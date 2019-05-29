@@ -21,7 +21,7 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Enter the number of steps"
+                android:text="@string/enter_the_number_of_steps"
                 android:textSize="60sp"
                 android:gravity="center"
                 android:textStyle="bold|italic"
@@ -32,19 +32,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="100dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp">
 
             <ImageView
+                    android:id="@+id/buttonDecrease"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/arrow_inactive"
                     android:rotation="-180"/>
 
             <TextView
+                    android:id="@+id/stepsCountText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -55,11 +57,16 @@
                     android:textStyle="bold|italic"/>
 
             <ImageView
+                    android:id="@+id/buttonIncrease"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/arrow_inactive"/>
-
         </LinearLayout>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
 </FrameLayout>

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TreeCare</string>
+    <string name="enter_the_number_of_steps">Enter the number of steps</string>
 </resources>

@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TreeCare</string>
     <string name="enter_the_number_of_steps">Enter the number of steps</string>
+
+    <string name="unity_shared_preferences">dal.mitacsgri.treecare.v2.playerprefs</string>
+    <string name="daily_step_count">daily_step_count</string>
+    <string name="last_days_step_count">last_days_step_count</string>
+
 </resources>

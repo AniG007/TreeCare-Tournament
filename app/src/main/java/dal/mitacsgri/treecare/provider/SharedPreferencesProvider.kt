@@ -10,16 +10,21 @@ class SharedPreferencesProvider(val context: Context) {
         context.getSharedPreferences(context.getString(R.string.unity_shared_preferences),
         Context.MODE_PRIVATE)
 
-    public fun storeDailyStepCount(stepCount: Int) {
-        with(sharedPref.edit()) {
-            putInt(context.getString(R.string.daily_step_count), stepCount)
-            apply()
-        }
+    fun storeDailyStepCount(stepCount: Int) {
+        storeInt(R.string.daily_step_count, stepCount)
     }
 
-    public fun storeLastDaysStepCount(stepCount: Int) {
+    fun storeLastDaysStepCount(stepCount: Int) {
+        storeInt(R.string.last_day_step_count, stepCount)
+    }
+
+    fun storeDailyStepsGoal(goal: Int) {
+        storeInt(R.string.daily_steps_goal, goal)
+    }
+
+    private fun storeInt(key: Int, value: Int) {
         with(sharedPref.edit()) {
-            putInt(context.getString(R.string.last_days_step_count), stepCount)
+            putInt(context.getString(key), value)
             apply()
         }
     }

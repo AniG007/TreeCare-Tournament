@@ -13,7 +13,8 @@ class SplashScreenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val sharedPref = SharedPreferencesProvider(this)
-        sharedPref.storeDailyStepCount(8000)
+        sharedPref.storeDailyStepCount(6000)
+        sharedPref.storeDailyStepsGoal(5000)
 
         startNextActivity(StepsCounterActivity::class.java, 2000)
     }

@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_dummy_display.*
 
+
+
 class StepsCounterActivity : AppCompatActivity(), SensorEventListener {
 
     private var steps = 0
@@ -38,16 +40,21 @@ class StepsCounterActivity : AppCompatActivity(), SensorEventListener {
         val sensor = event?.sensor
         val values = event?.values
         var value = -1
+        var countSD = 0
 
         if (values!!.isNotEmpty()) {
             value = values[0].toInt()
             Log.d("Value: ", "" + value)
         }
 
+        if (sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+            stepsDetectorText.text = (++countSD).toString()
+        }
 
         if (sensor?.type == Sensor.TYPE_STEP_COUNTER) {
 
-            stepsCountText.text = "Steps: ${event.values[0]}"
+
+            stepsCountText.text = event.values[0].toString()
         }
     }
 }

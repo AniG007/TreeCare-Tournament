@@ -47,8 +47,8 @@ class SensorApiActivity : AppCompatActivity(),
 
         mClient.connect()
 
-        invokeSensorsAPI()
         subscribe()
+        invokeSensorsAPI()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -16,7 +16,7 @@ class SplashScreenActivity : AppCompatActivity() {
         sharedPref.storeDailyStepCount(6000)
         sharedPref.storeDailyStepsGoal(5000)
 
-        startNextActivity(FitnessAPIActivity::class.java, 5000)
+        startNextActivity(SensorApiActivity::class.java, 5000)
     }
 
     private fun startNextActivity(activity : Class<*>, delay : Long) {

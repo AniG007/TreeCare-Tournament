@@ -9,6 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SensorApiActivity">
+        </activity>
         <activity android:name=".FitnessAPIActivity">
         </activity>
         <activity android:name=".StepsCounterActivity">

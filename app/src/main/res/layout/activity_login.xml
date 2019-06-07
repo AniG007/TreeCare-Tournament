@@ -7,4 +7,70 @@
     android:layout_height="match_parent"
     tools:context=".screens.login.LoginActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/leaf_pattern"
+        android:scaleType="centerCrop"
+        android:tint="#ddffffff"
+        android:id="@+id/imageView"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/walkAnimation"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:lottie_fileName="walk.json"
+        app:lottie_loop="true"
+        app:lottie_speed="0.7"
+        app:lottie_autoPlay="true"
+        android:layout_marginTop="@dimen/_20sdp"
+        tools:src="@drawable/splash_tree"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_screen_quote"
+        android:layout_marginTop="@dimen/_40sdp"
+        app:layout_constraintTop_toBottomOf="@+id/walkAnimation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/login_screen_text"
+        android:id="@+id/textView2"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_text"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:textSize="@dimen/_15sdp"
+        android:textStyle="normal"
+        style="@style/login_screen_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        android:id="@+id/textView3"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:text="@string/sign_in_with_google"
+        android:drawableStart="@drawable/ic_google"
+        android:drawablePadding="@dimen/_4sdp"
+        android:padding="@dimen/_10sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:layout_constraintVertical_bias="0.29000002"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,15 +9,22 @@
     android:background="@drawable/splash_screen_background"
     tools:context=".SplashScreenActivity">
 
-    <ImageView
-        android:layout_width="@dimen/_250sdp"
-        android:layout_height="@dimen/_250sdp"
-        android:src="@drawable/splash_tree"
-        app:layout_constraintStart_toStartOf="parent"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/splashScreenAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:lottie_fileName="tree.json"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="true"
+        app:lottie_speed="0.25"
+        android:layout_marginTop="@dimen/_20sdp"
+        tools:src="@drawable/splash_tree"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
-        android:id="@+id/imageView"/>
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -31,6 +38,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"/>
+        app:layout_constraintTop_toBottomOf="@+id/splashScreenAnimation"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
-import dal.mitacsgri.treecare.unity.UnityPlayerActivity
+import dal.mitacsgri.treecare.screens.login.LoginActivity
 
 class SplashScreenActivity : AppCompatActivity() {
 
@@ -17,7 +17,7 @@ class SplashScreenActivity : AppCompatActivity() {
         sharedPref.storeDailyStepCount(6000)
         sharedPref.storeDailyStepsGoal(5000)
 
-        startNextActivity(UnityPlayerActivity::class.java, 5000)
+        startNextActivity(LoginActivity::class.java, 5000)
     }
 
     private fun startNextActivity(activity : Class<*>, delay : Long) {

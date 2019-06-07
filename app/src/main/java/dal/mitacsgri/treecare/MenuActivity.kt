@@ -1,6 +1,6 @@
 package dal.mitacsgri.treecare
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
 class MenuActivity : AppCompatActivity() {

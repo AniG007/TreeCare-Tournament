@@ -4,15 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.ResultCallback
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataSource
 import com.google.android.gms.fitness.data.DataSource.TYPE_RAW
@@ -21,7 +19,6 @@ import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_CUMULATIVE
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.OnDataPointListener
 import com.google.android.gms.fitness.request.SensorRequest
-import com.google.android.gms.fitness.result.DataSourcesResult
 import kotlinx.android.synthetic.main.activity_sensor_api.*
 import java.util.concurrent.TimeUnit
 
@@ -46,9 +43,6 @@ class SensorApiActivity : AppCompatActivity(),
             .build()
 
         mClient.connect()
-
-        subscribe()
-        invokeSensorsAPI()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -66,38 +60,11 @@ class SensorApiActivity : AppCompatActivity(),
         }
     }
 
-    private fun invokeSensorsAPI() {
-//        Fitness.SensorsApi.add(
-//            mClient,
-//            SensorRequest.Builder()
-//                .setDataType(TYPE_STEP_COUNT_DELTA)
-//                .setSamplingRate(1, TimeUnit.SECONDS)
-//                .build(),
-//            this
-//        )
-//            .setResultCallback {
-//                    if (it.isSuccess) {
-//                        Log.i("Sensor API", "Sensor Listener registered!")
-//                    } else {
-//                        Log.i("Sensor API", "Sensor Listener not registered.")
-//                    }
-//            }
-    }
-
     override fun onConnected(p0: Bundle?) {
         val dataSourceRequest = DataSourcesRequest.Builder()
             .setDataTypes(TYPE_STEP_COUNT_CUMULATIVE)
             .setDataSourceTypes(TYPE_RAW)
             .build()
-
-        val dataSourcesResultCallback =
-            ResultCallback<DataSourcesResult> { dataSourcesResult ->
-                for (dataSource in dataSourcesResult.dataSources) {
-                    if (TYPE_STEP_COUNT_CUMULATIVE == dataSource.dataType) {
-                        registerFitnessDataListener(dataSource, TYPE_STEP_COUNT_CUMULATIVE)
-                    }
-                }
-            }
 
         Fitness.SensorsApi.findDataSources(mClient, dataSourceRequest)
             .setResultCallback {
@@ -161,20 +128,4 @@ class SensorApiActivity : AppCompatActivity(),
 
     }
 
-    fun subscribe() {
-        // To create a subscription, invoke the Recording API. As soon as the subscription is
-        // active, fitness data will start recording.
-        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-            .setResultCallback { status ->
-                if (status.isSuccess) {
-                    if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
-                        Log.i("recording", "Existing subscription for activity detected.")
-                    } else {
-                        Log.i("recording", "Successfully subscribed!")
-                    }
-                } else {
-                    Log.w("recording", "There was a problem subscribing.")
-                }
-            }
-    }
 }

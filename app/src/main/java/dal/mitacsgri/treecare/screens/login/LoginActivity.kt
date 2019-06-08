@@ -44,10 +44,10 @@ class LoginActivity : AppCompatActivity() {
                     mClient.connect()
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                "Login cancelled".toast(this)
+                Log.e("GoogleFit", "RESULT_CANCELED")
             }
         } else {
-            "Invalid code".toast(this)
+            Log.e("GoogleFit", "requestCode NOT request_oauth")
         }
     }
 
@@ -58,9 +58,8 @@ class LoginActivity : AppCompatActivity() {
             .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
             .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
             .addConnectionCallbacks(connectionCallbacksImpl)
-            .addOnConnectionFailedListener {connectionFailed}
+            .addOnConnectionFailedListener(connectionFailedImpl)
             .build()
-
         mClient.connect()
 
     }
@@ -80,7 +79,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private val connectionFailed = GoogleApiClient.OnConnectionFailedListener {
+    private val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
         if (!authInProgress) {
             try {
                 authInProgress = true
@@ -88,7 +87,6 @@ class LoginActivity : AppCompatActivity() {
             } catch (e: IntentSender.SendIntentException) {
 
             }
-
         } else {
             "Logging you in".toast(this)
         }
@@ -99,52 +97,8 @@ class LoginActivity : AppCompatActivity() {
 
             Log.d("Bundle", p0.toString())
             subscribeToRecordSteps()
-//            val dataSourceRequest = DataSourcesRequest.Builder()
-//                .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-//                .setDataSourceTypes(DataSource.TYPE_RAW)
-//                .build()
-//
-//            Fitness.SensorsApi.findDataSources(mClient, dataSourceRequest)
-//                .setResultCallback {
-//                    for (dataSource in it.dataSources) {
-//                        if (DataType.TYPE_STEP_COUNT_CUMULATIVE == dataSource.dataType) {
-//                            registerFitnessDataListener(dataSource, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-//                        }
-//                    }
-//                }
         }
 
         override fun onConnectionSuspended(p0: Int) {}
     }
-
-//    private fun registerFitnessDataListener(dataSource: DataSource, dataType: DataType) {
-//
-//        val request = SensorRequest.Builder()
-//            .setDataSource(dataSource)
-//            .setDataType(dataType)
-//            .setSamplingRate(1, TimeUnit.SECONDS)
-//            .build()
-//
-//        Fitness.SensorsApi.add(mClient, request) {
-//            for (field in it.dataType.fields) {
-//                val value = it.getValue(field)
-//                Log.i("datapoint", "Detected DataPoint field: " + field.name)
-//                Log.i("datapoint", "Detected DataPoint value: $value")
-//                val value1 = value.asInt()
-//
-//                if (field.name.equals("steps", true)) {
-//                    runOnUiThread {
-//                        run {
-//                            tv.text = "Value $value1"
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }.setResultCallback { status ->
-//                if (status.isSuccess) {
-//                    Log.e("GoogleFit", "SensorApi successfully added")
-//                }
-//            }
-//    }
 }

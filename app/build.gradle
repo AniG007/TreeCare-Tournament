@@ -37,10 +37,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-fitness:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
-    //Plus API
-    implementation 'com.google.android.gms:play-services-identity:16.0.0'
-    implementation 'com.google.android.gms:play-services-plus:16.0.0'
-
     //Intuit
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
 

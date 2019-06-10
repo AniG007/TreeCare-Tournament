@@ -13,7 +13,9 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".screens.ModeSelectionActivity">
         </activity>
-        <activity android:name=".screens.instructions.InstructionsActivity">
+        <activity
+            android:name=".screens.instructions.InstructionsActivity"
+            android:noHistory="true">
         </activity>
         <activity
             android:name=".screens.login.LoginActivity"

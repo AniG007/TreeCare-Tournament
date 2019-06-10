@@ -10,7 +10,7 @@
     <string name="login_done">login_done</string>
     <string name="last_opened_day">last_opened_day</string>
     <string name="daily_goal_checked">daily_goal_checked</string>
-    <string name="has_instructions_displayed">has_instruction_displayed</string>
+    <string name="has_instructions_displayed">has_instructions_displayed</string>
 
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
     <string name="login_text">Please login with your Google account to proceed</string>
@@ -18,8 +18,16 @@
     <string name="is_first_run">is_first_run</string>
     <string name="instructions">Instructions</string>
     <string name="select_a_mode">Select a mode</string>
-    <string name="challenger_mode">Challenger</string>
-    <string name="starter_mode">Starter</string>
-    <string name="tournament_mode">Tournament</string>
+    <string name="challenger">Challenger</string>
+    <string name="starter">Starter</string>
+    <string name="tournament">Tournament</string>
+    <string name="starter_mode">Starter Mode</string>
+    <string name="starter_mode_instructions">This is a single player mode. Here are the rules of this mode:
+        \n\n1. Your daily goal is initially set as 5,000 steps which can be increased by you.
+        \n\n2. For every 1,000 steps taken in a day, you will gain a green leaf.
+        \n\n3. When you will fail to meet your daily goal, you will lose the number of leaves that corresponds to the remaining steps required to meet your goal.
+        \n\n4. If you will meet your daily goal consistently for a week, you will gain a fruit on your tree.
+        \n\n5. But, if you will fail to fulfill your daily goals for a week, you will lose a fruit (if any).</string>
+    <string name="continueToGame">Continue</string>
 
 </resources>

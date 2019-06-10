@@ -30,7 +30,7 @@ class SharedPreferencesProvider(val context: Context) {
         }
 
     var hasInstructionsDisplayed: Boolean
-        get() = sharedPref.getBoolean("has_instructions_displayed", false)
+        get() = sharedPref.getBoolean(context.getString(R.string.has_instructions_displayed), false)
         set(value) {
             with(sharedPref.edit()) {
                 putBoolean(context.getString(R.string.has_instructions_displayed), value)

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="dal.mitacsgri.treecare">
 
     <application
@@ -8,16 +9,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".screens.login.LoginActivity">
-        </activity>
-        <activity android:name=".SensorApiActivity">
-        </activity>
-        <activity android:name=".FitnessAPIActivity">
-        </activity>
-        <activity android:name=".StepsCounterActivity">
-        </activity>
-        <activity android:name=".TreeScreenActivity">
         </activity>
         <activity android:name=".MenuActivity">
         </activity>
@@ -29,7 +23,4 @@
             </intent-filter>
         </activity>
     </application>
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 </manifest>

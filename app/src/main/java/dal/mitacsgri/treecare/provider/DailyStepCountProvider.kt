@@ -15,7 +15,7 @@ class DailyStepCountProvider(private val context: Context,
 
     private val TAG = "DailyStepCount"
 
-    fun updateUiWithStepCount(uiUpdateFun: (stepCount: Long) -> Unit) {
+    fun stepCountObtained(funToExecute: (stepCount: Long) -> Unit) {
 
         context.doAsync {
             var total: Long = 0
@@ -34,7 +34,7 @@ class DailyStepCountProvider(private val context: Context,
 
             Log.i(TAG, "Total steps: $total")
             uiThread {
-                uiUpdateFun(total)
+                funToExecute(total)
             }
         }
     }

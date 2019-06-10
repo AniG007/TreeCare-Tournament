@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
@@ -56,7 +55,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun startGoogleFitApiConfiguration() {
         mClient = GoogleApiClient.Builder(this)
-            .addApi(Fitness.SENSORS_API)
             .addApi(Fitness.RECORDING_API)
             .addApi(Fitness.HISTORY_API)
             .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
@@ -65,9 +63,6 @@ class LoginActivity : AppCompatActivity() {
             .addOnConnectionFailedListener(connectionFailedImpl)
             .build()
         mClient.connect()
-
-        GoogleSignIn.getLastSignedInAccount(this)?.toast(this)
-
     }
 
     private fun subscribeToRecordSteps(setLoginProcessDone : () -> Unit) {
@@ -107,8 +102,9 @@ class LoginActivity : AppCompatActivity() {
             }
 
             DailyStepCountProvider(this@LoginActivity, mClient)
-                .updateUiWithStepCount {
+                .stepCountObtained {
                     tvStepCount.text = it.toString()
+                    sharedPrefProvider.storeDailyStepCount(it.toInt())
                 }
         }
 

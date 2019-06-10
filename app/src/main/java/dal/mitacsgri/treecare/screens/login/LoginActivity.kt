@@ -16,6 +16,7 @@ import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
+import dal.mitacsgri.treecare.provider.DailyStepCountProvider
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -56,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         mClient = GoogleApiClient.Builder(this)
             .addApi(Fitness.SENSORS_API)
             .addApi(Fitness.RECORDING_API)
+            .addApi(Fitness.HISTORY_API)
             .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
             .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
             .addConnectionCallbacks(connectionCallbacksImpl)
@@ -100,6 +102,10 @@ class LoginActivity : AppCompatActivity() {
 
             Log.d("Bundle", p0.toString())
             subscribeToRecordSteps()
+            DailyStepCountProvider(this@LoginActivity, mClient)
+                .updateUiWithStepCount {
+                    tvStepCount.text = it.toString()
+                }
         }
 
         override fun onConnectionSuspended(p0: Int) {}

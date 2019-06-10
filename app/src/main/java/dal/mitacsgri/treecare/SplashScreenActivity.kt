@@ -2,23 +2,18 @@ package dal.mitacsgri.treecare
 
 import android.content.IntentSender
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.data.DataType
-import com.google.android.gms.fitness.request.DataReadRequest
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
-import java.text.DateFormat.getDateInstance
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class SplashScreenActivity : AppCompatActivity() {
@@ -35,7 +30,7 @@ class SplashScreenActivity : AppCompatActivity() {
             storeDailyStepsGoal(5000)
 
             with(sharedPref.edit()) {
-                putInt(getString(R.string.is_first_run), 0)
+                putInt(getString(R.string.is_first_run), 1)
                 apply()
             }
 
@@ -117,30 +112,5 @@ class SplashScreenActivity : AppCompatActivity() {
             .addOnConnectionFailedListener(connectionFailedImpl)
             .build()
         mClient.connect()
-    }
-
-    private fun getStepCountForPreviousDay() {
-        val cal = Calendar.getInstance()
-        val now = Date()
-        cal.apply {
-            time = now
-            set(Calendar.MILLISECOND, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.HOUR, 0)
-        }
-        val endTime = cal.timeInMillis
-        cal.add(Calendar.WEEK_OF_YEAR, -1)
-        val startTime = cal.timeInMillis
-
-        val dateFormat = getDateInstance()
-        Log.i("Time", "Range Start: $startTime")
-        Log.i("Time", "Range End: $endTime")
-
-        val readRequest = DataReadRequest.Builder()
-            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-            .bucketByTime(1, TimeUnit.DAYS)
-            .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-            .build()
     }
 }

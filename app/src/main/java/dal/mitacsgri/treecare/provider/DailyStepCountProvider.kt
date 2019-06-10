@@ -21,7 +21,7 @@ class DailyStepCountProvider(private val context: Context,
             var total: Long = 0
 
             val result = Fitness.HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA)
-            val totalResult = result.await(30, TimeUnit.SECONDS)
+            val totalResult = result.await(1, TimeUnit.SECONDS)
             if (totalResult.status.isSuccess) {
                 val totalSet = totalResult.total
                 total = (if (totalSet!!.isEmpty)

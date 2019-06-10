@@ -1,19 +1,25 @@
 package dal.mitacsgri.treecare
 
-import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.request.DataReadRequest
+import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.provider.DailyStepCountProvider
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
+import java.text.DateFormat.getDateInstance
+import java.util.*
+import java.util.concurrent.TimeUnit
+
 
 class SplashScreenActivity : AppCompatActivity() {
 
@@ -29,14 +35,8 @@ class SplashScreenActivity : AppCompatActivity() {
             storeDailyStepsGoal(5000)
 
             if (isLoginDone) setupAndStartUnityActivity()
-            else    startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
+            else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
         }
-    }
-
-    private fun startNextActivity(activity : Class<*>, delay : Long) {
-        Handler().postDelayed( {
-            startActivity(Intent(this@SplashScreenActivity, activity))
-        }, delay)
     }
 
 
@@ -45,6 +45,7 @@ class SplashScreenActivity : AppCompatActivity() {
         var authInProgress = false
         val SIGN_IN_CODE = 1000
         var mClient: GoogleApiClient? = null
+        val stepCountProvider = StepCountProvider(this@SplashScreenActivity)
 
         val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
             if (!authInProgress) {
@@ -60,17 +61,21 @@ class SplashScreenActivity : AppCompatActivity() {
         }
 
         mClient = GoogleApiClient.Builder(this)
-            .addApi(Fitness.RECORDING_API)
             .addApi(Fitness.HISTORY_API)
             .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
             .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
             .addConnectionCallbacks(object: GoogleApiClient.ConnectionCallbacks {
                 override fun onConnected(p0: Bundle?) {
+                        stepCountProvider.apply {
+                            getTodayStepCountData(mClient!!) {
+                                sharedPrefProvider.storeDailyStepCount(it.toInt())
+                                startNextActivity(UnityPlayerActivity::class.java, SPLASH_SCREEN_DELAY)
+                            }
 
-                    DailyStepCountProvider(this@SplashScreenActivity,  mClient!!)
-                        .stepCountObtained {
-                            sharedPrefProvider.storeDailyStepCount(it.toInt())
-                            startNextActivity(UnityPlayerActivity::class.java, SPLASH_SCREEN_DELAY)
+                            getLastDayStepCountData(mClient!!) {
+
+                            }
+
                         }
                 }
 
@@ -79,5 +84,30 @@ class SplashScreenActivity : AppCompatActivity() {
             .addOnConnectionFailedListener(connectionFailedImpl)
             .build()
         mClient.connect()
+    }
+
+    private fun getStepCountForPreviousDay() {
+        val cal = Calendar.getInstance()
+        val now = Date()
+        cal.apply {
+            time = now
+            set(Calendar.MILLISECOND, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.HOUR, 0)
+        }
+        val endTime = cal.timeInMillis
+        cal.add(Calendar.WEEK_OF_YEAR, -1)
+        val startTime = cal.timeInMillis
+
+        val dateFormat = getDateInstance()
+        Log.i("Time", "Range Start: $startTime")
+        Log.i("Time", "Range End: $endTime")
+
+        val readRequest = DataReadRequest.Builder()
+            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .bucketByTime(1, TimeUnit.DAYS)
+            .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+            .build()
     }
 }

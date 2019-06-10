@@ -14,9 +14,11 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.provider.DailyStepCountProvider
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.StepCountProvider
+import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -101,10 +103,11 @@ class LoginActivity : AppCompatActivity() {
                 sharedPrefProvider.isLoginDone = true
             }
 
-            DailyStepCountProvider(this@LoginActivity, mClient)
-                .stepCountObtained {
+            StepCountProvider(this@LoginActivity)
+                .getTodayStepCountData(mClient) {
                     tvStepCount.text = it.toString()
                     sharedPrefProvider.storeDailyStepCount(it.toInt())
+                    startNextActivity(UnityPlayerActivity::class.java)
                 }
         }
 

@@ -18,7 +18,7 @@ import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
-import dal.mitacsgri.treecare.unity.UnityPlayerActivity
+import dal.mitacsgri.treecare.screens.ModeSelectionActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
                 getTodayStepCountData(mClient) {
                     tvStepCount.text = it.toString()
                     sharedPrefProvider.storeDailyStepCount(it.toInt())
-                    startNextActivity(UnityPlayerActivity::class.java)
+                    startNextActivity(ModeSelectionActivity::class.java)
                 }
 
                 getLastDayStepCountData(mClient) {

@@ -17,4 +17,11 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="ModeSelectionButtonStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/_24sdp</item>
+        <item name="android:padding">@dimen/_8sdp</item>
+        <item name="android:background">@drawable/mode_selection_button_background</item>
+    </style>
+
 </resources>

@@ -15,5 +15,10 @@
     <string name="login_text">Please login with your Google account to proceed</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="is_first_run">is_first_run</string>
+    <string name="instructions">Instructions</string>
+    <string name="select_a_mode">Select a mode</string>
+    <string name="challenger_mode">Challenger</string>
+    <string name="starter_mode">Starter</string>
+    <string name="tournament_mode">Tournament</string>
 
 </resources>

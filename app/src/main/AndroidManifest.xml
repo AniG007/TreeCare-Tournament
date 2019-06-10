@@ -11,11 +11,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screens.login.LoginActivity">
+        <activity android:name=".screens.ModeSelectionActivity">
+        </activity>
+        <activity android:name=".screens.instructions.InstructionsActivity">
+        </activity>
+        <activity
+            android:name=".screens.login.LoginActivity"
+            android:noHistory="true">
         </activity>
         <activity android:name=".MenuActivity">
         </activity>
-        <activity android:name=".SplashScreenActivity"
+        <activity
+            android:name=".SplashScreenActivity"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -24,4 +31,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

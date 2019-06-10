@@ -6,9 +6,19 @@ import dal.mitacsgri.treecare.R
 
 class SharedPreferencesProvider(val context: Context) {
 
-    private val sharedPref: SharedPreferences =
-        context.getSharedPreferences(context.getString(R.string.unity_shared_preferences),
-        Context.MODE_PRIVATE)
+    private val sharedPref: SharedPreferences = context.getSharedPreferences(
+        context.getString(R.string.unity_shared_preferences),
+        Context.MODE_PRIVATE
+    )
+
+    var isLoginDone: Boolean
+        get() = sharedPref.getBoolean(context.getString(R.string.login_done), false)
+        set(value) {
+            with(sharedPref.edit()) {
+                putBoolean(context.getString(R.string.login_done), value)
+                apply()
+            }
+        }
 
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)

@@ -13,11 +13,13 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        val sharedPref = SharedPreferencesProvider(this)
-        sharedPref.storeDailyStepCount(6000)
-        sharedPref.storeDailyStepsGoal(5000)
+        val sharedPrefProvider = SharedPreferencesProvider(this)
+        sharedPrefProvider.apply {
+            storeDailyStepCount(6000)
+            storeDailyStepsGoal(5000)
 
-        startNextActivity(LoginActivity::class.java, 5000)
+            if (!isLoginDone) startNextActivity(LoginActivity::class.java, 5000)
+        }
     }
 
     private fun startNextActivity(activity : Class<*>, delay : Long) {

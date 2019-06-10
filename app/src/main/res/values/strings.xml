@@ -7,6 +7,8 @@
     <string name="daily_step_count">daily_step_count</string>
     <string name="last_day_step_count">last_days_step_count</string>
     <string name="daily_steps_goal">daily_goal</string>
+    <string name="login_done">login_done</string>
+
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
     <string name="login_text">Please login with your Google account to proceed</string>
     <string name="sign_in_with_google">Sign in with Google</string>

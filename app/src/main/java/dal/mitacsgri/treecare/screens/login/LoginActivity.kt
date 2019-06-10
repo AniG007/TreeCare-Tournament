@@ -17,20 +17,21 @@ import com.google.android.gms.fitness.data.DataType
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.DailyStepCountProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var mClient: GoogleApiClient
     private var authInProgress = false
-
+    private lateinit var sharedPrefProvider: SharedPreferencesProvider
     val SIGN_IN_CODE = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         window.statusBarColor = ContextCompat.getColor(this, R.color.gray)
-
+        sharedPrefProvider = SharedPreferencesProvider(this)
         signInButton.setOnClickListener {
             startGoogleFitApiConfiguration()
         }
@@ -69,12 +70,13 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun subscribeToRecordSteps() {
+    private fun subscribeToRecordSteps(setLoginProcessDone : () -> Unit) {
         Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
             .setResultCallback { status ->
                 if (status.isSuccess) {
                     if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
                         Log.i("recording", "Existing subscription for activity detected.")
+                        setLoginProcessDone()
                     } else {
                         Log.i("recording", "Successfully subscribed!")
                     }
@@ -100,8 +102,10 @@ class LoginActivity : AppCompatActivity() {
     private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {
         override fun onConnected(p0: Bundle?) {
 
-            Log.d("Bundle", p0.toString())
-            subscribeToRecordSteps()
+            subscribeToRecordSteps {
+                sharedPrefProvider.isLoginDone = true
+            }
+
             DailyStepCountProvider(this@LoginActivity, mClient)
                 .updateUiWithStepCount {
                     tvStepCount.text = it.toString()

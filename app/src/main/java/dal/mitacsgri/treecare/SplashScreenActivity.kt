@@ -34,11 +34,44 @@ class SplashScreenActivity : AppCompatActivity() {
         sharedPrefProvider.apply {
             storeDailyStepsGoal(5000)
 
+            with(sharedPref.edit()) {
+                putInt(getString(R.string.is_first_run), 0)
+                apply()
+            }
+
             if (isLoginDone) setupAndStartUnityActivity()
             else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
         }
+        resetDailyGoalCheckedFlag()
     }
 
+    private fun resetDailyGoalCheckedFlag() {
+
+        //Will execute only once in each day, when the app is opened for thr first time in the day
+        if (sharedPrefProvider.lastOpenedDayPlus1 < Date().time) {
+            sharedPrefProvider.dailyGoalChecked(0)
+
+            val cal = Calendar.getInstance()
+            val now = Date()
+            cal.apply {
+                time = now
+                set(Calendar.MILLISECOND, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.HOUR, 0)
+            }
+
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+            val month = cal.get(Calendar.MONTH)
+
+            cal.add(Calendar.DAY_OF_YEAR, 1)
+
+            //Doing this to prevent rounding off at the end of the year
+            if (day == 31 && month == 12) cal.add(Calendar.YEAR, 1)
+
+            sharedPrefProvider.lastOpenedDayPlus1 = cal.timeInMillis
+        }
+    }
 
     private fun setupAndStartUnityActivity() {
 
@@ -73,7 +106,7 @@ class SplashScreenActivity : AppCompatActivity() {
                             }
 
                             getLastDayStepCountData(mClient!!) {
-
+                                sharedPrefProvider.storeLastDayStepCount(it.toInt())
                             }
 
                         }

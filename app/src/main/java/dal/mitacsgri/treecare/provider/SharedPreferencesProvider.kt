@@ -6,7 +6,7 @@ import dal.mitacsgri.treecare.R
 
 class SharedPreferencesProvider(val context: Context) {
 
-    private val sharedPref: SharedPreferences = context.getSharedPreferences(
+    public val sharedPref: SharedPreferences = context.getSharedPreferences(
         context.getString(R.string.unity_shared_preferences),
         Context.MODE_PRIVATE
     )
@@ -20,16 +20,29 @@ class SharedPreferencesProvider(val context: Context) {
             }
         }
 
+    var lastOpenedDayPlus1: Long
+        get() = sharedPref.getLong(context.getString(R.string.last_opened_day), 0)
+        set(value) {
+            with(sharedPref.edit()) {
+                putLong(context.getString(R.string.last_opened_day), value)
+                apply()
+            }
+        }
+
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)
     }
 
-    fun storeLastDaysStepCount(stepCount: Int) {
+    fun storeLastDayStepCount(stepCount: Int) {
         storeInt(R.string.last_day_step_count, stepCount)
     }
 
     fun storeDailyStepsGoal(goal: Int) {
         storeInt(R.string.daily_steps_goal, goal)
+    }
+
+    fun dailyGoalChecked(value: Int) {
+        storeInt(R.string.daily_goal_checked, value)
     }
 
     private fun storeInt(key: Int, value: Int) {

@@ -4,17 +4,13 @@ import android.content.Context
 import android.util.Log
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.data.DataSet
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-
-
 
 class StepCountProvider(private val context: Context) {
 
@@ -52,13 +48,10 @@ class StepCountProvider(private val context: Context) {
             set(Calendar.MINUTE, 0)
             set(Calendar.HOUR, 0)
         }
+
         val endTime = cal.timeInMillis
         cal.add(Calendar.DAY_OF_YEAR, -1)
         val startTime = cal.timeInMillis
-
-        val dateFormat = DateFormat.getDateInstance()
-        Log.i("Time", "Range Start: $startTime")
-        Log.i("Time", "Range End: $endTime")
 
         val readRequest = DataReadRequest.Builder()
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
@@ -71,46 +64,14 @@ class StepCountProvider(private val context: Context) {
             var lastDayStepCount = 0
 
             if (result.status.isSuccess) {
-                Log.d("Last day", "No. of buckets: " + result.buckets.size)
                 for (bucket in result.buckets) {
                     val dataSets = bucket.dataSets
                     for (dataSet in dataSets) {
-                        //showDataSet(dataSet)
                         for (dataPoint in dataSet.dataPoints) {
                             lastDayStepCount += dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
                         }
                     }
                 }
-                Log.e("Last day steps: ", lastDayStepCount.toString())
-            }
-        }
-    }
-
-    private fun showDataSet(dataSet: DataSet) {
-        Log.e("History", "Data returned for Data type: " + dataSet.dataType.name)
-        val dateFormat = DateFormat.getDateInstance()
-        val timeFormat = DateFormat.getTimeInstance()
-
-        for (dp in dataSet.dataPoints) {
-            Log.e("History", "Data point:")
-            Log.e("History", "\tType: " + dp.dataType.name)
-            Log.e(
-                "History",
-                "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(
-                    dp.getStartTime(TimeUnit.MILLISECONDS)
-                )
-            )
-            Log.e(
-                "History",
-                "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + " " + timeFormat.format(
-                    dp.getStartTime(TimeUnit.MILLISECONDS)
-                )
-            )
-            for (field in dp.dataType.fields) {
-                Log.e(
-                    "History", "\tField: " + field.name +
-                            " Value: " + dp.getValue(field)
-                )
             }
         }
     }

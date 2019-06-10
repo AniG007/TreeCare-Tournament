@@ -36,7 +36,6 @@ class LoginActivity : AppCompatActivity() {
         signInButton.setOnClickListener {
             startGoogleFitApiConfiguration()
         }
-
     }
 
 
@@ -103,12 +102,18 @@ class LoginActivity : AppCompatActivity() {
                 sharedPrefProvider.isLoginDone = true
             }
 
-            StepCountProvider(this@LoginActivity)
-                .getTodayStepCountData(mClient) {
+            StepCountProvider(this@LoginActivity).apply {
+                getTodayStepCountData(mClient) {
                     tvStepCount.text = it.toString()
                     sharedPrefProvider.storeDailyStepCount(it.toInt())
                     startNextActivity(UnityPlayerActivity::class.java)
                 }
+
+                getLastDayStepCountData(mClient) {
+                    sharedPrefProvider.storeLastDayStepCount(it.toInt())
+                }
+            }
+
         }
 
         override fun onConnectionSuspended(p0: Int) {}

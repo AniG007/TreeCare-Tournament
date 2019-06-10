@@ -106,6 +106,7 @@ class LoginActivity : AppCompatActivity() {
                 getTodayStepCountData(mClient) {
                     tvStepCount.text = it.toString()
                     sharedPrefProvider.storeDailyStepCount(it.toInt())
+                    sharedPrefProvider.isLoginDone = true
                     startNextActivity(ModeSelectionActivity::class.java)
                 }
 

@@ -10,6 +10,7 @@
     <string name="login_done">login_done</string>
     <string name="last_opened_day">last_opened_day</string>
     <string name="daily_goal_checked">daily_goal_checked</string>
+    <string name="has_instructions_displayed">has_instruction_displayed</string>
 
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
     <string name="login_text">Please login with your Google account to proceed</string>

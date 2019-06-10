@@ -6,7 +6,7 @@ import dal.mitacsgri.treecare.R
 
 class SharedPreferencesProvider(val context: Context) {
 
-    public val sharedPref: SharedPreferences = context.getSharedPreferences(
+    val sharedPref: SharedPreferences = context.getSharedPreferences(
         context.getString(R.string.unity_shared_preferences),
         Context.MODE_PRIVATE
     )
@@ -25,6 +25,15 @@ class SharedPreferencesProvider(val context: Context) {
         set(value) {
             with(sharedPref.edit()) {
                 putLong(context.getString(R.string.last_opened_day), value)
+                apply()
+            }
+        }
+
+    var hasInstructionsDisplayed: Boolean
+        get() = sharedPref.getBoolean("has_instructions_displayed", false)
+        set(value) {
+            with(sharedPref.edit()) {
+                putBoolean(context.getString(R.string.has_instructions_displayed), value)
                 apply()
             }
         }

@@ -27,14 +27,14 @@ class SplashScreenActivity : AppCompatActivity() {
 
         sharedPrefProvider = SharedPreferencesProvider(this)
         sharedPrefProvider.apply {
-            storeDailyStepsGoal(5000)
-
             if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
             else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
-        }
-        //resetDailyGoalCheckedFlag()
 
-        if (sharedPrefProvider.isLoginDone) setupFitApiToGetData()
+            if (isLoginDone) setupFitApiToGetData()
+
+            //testGameByManipulatingSharedPrefsData(this)
+        }
+        resetDailyGoalCheckedFlag()
     }
 
     private fun resetDailyGoalCheckedFlag() {
@@ -70,8 +70,6 @@ class SplashScreenActivity : AppCompatActivity() {
         val SIGN_IN_CODE = 1000
         var mClient: GoogleApiClient? = null
         val stepCountProvider = StepCountProvider(this)
-        var dailyStepCountObtained = false
-        var lastDayStepCountObtained = false
 
         val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
             if (!authInProgress) {
@@ -94,7 +92,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 override fun onConnected(p0: Bundle?) {
                     stepCountProvider.apply {
                         getTodayStepCountData(mClient!!) {
-                            sharedPrefProvider.storeDailyStepCount(20)
+                            sharedPrefProvider.storeDailyStepCount(2000)
                             //startNextActivity(UnityPlayerActivity::class.java)
                         }
 
@@ -112,5 +110,18 @@ class SplashScreenActivity : AppCompatActivity() {
         mClient.connect()
     }
 
+//    private fun testGameByManipulatingSharedPrefsData(sharedPrefsProvider: SharedPreferencesProvider) {
+//        sharedPrefsProvider.apply {
+//            storeDailyStepsGoal(5000)
+//            storeLastDayStepCount(20)
+//            storeDailyStepCount(2000)
+//            dailyGoalChecked(0)
+//            with(sharedPref.edit()) {
+//                //putInt(getString(R.string.total_leaves_on_tree), 50)
+//                //putInt(getString(R.string.is_first_run), 1)
+//                apply()
+//            }
+//        }
+//    }
 
 }

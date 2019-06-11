@@ -4,18 +4,35 @@
 
     <string name="unity_shared_preferences">dal.mitacsgri.treecare.v2.playerprefs</string>
 
+    <!--Shared preferences' keys-->
+
     <string name="daily_step_count">daily_step_count</string>
     <string name="last_day_step_count">last_day_step_count</string>
     <string name="daily_steps_goal">daily_goal</string>
+
     <string name="login_done">login_done</string>
+        <!--Actually, last opened day rounded off to nearest 00:00 time-->
     <string name="last_opened_day">last_opened_day</string>
+
+    <!--daily_goal is used to check if tree has been updated as per the goal achievement of previous day.
+    It is reset at 00:00 of every day.
+    If 0, it means daily_goal has not been checked. Always set to 0 by Android app part.
+    If 1, it means that daily_goal has been checked. It is set to 1 always by Unity-->
     <string name="daily_goal_checked">daily_goal_checked</string>
+
     <string name="has_instructions_displayed">has_instructions_displayed</string>
 
+    <!--Used to check if UnityPlayerActivity is run for the first time by the user.
+    It is separate from login_done because it may happen that user logged in but didn't proceed to the tree screene
+    Always updated by Unity. Initially, it will be unset, so a value of 1 is obtained.
+    After the pref is checked once, it is set to 1 and not updated again-->
+    <string name="is_first_run">is_first_run</string>
+
+
+    <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
     <string name="login_text">Please login with your Google account to proceed</string>
     <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="is_first_run">is_first_run</string>
     <string name="instructions">Instructions</string>
     <string name="select_a_mode">Select a mode</string>
     <string name="challenger">Challenger</string>

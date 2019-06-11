@@ -27,7 +27,8 @@
     Always updated by Unity. Initially, it will be unset, so a value of 1 is obtained.
     After the pref is checked once, it is set to 1 and not updated again-->
     <string name="is_first_run">is_first_run</string>
-    <string name="total_leaves_on_tree">total_leaves_on_tree</string>
+    <string name="leaf_count_before_today">leaf_count_before_today</string>
+    <string name="leaves_gained_today">leaves_gained_today</string>
 
 
     <!--App UI text-->

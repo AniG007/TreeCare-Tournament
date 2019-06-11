@@ -32,9 +32,9 @@ class SplashScreenActivity : AppCompatActivity() {
 
             if (isLoginDone) setupFitApiToGetData()
 
-            //testGameByManipulatingSharedPrefsData(this)
+            testGameByManipulatingSharedPrefsData(this)
         }
-        resetDailyGoalCheckedFlag()
+        //resetDailyGoalCheckedFlag()
     }
 
     private fun resetDailyGoalCheckedFlag() {
@@ -110,18 +110,18 @@ class SplashScreenActivity : AppCompatActivity() {
         mClient.connect()
     }
 
-//    private fun testGameByManipulatingSharedPrefsData(sharedPrefsProvider: SharedPreferencesProvider) {
-//        sharedPrefsProvider.apply {
-//            storeDailyStepsGoal(5000)
-//            storeLastDayStepCount(20)
-//            storeDailyStepCount(2000)
-//            dailyGoalChecked(0)
-//            with(sharedPref.edit()) {
-//                //putInt(getString(R.string.total_leaves_on_tree), 50)
-//                //putInt(getString(R.string.is_first_run), 1)
-//                apply()
-//            }
-//        }
-//    }
+    private fun testGameByManipulatingSharedPrefsData(sharedPrefsProvider: SharedPreferencesProvider) {
+        sharedPrefsProvider.apply {
+            storeDailyStepsGoal(5000)
+            storeLastDayStepCount(20)
+            storeDailyStepCount(2000)
+            dailyGoalChecked(0)
+            with(sharedPref.edit()) {
+                putInt(getString(R.string.leaf_count_before_today), 50)
+                //putInt(getString(R.string.is_first_run), 1)
+                apply()
+            }
+        }
+    }
 
 }

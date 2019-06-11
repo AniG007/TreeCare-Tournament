@@ -45,4 +45,7 @@ dependencies {
 
     //Anko Commons
     implementation "org.jetbrains.anko:anko-commons:0.10.8"
+
+    //Stetho, used here to test app via SharedPreferences
+    implementation 'com.facebook.stetho:stetho:1.5.1'
 }

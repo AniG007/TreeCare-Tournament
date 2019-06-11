@@ -29,15 +29,10 @@ class SplashScreenActivity : AppCompatActivity() {
         sharedPrefProvider.apply {
             storeDailyStepsGoal(5000)
 
-            with(sharedPref.edit()) {
-                putInt(getString(R.string.is_first_run), 1)
-                apply()
-            }
-
             if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
             else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
         }
-        resetDailyGoalCheckedFlag()
+        //resetDailyGoalCheckedFlag()
 
         if (sharedPrefProvider.isLoginDone) setupFitApiToGetData()
     }
@@ -99,12 +94,12 @@ class SplashScreenActivity : AppCompatActivity() {
                 override fun onConnected(p0: Bundle?) {
                     stepCountProvider.apply {
                         getTodayStepCountData(mClient!!) {
-                            sharedPrefProvider.storeDailyStepCount(it.toInt())
+                            sharedPrefProvider.storeDailyStepCount(20)
                             //startNextActivity(UnityPlayerActivity::class.java)
                         }
 
                         getLastDayStepCountData(mClient!!) {
-                            sharedPrefProvider.storeLastDayStepCount(it.toInt())
+                            sharedPrefProvider.storeLastDayStepCount(20)
                         }
 
                     }

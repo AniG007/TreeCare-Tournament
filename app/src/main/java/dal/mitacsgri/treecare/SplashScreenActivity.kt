@@ -14,7 +14,6 @@ import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.ModeSelectionActivity
 import dal.mitacsgri.treecare.screens.login.LoginActivity
-import kotlinx.android.synthetic.main.activity_splash_screen.*
 import java.util.*
 
 
@@ -39,11 +38,7 @@ class SplashScreenActivity : AppCompatActivity() {
             //testGameByManipulatingSharedPrefsData(this)
         }
 
-        button.setOnClickListener {
-            //setupFitApiToGetData()
-            //resetDailyGoalCheckedFlag()
-        }
-
+        resetDailyGoalCheckedFlag()
     }
 
     private fun resetDailyGoalCheckedFlag() {

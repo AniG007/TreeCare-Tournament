@@ -2,6 +2,7 @@ package dal.mitacsgri.treecare
 
 import android.content.IntentSender
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
@@ -13,6 +14,7 @@ import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.ModeSelectionActivity
 import dal.mitacsgri.treecare.screens.login.LoginActivity
+import kotlinx.android.synthetic.main.activity_splash_screen.*
 import java.util.*
 
 
@@ -27,14 +29,21 @@ class SplashScreenActivity : AppCompatActivity() {
 
         sharedPrefProvider = SharedPreferencesProvider(this)
         sharedPrefProvider.apply {
-            if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
-            else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
+            storeDailyStepsGoal(5000)
 
             if (isLoginDone) setupFitApiToGetData()
 
-            testGameByManipulatingSharedPrefsData(this)
+            if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
+            else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
+
+            //testGameByManipulatingSharedPrefsData(this)
         }
-        //resetDailyGoalCheckedFlag()
+
+        button.setOnClickListener {
+            //setupFitApiToGetData()
+            //resetDailyGoalCheckedFlag()
+        }
+
     }
 
     private fun resetDailyGoalCheckedFlag() {
@@ -55,10 +64,10 @@ class SplashScreenActivity : AppCompatActivity() {
             val day = cal.get(Calendar.DAY_OF_MONTH)
             val month = cal.get(Calendar.MONTH)
 
-            cal.add(Calendar.DAY_OF_YEAR, 1)
-
             //Doing this to prevent rounding off at the end of the year
             if (day == 31 && month == 12) cal.add(Calendar.YEAR, 1)
+
+            cal.add(Calendar.DAY_OF_YEAR, 1)
 
             sharedPrefProvider.lastOpenedDayPlus1 = cal.timeInMillis
         }
@@ -92,12 +101,14 @@ class SplashScreenActivity : AppCompatActivity() {
                 override fun onConnected(p0: Bundle?) {
                     stepCountProvider.apply {
                         getTodayStepCountData(mClient!!) {
-                            sharedPrefProvider.storeDailyStepCount(2000)
+                            sharedPrefProvider.storeDailyStepCount(it)
+                            Log.d("DailyStepCount", it.toString())
                             //startNextActivity(UnityPlayerActivity::class.java)
                         }
 
                         getLastDayStepCountData(mClient!!) {
-                            sharedPrefProvider.storeLastDayStepCount(20)
+                            sharedPrefProvider.storeLastDayStepCount(it)
+                            Log.d("LastDayStepCount", it.toString())
                         }
 
                     }
@@ -115,7 +126,7 @@ class SplashScreenActivity : AppCompatActivity() {
             storeDailyStepsGoal(5000)
             storeLastDayStepCount(20)
             storeDailyStepCount(2000)
-            dailyGoalChecked(0)
+            //dailyGoalChecked(0)
             with(sharedPref.edit()) {
                 putInt(getString(R.string.leaf_count_before_today), 50)
                 //putInt(getString(R.string.is_first_run), 1)

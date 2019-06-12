@@ -16,29 +16,28 @@ class StepCountProvider(private val context: Context) {
 
     private val TAG = "DailyStepCount"
 
-    fun getTodayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Long) -> Unit) {
+    fun getTodayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Int) -> Unit) {
 
         context.doAsync {
-            var total: Long = 0
+            var total = 0
 
             val result = Fitness.HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA)
             val totalResult = result.await(1, TimeUnit.SECONDS)
             if (totalResult.status.isSuccess) {
                 val totalSet = totalResult.total
                 total = (if (totalSet!!.isEmpty) 0
-                else totalSet.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()).toLong()
+                else totalSet.dataPoints[0].getValue(Field.FIELD_STEPS).asInt())
             } else {
                 Log.w(TAG, "There was a problem getting the step count.")
             }
 
-            Log.i(TAG, "Total steps: $total")
             uiThread {
                 onDataObtained(total)
             }
         }
     }
 
-    fun getLastDayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Long) -> Unit) {
+    fun getLastDayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Int) -> Unit) {
         val cal = Calendar.getInstance()
         val now = Date()
         cal.apply {
@@ -70,6 +69,10 @@ class StepCountProvider(private val context: Context) {
                         for (dataPoint in dataSet.dataPoints) {
                             lastDayStepCount += dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
                         }
+                    }
+
+                    uiThread {
+                        onDataObtained(lastDayStepCount)
                     }
                 }
             }

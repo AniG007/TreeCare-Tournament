@@ -33,6 +33,9 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         window.statusBarColor = ContextCompat.getColor(this, R.color.gray)
         sharedPrefProvider = SharedPreferencesProvider(this)
+
+        sharedPrefProvider.sharedPref.edit().putInt(getString(R.string.total_fruits_on_tree), 0).apply()
+
         signInButton.setOnClickListener {
             startGoogleFitApiConfiguration()
         }

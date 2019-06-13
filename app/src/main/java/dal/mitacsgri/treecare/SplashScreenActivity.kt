@@ -31,9 +31,9 @@ class SplashScreenActivity : AppCompatActivity() {
         sharedPrefProvider.apply {
             storeDailyStepsGoal(5000)
 
-            testGameByManipulatingSharedPrefsData(this)
+            //testGameByManipulatingSharedPrefsData(this)
 //            lastOpenedDayPlus1 = 0
-//            resetDailyGoalCheckedFlag(sharedPrefProvider)
+            resetDailyGoalCheckedFlag(sharedPrefProvider)
 
             if (isLoginDone) setupFitApiToGetData()
 

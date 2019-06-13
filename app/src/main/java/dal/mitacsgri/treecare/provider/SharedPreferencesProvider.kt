@@ -60,8 +60,6 @@ class SharedPreferencesProvider(val context: Context) {
         storeInt(R.string.daily_goal_checked, value)
     }
 
-
-
     fun storeLeafCountBeforeToday(leafCount: Int) {
         storeInt(R.string.leaf_count_before_today, leafCount)
     }

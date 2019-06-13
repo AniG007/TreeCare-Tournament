@@ -4,12 +4,10 @@ import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.evernote.android.job.JobRequest
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
-import dal.mitacsgri.treecare.backgroundtasks.jobs.CheckGoalAndUpdateTreeJob
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
@@ -29,24 +27,25 @@ class SplashScreenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash_screen)
 
         sharedPrefProvider = SharedPreferencesProvider(this)
+
         sharedPrefProvider.apply {
             storeDailyStepsGoal(5000)
+
+            //testGameByManipulatingSharedPrefsData(this)
+//            lastOpenedDayPlus1 = 0
+//            resetDailyGoalCheckedFlag(sharedPrefProvider)
 
             if (isLoginDone) setupFitApiToGetData()
 
             if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
             else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
-
-            //testGameByManipulatingSharedPrefsData(this)
         }
-
-        resetDailyGoalCheckedFlag()
     }
 
-    private fun resetDailyGoalCheckedFlag() {
+    private fun resetDailyGoalCheckedFlag(sharedPrefProviderParam: SharedPreferencesProvider) {
         //Will execute only once in each day, when the app is opened for thr first time in the day
-        if (sharedPrefProvider.lastOpenedDayPlus1 < Date().time) {
-            sharedPrefProvider.dailyGoalChecked(0)
+        if (sharedPrefProviderParam.lastOpenedDayPlus1 < Date().time) {
+            sharedPrefProviderParam.dailyGoalChecked(0)
 
             val cal = Calendar.getInstance()
             val now = Date()
@@ -66,7 +65,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
             cal.add(Calendar.DAY_OF_YEAR, 1)
 
-            sharedPrefProvider.lastOpenedDayPlus1 = cal.timeInMillis
+            sharedPrefProviderParam.lastOpenedDayPlus1 = cal.timeInMillis
         }
     }
 
@@ -121,12 +120,17 @@ class SplashScreenActivity : AppCompatActivity() {
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsProvider: SharedPreferencesProvider) {
         sharedPrefsProvider.apply {
             storeDailyStepsGoal(5000)
-            storeLastDayStepCount(20)
-            storeDailyStepCount(2000)
-            //dailyGoalChecked(0)
+            //storeLastDayStepCount(0)
+            storeDailyStepCount(8000)
+            dailyGoalChecked(0)
+            storeLeafCountBeforeToday(8)
+
             with(sharedPref.edit()) {
-                putInt(getString(R.string.leaf_count_before_today), 50)
+                //putInt(getString(R.string.leaf_count_before_today), 50)
                 //putInt(getString(R.string.is_first_run), 1)
+                putInt(getString(R.string.leaves_gained_today), 4)
+                lastOpenedDayPlus1 = 0
+                //isLoginDone = true
                 apply()
             }
         }

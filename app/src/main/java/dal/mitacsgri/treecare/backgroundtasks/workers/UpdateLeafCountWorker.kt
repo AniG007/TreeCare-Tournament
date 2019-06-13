@@ -6,7 +6,6 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 
-
 class UpdateLeafCountWorker(private val appContext: Context, private val workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 

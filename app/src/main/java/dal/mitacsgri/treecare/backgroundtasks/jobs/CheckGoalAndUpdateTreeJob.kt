@@ -21,8 +21,7 @@ class CheckGoalAndUpdateTreeJob(context: Context): DailyJob() {
         }
     }
 
-
-
+    //TODO: Instead of creating three workers, use CyclicBarrier class
     override fun onRunDailyJob(p0: Params): DailyJobResult {
 
         WorkManager.getInstance()

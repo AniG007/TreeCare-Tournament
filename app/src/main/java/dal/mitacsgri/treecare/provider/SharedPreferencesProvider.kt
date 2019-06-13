@@ -64,7 +64,7 @@ class SharedPreferencesProvider(val context: Context) {
         storeInt(R.string.leaf_count_before_today, leafCount)
     }
 
-    private fun storeInt(key: Int, value: Int) {
+    fun storeInt(key: Int, value: Int) {
         with(sharedPref.edit()) {
             putInt(context.getString(key), value)
             apply()

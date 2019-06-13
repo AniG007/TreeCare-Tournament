@@ -31,7 +31,7 @@ class SplashScreenActivity : AppCompatActivity() {
         sharedPrefProvider.apply {
             storeDailyStepsGoal(5000)
 
-            //testGameByManipulatingSharedPrefsData(this)
+            testGameByManipulatingSharedPrefsData(this)
 //            lastOpenedDayPlus1 = 0
 //            resetDailyGoalCheckedFlag(sharedPrefProvider)
 
@@ -103,7 +103,7 @@ class SplashScreenActivity : AppCompatActivity() {
                         }
 
                         getLastDayStepCountData(mClient!!) {
-                            sharedPrefProvider.storeLastDayStepCount(it)
+                            sharedPrefProvider.storeLastDayStepCount(8000)
                             Log.d("LastDayStepCount", it.toString())
                         }
 
@@ -124,13 +124,17 @@ class SplashScreenActivity : AppCompatActivity() {
             storeDailyStepCount(8000)
             dailyGoalChecked(0)
             storeLeafCountBeforeToday(8)
+            storeLastDayStepCount(8000)
 
             with(sharedPref.edit()) {
                 //putInt(getString(R.string.leaf_count_before_today), 50)
                 //putInt(getString(R.string.is_first_run), 1)
-                putInt(getString(R.string.leaves_gained_today), 4)
-                lastOpenedDayPlus1 = 0
-                //isLoginDone = true
+                putInt(getString(R.string.leaves_gained_today), 6)
+
+                putString(getString(R.string.goal_achieved_streak), "1111111")
+                storeInt(R.string.current_day, 6)
+                storeInt(R.string.total_fruits_on_tree, 8)
+
                 apply()
             }
         }

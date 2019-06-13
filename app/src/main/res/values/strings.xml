@@ -29,7 +29,9 @@
     <string name="is_first_run">is_first_run</string>
     <string name="leaf_count_before_today">leaf_count_before_today</string>
     <string name="leaves_gained_today">leaves_gained_today</string>
-
+    <string name="goal_achieved_streak">goal_achieved_streak</string>
+    <string name="current_day">current_day</string>
+    <string name="total_fruits_on_tree">total_fruits_on_tree</string>
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>

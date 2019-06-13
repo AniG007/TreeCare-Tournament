@@ -42,16 +42,28 @@ class SharedPreferencesProvider(val context: Context) {
         storeInt(R.string.daily_step_count, stepCount)
     }
 
+    fun getDailyStepCount() = getInt(R.string.daily_step_count)
+
     fun storeLastDayStepCount(stepCount: Int) {
         storeInt(R.string.last_day_step_count, stepCount)
     }
+
+    fun getLastDayStepCount() = getInt(R.string.last_day_step_count)
 
     fun storeDailyStepsGoal(goal: Int) {
         storeInt(R.string.daily_steps_goal, goal)
     }
 
+    fun getDailyStepsGoal() = getInt(R.string.daily_steps_goal)
+
     fun dailyGoalChecked(value: Int) {
         storeInt(R.string.daily_goal_checked, value)
+    }
+
+
+
+    fun storeLeafCountBeforeToday(leafCount: Int) {
+        storeInt(R.string.leaf_count_before_today, leafCount)
     }
 
     private fun storeInt(key: Int, value: Int) {
@@ -60,4 +72,6 @@ class SharedPreferencesProvider(val context: Context) {
             apply()
         }
     }
+
+    private fun getInt(key: Int) = sharedPref.getInt(context.getString(key), 0)
 }

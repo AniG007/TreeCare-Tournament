@@ -9,6 +9,14 @@
     android:background="@drawable/splash_screen_background"
     tools:context=".SplashScreenActivity">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/leaf_pattern"
+        android:scaleType="centerCrop"
+        android:foreground="@drawable/splash_screen_background"/>
+
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/splashScreenAnimation"
         android:layout_width="match_parent"

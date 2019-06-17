@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
@@ -20,6 +21,7 @@ import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import kotlinx.android.synthetic.main.activity_login.*
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -46,8 +48,17 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == 1000) {
             authInProgress = false
             if (resultCode == Activity.RESULT_OK) {
-                if (!mClient.isConnecting && !mClient.isConnected) {
-                    mClient.connect()
+                Log.v("Login", "result ok $data")
+                val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+
+                if (result.isSuccess) {
+                    // Google Sign In was successful, authenticate with Firebase
+                    val account = result.signInAccount
+                    Log.v("Sign in account", account.toString())
+
+                    if (!mClient.isConnecting && !mClient.isConnected) {
+                        mClient.connect()
+                    }
                 }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e("GoogleFit", "RESULT_CANCELED")
@@ -108,13 +119,13 @@ class LoginActivity : AppCompatActivity() {
             StepCountProvider(this@LoginActivity).apply {
                 getTodayStepCountData(mClient) {
                     tvStepCount.text = it.toString()
-                    sharedPrefProvider.storeDailyStepCount(it.toInt())
+                    sharedPrefProvider.storeDailyStepCount(it)
                     sharedPrefProvider.isLoginDone = true
                     startNextActivity(ModeSelectionActivity::class.java)
                 }
 
                 getLastDayStepCountData(mClient) {
-                    sharedPrefProvider.storeLastDayStepCount(it.toInt())
+                    sharedPrefProvider.storeLastDayStepCount(it)
                 }
             }
 

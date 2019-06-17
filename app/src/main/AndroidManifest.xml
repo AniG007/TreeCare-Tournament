@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screens.ModeSelectionActivity">
+        <activity android:name=".screens.modeselection.ModeSelectionActivity">
         </activity>
         <activity
             android:name=".screens.instructions.InstructionsActivity"
@@ -22,10 +22,8 @@
             android:name=".screens.login.LoginActivity"
             android:noHistory="true">
         </activity>
-        <activity android:name=".MenuActivity">
-        </activity>
         <activity
-            android:name=".SplashScreenActivity"
+            android:name=".screens.splash.SplashScreenActivity"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

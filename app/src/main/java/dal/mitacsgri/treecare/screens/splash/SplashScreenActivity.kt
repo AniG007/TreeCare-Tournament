@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare
+package dal.mitacsgri.treecare.screens.splash
 
 import android.content.IntentSender
 import android.os.Bundle
@@ -8,11 +8,12 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
-import dal.mitacsgri.treecare.screens.ModeSelectionActivity
+import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import java.util.*
 

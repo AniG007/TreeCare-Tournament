@@ -18,7 +18,7 @@ import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
-import dal.mitacsgri.treecare.screens.ModeSelectionActivity
+import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {

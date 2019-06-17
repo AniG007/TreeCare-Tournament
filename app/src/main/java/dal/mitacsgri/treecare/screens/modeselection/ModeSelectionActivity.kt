@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens
+package dal.mitacsgri.treecare.screens.modeselection
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -10,7 +10,7 @@ import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.screens.instructions.InstructionsActivity
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
-import kotlinx.android.synthetic.main.activity_menu_selection.*
+import kotlinx.android.synthetic.main.activity_mode_selection.*
 
 class ModeSelectionActivity : AppCompatActivity() {
 
@@ -18,7 +18,7 @@ class ModeSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_menu_selection)
+        setContentView(R.layout.activity_mode_selection)
 
         sharedPrefProvider = SharedPreferencesProvider(this)
 

@@ -11,7 +11,7 @@
     <string name="daily_steps_goal">daily_goal</string>
 
     <string name="login_done">login_done</string>
-        <!--Actually, last opened day rounded off to nearest 00:00 time-->
+    <!--Actually, last opened day rounded off to nearest 00:00 time-->
     <string name="last_opened_day">last_opened_day</string>
 
     <!--daily_goal is used to check if tree has been updated as per the goal achievement of previous day.

@@ -9,7 +9,7 @@
 
     <include
         layout="@layout/leaf_background_image"
-        android:id="@+id/include2"
+        android:id="@+id/imageView"
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="-56dp"/>
 
@@ -73,7 +73,7 @@
         style="@style/ModeSelectionButtonStyle"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        app:layout_constraintBottom_toBottomOf="@+id/include2"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

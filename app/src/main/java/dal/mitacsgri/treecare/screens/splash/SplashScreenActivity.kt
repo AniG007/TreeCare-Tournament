@@ -4,9 +4,9 @@ import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import dal.mitacsgri.treecare.R
@@ -15,6 +15,7 @@ import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.login.LoginActivity
+import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import java.util.*
 
 
@@ -37,12 +38,10 @@ class SplashScreenActivity : AppCompatActivity() {
 
             if (isLoginDone) setupFitApiToGetData()
 
-//            if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
-//            else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
-            startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
+            if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
+            else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
+            //startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
         }
-
-        GoogleSignIn.getLastSignedInAccount(this)?.email?.toast(this)
     }
 
     private fun resetDailyGoalCheckedFlag(sharedPrefProviderParam: SharedPreferencesProvider) {
@@ -82,7 +81,7 @@ class SplashScreenActivity : AppCompatActivity() {
         var mClient: GoogleApiClient? = null
         val stepCountProvider = StepCountProvider(this)
 
-        val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
+        val connectionFailedImpl = OnConnectionFailedListener {
             if (!authInProgress) {
                 try {
                     authInProgress = true

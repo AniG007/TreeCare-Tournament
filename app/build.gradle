@@ -26,6 +26,8 @@ android {
 }
 
 dependencies {
+    def nav_version = "2.1.0-alpha05"
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -35,6 +37,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(":TreeCareUnityModule")
+
+    //Core KTX
+    implementation 'androidx.core:core-ktx:1.0.2'
 
     //Google Fitness API
     implementation 'com.google.android.gms:play-services-fitness:16.0.1'
@@ -59,4 +64,9 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.0.1"
     implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
+
+    //Navigation components - Kotlin
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
 }

@@ -4,14 +4,14 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 
 class UpdateLeafCountWorker(private val appContext: Context, private val workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {
 
     override fun doWork(): Result {
 
-        val sharedPrefsProvider = SharedPreferencesProvider(appContext)
+        val sharedPrefsProvider = SharedPreferencesRepository(appContext)
 
         //if (sharedPrefsProvider.get)
         sharedPrefsProvider.apply {

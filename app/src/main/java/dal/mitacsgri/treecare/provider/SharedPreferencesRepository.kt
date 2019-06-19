@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import dal.mitacsgri.treecare.R
 
-class SharedPreferencesProvider(val context: Context) {
+class SharedPreferencesRepository(val context: Context) {
 
     val sharedPref: SharedPreferences = context.getSharedPreferences(
         context.getString(R.string.unity_shared_preferences),

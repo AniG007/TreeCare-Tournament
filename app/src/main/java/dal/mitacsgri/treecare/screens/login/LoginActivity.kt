@@ -16,7 +16,7 @@ import com.google.android.gms.fitness.data.DataType
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import kotlinx.android.synthetic.main.activity_login.*
@@ -25,14 +25,14 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var mClient: GoogleApiClient
     private var authInProgress = false
-    private lateinit var sharedPrefProvider: SharedPreferencesProvider
+    private lateinit var sharedPrefProvider: SharedPreferencesRepository
     val SIGN_IN_CODE = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         window.statusBarColor = ContextCompat.getColor(this, R.color.gray)
-        sharedPrefProvider = SharedPreferencesProvider(this)
+        sharedPrefProvider = SharedPreferencesRepository(this)
         signInButton.setOnClickListener {
             startGoogleFitApiConfiguration()
         }

@@ -9,7 +9,7 @@ import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountProvider
 
 class DailyStepCountWorker(private val appContext: Context, private val workerParams: WorkerParameters)
@@ -18,7 +18,7 @@ class DailyStepCountWorker(private val appContext: Context, private val workerPa
     override fun doWork(): Result {
 
         val stepCountProvider = StepCountProvider(appContext)
-        val sharedPrefProvider = SharedPreferencesProvider(appContext)
+        val sharedPrefProvider = SharedPreferencesRepository(appContext)
         var mClient: GoogleApiClient? = null
 
         mClient = GoogleApiClient.Builder(appContext)

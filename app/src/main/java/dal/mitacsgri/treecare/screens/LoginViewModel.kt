@@ -3,7 +3,6 @@ package dal.mitacsgri.treecare.screens
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -14,16 +13,13 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
-import dal.mitacsgri.treecare.extensions.getApplicationContext
-import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 
-class MainViewModel : ViewModel() {
+class LoginViewModel(sharedPrefRepository: SharedPreferencesRepository) : ViewModel() {
 
     private lateinit var mClient: GoogleApiClient
-    lateinit var sharedPrefProvider: SharedPreferencesProvider
 
     var authInProgress = false
     //Creating MutableLiveData with a default value
@@ -73,15 +69,6 @@ class MainViewModel : ViewModel() {
     }
 
     private val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
-//        if (!authInProgress) {
-//            try {
-//                authInProgress = true
-//                it.startResolutionForResult(, SIGN_IN_CODE)
-//            } catch (e: IntentSender.SendIntentException) {
-//
-//            }
-//        } else {
-//        }
         Log.e("Login failed: ", it.errorMessage)
     }
 
@@ -90,18 +77,18 @@ class MainViewModel : ViewModel() {
 
             subscribeToRecordSteps {
                 loginStatus.value = true
-                sharedPrefProvider.isLoginDone = loginStatus.value ?: true
+                sharedPrefRepository.isLoginDone = loginStatus.value ?: true
             }
 
             StepCountProvider(this@LoginActivity).apply {
                 getTodayStepCountData(mClient) {
-                    sharedPrefProvider.storeDailyStepCount(it)
-                    sharedPrefProvider.isLoginDone = true
+                    sharedPrefRepository.storeDailyStepCount(it)
+                    sharedPrefRepository.isLoginDone = true
                     startNextActivity(ModeSelectionActivity::class.java)
                 }
 
                 getLastDayStepCountData(mClient) {
-                    sharedPrefProvider.storeLastDayStepCount(it)
+                    sharedPrefRepository.storeLastDayStepCount(it)
                 }
             }
 

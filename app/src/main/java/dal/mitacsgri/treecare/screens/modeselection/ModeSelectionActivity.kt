@@ -7,20 +7,20 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.instructions.InstructionsActivity
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import kotlinx.android.synthetic.main.activity_mode_selection.*
 
 class ModeSelectionActivity : AppCompatActivity() {
 
-    private lateinit var sharedPrefProvider: SharedPreferencesProvider
+    private lateinit var sharedPrefProvider: SharedPreferencesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mode_selection)
 
-        sharedPrefProvider = SharedPreferencesProvider(this)
+        sharedPrefProvider = SharedPreferencesRepository(this)
 
         changeBackgroundSolidAndStrokeColor(starterModeButton, "FF0189F1", "FF0000FF")
         changeBackgroundSolidAndStrokeColor(challengerModeButton, "FFFF6F00", "FFBF360C")

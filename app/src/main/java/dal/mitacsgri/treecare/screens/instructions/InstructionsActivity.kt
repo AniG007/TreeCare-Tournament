@@ -7,19 +7,19 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import kotlinx.android.synthetic.main.activity_instructions.*
 
 class InstructionsActivity : AppCompatActivity() {
 
-    private lateinit var sharedPrefProvider: SharedPreferencesProvider
+    private lateinit var sharedPrefProvider: SharedPreferencesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_instructions)
 
-        sharedPrefProvider = SharedPreferencesProvider(this)
+        sharedPrefProvider = SharedPreferencesRepository(this)
         sharedPrefProvider.hasInstructionsDisplayed = true
 
         changeBackgroundSolidAndStrokeColor(scrollView, "ccffffff", "ff646464")

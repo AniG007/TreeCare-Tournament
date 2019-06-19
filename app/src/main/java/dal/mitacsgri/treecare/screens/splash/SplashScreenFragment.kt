@@ -15,7 +15,7 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.provider.SharedPreferencesProvider
+import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountProvider
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
@@ -25,7 +25,7 @@ import java.util.*
 class SplashScreenFragment : Fragment() {
 
     private val SPLASH_SCREEN_DELAY = 5000L
-    private lateinit var sharedPrefProvider: SharedPreferencesProvider
+    private lateinit var sharedPrefProvider: SharedPreferencesRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +33,7 @@ class SplashScreenFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_splash_screen, container, false)
 
-        sharedPrefProvider = SharedPreferencesProvider(view.context)
+        sharedPrefProvider = SharedPreferencesRepository(view.context)
 
         sharedPrefProvider.apply {
 
@@ -54,7 +54,7 @@ class SplashScreenFragment : Fragment() {
 
     }
 
-    private fun resetDailyGoalCheckedFlag(sharedPrefProviderParam: SharedPreferencesProvider) {
+    private fun resetDailyGoalCheckedFlag(sharedPrefProviderParam: SharedPreferencesRepository) {
         //Will execute only once in each day, when the app is opened for thr first time in the day
         if (sharedPrefProviderParam.lastOpenedDayPlus1 < Date().time) {
             sharedPrefProviderParam.dailyGoalChecked(0)
@@ -132,7 +132,7 @@ class SplashScreenFragment : Fragment() {
         mClient.connect()
     }
 
-    private fun testGameByManipulatingSharedPrefsData(sharedPrefsProvider: SharedPreferencesProvider) {
+    private fun testGameByManipulatingSharedPrefsData(sharedPrefsProvider: SharedPreferencesRepository) {
         sharedPrefsProvider.apply {
             storeDailyStepsGoal(5000)
             //storeLastDayStepCount(0)

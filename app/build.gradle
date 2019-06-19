@@ -77,4 +77,7 @@ dependencies {
 
     //Koin
     implementation "org.koin:koin-android:$koin_version"
+
+    //Koin AndroidX ViewModel features
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 }

@@ -4,11 +4,13 @@ package dal.mitacsgri.treecare.screens.splash
 import android.content.Context
 import android.content.IntentSender
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
@@ -17,10 +19,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountRepository
-import dal.mitacsgri.treecare.screens.login.LoginActivity
-import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import java.util.*
-
 
 class SplashScreenFragment : Fragment() {
 
@@ -44,14 +43,18 @@ class SplashScreenFragment : Fragment() {
 
             if (isLoginDone) setupFitApiToGetData(view.context)
 
-            if (isLoginDone) startNextActivity(ModeSelectionActivity::class.java, SPLASH_SCREEN_DELAY)
-            else startNextActivity(LoginActivity::class.java, SPLASH_SCREEN_DELAY)
+            if (isLoginDone) navigateWithDelay(R.id.action_splashScreenFragment_to_modeSelectionFragment)
+            else navigateWithDelay(R.id.action_splashScreenFragment_to_loginFragment)
         }
         return view;
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {}
 
+    private fun navigateWithDelay(actionResId: Int, delay: Long = SPLASH_SCREEN_DELAY) {
+        Handler().postDelayed({
+            findNavController().navigate(actionResId)
+        }, delay)
     }
 
     private fun resetDailyGoalCheckedFlag(sharedPrefProviderParam: SharedPreferencesRepository) {
@@ -95,7 +98,7 @@ class SplashScreenFragment : Fragment() {
             if (!authInProgress) {
                 try {
                     authInProgress = true
-                    it.startResolutionForResult(context, SIGN_IN_CODE)
+                    it.startResolutionForResult(activity, SIGN_IN_CODE)
                 } catch (e: IntentSender.SendIntentException) {
 
                 }

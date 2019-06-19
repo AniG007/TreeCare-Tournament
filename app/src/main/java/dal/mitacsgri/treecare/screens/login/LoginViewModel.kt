@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens
+package dal.mitacsgri.treecare.screens.login
 
 import android.app.Activity
 import android.content.Context
@@ -13,8 +13,10 @@ import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
+import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountRepository
+import java.util.concurrent.CyclicBarrier
 
 class LoginViewModel(
     sharedPrefRepository: SharedPreferencesRepository,
@@ -22,10 +24,15 @@ class LoginViewModel(
     ) : ViewModel() {
 
     private lateinit var mClient: GoogleApiClient
+    private var authInProgress = false
 
-    var authInProgress = false
-    //Creating MutableLiveData with a default value
-    val loginStatus = MutableLiveData<Boolean>().apply { value = false }
+    //Use it to wait till all the step count data has been obtained
+    val cyclicBarrier = CyclicBarrier(2) {
+        hasStepsData.value = true
+    }
+
+    val hasStepsData = MutableLiveData<Boolean>().default(false)
+    val loginStatus = MutableLiveData<Boolean>().default(false)
 
     fun performLogin(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1000) {
@@ -71,7 +78,7 @@ class LoginViewModel(
     }
 
     private val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
-        Log.e("Login failed: ", it.errorMessage)
+        Log.e("Login failed: ", "$it")
     }
 
     private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {
@@ -87,11 +94,12 @@ class LoginViewModel(
                     sharedPrefRepository.storeDailyStepCount(it)
                     sharedPrefRepository.isLoginDone = true
                     sharedPrefRepository.isLoginDone = loginStatus.value ?: true
-                    //startNextActivity(ModeSelectionActivity::class.java)
+                    cyclicBarrier.await()
                 }
 
                 getLastDayStepCountData(mClient) {
                     sharedPrefRepository.storeLastDayStepCount(it)
+                    cyclicBarrier.await()
                 }
             }
 

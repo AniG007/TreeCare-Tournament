@@ -38,6 +38,5 @@ class InstructionsActivity : AppCompatActivity() {
         background.setStroke(
             resources.getDimension(com.intuit.sdp.R.dimen._4sdp).toInt(),
             Color.parseColor("#$strokeColor"))
-
     }
 }

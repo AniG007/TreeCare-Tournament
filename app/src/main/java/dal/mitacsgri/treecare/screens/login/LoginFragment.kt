@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.screens.LoginViewModel
-import kotlinx.android.synthetic.main.activity_login.*
+import dal.mitacsgri.treecare.extensions.toast
+import kotlinx.android.synthetic.main.fragment_login.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class LoginFragment : Fragment() {
@@ -20,7 +22,12 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        val view = inflater.inflate(R.layout.fragment_login, container, false)
+        view.signInButton.setOnClickListener {
+            loginViewModel.startGoogleFitApiConfiguration(context!!)
+        }
+
+        return view
     }
 
     override fun onAttach(context: Context) {
@@ -30,8 +37,17 @@ class LoginFragment : Fragment() {
             it.window.statusBarColor = ContextCompat.getColor(context, R.color.gray)
         }
 
-        signInButton.setOnClickListener {
-            loginViewModel.startGoogleFitApiConfiguration(context)
-        }
+        loginViewModel.loginStatus.observe(this, Observer {
+            it?.let {
+                if (it) "Login successful".toast(context)
+            }
+        })
+
+        loginViewModel.hasStepsData.observe(this, Observer {
+            it?.let {
+                if (it)
+                    findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+            }
+        })
     }
 }

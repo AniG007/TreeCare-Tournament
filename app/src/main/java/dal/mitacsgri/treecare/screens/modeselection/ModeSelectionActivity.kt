@@ -39,7 +39,6 @@ class ModeSelectionActivity : AppCompatActivity() {
         background.setStroke(
             resources.getDimension(com.intuit.sdp.R.dimen._4sdp).toInt(),
             Color.parseColor("#$strokeColor"))
-
     }
 
     private fun startInstructionOrUnityActivity() {

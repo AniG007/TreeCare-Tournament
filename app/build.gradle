@@ -28,6 +28,7 @@ android {
 dependencies {
     def nav_version = "2.1.0-alpha05"
     def lifecycle_version = "2.0.0"
+    def koin_version = "2.0.1"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -73,4 +74,7 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+
+    //Koin
+    implementation "org.koin:koin-android:$koin_version"
 }

@@ -16,7 +16,7 @@ import com.google.android.gms.fitness.Fitness
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountProvider
+import dal.mitacsgri.treecare.provider.StepCountRepository
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import java.util.*
@@ -89,7 +89,7 @@ class SplashScreenFragment : Fragment() {
         var authInProgress = false
         val SIGN_IN_CODE = 1000
         var mClient: GoogleApiClient? = null
-        val stepCountProvider = StepCountProvider(context)
+        val stepCountProvider = StepCountRepository(context)
 
         val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
             if (!authInProgress) {

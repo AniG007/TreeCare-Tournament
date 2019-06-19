@@ -17,7 +17,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountProvider
+import dal.mitacsgri.treecare.provider.StepCountRepository
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                 sharedPrefProvider.isLoginDone = true
             }
 
-            StepCountProvider(this@LoginActivity).apply {
+            StepCountRepository(this@LoginActivity).apply {
                 getTodayStepCountData(mClient) {
                     sharedPrefProvider.storeDailyStepCount(it)
                     sharedPrefProvider.isLoginDone = true

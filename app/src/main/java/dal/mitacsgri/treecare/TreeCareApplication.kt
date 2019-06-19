@@ -14,6 +14,7 @@ class TreeCareApplication : Application() {
         super.onCreate()
         Stetho.initializeWithDefaults(this)
         JobManager.create(this).addJobCreator(TreeUpdateJobCreator(this))
+
         startKoin {
             modules(listOf(appModule, sharedPreferencesRepositoryModule))
         }

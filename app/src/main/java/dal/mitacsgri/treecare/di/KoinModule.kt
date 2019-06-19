@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.di
 
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
+import dal.mitacsgri.treecare.provider.StepCountRepository
 import dal.mitacsgri.treecare.screens.LoginViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -13,6 +14,10 @@ val sharedPreferencesRepositoryModule = module {
     single { SharedPreferencesRepository(get()) }
 }
 
+val stepCountRepositoryModule = module {
+    single { StepCountRepository(get()) }
+}
+
 val appModule = module {
-    viewModel { LoginViewModel(get()) }
+    viewModel { LoginViewModel(get(), get()) }
 }

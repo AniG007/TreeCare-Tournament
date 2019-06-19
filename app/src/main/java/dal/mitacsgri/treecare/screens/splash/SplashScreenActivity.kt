@@ -13,7 +13,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountProvider
+import dal.mitacsgri.treecare.provider.StepCountRepository
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import java.util.*
@@ -79,7 +79,7 @@ class SplashScreenActivity : AppCompatActivity() {
         var authInProgress = false
         val SIGN_IN_CODE = 1000
         var mClient: GoogleApiClient? = null
-        val stepCountProvider = StepCountProvider(this)
+        val stepCountProvider = StepCountRepository(this)
 
         val connectionFailedImpl = OnConnectionFailedListener {
             if (!authInProgress) {

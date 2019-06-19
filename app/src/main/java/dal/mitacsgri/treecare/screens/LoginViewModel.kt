@@ -14,10 +14,12 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountProvider
-import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
+import dal.mitacsgri.treecare.provider.StepCountRepository
 
-class LoginViewModel(sharedPrefRepository: SharedPreferencesRepository) : ViewModel() {
+class LoginViewModel(
+    sharedPrefRepository: SharedPreferencesRepository,
+    stepCountRepository: StepCountRepository
+    ) : ViewModel() {
 
     private lateinit var mClient: GoogleApiClient
 
@@ -40,7 +42,7 @@ class LoginViewModel(sharedPrefRepository: SharedPreferencesRepository) : ViewMo
         }
     }
 
-    private fun startGoogleFitApiConfiguration(context: Context) {
+    fun startGoogleFitApiConfiguration(context: Context) {
         mClient = GoogleApiClient.Builder(context)
             .addApi(Fitness.RECORDING_API)
             .addApi(Fitness.HISTORY_API)
@@ -80,11 +82,12 @@ class LoginViewModel(sharedPrefRepository: SharedPreferencesRepository) : ViewMo
                 sharedPrefRepository.isLoginDone = loginStatus.value ?: true
             }
 
-            StepCountProvider(this@LoginActivity).apply {
+            stepCountRepository.apply {
                 getTodayStepCountData(mClient) {
                     sharedPrefRepository.storeDailyStepCount(it)
                     sharedPrefRepository.isLoginDone = true
-                    startNextActivity(ModeSelectionActivity::class.java)
+                    sharedPrefRepository.isLoginDone = loginStatus.value ?: true
+                    //startNextActivity(ModeSelectionActivity::class.java)
                 }
 
                 getLastDayStepCountData(mClient) {

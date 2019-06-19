@@ -12,7 +12,7 @@ import org.jetbrains.anko.uiThread
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class StepCountProvider(private val context: Context) {
+class StepCountRepository(private val context: Context) {
 
     private val TAG = "DailyStepCount"
 

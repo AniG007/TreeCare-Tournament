@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.provider
+package dal.mitacsgri.treecare.repository
 
 import android.content.Context
 import android.content.SharedPreferences

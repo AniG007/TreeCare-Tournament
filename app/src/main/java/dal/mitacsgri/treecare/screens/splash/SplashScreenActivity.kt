@@ -12,8 +12,8 @@ import com.google.android.gms.fitness.Fitness
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.login.LoginActivity
 import dal.mitacsgri.treecare.screens.modeselection.ModeSelectionActivity
 import java.util.*

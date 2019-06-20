@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
 class UpdateLeafCountWorker(private val appContext: Context, private val workerParams: WorkerParameters)
     : Worker(appContext, workerParams) {

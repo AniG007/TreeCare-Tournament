@@ -7,7 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
-import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import kotlinx.android.synthetic.main.activity_instructions.*
 

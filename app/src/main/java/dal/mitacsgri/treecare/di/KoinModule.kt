@@ -1,7 +1,7 @@
 package dal.mitacsgri.treecare.di
 
-import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.splash.SplashScreenViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel

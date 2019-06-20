@@ -15,8 +15,8 @@ import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
 import dal.mitacsgri.treecare.extensions.default
-import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
-import dal.mitacsgri.treecare.provider.StepCountRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
 
 class MainViewModel(
     private val sharedPrefRepository: SharedPreferencesRepository,

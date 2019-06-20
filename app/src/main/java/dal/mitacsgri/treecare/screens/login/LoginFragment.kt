@@ -11,13 +11,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
+import dal.mitacsgri.treecare.screens.MainViewModel
 import kotlinx.android.synthetic.main.fragment_login.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class LoginFragment : Fragment() {
 
     //Shared ViewModel with parent activity
-    private val loginViewModel: LoginViewModel by sharedViewModel()
+    private val mainViewModel: MainViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +27,7 @@ class LoginFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
         view.signInButton.setOnClickListener {
             "Button clicked".toast(view.context)
-            loginViewModel.startLoginAndConfiguration(activity!!)
+            mainViewModel.startLoginAndConfiguration(activity!!)
         }
 
         return view
@@ -42,7 +43,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun setUpLiveDataObservers(context: Context) {
-        loginViewModel.apply {
+        mainViewModel.apply {
             loginStatus.observe(this@LoginFragment, Observer {
                 it?.let {
                     if (it) {

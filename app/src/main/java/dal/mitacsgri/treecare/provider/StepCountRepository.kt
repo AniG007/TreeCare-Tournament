@@ -63,10 +63,13 @@ class StepCountRepository(private val context: Context) {
             var lastDayStepCount = 0
 
             if (result.status.isSuccess) {
+                Log.d("Buckets: ", result.buckets.toString())
                 for (bucket in result.buckets) {
+                    Log.d("Datasets: ", bucket.dataSets.toString())
                     val dataSets = bucket.dataSets
                     for (dataSet in dataSets) {
                         for (dataPoint in dataSet.dataPoints) {
+                            Log.d("Datapoint", dataPoint.toString())
                             lastDayStepCount += dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
                         }
                     }

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.fragment_login.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class LoginFragment : Fragment() {
+
     //Shared ViewModel with parent activity
     private val loginViewModel: LoginViewModel by sharedViewModel()
 
@@ -37,19 +38,22 @@ class LoginFragment : Fragment() {
         activity?.let {
             it.window.statusBarColor = ContextCompat.getColor(context, R.color.gray)
         }
+        setUpLiveDataObservers(context)
+    }
 
-        loginViewModel.loginStatus.observe(this, Observer {
-            it?.let {
-                if (it) {
-                    "Login successful".toast(context)
-                    findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+    private fun setUpLiveDataObservers(context: Context) {
+        loginViewModel.apply {
+            loginStatus.observe(this@LoginFragment, Observer {
+                it?.let {
+                    if (it) {
+                        findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+                    }
                 }
-            }
-        })
+            })
 
-        loginViewModel.hasStepsData.observe(this, Observer {
-            it?.let {
-            }
-        })
+            user.observe(this@LoginFragment, Observer {
+                "Welcome ${it.displayName?.split(" ")?.get(0)} !".toast(context)
+            })
+        }
     }
 }

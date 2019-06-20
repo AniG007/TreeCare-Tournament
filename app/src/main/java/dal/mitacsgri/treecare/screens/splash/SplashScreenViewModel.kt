@@ -3,12 +3,14 @@ package dal.mitacsgri.treecare.screens.splash
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import com.google.firebase.auth.FirebaseAuth
+import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import java.util.*
@@ -23,6 +25,10 @@ class SplashScreenViewModel(
     : ViewModel() {
 
     val isLoginDone = sharedPrefsRepository.isLoginDone
+
+    //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
+    //Value 2 means both the steps counts have been obtained
+    val stepCountDataFetchedCounter = MutableLiveData<Int>().default(0)
 
     fun storeDailyStepsGoal(goal: Int) {
         sharedPrefsRepository.storeDailyStepsGoal(goal)
@@ -77,11 +83,13 @@ class SplashScreenViewModel(
                         getTodayStepCountData(mClient!!) {
                             sharedPrefsRepository.storeDailyStepCount(it)
                             Log.d("DailyStepCount", it.toString())
+                            increaseStepCountDataFetchedCounter()
                         }
 
                         getLastDayStepCountData(mClient!!) {
                             sharedPrefsRepository.storeLastDayStepCount(it)
                             Log.d("LastDayStepCount", it.toString())
+                            increaseStepCountDataFetchedCounter()
                         }
 
                     }
@@ -92,6 +100,13 @@ class SplashScreenViewModel(
             .addOnConnectionFailedListener(connectionFailedImpl)
             .build()
         mClient.connect()
+    }
+
+    private inline fun increaseStepCountDataFetchedCounter() {
+        synchronized(stepCountDataFetchedCounter) {
+            stepCountDataFetchedCounter.value = stepCountDataFetchedCounter.value?.plus(1)
+            Log.d("Counter value", stepCountDataFetchedCounter.value.toString())
+        }
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

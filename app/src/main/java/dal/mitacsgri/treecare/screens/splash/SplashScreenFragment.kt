@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashScreenFragment : Fragment() {
@@ -23,13 +25,18 @@ class SplashScreenFragment : Fragment() {
 
         splashScreenViewModel.apply {
             storeDailyStepsGoal(5000)
-
             //testGameByManipulatingSharedPrefsData(this)
             resetDailyGoalCheckedFlag()
 
-            if (isLoginDone) setupFitApiToGetData(view.context)
+            stepCountDataFetchedCounter.observe(this@SplashScreenFragment, Observer {
+                //This value will be 2 only when login has been done
+                if (it == 2) {
+                    "Welcome".toast(view.context)
+                    navigateWithDelay(R.id.action_splashScreenFragment_to_modeSelectionFragment)
+                }
+            })
 
-            if (isLoginDone) navigateWithDelay(R.id.action_splashScreenFragment_to_modeSelectionFragment)
+            if (isLoginDone) setupFitApiToGetData(view.context)
             else navigateWithDelay(R.id.action_splashScreenFragment_to_loginFragment)
         }
 

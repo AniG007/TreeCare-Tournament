@@ -47,13 +47,19 @@ class LoginFragment : Fragment() {
             loginStatus.observe(this@LoginFragment, Observer {
                 it?.let {
                     if (it) {
-                        findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
                     }
                 }
             })
 
             userFirstName.observe(this@LoginFragment, Observer {
                 "Welcome $it !".toast(context)
+            })
+
+            stepCountDataFetchedCounter.observe(this@LoginFragment, Observer {
+                if (it == 2) {
+                    "Data fetched".toast(context)
+                    findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+                }
             })
         }
     }

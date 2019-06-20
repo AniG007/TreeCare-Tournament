@@ -25,10 +25,11 @@ class MainViewModel(
 
     private lateinit var mClient: GoogleApiClient
     private var authInProgress = false
-
     private var RC_SIGN_IN = 1000
 
-    val hasStepsData = MutableLiveData<Boolean>().default(false)
+    //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
+    //Value 2 means both the steps counts have been obtained
+    val stepCountDataFetchedCounter = MutableLiveData<Int>().default(0)
     val loginStatus = MutableLiveData<Boolean>().default(false)
     val userFirstName =  MutableLiveData<String>()
 
@@ -95,10 +96,12 @@ class MainViewModel(
             stepCountRepository.apply {
                 getTodayStepCountData(mClient) {
                     sharedPrefRepository.storeDailyStepCount(it)
+                    increaseStepCountDataFetchedCounter()
                 }
 
                 getLastDayStepCountData(mClient) {
                     sharedPrefRepository.storeLastDayStepCount(it)
+                    increaseStepCountDataFetchedCounter()
                 }
             }
 
@@ -129,4 +132,10 @@ class MainViewModel(
         sharedPrefRepository.isLoginDone = true
     }
 
+    private inline fun increaseStepCountDataFetchedCounter() {
+        synchronized(stepCountDataFetchedCounter) {
+            stepCountDataFetchedCounter.value = stepCountDataFetchedCounter.value?.plus(1)
+            Log.d("Counter value", stepCountDataFetchedCounter.value.toString())
+        }
+    }
 }

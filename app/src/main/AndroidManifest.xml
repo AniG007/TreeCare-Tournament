@@ -18,20 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".screens.modeselection.ModeSelectionActivity">
-        </activity>
-        <activity
-            android:name=".screens.instructions.InstructionsActivity"
-            android:noHistory="true">
-        </activity>
-        <activity
-            android:name=".screens.login.LoginActivity"
-            android:noHistory="true">
-        </activity>
-        <activity
-            android:name=".screens.splash.SplashScreenActivity"
-            android:noHistory="true">
-        </activity>
     </application>
 
 </manifest>

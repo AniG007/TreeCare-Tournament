@@ -30,7 +30,6 @@ class MainViewModel(
     //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
     //Value 2 means both the steps counts have been obtained
     val stepCountDataFetchedCounter = MutableLiveData<Int>().default(0)
-    val loginStatus = MutableLiveData<Boolean>().default(false)
     val userFirstName =  MutableLiveData<String>()
 
     var hasInstructionsDisplayed
@@ -38,6 +37,20 @@ class MainViewModel(
             sharedPrefRepository.hasInstructionsDisplayed = value
         }
         get() = sharedPrefRepository.hasInstructionsDisplayed
+
+    fun startLoginAndConfiguration(activity: Activity) {
+        // Choose authentication providers
+        val providers = arrayListOf(
+            AuthUI.IdpConfig.GoogleBuilder().build())
+
+        // Create and launch sign-in intent
+        activity.startActivityForResult(
+            AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build(),
+            RC_SIGN_IN)
+    }
 
     fun performLogin(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
         if (requestCode == RC_SIGN_IN) {
@@ -48,29 +61,31 @@ class MainViewModel(
                 userFirstName.value = user?.displayName?.let {
                     it.split(" ")[0]
                 }
-
+                performFitnessApiConfiguration(activity, user?.email)
                 Log.d("User: ", userFirstName.toString())
 
-                mClient = GoogleApiClient.Builder(activity)
-                    .addApi(Fitness.RECORDING_API)
-                    .addApi(Fitness.HISTORY_API)
-                    .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
-                    .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                    .setAccountName(user?.email)
-                    .addConnectionCallbacks(connectionCallbacksImpl)
-                    .addOnConnectionFailedListener {
-                        Log.d("Connection failed: ", it.toString())
-                    }.build()
-
-                if (!mClient.isConnecting && !mClient.isConnected) {
-                    mClient.connect()
-                    Log.d("Login done", "$requestCode")
-                }
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e("GoogleFit", "RESULT_CANCELED")
             }
         } else {
             Log.e("GoogleFit", "requestCode NOT request_oauth")
+        }
+    }
+
+    private fun performFitnessApiConfiguration(activity: Activity, accountName: String?) {
+        mClient = GoogleApiClient.Builder(activity)
+            .addApi(Fitness.RECORDING_API)
+            .addApi(Fitness.HISTORY_API)
+            .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
+            .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
+            .setAccountName(accountName)
+            .addConnectionCallbacks(connectionCallbacksImpl)
+            .addOnConnectionFailedListener {
+                Log.d("Connection failed: ", it.toString())
+            }.build()
+
+        if (!mClient.isConnecting && !mClient.isConnected) {
+            mClient.connect()
         }
     }
 
@@ -106,30 +121,11 @@ class MainViewModel(
             }
 
             subscribeToRecordSteps {
-                setStateAsLoginDone()
+                sharedPrefRepository.isLoginDone = true
             }
         }
 
         override fun onConnectionSuspended(p0: Int) {}
-    }
-
-    fun startLoginAndConfiguration(activity: Activity) {
-        // Choose authentication providers
-        val providers = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build())
-
-        // Create and launch sign-in intent
-        activity.startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build(),
-            RC_SIGN_IN)
-    }
-
-    fun setStateAsLoginDone() {
-        loginStatus.value = true
-        sharedPrefRepository.isLoginDone = true
     }
 
     private inline fun increaseStepCountDataFetchedCounter() {

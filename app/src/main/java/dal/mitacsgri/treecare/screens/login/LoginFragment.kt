@@ -44,12 +44,6 @@ class LoginFragment : Fragment() {
 
     private fun setUpLiveDataObservers(context: Context) {
         mainViewModel.apply {
-            loginStatus.observe(this@LoginFragment, Observer {
-                it?.let {
-                    if (it) {
-                    }
-                }
-            })
 
             userFirstName.observe(this@LoginFragment, Observer {
                 "Welcome $it !".toast(context)

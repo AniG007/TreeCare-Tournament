@@ -20,5 +20,4 @@ val stepCountRepositoryModule = module {
 
 val appModule = module {
     viewModel { MainViewModel(get(), get()) }
-    viewModel { MainViewModel(get()) }
 }

@@ -14,7 +14,6 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.provider.SharedPreferencesRepository
 import dal.mitacsgri.treecare.provider.StepCountRepository
@@ -31,25 +30,32 @@ class MainViewModel(
 
     val hasStepsData = MutableLiveData<Boolean>().default(false)
     val loginStatus = MutableLiveData<Boolean>().default(false)
-    val user =  MutableLiveData<FirebaseUser>()
+    val userFirstName =  MutableLiveData<String>()
 
-    val haveInstructionsDisplayed = MutableLiveData<Boolean>().default(false)
+    var hasInstructionsDisplayed
+        set(value) {
+            sharedPrefRepository.hasInstructionsDisplayed = value
+        }
+        get() = sharedPrefRepository.hasInstructionsDisplayed
 
     fun performLogin(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
         if (requestCode == RC_SIGN_IN) {
             authInProgress = false
             if (resultCode == Activity.RESULT_OK) {
 
-                user.value = FirebaseAuth.getInstance().currentUser
+                val user = FirebaseAuth.getInstance().currentUser
+                userFirstName.value = user?.displayName?.let {
+                    it.split(" ")[0]
+                }
 
-                Log.d("User: ", user.toString())
+                Log.d("User: ", userFirstName.toString())
 
                 mClient = GoogleApiClient.Builder(activity)
                     .addApi(Fitness.RECORDING_API)
                     .addApi(Fitness.HISTORY_API)
                     .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
                     .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-                    .setAccountName(user.value?.email)
+                    .setAccountName(user?.email)
                     .addConnectionCallbacks(connectionCallbacksImpl)
                     .addOnConnectionFailedListener {
                         Log.d("Connection failed: ", it.toString())
@@ -121,11 +127,6 @@ class MainViewModel(
     fun setStateAsLoginDone() {
         loginStatus.value = true
         sharedPrefRepository.isLoginDone = true
-    }
-
-    fun setInstructionsDisplayedStatus(value: Boolean) {
-        sharedPrefRepository.hasInstructionsDisplayed = value
-        haveInstructionsDisplayed.value = value
     }
 
 }

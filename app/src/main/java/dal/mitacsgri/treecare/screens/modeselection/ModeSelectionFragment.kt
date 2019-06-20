@@ -1,6 +1,5 @@
 package dal.mitacsgri.treecare.screens.modeselection
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -26,13 +25,8 @@ class ModeSelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_mode_selection, container, false)
-        return view
-    }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        view?.apply {
+        view.apply {
             changeBackgroundSolidAndStrokeColor(starterModeButton, "FF0189F1", "FF0000FF")
             changeBackgroundSolidAndStrokeColor(challengerModeButton, "FFFF6F00", "FFBF360C")
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
@@ -41,6 +35,8 @@ class ModeSelectionFragment : Fragment() {
                 startInstructionOrUnityActivity()
             }
         }
+
+        return view
     }
 
     private fun changeBackgroundSolidAndStrokeColor(
@@ -54,7 +50,7 @@ class ModeSelectionFragment : Fragment() {
     }
 
     private fun startInstructionOrUnityActivity() {
-        if (mainViewModel.haveInstructionsDisplayed.value!!)
+        if (mainViewModel.hasInstructionsDisplayed)
             activity?.startNextActivity(UnityPlayerActivity::class.java)
         else
             findNavController().navigate(R.id.action_modeSelectionFragment_to_instructionsFragment)

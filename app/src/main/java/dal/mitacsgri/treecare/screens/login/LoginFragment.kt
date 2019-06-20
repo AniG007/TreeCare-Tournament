@@ -52,8 +52,8 @@ class LoginFragment : Fragment() {
                 }
             })
 
-            user.observe(this@LoginFragment, Observer {
-                "Welcome ${it.displayName?.split(" ")?.get(0)} !".toast(context)
+            userFirstName.observe(this@LoginFragment, Observer {
+                "Welcome $it !".toast(context)
             })
         }
     }

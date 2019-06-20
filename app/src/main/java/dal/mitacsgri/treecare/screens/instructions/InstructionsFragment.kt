@@ -1,7 +1,6 @@
 package dal.mitacsgri.treecare.screens.instructions
 
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -26,20 +25,16 @@ class InstructionsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_instructions, container, false)
 
-        mainViewModel.setInstructionsDisplayedStatus(true)
+        mainViewModel.hasInstructionsDisplayed = true
         view.apply {
             changeBackgroundSolidAndStrokeColor(scrollView, "ccffffff", "ff646464")
             changeBackgroundSolidAndStrokeColor(continueButton, "FF0189F1", "FF0000FF")
+            continueButton.setOnClickListener {
+                activity?.startNextActivity(UnityPlayerActivity::class.java)
+            }
         }
 
         return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        view?.continueButton?.setOnClickListener {
-            activity?.startNextActivity(UnityPlayerActivity::class.java)
-        }
     }
 
     private fun changeBackgroundSolidAndStrokeColor(

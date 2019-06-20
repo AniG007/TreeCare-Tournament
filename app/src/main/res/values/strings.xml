@@ -22,8 +22,8 @@
 
     <string name="has_instructions_displayed">has_instructions_displayed</string>
 
-    <!--Used to check if UnityPlayerActivity is run for the first time by the user.
-    It is separate from login_done because it may happen that user logged in but didn't proceed to the tree screene
+    <!--Used to check if UnityPlayerActivity is run for the first time by the userFirstName.
+    It is separate from login_done because it may happen that userFirstName logged in but didn't proceed to the tree screene
     Always updated by Unity. Initially, it will be unset, so a value of 1 is obtained.
     After the pref is checked once, it is set to 1 and not updated again-->
     <string name="is_first_run">is_first_run</string>

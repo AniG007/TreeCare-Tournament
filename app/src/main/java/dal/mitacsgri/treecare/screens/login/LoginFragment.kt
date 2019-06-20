@@ -24,7 +24,8 @@ class LoginFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
         view.signInButton.setOnClickListener {
-            loginViewModel.startGoogleFitApiConfiguration(context!!)
+            "Button clicked".toast(view.context)
+            loginViewModel.startLoginAndConfiguration(activity!!)
         }
 
         return view
@@ -39,14 +40,15 @@ class LoginFragment : Fragment() {
 
         loginViewModel.loginStatus.observe(this, Observer {
             it?.let {
-                if (it) "Login successful".toast(context)
+                if (it) {
+                    "Login successful".toast(context)
+                    findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+                }
             }
         })
 
         loginViewModel.hasStepsData.observe(this, Observer {
             it?.let {
-                if (it)
-                    findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
             }
         })
     }

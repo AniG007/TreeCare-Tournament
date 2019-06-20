@@ -45,8 +45,8 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.0.2'
 
     //Google Fitness API
-    implementation 'com.google.android.gms:play-services-fitness:16.0.1'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.google.android.gms:play-services-fitness:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
 
     //Intuit
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
@@ -80,4 +80,10 @@ dependencies {
 
     //Koin AndroidX ViewModel features
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+
+    //Firebase core, keep the version at 16.0.9 otherwise app crashes at runtime
+    implementation 'com.google.firebase:firebase-core:16.0.9'
+
+    //Firebase UI Auth
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
 }

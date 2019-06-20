@@ -14,7 +14,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
-import kotlinx.android.synthetic.main.fragment_mode_selection.*
+import kotlinx.android.synthetic.main.fragment_mode_selection.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ModeSelectionFragment : Fragment() {
@@ -32,7 +32,7 @@ class ModeSelectionFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        view.apply {
+        view?.apply {
             changeBackgroundSolidAndStrokeColor(starterModeButton, "FF0189F1", "FF0000FF")
             changeBackgroundSolidAndStrokeColor(challengerModeButton, "FFFF6F00", "FFBF360C")
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")

@@ -147,8 +147,13 @@ class MainViewModel(
                         sharedPrefsRepository.lastLoginTime,
                         DateTime().withTimeAtStartOfDay().millis) {
 
+                        var totalStepCount = 0
+                        it.forEach { (_, stepCount) ->
+                            totalStepCount += stepCount
+                        }
+
                         sharedPrefsRepository.lastLeafCount =
-                            calculateLeafCountFromStepCount(it, 5000)
+                            calculateLeafCountFromStepCount(totalStepCount, 5000)
                     }
 
                     //Get aggregate leaf count up to today
@@ -156,7 +161,12 @@ class MainViewModel(
                         sharedPrefsRepository.lastLoginTime,
                         DateTime().withTimeAtStartOfDay().millis) {
 
-                        var leafCount = calculateLeafCountFromStepCount(it, 5000)
+                        var totalStepCount = 0
+                        it.forEach { (_, stepCount) ->
+                            totalStepCount += stepCount
+                        }
+
+                        var leafCount = calculateLeafCountFromStepCount(totalStepCount, 5000)
                         Log.d("Current leaf count", leafCount.toString())
                         increaseStepCountDataFetchedCounter()
 

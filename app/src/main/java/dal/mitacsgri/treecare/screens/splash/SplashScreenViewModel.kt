@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
+import org.joda.time.DateTime
 import java.util.*
 
 /**
@@ -25,6 +26,7 @@ class SplashScreenViewModel(
     : ViewModel() {
 
     val isLoginDone = sharedPrefsRepository.isLoginDone
+    private lateinit var mClient: GoogleApiClient
 
     //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
     //Value 2 means both the steps counts have been obtained
@@ -66,8 +68,6 @@ class SplashScreenViewModel(
 
     fun setupFitApiToGetData(context: Context) {
 
-        var mClient: GoogleApiClient? = null
-
         val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
             Log.e("Connection failed", it.toString())
         }
@@ -80,18 +80,24 @@ class SplashScreenViewModel(
             .addConnectionCallbacks(object: GoogleApiClient.ConnectionCallbacks {
                 override fun onConnected(p0: Bundle?) {
                     stepCountRepository.apply {
-                        getTodayStepCountData(mClient!!) {
+                        getTodayStepCountData(mClient) {
                             sharedPrefsRepository.storeDailyStepCount(it)
                             Log.d("DailyStepCount", it.toString())
                             increaseStepCountDataFetchedCounter()
                         }
 
-                        getLastDayStepCountData(mClient!!) {
+                        getLastDayStepCountData(mClient) {
                             sharedPrefsRepository.storeLastDayStepCount(it)
                             Log.d("LastDayStepCount", it.toString())
                             increaseStepCountDataFetchedCounter()
                         }
 
+                        getStepCountDataOverARange(mClient,
+                            DateTime(Date().time).withTimeAtStartOfDay().millis - 100000000,
+                            Date().time) {
+                            sharedPrefsRepository.currentLeafCount = it
+                            Log.d("Current leaf count", it.toString())
+                        }
                     }
                 }
 

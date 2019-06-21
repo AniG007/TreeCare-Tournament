@@ -17,6 +17,8 @@ import com.google.firebase.auth.FirebaseAuth
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
+import org.joda.time.DateTime
+import java.util.*
 
 class MainViewModel(
     private val sharedPrefRepository: SharedPreferencesRepository,
@@ -37,6 +39,18 @@ class MainViewModel(
             sharedPrefRepository.hasInstructionsDisplayed = value
         }
         get() = sharedPrefRepository.hasInstructionsDisplayed
+
+    var lastLoginTime: Long
+        set(value) {
+            sharedPrefRepository.lastLoginTime = value
+        }
+        get() = sharedPrefRepository.lastLoginTime
+
+    var lastLogoutTime: Long
+        set(value) {
+        sharedPrefRepository.lastLogoutTime = value
+        }
+        get() = sharedPrefRepository.lastLogoutTime
 
     fun startLoginAndConfiguration(activity: Activity) {
         // Choose authentication providers
@@ -63,6 +77,8 @@ class MainViewModel(
                 }
                 performFitnessApiConfiguration(activity, user?.email)
                 Log.d("User: ", userFirstName.toString())
+
+                lastLoginTime = Date().time
 
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e("GoogleFit", "RESULT_CANCELED")
@@ -118,6 +134,10 @@ class MainViewModel(
                     sharedPrefRepository.storeLastDayStepCount(it)
                     increaseStepCountDataFetchedCounter()
                 }
+
+                getStepCountDataOverARange(mClient,
+                    DateTime(Date().time).withTimeAtStartOfDay().millis - 100000000,
+                    Date().time) {}
             }
 
             subscribeToRecordSteps {

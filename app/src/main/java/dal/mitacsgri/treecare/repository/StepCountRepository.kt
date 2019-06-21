@@ -9,6 +9,9 @@ import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.joda.time.DateTime
+import org.joda.time.Days
+import org.joda.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -56,6 +59,51 @@ class StepCountRepository(private val context: Context) {
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
             .bucketByTime(1, TimeUnit.DAYS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+            .build()
+
+        context.doAsync {
+            val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
+            var lastDayStepCount = 0
+
+            if (result.status.isSuccess) {
+                //Log.d("Buckets: ", result.buckets.toString())
+                for (bucket in result.buckets) {
+                    //Log.d("Datasets: ", bucket.dataSets.toString())
+                    val dataSets = bucket.dataSets
+                    for (dataSet in dataSets) {
+                        for (dataPoint in dataSet.dataPoints) {
+                            //Log.d("Datapoint", dataPoint.toString())
+                            lastDayStepCount += dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
+                        }
+                    }
+
+                    uiThread {
+                        onDataObtained(lastDayStepCount)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getStepCountDataOverARange(mClient: GoogleApiClient,
+                                   startTime: Long, endTime: Long,
+                                   onDataObtained: (stepCount: Int) -> Unit) {
+
+        val startDate = DateTime(startTime).withTimeAtStartOfDay()
+        val endDate = DateTime(endTime).plusDays(1).withTimeAtStartOfDay()
+
+        val days = Days.daysBetween(startDate, endDate)
+
+        Log.d("Start date:", startDate.millis.toString())
+        Log.d("End date:", endDate.millis.toString())
+        Log.d("Days:", days.days.toString())
+
+        LocalDate().toDateTimeAtStartOfDay()
+
+        val readRequest = DataReadRequest.Builder()
+            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .bucketByTime(1, TimeUnit.DAYS)
+            .setTimeRange(startDate.millis, endDate.millis, TimeUnit.MILLISECONDS)
             .build()
 
         context.doAsync {

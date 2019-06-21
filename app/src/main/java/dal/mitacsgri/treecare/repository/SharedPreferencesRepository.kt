@@ -38,6 +38,24 @@ class SharedPreferencesRepository(val context: Context) {
             }
         }
 
+    var lastLoginTime: Long
+        get() = sharedPref.getLong(context.getString(R.string.last_login_time_ms), 0)
+        set(value) {
+            with(sharedPref.edit()) {
+                putLong(context.getString(R.string.last_login_time_ms), value)
+                apply()
+            }
+        }
+
+    var lastLogoutTime: Long
+        get() = sharedPref.getLong(context.getString(R.string.last_logout_time_ms), 0)
+        set(value) {
+            with(sharedPref.edit()) {
+                putLong(context.getString(R.string.last_logout_time_ms), value)
+                apply()
+            }
+        }
+
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)
     }

@@ -41,24 +41,6 @@ class SplashScreenViewModel(
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
             sharedPrefsRepository.isDailyGoalChecked = 0
 
-//            val cal = Calendar.getInstance()
-//            val now = Date()
-//            cal.apply {
-//                time = now
-//                set(Calendar.MILLISECOND, 0)
-//                set(Calendar.SECOND, 0)
-//                set(Calendar.MINUTE, 0)
-//                set(Calendar.HOUR, 0)
-//            }
-//
-//            val day = cal.get(Calendar.DAY_OF_MONTH)
-//            val month = cal.get(Calendar.MONTH)
-//
-//            //Doing this to prevent rounding off at the end of the year
-//            if (day == 31 && month == 12) cal.add(Calendar.YEAR, 1)
-//
-//            cal.add(Calendar.DAY_OF_YEAR, 1)
-
             val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis + 15_000*60
 
             Log.v("Current time: ", Date().time.toString())
@@ -84,12 +66,6 @@ class SplashScreenViewModel(
                 override fun onConnected(p0: Bundle?) {
                     stepCountRepository.apply {
 
-                        getTodayStepCountData(mClient) {
-                            sharedPrefsRepository.storeDailyStepCount(it)
-                            Log.d("DailyStepCount", it.toString())
-                            increaseStepCountDataFetchedCounter()
-                        }
-
                         //Execute only once each day, dailyGoalChecked will be set as true(1) by Unity
                         //Execute once to prevent updating lastLeafCount every time
                         if (sharedPrefsRepository.isDailyGoalChecked == 0) {
@@ -108,12 +84,21 @@ class SplashScreenViewModel(
                         //Get aggregate leaf count up to today
                         getStepCountDataOverARange(mClient,
                             sharedPrefsRepository.lastLoginTime,
-                            DateTime().plusDays(1).withTimeAtStartOfDay().millis) {
+                            DateTime().withTimeAtStartOfDay().millis) {
 
-                            val leafCount = calculateLeafCountFromStepCount(it, 5000)
-                            sharedPrefsRepository.currentLeafCount = leafCount
+                            var leafCount = calculateLeafCountFromStepCount(it, 5000)
                             Log.d("Current leaf count", leafCount.toString())
                             increaseStepCountDataFetchedCounter()
+
+                            //Call needs to be made here because it uses data from previous call
+                            getTodayStepCountData(mClient) {
+                                leafCount += it/1000
+                                sharedPrefsRepository.currentLeafCount = leafCount
+
+                                sharedPrefsRepository.storeDailyStepCount(it)
+                                Log.d("DailyStepCount", it.toString())
+                                increaseStepCountDataFetchedCounter()
+                            }
                         }
                     }
                 }

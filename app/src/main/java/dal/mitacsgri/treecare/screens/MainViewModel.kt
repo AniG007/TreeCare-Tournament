@@ -125,25 +125,22 @@ class MainViewModel(
     private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {
         override fun onConnected(p0: Bundle?) {
 
-            stepCountRepository.apply {
+            subscribeToRecordSteps {
+                sharedPrefsRepository.isLoginDone = true
+            }
 
+            stepCountRepository.apply {
                 if (sharedPrefsRepository.isFirstRun) {
                     getTodayStepCountData(mClient) {
                         sharedPrefsRepository.storeDailyStepCount(it)
                         Log.d("DailyStepCount", it.toString())
-                        sharedPrefsRepository.currentLeafCount =
-                            calculateLeafCountFromStepCount(it, 5000)
+                        sharedPrefsRepository.currentLeafCount = it / 1000
                         increaseStepCountDataFetchedCounter()
                         increaseStepCountDataFetchedCounter()
                     }
                     sharedPrefsRepository.isFirstRun = false
                     sharedPrefsRepository.lastLeafCount = 0
                 } else {
-                    getTodayStepCountData(mClient) {
-                        sharedPrefsRepository.storeDailyStepCount(it)
-                        Log.d("DailyStepCount", it.toString())
-                        increaseStepCountDataFetchedCounter()
-                    }
 
                     //Get aggregate step count up to the last day
                     getStepCountDataOverARange(mClient,
@@ -157,17 +154,23 @@ class MainViewModel(
                     //Get aggregate leaf count up to today
                     getStepCountDataOverARange(mClient,
                         sharedPrefsRepository.lastLoginTime,
-                        DateTime().plusDays(1).withTimeAtStartOfDay().millis) {
+                        DateTime().withTimeAtStartOfDay().millis) {
 
-                        val leafCount = calculateLeafCountFromStepCount(it, 5000)
-                        sharedPrefsRepository.currentLeafCount = leafCount
+                        var leafCount = calculateLeafCountFromStepCount(it, 5000)
                         Log.d("Current leaf count", leafCount.toString())
+                        increaseStepCountDataFetchedCounter()
+
+                        //Call needs to be made here because it uses data from previous call
+                        getTodayStepCountData(mClient) {
+                            leafCount = it / 1000
+
+                            sharedPrefsRepository.currentLeafCount = leafCount
+                            sharedPrefsRepository.storeDailyStepCount(it)
+                            Log.d("DailyStepCount", it.toString())
+                            increaseStepCountDataFetchedCounter()
+                        }
                     }
                 }
-            }
-
-            subscribeToRecordSteps {
-                sharedPrefsRepository.isLoginDone = true
             }
         }
 

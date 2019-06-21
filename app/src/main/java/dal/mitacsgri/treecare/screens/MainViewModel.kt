@@ -21,7 +21,7 @@ import org.joda.time.DateTime
 import java.util.*
 
 class MainViewModel(
-    private val sharedPrefRepository: SharedPreferencesRepository,
+    private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository
     ) : ViewModel() {
 
@@ -36,21 +36,21 @@ class MainViewModel(
 
     var hasInstructionsDisplayed
         set(value) {
-            sharedPrefRepository.hasInstructionsDisplayed = value
+            sharedPrefsRepository.hasInstructionsDisplayed = value
         }
-        get() = sharedPrefRepository.hasInstructionsDisplayed
+        get() = sharedPrefsRepository.hasInstructionsDisplayed
 
     var lastLoginTime: Long
         set(value) {
-            sharedPrefRepository.lastLoginTime = value
+            sharedPrefsRepository.lastLoginTime = value
         }
-        get() = sharedPrefRepository.lastLoginTime
+        get() = sharedPrefsRepository.lastLoginTime
 
     var lastLogoutTime: Long
         set(value) {
-        sharedPrefRepository.lastLogoutTime = value
+        sharedPrefsRepository.lastLogoutTime = value
         }
-        get() = sharedPrefRepository.lastLogoutTime
+        get() = sharedPrefsRepository.lastLogoutTime
 
     fun startLoginAndConfiguration(activity: Activity) {
         // Choose authentication providers
@@ -87,6 +87,7 @@ class MainViewModel(
             Log.e("GoogleFit", "requestCode NOT request_oauth")
         }
     }
+
 
     private fun performFitnessApiConfiguration(activity: Activity, accountName: String?) {
         mClient = GoogleApiClient.Builder(activity)
@@ -125,26 +126,48 @@ class MainViewModel(
         override fun onConnected(p0: Bundle?) {
 
             stepCountRepository.apply {
-                getTodayStepCountData(mClient) {
-                    sharedPrefRepository.storeDailyStepCount(it)
-                    increaseStepCountDataFetchedCounter()
-                }
 
-                getLastDayStepCountData(mClient) {
-                    sharedPrefRepository.storeLastDayStepCount(it)
-                    increaseStepCountDataFetchedCounter()
-                }
+                if (sharedPrefsRepository.isFirstRun) {
+                    getTodayStepCountData(mClient) {
+                        sharedPrefsRepository.storeDailyStepCount(it)
+                        Log.d("DailyStepCount", it.toString())
+                        sharedPrefsRepository.currentLeafCount =
+                            calculateLeafCountFromStepCount(it, 5000)
+                        increaseStepCountDataFetchedCounter()
+                        increaseStepCountDataFetchedCounter()
+                    }
+                    sharedPrefsRepository.isFirstRun = false
+                    sharedPrefsRepository.lastLeafCount = 0
+                } else {
+                    getTodayStepCountData(mClient) {
+                        sharedPrefsRepository.storeDailyStepCount(it)
+                        Log.d("DailyStepCount", it.toString())
+                        increaseStepCountDataFetchedCounter()
+                    }
 
-                getStepCountDataOverARange(mClient,
-                    DateTime(Date().time).withTimeAtStartOfDay().millis - 100000000,
-                    Date().time) {
-                    sharedPrefRepository.currentLeafCount = it
-                    Log.d("Current leaf count", it.toString())
+                    //Get aggregate step count up to the last day
+                    getStepCountDataOverARange(mClient,
+                        sharedPrefsRepository.lastLoginTime,
+                        DateTime().withTimeAtStartOfDay().millis) {
+
+                        sharedPrefsRepository.lastLeafCount =
+                            calculateLeafCountFromStepCount(it, 5000)
+                    }
+
+                    //Get aggregate leaf count up to today
+                    getStepCountDataOverARange(mClient,
+                        sharedPrefsRepository.lastLoginTime,
+                        DateTime().plusDays(1).withTimeAtStartOfDay().millis) {
+
+                        val leafCount = calculateLeafCountFromStepCount(it, 5000)
+                        sharedPrefsRepository.currentLeafCount = leafCount
+                        Log.d("Current leaf count", leafCount.toString())
+                    }
                 }
             }
 
             subscribeToRecordSteps {
-                sharedPrefRepository.isLoginDone = true
+                sharedPrefsRepository.isLoginDone = true
             }
         }
 
@@ -156,5 +179,14 @@ class MainViewModel(
             stepCountDataFetchedCounter.value = stepCountDataFetchedCounter.value?.plus(1)
             Log.d("Counter value", stepCountDataFetchedCounter.value.toString())
         }
+    }
+
+    private fun calculateLeafCountFromStepCount(stepCount: Int, dailyGoal: Int): Int {
+        var leafCount = stepCount / 1000
+        if (stepCount < dailyGoal) {
+            leafCount -= Math.ceil((dailyGoal - stepCount) / 1000.0).toInt()
+            if (leafCount < 0) leafCount = 0
+        }
+        return leafCount
     }
 }

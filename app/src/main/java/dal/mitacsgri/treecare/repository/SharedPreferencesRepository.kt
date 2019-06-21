@@ -11,6 +11,20 @@ class SharedPreferencesRepository(val context: Context) {
         Context.MODE_PRIVATE
     )
 
+    //This value neeeds to be obtained from the database to check if the user is using the app for the first time or not
+    var isFirstRun
+        get() = getBoolean(R.string.is_first_run, true)
+        set(value) {
+            storeBoolean(R.string.is_first_run, value)
+        }
+
+    //This needs to be as int because this will be used by Unity and Unity does not support boolean prefs
+    var isDailyGoalChecked
+        get() = sharedPref.getInt(context.getString(R.string.daily_goal_checked), 0)
+        set(value) {
+            storeInt(R.string.daily_goal_checked, value)
+        }
+
     var isLoginDone: Boolean
         get() = sharedPref.getBoolean(context.getString(R.string.login_done), false)
         set(value) {
@@ -86,15 +100,11 @@ class SharedPreferencesRepository(val context: Context) {
 
     fun getDailyStepsGoal() = getInt(R.string.daily_steps_goal)
 
-    fun dailyGoalChecked(value: Int) {
-        storeInt(R.string.daily_goal_checked, value)
-    }
-
     fun storeLeafCountBeforeToday(leafCount: Int) {
         storeInt(R.string.leaf_count_before_today, leafCount)
     }
 
-    fun storeInt(key: Int, value: Int) {
+    private fun storeInt(key: Int, value: Int) {
         with(sharedPref.edit()) {
             putInt(context.getString(key), value)
             apply()
@@ -102,4 +112,14 @@ class SharedPreferencesRepository(val context: Context) {
     }
 
     private fun getInt(key: Int) = sharedPref.getInt(context.getString(key), 0)
+
+    private fun storeBoolean(key: Int, value: Boolean) {
+        with(sharedPref.edit()) {
+            putBoolean(context.getString(key), value)
+            apply()
+        }
+    }
+
+    private fun getBoolean(key: Int, defValue: Boolean)
+            = sharedPref.getBoolean(context.getString(key), defValue)
 }

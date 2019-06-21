@@ -26,7 +26,7 @@ class UpdateLeafCountWorker(private val appContext: Context, private val workerP
             leavesToRemove = Math.ceil((dailyGoal - lastDayStepsTaken) / 1000.0).toInt()
             if (leavesToRemove < 0) leavesToRemove = 0
 
-            dailyGoalChecked(1)
+            isDailyGoalChecked = 1
 
             //Here, LEAVES_GAINED_TODAY will contain the last updated leaves value from the previous day
             //val netLeavesToAdd = leavesToAdd - leavesToRemove + PlayerPrefs.GetInt(LEAVES_GAINED_TODAY)

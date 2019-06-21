@@ -34,6 +34,8 @@
     <string name="total_fruits_on_tree">total_fruits_on_tree</string>
     <string name="last_login_time_ms">last_login_time_ms</string>
     <string name="last_logout_time_ms">last_logout_time_ms</string>
+    <string name="last_leaf_count">last_leaf_count</string>
+    <string name="current_leaf_count">current_leaf_count</string>
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>

@@ -89,7 +89,7 @@ class StepCountRepository(private val context: Context) {
                                    startTime: Long, endTime: Long,
                                    onDataObtained: (stepCount: Int) -> Unit) {
 
-        val startDate = DateTime(startTime).withTimeAtStartOfDay()
+        val startDate = DateTime(startTime).minusDays(10).withTimeAtStartOfDay()
         val endDate = DateTime(endTime).plusDays(1).withTimeAtStartOfDay()
 
         val days = Days.daysBetween(startDate, endDate)
@@ -108,7 +108,7 @@ class StepCountRepository(private val context: Context) {
 
         context.doAsync {
             val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
-            var lastDayStepCount = 0
+            var totalLeafCount = 0
 
             if (result.status.isSuccess) {
                 Log.d("Buckets: ", result.buckets.toString())
@@ -118,15 +118,26 @@ class StepCountRepository(private val context: Context) {
                     for (dataSet in dataSets) {
                         for (dataPoint in dataSet.dataPoints) {
                             Log.d("Datapoint", dataPoint.toString())
-                            lastDayStepCount += dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
+                            val stepCount = dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
+                            Log.d("Step count", stepCount.toString())
+                            totalLeafCount += calculateLeafCountFromStepCount(stepCount, 5000)
                         }
                     }
+                }
 
-                    uiThread {
-                        onDataObtained(lastDayStepCount)
-                    }
+                uiThread {
+                    onDataObtained(totalLeafCount)
                 }
             }
         }
+    }
+
+    private fun calculateLeafCountFromStepCount(stepCount: Int, dailyGoal: Int): Int {
+        var leafCount = stepCount / 1000
+        if (stepCount < dailyGoal) {
+            leafCount -= Math.ceil((dailyGoal - stepCount) / 1000.0).toInt()
+            if (leafCount < 0) leafCount = 0
+        }
+        return leafCount
     }
 }

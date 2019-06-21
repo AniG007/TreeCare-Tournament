@@ -137,7 +137,10 @@ class MainViewModel(
 
                 getStepCountDataOverARange(mClient,
                     DateTime(Date().time).withTimeAtStartOfDay().millis - 100000000,
-                    Date().time) {}
+                    Date().time) {
+                    sharedPrefRepository.currentLeafCount = it
+                    Log.d("Current leaf count", it.toString())
+                }
             }
 
             subscribeToRecordSteps {

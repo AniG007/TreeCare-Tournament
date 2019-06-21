@@ -41,29 +41,31 @@ class SplashScreenViewModel(
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
             sharedPrefsRepository.isDailyGoalChecked = 0
 
-            val cal = Calendar.getInstance()
-            val now = Date()
-            cal.apply {
-                time = now
-                set(Calendar.MILLISECOND, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.HOUR, 0)
-            }
+//            val cal = Calendar.getInstance()
+//            val now = Date()
+//            cal.apply {
+//                time = now
+//                set(Calendar.MILLISECOND, 0)
+//                set(Calendar.SECOND, 0)
+//                set(Calendar.MINUTE, 0)
+//                set(Calendar.HOUR, 0)
+//            }
+//
+//            val day = cal.get(Calendar.DAY_OF_MONTH)
+//            val month = cal.get(Calendar.MONTH)
+//
+//            //Doing this to prevent rounding off at the end of the year
+//            if (day == 31 && month == 12) cal.add(Calendar.YEAR, 1)
+//
+//            cal.add(Calendar.DAY_OF_YEAR, 1)
 
-            val day = cal.get(Calendar.DAY_OF_MONTH)
-            val month = cal.get(Calendar.MONTH)
-
-            //Doing this to prevent rounding off at the end of the year
-            if (day == 31 && month == 12) cal.add(Calendar.YEAR, 1)
-
-            cal.add(Calendar.DAY_OF_YEAR, 1)
+            val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis + 15_000*60
 
             Log.v("Current time: ", Date().time.toString())
-            Log.v("Time to store: ", cal.timeInMillis.toString())
+            Log.v("Time to store: ", timeToStore.toString())
 
             //This will delay the resetting of flag by 15 minutes, as Google Fit takes some time to update step count
-            sharedPrefsRepository.lastOpenedDayPlus1 = cal.timeInMillis + 15_000*60
+            sharedPrefsRepository.lastOpenedDayPlus1 = timeToStore
         }
     }
 

@@ -9,9 +9,6 @@ import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import org.joda.time.DateTime
-import org.joda.time.Days
-import org.joda.time.LocalDate
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -66,9 +63,7 @@ class StepCountRepository(private val context: Context) {
             var lastDayStepCount = 0
 
             if (result.status.isSuccess) {
-                //Log.d("Buckets: ", result.buckets.toString())
                 for (bucket in result.buckets) {
-                    //Log.d("Datasets: ", bucket.dataSets.toString())
                     val dataSets = bucket.dataSets
                     for (dataSet in dataSets) {
                         for (dataPoint in dataSet.dataPoints) {
@@ -89,21 +84,17 @@ class StepCountRepository(private val context: Context) {
                                    startTime: Long, endTime: Long,
                                    onDataObtained: (stepCount: Map<Long, Int>) -> Unit) {
 
-        val startDate = DateTime(startTime).minusDays(10).withTimeAtStartOfDay()
-        val endDate = DateTime(endTime).plusDays(1).withTimeAtStartOfDay()
-
-        val days = Days.daysBetween(startDate, endDate)
-
-        Log.d("Start date:", startDate.millis.toString())
-        Log.d("End date:", endDate.millis.toString())
-        Log.d("Days:", days.days.toString())
-
-        LocalDate().toDateTimeAtStartOfDay()
+        //This statement prevents running the following code when the app is being used for the first day
+        //Otherwise the app will crash
+        if (endTime < startTime) {
+            onDataObtained(mutableMapOf())
+            return
+        }
 
         val readRequest = DataReadRequest.Builder()
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
             .bucketByTime(1, TimeUnit.DAYS)
-            .setTimeRange(startDate.millis, endDate.millis, TimeUnit.MILLISECONDS)
+            .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
 
         context.doAsync {
@@ -118,10 +109,11 @@ class StepCountRepository(private val context: Context) {
                             Log.d("Datapoint", dataPoint.toString())
                             val stepCount = dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
                             stepCountMap[dataPoint.getStartTime(TimeUnit.MILLISECONDS)] = stepCount
-                            Log.d("Step count map", stepCountMap.toString())
                         }
                     }
                 }
+
+                Log.d("Step count map", stepCountMap.toString())
 
                 uiThread {
                     onDataObtained(stepCountMap)

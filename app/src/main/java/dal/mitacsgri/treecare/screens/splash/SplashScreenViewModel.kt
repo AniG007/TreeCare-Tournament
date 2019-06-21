@@ -34,6 +34,7 @@ class SplashScreenViewModel(
 
     fun storeDailyStepsGoal(goal: Int) {
         sharedPrefsRepository.storeDailyStepsGoal(goal)
+
     }
 
     fun resetDailyGoalCheckedFlag() {
@@ -133,6 +134,28 @@ class SplashScreenViewModel(
             if (leafCount < 0) leafCount = 0
         }
         return leafCount
+    }
+
+    private fun calculateFruitsOnTree(stepCountMap: Map<Long, Int>) {
+
+        var currentDay = 0
+        val goalAchievedStreak = arrayOf(false, false, false, false, false, false, false)
+        val fullStreak = arrayOf(true, true, true, true, true, true, true)
+
+        stepCountMap.forEach { (_, stepCount) ->
+            if (stepCount > 5000) goalAchievedStreak[currentDay] = true
+
+            currentDay = (currentDay + 1) % 7
+
+            if (currentDay == 0) {
+                sharedPrefsRepository.lastFruitCount = sharedPrefsRepository.currentFruitCount
+                if (goalAchievedStreak.contentEquals(fullStreak))
+                    sharedPrefsRepository.currentFruitCount++
+                else {
+                    sharedPrefsRepository.currentFruitCount--
+                }
+            }
+        }
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

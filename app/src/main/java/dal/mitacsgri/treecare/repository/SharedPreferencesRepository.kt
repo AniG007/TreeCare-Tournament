@@ -82,6 +82,17 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.current_leaf_count, value)
         }
 
+    var lastFruitCount
+        get() = getInt(R.string.last_fruit_count)
+        set(value) { storeInt(R.string.last_fruit_count, value) }
+
+    var currentFruitCount
+        get() = getInt(R.string.current_fruit_count)
+        set(value) {
+            if (currentFruitCount == 0) return
+            storeInt(R.string.current_fruit_count, value)
+        }
+
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)
     }

@@ -93,6 +93,10 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.current_fruit_count, value)
         }
 
+    var currentDayOfWeek
+        get() = getInt(R.string.current_day_of_week)
+        set(value) { storeInt(R.string.current_day_of_week, value) }
+
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)
     }

@@ -42,12 +42,12 @@ class SplashScreenViewModel(
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
             sharedPrefsRepository.isDailyGoalChecked = 0
 
-            val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis + 15_000*60
+            //Resetting of flag by 2 hours, as Google Fit takes some time to update step count
+            val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis + 1_000*60*60
 
             Log.v("Current time: ", Date().time.toString())
             Log.v("Time to store: ", timeToStore.toString())
 
-            //This will delay the resetting of flag by 15 minutes, as Google Fit takes some time to update step count
             sharedPrefsRepository.lastOpenedDayPlus1 = timeToStore
         }
     }
@@ -66,7 +66,6 @@ class SplashScreenViewModel(
             .addConnectionCallbacks(object: GoogleApiClient.ConnectionCallbacks {
                 override fun onConnected(p0: Bundle?) {
                     stepCountRepository.apply {
-
                         //Execute only once each day, dailyGoalChecked will be set as true(1) by Unity
                         //Execute once to prevent updating lastLeafCount every time
                         if (sharedPrefsRepository.isDailyGoalChecked == 0) {
@@ -77,38 +76,29 @@ class SplashScreenViewModel(
                                 DateTime().withTimeAtStartOfDay().millis
                             ) {
 
-                                var totalStepCount: Int = 0
+                                calculateFruitsOnTree(it)
+                                increaseStepCountDataFetchedCounter()
+
+                                var totalLeafCountTillLastDay = 0
                                 it.forEach { (_, stepCount) ->
-                                    totalStepCount += stepCount
+                                    totalLeafCountTillLastDay +=
+                                        calculateLeafCountFromStepCount(stepCount, 5000)
                                 }
 
-                                sharedPrefsRepository.lastLeafCount =
-                                    calculateLeafCountFromStepCount(totalStepCount, 5000)
-                            }
-                        }
+                                sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
+                                Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())
 
-                        //Get aggregate leaf count up to today
-                        getStepCountDataOverARange(mClient,
-                            sharedPrefsRepository.lastLoginTime,
-                            DateTime().withTimeAtStartOfDay().millis) {
+                                var currentLeafCount = totalLeafCountTillLastDay
+                                //Add today's leaf count to leafCountTillLastDay
+                                //Call needs to be made here because it uses data from previous call
+                                getTodayStepCountData(mClient) {
+                                    currentLeafCount += it/1000
+                                    sharedPrefsRepository.currentLeafCount = currentLeafCount
 
-                            var totalStepCount: Int = 0
-                            it.forEach { (_, stepCount) ->
-                                totalStepCount += stepCount
-                            }
-
-                            var leafCount = calculateLeafCountFromStepCount(totalStepCount, 5000)
-                            Log.d("Current leaf count", leafCount.toString())
-                            increaseStepCountDataFetchedCounter()
-
-                            //Call needs to be made here because it uses data from previous call
-                            getTodayStepCountData(mClient) {
-                                leafCount += it/1000
-                                sharedPrefsRepository.currentLeafCount = leafCount
-
-                                sharedPrefsRepository.storeDailyStepCount(it)
-                                Log.d("DailyStepCount", it.toString())
-                                increaseStepCountDataFetchedCounter()
+                                    sharedPrefsRepository.storeDailyStepCount(it)
+                                    Log.d("DailyStepCount", it.toString())
+                                    increaseStepCountDataFetchedCounter()
+                                }
                             }
                         }
                     }
@@ -138,12 +128,12 @@ class SplashScreenViewModel(
 
     private fun calculateFruitsOnTree(stepCountMap: Map<Long, Int>) {
 
-        var currentDay = 0
+        var currentDay = sharedPrefsRepository.currentDayOfWeek
         val goalAchievedStreak = arrayOf(false, false, false, false, false, false, false)
         val fullStreak = arrayOf(true, true, true, true, true, true, true)
 
         stepCountMap.forEach { (_, stepCount) ->
-            if (stepCount > 5000) goalAchievedStreak[currentDay] = true
+            goalAchievedStreak[currentDay] = stepCount >= 5000
 
             currentDay = (currentDay + 1) % 7
 
@@ -156,6 +146,9 @@ class SplashScreenViewModel(
                 }
             }
         }
+
+        sharedPrefsRepository.currentDayOfWeek = currentDay
+        sharedPrefsRepository.currentFruitCount = 3
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

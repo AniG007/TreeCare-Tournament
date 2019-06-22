@@ -38,6 +38,7 @@
     <string name="current_leaf_count">current_leaf_count</string>
     <string name="last_fruit_count">last_fruit_count</string>
     <string name="current_fruit_count">current_fruit_count</string>
+    <string name="current_day_of_week">current_day_of_week</string>
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>

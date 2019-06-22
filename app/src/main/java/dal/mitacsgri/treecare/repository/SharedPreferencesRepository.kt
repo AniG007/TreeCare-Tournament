@@ -89,7 +89,7 @@ class SharedPreferencesRepository(val context: Context) {
     var currentFruitCount
         get() = getInt(R.string.current_fruit_count)
         set(value) {
-            if (currentFruitCount == 0) return
+            if (value < 0) return
             storeInt(R.string.current_fruit_count, value)
         }
 

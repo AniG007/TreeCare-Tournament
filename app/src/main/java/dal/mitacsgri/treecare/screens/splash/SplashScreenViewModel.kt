@@ -66,39 +66,35 @@ class SplashScreenViewModel(
             .addConnectionCallbacks(object: GoogleApiClient.ConnectionCallbacks {
                 override fun onConnected(p0: Bundle?) {
                     stepCountRepository.apply {
-                        //Execute only once each day, dailyGoalChecked will be set as true(1) by Unity
-                        //Execute once to prevent updating lastLeafCount every time
-                        if (sharedPrefsRepository.isDailyGoalChecked == 0) {
-                            //Get aggregate step count up to the last day
-                            getStepCountDataOverARange(
-                                mClient,
-                                sharedPrefsRepository.lastLoginTime,
-                                DateTime().withTimeAtStartOfDay().millis
-                            ) {
+                        //Get aggregate step count up to the last day
+                        getStepCountDataOverARange(
+                            mClient,
+                            sharedPrefsRepository.lastLoginTime,
+                            DateTime().withTimeAtStartOfDay().millis
+                        ) {
 
-                                calculateFruitsOnTree(it)
+                            calculateFruitsOnTree(it)
+                            increaseStepCountDataFetchedCounter()
+
+                            var totalLeafCountTillLastDay = 0
+                            it.forEach { (_, stepCount) ->
+                                totalLeafCountTillLastDay +=
+                                    calculateLeafCountFromStepCount(stepCount, 5000)
+                            }
+
+                            sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
+                            Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())
+
+                            var currentLeafCount = totalLeafCountTillLastDay
+                            //Add today's leaf count to leafCountTillLastDay
+                            //Call needs to be made here because it uses data from previous call
+                            getTodayStepCountData(mClient) {
+                                currentLeafCount += it/1000
+                                sharedPrefsRepository.currentLeafCount = currentLeafCount
+
+                                sharedPrefsRepository.storeDailyStepCount(it)
+                                Log.d("DailyStepCount", it.toString())
                                 increaseStepCountDataFetchedCounter()
-
-                                var totalLeafCountTillLastDay = 0
-                                it.forEach { (_, stepCount) ->
-                                    totalLeafCountTillLastDay +=
-                                        calculateLeafCountFromStepCount(stepCount, 5000)
-                                }
-
-                                sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
-                                Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())
-
-                                var currentLeafCount = totalLeafCountTillLastDay
-                                //Add today's leaf count to leafCountTillLastDay
-                                //Call needs to be made here because it uses data from previous call
-                                getTodayStepCountData(mClient) {
-                                    currentLeafCount += it/1000
-                                    sharedPrefsRepository.currentLeafCount = currentLeafCount
-
-                                    sharedPrefsRepository.storeDailyStepCount(it)
-                                    Log.d("DailyStepCount", it.toString())
-                                    increaseStepCountDataFetchedCounter()
-                                }
                             }
                         }
                     }
@@ -140,15 +136,14 @@ class SplashScreenViewModel(
             if (currentDay == 0) {
                 sharedPrefsRepository.lastFruitCount = sharedPrefsRepository.currentFruitCount
                 if (goalAchievedStreak.contentEquals(fullStreak))
-                    sharedPrefsRepository.currentFruitCount++
+                    sharedPrefsRepository.currentFruitCount += 1
                 else {
-                    sharedPrefsRepository.currentFruitCount--
+                    sharedPrefsRepository.currentFruitCount -= 1
                 }
             }
         }
 
         sharedPrefsRepository.currentDayOfWeek = currentDay
-        sharedPrefsRepository.currentFruitCount = 3
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

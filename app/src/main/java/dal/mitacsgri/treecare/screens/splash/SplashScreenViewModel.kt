@@ -48,7 +48,11 @@ class SplashScreenViewModel(
             Log.v("Current time: ", Date().time.toString())
             Log.v("Time to store: ", timeToStore.toString())
 
-            sharedPrefsRepository.lastOpenedDayPlus1 = timeToStore
+            sharedPrefsRepository.apply {
+                lastOpenedDayPlus1 = timeToStore
+                lastLeafCount = currentLeafCount
+            }
+
         }
     }
 
@@ -82,7 +86,6 @@ class SplashScreenViewModel(
                                     calculateLeafCountFromStepCount(stepCount, 5000)
                             }
 
-                            sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
                             Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())
 
                             var currentLeafCount = totalLeafCountTillLastDay

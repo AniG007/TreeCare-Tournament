@@ -1,5 +1,6 @@
 package dal.mitacsgri.treecare.di
 
+import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainViewModel
@@ -19,7 +20,11 @@ val stepCountRepositoryModule = module {
     single { StepCountRepository(get()) }
 }
 
+val firestoreRepositoryModule = module {
+    single { FirestoreRepository() }
+}
+
 val appModule = module {
-    viewModel { MainViewModel(get(), get()) }
+    viewModel { MainViewModel(get(), get(), get()) }
     viewModel { SplashScreenViewModel(get(), get()) }
 }

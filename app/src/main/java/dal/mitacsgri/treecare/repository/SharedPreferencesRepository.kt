@@ -52,6 +52,15 @@ class SharedPreferencesRepository(val context: Context) {
             }
         }
 
+    var firstLoginTime: Long
+        get() = sharedPref.getLong(context.getString(R.string.first_login_time_ms), 0)
+        set(value) {
+            with(sharedPref.edit()) {
+                putLong(context.getString(R.string.first_login_time_ms), value)
+                apply()
+            }
+        }
+
     var lastLoginTime: Long
         get() = sharedPref.getLong(context.getString(R.string.last_login_time_ms), 0)
         set(value) {

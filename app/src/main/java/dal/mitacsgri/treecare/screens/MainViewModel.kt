@@ -14,15 +14,20 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
+import data.User
 import org.joda.time.DateTime
 import java.util.*
 
 class MainViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
-    private val stepCountRepository: StepCountRepository
+    private val stepCountRepository: StepCountRepository,
+    private val firestoreRepository: FirestoreRepository
     ) : ViewModel() {
 
     private lateinit var mClient: GoogleApiClient
@@ -39,6 +44,12 @@ class MainViewModel(
             sharedPrefsRepository.hasInstructionsDisplayed = value
         }
         get() = sharedPrefsRepository.hasInstructionsDisplayed
+
+    var firstLoginTime: Long
+        set(value) {
+            sharedPrefsRepository.firstLoginTime = value
+        }
+        get() = sharedPrefsRepository.firstLoginTime
 
     var lastLoginTime: Long
         set(value) {
@@ -72,11 +83,29 @@ class MainViewModel(
             if (resultCode == Activity.RESULT_OK) {
 
                 val user = FirebaseAuth.getInstance().currentUser
-                userFirstName.value = user?.displayName?.let {
-                    it.split(" ")[0]
+
+                //Store user data if user does not exist
+                user?.let {
+                    userFirstName.value = user.displayName?.let {
+                        it.split(" ")[0]
+                    }
+
+                    checkIfUserExists(user.uid, {
+                        firstLoginTime = it.firstLoginTime
+                        sharedPrefsRepository.isFirstRun = false
+                    }) {
+                        sharedPrefsRepository.isFirstRun = true
+                        return@checkIfUserExists User(
+                            uid = user.uid,
+                            isFirstRun = false,
+                            name = user.displayName!!,
+                            firstLoginTime = DateTime().millis,
+                            email = user.email!!)
+                    }
+
+                    performFitnessApiConfiguration(activity, user.email)
+                    Log.d("User: ", userFirstName.toString())
                 }
-                performFitnessApiConfiguration(activity, user?.email)
-                Log.d("User: ", userFirstName.toString())
 
                 lastLoginTime = Date().time
 
@@ -138,7 +167,6 @@ class MainViewModel(
                         increaseStepCountDataFetchedCounter()
                         increaseStepCountDataFetchedCounter()
                     }
-                    sharedPrefsRepository.isFirstRun = false
                     sharedPrefsRepository.lastLeafCount = 0
                 } else {
 
@@ -187,7 +215,7 @@ class MainViewModel(
         override fun onConnectionSuspended(p0: Int) {}
     }
 
-    private inline fun increaseStepCountDataFetchedCounter() {
+    private fun increaseStepCountDataFetchedCounter() {
         synchronized(stepCountDataFetchedCounter) {
             stepCountDataFetchedCounter.value = stepCountDataFetchedCounter.value?.plus(1)
             Log.d("Counter value", stepCountDataFetchedCounter.value.toString())
@@ -202,4 +230,23 @@ class MainViewModel(
         }
         return leafCount
     }
+
+    private inline fun checkIfUserExists(uid: String,
+                                  crossinline userExistsAction: (User) -> Unit,
+                                  crossinline userDoesNotExistAction: () -> User) {
+        firestoreRepository.getUserData(uid)
+            .addOnSuccessListener {
+                if (it.exists()) userExistsAction(it.toObject<User>()!!)
+                else {
+                    firestoreRepository.storeUser(userDoesNotExistAction())
+                    Log.e("USER", it.toString())
+                }
+            }
+            .addOnFailureListener {
+                Log.e("USER", it.toString())
+            }
+    }
+
+    private fun makeUserFromFirebaseUser(fUser: FirebaseUser)
+            = User(uid = fUser.uid, isFirstRun = false)
 }

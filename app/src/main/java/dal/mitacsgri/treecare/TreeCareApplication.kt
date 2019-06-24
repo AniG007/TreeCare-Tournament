@@ -5,6 +5,7 @@ import com.evernote.android.job.JobManager
 import com.facebook.stetho.Stetho
 import dal.mitacsgri.treecare.backgroundtasks.jobs.TreeUpdateJobCreator
 import dal.mitacsgri.treecare.di.appModule
+import dal.mitacsgri.treecare.di.firestoreRepositoryModule
 import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.di.stepCountRepositoryModule
 import org.koin.android.ext.koin.androidContext
@@ -19,7 +20,8 @@ class TreeCareApplication : Application() {
 
         startKoin {
             androidContext(this@TreeCareApplication)
-            modules(listOf(appModule, sharedPreferencesRepositoryModule, stepCountRepositoryModule))
+            modules(listOf(appModule, sharedPreferencesRepositoryModule, stepCountRepositoryModule,
+                firestoreRepositoryModule))
         }
     }
 }

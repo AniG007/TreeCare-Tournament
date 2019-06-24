@@ -32,6 +32,7 @@
     <string name="goal_achieved_streak">goal_achieved_streak</string>
     <string name="current_day">current_day</string>
     <string name="total_fruits_on_tree">total_fruits_on_tree</string>
+    <string name="first_login_time_ms">first_login_time_ms</string>
     <string name="last_login_time_ms">last_login_time_ms</string>
     <string name="last_logout_time_ms">last_logout_time_ms</string>
     <string name="last_leaf_count">last_leaf_count</string>

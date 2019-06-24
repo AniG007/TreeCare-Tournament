@@ -2,7 +2,10 @@ package dal.mitacsgri.treecare.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import com.google.gson.Gson
 import dal.mitacsgri.treecare.R
+import data.User
 
 class SharedPreferencesRepository(val context: Context) {
 
@@ -105,6 +108,15 @@ class SharedPreferencesRepository(val context: Context) {
     var currentDayOfWeek
         get() = getInt(R.string.current_day_of_week)
         set(value) { storeInt(R.string.current_day_of_week, value) }
+
+    var user: User
+        get() = Gson().fromJson(sharedPref.getString(context.getString(R.string.user), ""), User::class.java)
+        set(value) {
+            sharedPref.edit {
+                putString(context.getString(R.string.user), Gson().toJson(value))
+            }
+        }
+
 
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)

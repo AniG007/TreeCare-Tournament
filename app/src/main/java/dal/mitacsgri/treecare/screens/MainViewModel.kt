@@ -222,10 +222,16 @@ class MainViewModel(
                                   crossinline userDoesNotExistAction: () -> User) {
         firestoreRepository.getUserData(uid)
             .addOnSuccessListener {
-                if (it.exists()) userExistsAction(it.toObject<User>()!!)
+                if (it.exists()) {
+                    val user = it.toObject<User>() as User
+                    userExistsAction(user)
+                    sharedPrefsRepository.user = user
+                }
                 else {
-                    firestoreRepository.storeUser(userDoesNotExistAction())
+                    val user = userDoesNotExistAction()
+                    firestoreRepository.storeUser(user)
                     Log.e("USER", it.toString())
+                    sharedPrefsRepository.user = user
                 }
             }
             .addOnFailureListener {

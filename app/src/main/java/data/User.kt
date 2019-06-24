@@ -9,5 +9,6 @@ data class User (
     val isFirstRun: Boolean = false,
     val firstLoginTime: Long = 0,
     val name: String = "",
-    val email: String = ""
+    val email: String = "",
+    val dailyGoalMap: MutableMap<String, Int> = mutableMapOf()
 )

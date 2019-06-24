@@ -41,7 +41,7 @@ class SettingsActivity : AppCompatActivity() {
 
         changeBackgroundSolidAndStrokeColor(buttonSaveDailyGoal, "FFCFCFCF", "FF828282")
         buttonSaveDailyGoal.setOnClickListener {
-
+            settingsViewModel.storeUpdatedStepGoal(stepsCountText.text.toString().toInt())
         }
     }
 

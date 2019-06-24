@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
-import dal.mitacsgri.treecare.unity.UnityPlayerActivity
+import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.fragment_instructions.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -30,7 +30,7 @@ class InstructionsFragment : Fragment() {
             changeBackgroundSolidAndStrokeColor(scrollView, "ccffffff", "ff646464")
             changeBackgroundSolidAndStrokeColor(continueButton, "FF0189F1", "FF0000FF")
             continueButton.setOnClickListener {
-                activity?.startNextActivity(UnityPlayerActivity::class.java)
+                activity?.startNextActivity(TreeCareUnityActivity::class.java)
             }
         }
 

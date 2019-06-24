@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
-import dal.mitacsgri.treecare.unity.UnityPlayerActivity
+import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.fragment_mode_selection.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -51,7 +51,7 @@ class ModeSelectionFragment : Fragment() {
 
     private fun startInstructionOrUnityActivity() {
         if (mainViewModel.hasInstructionsDisplayed)
-            activity?.startNextActivity(UnityPlayerActivity::class.java)
+            activity?.startNextActivity(TreeCareUnityActivity::class.java)
         else
             findNavController().navigate(R.id.action_modeSelectionFragment_to_instructionsFragment)
     }

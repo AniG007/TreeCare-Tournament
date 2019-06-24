@@ -9,6 +9,7 @@ import dal.mitacsgri.treecare.unity.UnityPlayerActivity
  */
 class TreeCareUnityActivity : UnityPlayerActivity() {
 
+    //Called from Unity
     fun Launch() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }

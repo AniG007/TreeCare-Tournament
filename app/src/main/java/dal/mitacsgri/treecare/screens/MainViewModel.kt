@@ -93,8 +93,10 @@ class MainViewModel(
                     checkIfUserExists(user.uid, {
                         firstLoginTime = it.firstLoginTime
                         sharedPrefsRepository.isFirstRun = false
+                        performFitnessApiConfiguration(activity, user.email)
                     }) {
                         sharedPrefsRepository.isFirstRun = true
+                        performFitnessApiConfiguration(activity, user.email)
                         return@checkIfUserExists User(
                             uid = user.uid,
                             isFirstRun = false,
@@ -103,7 +105,6 @@ class MainViewModel(
                             email = user.email!!)
                     }
 
-                    performFitnessApiConfiguration(activity, user.email)
                     Log.d("User: ", userFirstName.toString())
                 }
 
@@ -169,40 +170,25 @@ class MainViewModel(
                     }
                     sharedPrefsRepository.lastLeafCount = 0
                 } else {
-
-                    //Get aggregate step count up to the last day
+                    //Get aggregate step count up to the last day + current day step count
                     getStepCountDataOverARange(mClient,
-                        sharedPrefsRepository.lastLoginTime,
+                        DateTime(sharedPrefsRepository.firstLoginTime).withTimeAtStartOfDay().millis,
                         DateTime().withTimeAtStartOfDay().millis) {
 
-                        var totalStepCount = 0
+                        var totalLeafCountTillLastDay = 0
                         it.forEach { (_, stepCount) ->
-                            totalStepCount += stepCount
+                            totalLeafCountTillLastDay +=
+                                calculateLeafCountFromStepCount(stepCount, 5000)
                         }
-
-                        sharedPrefsRepository.lastLeafCount =
-                            calculateLeafCountFromStepCount(totalStepCount, 5000)
-                    }
-
-                    //Get aggregate leaf count up to today
-                    getStepCountDataOverARange(mClient,
-                        sharedPrefsRepository.lastLoginTime,
-                        DateTime().withTimeAtStartOfDay().millis) {
-
-                        var totalStepCount = 0
-                        it.forEach { (_, stepCount) ->
-                            totalStepCount += stepCount
-                        }
-
-                        var leafCount = calculateLeafCountFromStepCount(totalStepCount, 5000)
-                        Log.d("Current leaf count", leafCount.toString())
+                        sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
                         increaseStepCountDataFetchedCounter()
 
+                        var currentLeafCount = totalLeafCountTillLastDay
+                        //Add today's leaf count to leafCountTillLastDay
                         //Call needs to be made here because it uses data from previous call
                         getTodayStepCountData(mClient) {
-                            leafCount = it / 1000
-
-                            sharedPrefsRepository.currentLeafCount = leafCount
+                            currentLeafCount += it / 1000
+                            sharedPrefsRepository.currentLeafCount = currentLeafCount
                             sharedPrefsRepository.storeDailyStepCount(it)
                             Log.d("DailyStepCount", it.toString())
                             increaseStepCountDataFetchedCounter()

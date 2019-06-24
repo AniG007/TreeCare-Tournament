@@ -73,7 +73,7 @@ class SplashScreenViewModel(
                         //Get aggregate step count up to the last day
                         getStepCountDataOverARange(
                             mClient,
-                            sharedPrefsRepository.lastLoginTime,
+                            DateTime(sharedPrefsRepository.firstLoginTime).withTimeAtStartOfDay().millis,
                             DateTime().withTimeAtStartOfDay().millis
                         ) {
 

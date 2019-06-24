@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.extensions.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashScreenFragment : Fragment() {
@@ -31,7 +30,6 @@ class SplashScreenFragment : Fragment() {
             stepCountDataFetchedCounter.observe(this@SplashScreenFragment, Observer {
                 //This value will be 2 only when login has been done
                 if (it == 2) {
-                    "Welcome".toast(view.context)
                     navigateWithDelay(R.id.action_splashScreenFragment_to_modeSelectionFragment)
                 }
             })
@@ -40,7 +38,7 @@ class SplashScreenFragment : Fragment() {
             else navigateWithDelay(R.id.action_splashScreenFragment_to_loginFragment)
         }
 
-        return view;
+        return view
     }
 
     private fun navigateWithDelay(actionResId: Int, delay: Long = 5000L) {

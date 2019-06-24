@@ -26,7 +26,6 @@ class LoginFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
         view.signInButton.setOnClickListener {
-            "Button clicked".toast(view.context)
             mainViewModel.startLoginAndConfiguration(activity!!)
         }
 
@@ -51,7 +50,6 @@ class LoginFragment : Fragment() {
 
             stepCountDataFetchedCounter.observe(this@LoginFragment, Observer {
                 if (it == 2) {
-                    "Data fetched".toast(context)
                     findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
                 }
             })

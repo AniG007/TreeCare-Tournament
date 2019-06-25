@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens
+package dal.mitacsgri.treecare.screens.gamesettings
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
-import data.User
+import dal.mitacsgri.treecare.data.User
 import org.joda.time.DateTime
 import org.joda.time.Days
 
@@ -48,7 +48,7 @@ class SettingsViewModel(
         firestoreRepository.storeUser(user)
     }
 
-    //This function will add missing daily step goal data if user does not opens app for many days
+    //This function will add missing daily step goal dal.mitacsgri.treecare.data if user does not opens app for many days
     private fun completeUserDailyGoalMap(user: User, updatedStepGoal: Int) {
         val dailyGoalMap = user.dailyGoalMap
 

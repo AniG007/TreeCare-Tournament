@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens
+package dal.mitacsgri.treecare.screens.gamesettings
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable

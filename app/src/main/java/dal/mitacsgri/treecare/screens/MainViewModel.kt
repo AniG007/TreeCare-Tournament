@@ -20,7 +20,7 @@ import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
-import data.User
+import dal.mitacsgri.treecare.data.User
 import org.joda.time.DateTime
 import java.util.*
 
@@ -84,7 +84,7 @@ class MainViewModel(
 
                 val user = FirebaseAuth.getInstance().currentUser
 
-                //Store user data if user does not exist
+                //Store user dal.mitacsgri.treecare.data if user does not exist
                 user?.let {
                     userFirstName.value = user.displayName?.let {
                         it.split(" ")[0]
@@ -186,7 +186,7 @@ class MainViewModel(
 
                         var currentLeafCount = totalLeafCountTillLastDay
                         //Add today's leaf count to leafCountTillLastDay
-                        //Call needs to be made here because it uses data from previous call
+                        //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
                         getTodayStepCountData(mClient) {
                             currentLeafCount += it / 1000
                             sharedPrefsRepository.currentLeafCount = currentLeafCount

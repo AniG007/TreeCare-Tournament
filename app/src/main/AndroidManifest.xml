@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screens.SettingsActivity">
+        <activity android:name=".screens.gamesettings.SettingsActivity">
         </activity>
         <activity
             android:name=".screens.MainActivity"

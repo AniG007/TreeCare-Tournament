@@ -9,9 +9,9 @@ export var modifyUser = functions.firestore
 		if (change.after.exists) {
 			// Get an object with the current document value.
 			// If the document does not exist, it has been deleted.
-			const document: string = change.after.data().uid;
+			const document: string = change.after.dal.mitacsgri.treecare.data().uid;
 			// Get an object with the previous document value (for update or delete)
-			//const oldDocument = change.before.data();
+			//const oldDocument = change.before.dal.mitacsgri.treecare.data();
 
 			//let dailyGoalMap: Map<string, number> = document["dailyGoalMap"] as Map<string, number>;
 			console.log(document);

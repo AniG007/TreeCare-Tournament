@@ -1,7 +1,7 @@
 package dal.mitacsgri.treecare.screens.treecareunityactivity
 
 import android.content.Intent
-import dal.mitacsgri.treecare.screens.SettingsActivity
+import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 
 /**

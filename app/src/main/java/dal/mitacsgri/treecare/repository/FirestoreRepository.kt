@@ -7,8 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import consts.COLLECTION_USERS
-import data.User
+import dal.mitacsgri.treecare.consts.COLLECTION_USERS
+import dal.mitacsgri.treecare.data.User
 
 /**
  * Created by Devansh on 22-06-2019

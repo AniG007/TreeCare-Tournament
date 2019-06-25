@@ -134,7 +134,7 @@ class SharedPreferencesRepository(val context: Context) {
         storeInt(R.string.daily_steps_goal, goal)
     }
 
-    fun getDailyStepsGoal() = getInt(R.string.daily_steps_goal)
+    fun getDailyStepsGoal() = getInt(R.string.daily_steps_goal, 5000)
 
     fun storeLeafCountBeforeToday(leafCount: Int) {
         storeInt(R.string.leaf_count_before_today, leafCount)
@@ -147,7 +147,7 @@ class SharedPreferencesRepository(val context: Context) {
         }
     }
 
-    private fun getInt(key: Int) = sharedPref.getInt(context.getString(key), 0)
+    private fun getInt(key: Int, defValue: Int = 0) = sharedPref.getInt(context.getString(key), defValue)
 
     private fun storeBoolean(key: Int, value: Boolean) {
         with(sharedPref.edit()) {

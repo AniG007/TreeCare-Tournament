@@ -39,6 +39,7 @@ class SettingsViewModel(
         user.dailyGoalMap[lastGoalChangeTime.toString()] = updatedStepGoal
         user.lastGoalChangeTime = lastGoalChangeTime
 
+        sharedPrefRepository.user = user
         sharedPrefRepository.storeDailyStepsGoal(updatedStepGoal)
         firestoreRepository.storeUser(user)
     }

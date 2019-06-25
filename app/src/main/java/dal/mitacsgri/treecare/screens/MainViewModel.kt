@@ -178,7 +178,8 @@ class MainViewModel(
                         var totalLeafCountTillLastDay = 0
                         it.forEach { (_, stepCount) ->
                             totalLeafCountTillLastDay +=
-                                calculateLeafCountFromStepCount(stepCount, 5000)
+                                calculateLeafCountFromStepCount(stepCount,
+                                    sharedPrefsRepository.getDailyStepsGoal())
                         }
                         sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
                         increaseStepCountDataFetchedCounter()

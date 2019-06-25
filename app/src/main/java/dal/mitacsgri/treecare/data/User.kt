@@ -15,5 +15,6 @@ data class User (
     val dailyGoalMap: MutableMap<String, Int> = mutableMapOf(
         DateTime(firstLoginTime).withTimeAtStartOfDay().millis.toString() to 5000
     ),
-    var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis
+    var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis,
+    val currentChallenges: List<String> = arrayListOf()
 )

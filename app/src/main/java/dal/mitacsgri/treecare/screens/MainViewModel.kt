@@ -176,10 +176,10 @@ class MainViewModel(
                         DateTime().withTimeAtStartOfDay().millis) {
 
                         var totalLeafCountTillLastDay = 0
-                        it.forEach { (_, stepCount) ->
+                        it.forEach { (date, stepCount) ->
+                            val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
                             totalLeafCountTillLastDay +=
-                                calculateLeafCountFromStepCount(stepCount,
-                                    sharedPrefsRepository.getDailyStepsGoal())
+                                calculateLeafCountFromStepCount(stepCount, goal!!)
                         }
                         sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
                         increaseStepCountDataFetchedCounter()

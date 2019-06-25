@@ -9,6 +9,7 @@ import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.joda.time.DateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -108,7 +109,8 @@ class StepCountRepository(private val context: Context) {
                         for (dataPoint in dataSet.dataPoints) {
                             Log.d("Datapoint", dataPoint.toString())
                             val stepCount = dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
-                            stepCountMap[dataPoint.getStartTime(TimeUnit.MILLISECONDS)] = stepCount
+                            val dpStartTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS)
+                            stepCountMap[DateTime(dpStartTime).withTimeAtStartOfDay().millis]= stepCount
                         }
                     }
                 }

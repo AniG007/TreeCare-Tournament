@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModel
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import data.User
 import org.joda.time.DateTime
+import org.joda.time.Days
 
 /**
  * Created by Devansh on 24-06-2019
@@ -39,8 +41,34 @@ class SettingsViewModel(
         user.dailyGoalMap[lastGoalChangeTime.toString()] = updatedStepGoal
         user.lastGoalChangeTime = lastGoalChangeTime
 
+        completeUserDailyGoalMap(user, updatedStepGoal)
+
         sharedPrefRepository.user = user
         sharedPrefRepository.storeDailyStepsGoal(updatedStepGoal)
         firestoreRepository.storeUser(user)
+    }
+
+    private fun completeUserDailyGoalMap(user: User, updatedStepGoal: Int) {
+        val dailyGoalMap = user.dailyGoalMap
+
+        var keysList = mutableListOf<Long>()
+        dailyGoalMap.keys.forEach {
+            keysList.add(it.toLong())
+        }
+        keysList = keysList.sorted().toMutableList()
+
+        //This needs to be done only for the last element, because the map is done every time,
+        //So every time only last element needs to be checked
+        val lastTime = keysList[keysList.size-1]
+        val days = Days.daysBetween(DateTime(lastTime), DateTime(user.lastGoalChangeTime)).days
+
+        val oldGoal = dailyGoalMap[lastTime.toString()]
+
+        for (i in 1..days) {
+            val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+            dailyGoalMap[key] = oldGoal!!
+        }
+
+        dailyGoalMap[(days + 1).toString()] = updatedStepGoal
     }
 }

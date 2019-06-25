@@ -86,7 +86,7 @@ class StepCountRepository(private val context: Context) {
 
         //This statement prevents running the following code when the app is being used for the first day
         //Otherwise the app will crash
-        if (endTime < startTime) {
+        if (endTime <= startTime) {
             onDataObtained(mutableMapOf())
             return
         }

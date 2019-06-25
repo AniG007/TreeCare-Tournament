@@ -33,9 +33,13 @@ class SettingsViewModel(
 
     fun storeUpdatedStepGoal(updatedStepGoal: Int) {
         val user = sharedPrefRepository.user
+        //Actually, this will be the date from which the new goal will be applicable
+        val lastGoalChangeTime = DateTime().plusDays(1).withTimeAtStartOfDay().millis
         //Set the goal as updated daily goal for the next day
-        user.dailyGoalMap[DateTime().plusDays(1).withTimeAtStartOfDay().millis.toString()] = updatedStepGoal
+        user.dailyGoalMap[lastGoalChangeTime.toString()] = updatedStepGoal
+        user.lastGoalChangeTime = lastGoalChangeTime
 
+        sharedPrefRepository.storeDailyStepsGoal(updatedStepGoal)
         firestoreRepository.storeUser(user)
     }
 }

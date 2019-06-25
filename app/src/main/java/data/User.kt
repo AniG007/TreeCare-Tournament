@@ -1,5 +1,7 @@
 package data
 
+import org.joda.time.DateTime
+
 /**
  * Created by Devansh on 22-06-2019
  */
@@ -10,5 +12,8 @@ data class User (
     val firstLoginTime: Long = 0,
     val name: String = "",
     val email: String = "",
-    val dailyGoalMap: MutableMap<String, Int> = mutableMapOf()
+    val dailyGoalMap: MutableMap<String, Int> = mutableMapOf(
+        DateTime(firstLoginTime).withTimeAtStartOfDay().millis.toString() to 5000
+    ),
+    var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis
 )

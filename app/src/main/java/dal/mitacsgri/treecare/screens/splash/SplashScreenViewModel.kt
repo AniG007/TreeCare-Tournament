@@ -42,8 +42,7 @@ class SplashScreenViewModel(
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
             sharedPrefsRepository.isDailyGoalChecked = 0
 
-            //Resetting of flag by 2 hours, as Google Fit takes some time to update step count
-            val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis + 1_000*60*60
+            val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis
 
             Log.v("Current time: ", Date().time.toString())
             Log.v("Time to store: ", timeToStore.toString())

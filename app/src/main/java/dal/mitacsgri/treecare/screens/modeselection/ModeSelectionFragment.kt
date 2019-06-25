@@ -10,6 +10,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
@@ -38,9 +39,12 @@ class ModeSelectionFragment : Fragment() {
             }
 
             challengerModeButton.setOnClickListener {
-//                startInstructionOrUnityActivity(CHALLENGER_MODE,
-//                    mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
-                findNavController().navigate(R.id.action_modeSelectionFragment_to_currentChallengesFragment)
+                if (mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
+                    findNavController().navigate(R.id.action_modeSelectionFragment_to_currentChallengesFragment)
+                else {
+                    mainViewModel.setInstructionsDisplayed(CHALLENGER_MODE, true)
+                    findNavController().navigate(R.id.action_modeSelectionFragment_to_instructionsFragment)
+                }
             }
 
 //            tournamentModeButton.setOnClickListener {

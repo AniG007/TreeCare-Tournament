@@ -46,14 +46,30 @@ class SharedPreferencesRepository(val context: Context) {
             }
         }
 
-    var hasInstructionsDisplayed: Boolean
-        get() = sharedPref.getBoolean(context.getString(R.string.has_instructions_displayed), false)
+    var starterModeInstructionsDisplayed: Boolean
+        get() = sharedPref.getBoolean(context.getString(R.string.starter_mode_instructions_displayed), false)
         set(value) {
-            with(sharedPref.edit()) {
-                putBoolean(context.getString(R.string.has_instructions_displayed), value)
-                apply()
+            sharedPref.edit {
+                putBoolean(context.getString(R.string.starter_mode_instructions_displayed), value)
             }
         }
+
+    var challengerModeInstructionsDisplayed: Boolean
+        get() = sharedPref.getBoolean(context.getString(R.string.challenger_mode_instructions_displayed), false)
+        set(value) {
+            sharedPref.edit {
+                putBoolean(context.getString(R.string.challenger_mode_instructions_displayed), value)
+            }
+        }
+
+    var tournamentModeInstructionsDisplayed: Boolean
+        get() = sharedPref.getBoolean(context.getString(R.string.tournament_mode_instructions_displayed), false)
+        set(value) {
+            sharedPref.edit {
+                putBoolean(context.getString(R.string.tournament_mode_instructions_displayed), value)
+            }
+        }
+
 
     var firstLoginTime: Long
         get() = sharedPref.getLong(context.getString(R.string.first_login_time_ms), 0)

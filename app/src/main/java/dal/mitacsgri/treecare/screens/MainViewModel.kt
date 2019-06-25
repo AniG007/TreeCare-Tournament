@@ -16,11 +16,14 @@ import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.toObject
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.consts.STARTER_MODE
+import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
+import dal.mitacsgri.treecare.data.User
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
-import dal.mitacsgri.treecare.data.User
 import org.joda.time.DateTime
 import java.util.*
 
@@ -39,12 +42,6 @@ class MainViewModel(
     val stepCountDataFetchedCounter = MutableLiveData<Int>().default(0)
     val userFirstName =  MutableLiveData<String>()
 
-    var hasInstructionsDisplayed
-        set(value) {
-            sharedPrefsRepository.hasInstructionsDisplayed = value
-        }
-        get() = sharedPrefsRepository.hasInstructionsDisplayed
-
     var firstLoginTime: Long
         set(value) {
             sharedPrefsRepository.firstLoginTime = value
@@ -62,6 +59,22 @@ class MainViewModel(
         sharedPrefsRepository.lastLogoutTime = value
         }
         get() = sharedPrefsRepository.lastLogoutTime
+
+    fun hasInstructionsDisplayed(mode: Int) =
+            when(mode) {
+                STARTER_MODE -> sharedPrefsRepository.starterModeInstructionsDisplayed
+                CHALLENGER_MODE -> sharedPrefsRepository.challengerModeInstructionsDisplayed
+                TOURNAMENT_MODE -> sharedPrefsRepository.tournamentModeInstructionsDisplayed
+                else -> true
+            }
+
+    fun setInstructionsDisplayed(mode: Int, value: Boolean) {
+        when(mode) {
+            STARTER_MODE -> sharedPrefsRepository.starterModeInstructionsDisplayed = value
+            CHALLENGER_MODE -> sharedPrefsRepository.challengerModeInstructionsDisplayed = value
+            TOURNAMENT_MODE -> sharedPrefsRepository.tournamentModeInstructionsDisplayed = value
+        }
+    }
 
     fun startLoginAndConfiguration(activity: Activity) {
         // Choose authentication providers

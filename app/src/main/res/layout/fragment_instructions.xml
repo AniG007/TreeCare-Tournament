@@ -55,6 +55,7 @@
         app:layout_constraintBottom_toTopOf="@+id/continueButton">
 
         <TextView
+            android:id="@+id/instructionsTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/starter_mode_instructions"

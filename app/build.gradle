@@ -7,6 +7,9 @@ apply plugin: 'kotlin-android-extensions'
 // Google Play services Gradle plugin
 apply plugin: 'com.google.gms.google-services'
 
+//SafeArgs
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
 android {
     compileSdkVersion 28
     defaultConfig {

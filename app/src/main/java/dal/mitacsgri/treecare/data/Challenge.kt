@@ -1,6 +1,6 @@
 package dal.mitacsgri.treecare.data
 
-import java.util.*
+import com.google.firebase.Timestamp
 
 /**
  * Created by Devansh on 25-06-2019
@@ -9,7 +9,9 @@ import java.util.*
 data class Challenge(
     val name: String = "",
     val description: String = "",
-    val creationTimestamp: Date = Date(),
-    val finishTimestamp: Date = Date(),
-    val players: List<String> = arrayListOf()
+    val creationTimestamp: Timestamp = Timestamp.now(),
+    val finishTimestamp: Timestamp = Timestamp.now(),
+    val players: List<String> = arrayListOf(),
+    val isExist: Boolean = true,
+    val isActive: Boolean = true
 )

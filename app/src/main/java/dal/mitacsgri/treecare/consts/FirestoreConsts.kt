@@ -5,3 +5,4 @@ package dal.mitacsgri.treecare.consts
  */
 
 const val COLLECTION_USERS = "users"
+const val COLLECTION_CHALLENGES = "challenges"

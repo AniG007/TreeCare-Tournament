@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
 import dal.mitacsgri.treecare.data.User
 
@@ -32,4 +33,6 @@ class FirestoreRepository {
                 Log.d("USER store failed", it.toString())
             }
     }
+
+    fun getChallenge(id: String) = db.collection(COLLECTION_CHALLENGES).document(id).get()
 }

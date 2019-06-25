@@ -10,6 +10,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
@@ -32,8 +33,19 @@ class ModeSelectionFragment : Fragment() {
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
 
             starterModeButton.setOnClickListener {
-                startInstructionOrUnityActivity()
+                startInstructionOrUnityActivity(STARTER_MODE,
+                    mainViewModel.hasInstructionsDisplayed(STARTER_MODE))
             }
+
+            challengerModeButton.setOnClickListener {
+//                startInstructionOrUnityActivity(CHALLENGER_MODE,
+//                    mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
+                findNavController().navigate(R.id.action_modeSelectionFragment_to_currentChallengesFragment)
+            }
+
+//            tournamentModeButton.setOnClickListener {
+//                startInstructionOrUnityActivity(TOURNAMENT_MODE)
+//            }
         }
 
         return view
@@ -49,11 +61,14 @@ class ModeSelectionFragment : Fragment() {
             Color.parseColor("#$strokeColor"))
     }
 
-    private fun startInstructionOrUnityActivity() {
-        if (mainViewModel.hasInstructionsDisplayed)
+    private fun startInstructionOrUnityActivity(mode: Int, hasInstructionsDisplayed: Boolean) {
+        if (hasInstructionsDisplayed)
             activity?.startNextActivity(TreeCareUnityActivity::class.java)
-        else
-            findNavController().navigate(R.id.action_modeSelectionFragment_to_instructionsFragment)
+        else {
+            val action = ModeSelectionFragmentDirections
+                .actionModeSelectionFragmentToInstructionsFragment(mode)
+            findNavController().navigate(action)
+        }
     }
 
 }

@@ -23,7 +23,6 @@ class SplashScreenFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_splash_screen, container, false)
 
         splashScreenViewModel.apply {
-            storeDailyStepsGoal(5000)
             //testGameByManipulatingSharedPrefsData(this)
             resetDailyGoalCheckedFlag()
 

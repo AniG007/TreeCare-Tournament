@@ -48,6 +48,7 @@ class SettingsViewModel(
         firestoreRepository.storeUser(user)
     }
 
+    //This function will add missing daily step goal data if user does not opens app for many days
     private fun completeUserDailyGoalMap(user: User, updatedStepGoal: Int) {
         val dailyGoalMap = user.dailyGoalMap
 
@@ -69,6 +70,6 @@ class SettingsViewModel(
             dailyGoalMap[key] = oldGoal!!
         }
 
-        dailyGoalMap[(days + 1).toString()] = updatedStepGoal
+        dailyGoalMap[user.lastGoalChangeTime.toString()] = updatedStepGoal
     }
 }

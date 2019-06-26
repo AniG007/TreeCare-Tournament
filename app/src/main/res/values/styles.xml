@@ -24,4 +24,8 @@
         <item name="android:background">@drawable/mode_selection_button_background</item>
     </style>
 
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/_20sdp</item>
+    </style>
+
 </resources>

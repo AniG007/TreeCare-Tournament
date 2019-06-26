@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens.currentchallenges
+package dal.mitacsgri.treecare.screens.challenges.currentchallenges
 
 import android.os.Bundle
 import android.view.LayoutInflater

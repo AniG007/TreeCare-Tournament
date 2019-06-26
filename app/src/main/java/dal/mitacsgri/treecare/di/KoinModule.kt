@@ -4,7 +4,8 @@ import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainViewModel
-import dal.mitacsgri.treecare.screens.currentchallenges.CurrentChallengesViewModel
+import dal.mitacsgri.treecare.screens.challenges.activechallenges.ActiveChallengesViewModel
+import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChallengesViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.splash.SplashScreenViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -31,4 +32,5 @@ val appModule = module {
     viewModel { SplashScreenViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
     viewModel { CurrentChallengesViewModel(get(), get()) }
+    viewModel { ActiveChallengesViewModel(get(), get()) }
 }

@@ -35,4 +35,6 @@ class FirestoreRepository {
     }
 
     fun getChallenge(id: String) = db.collection(COLLECTION_CHALLENGES).document(id).get()
+
+    fun getAllActiveChallenges() = db.collection(COLLECTION_CHALLENGES).get()
 }

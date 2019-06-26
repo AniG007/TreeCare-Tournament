@@ -40,10 +40,12 @@ class ModeSelectionFragment : Fragment() {
 
             challengerModeButton.setOnClickListener {
                 if (mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
-                    findNavController().navigate(R.id.action_modeSelectionFragment_to_currentChallengesFragment)
+                    findNavController().navigate(R.id.action_modeSelectionFragment_to_challengesFragment)
                 else {
                     mainViewModel.setInstructionsDisplayed(CHALLENGER_MODE, true)
-                    findNavController().navigate(R.id.action_modeSelectionFragment_to_instructionsFragment)
+                    val action = ModeSelectionFragmentDirections
+                        .actionModeSelectionFragmentToInstructionsFragment(CHALLENGER_MODE)
+                    findNavController().navigate(action)
                 }
             }
 

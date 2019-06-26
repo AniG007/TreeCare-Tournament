@@ -43,8 +43,8 @@
             android:id="@+id/action_modeSelectionFragment_to_unityPlayerActivity"
             app:destination="@id/unityPlayerActivity"/>
         <action
-            android:id="@+id/action_modeSelectionFragment_to_currentChallengesFragment"
-            app:destination="@id/currentChallengesFragment"/>
+            android:id="@+id/action_modeSelectionFragment_to_challengesFragment"
+            app:destination="@id/challengesFragment"/>
     </fragment>
     <fragment
         android:id="@+id/instructionsFragment"
@@ -57,8 +57,8 @@
             app:popUpToInclusive="true"
             app:launchSingleTop="true"/>
         <action
-            android:id="@+id/action_instructionsFragment_to_currentChallengesFragment"
-            app:destination="@id/currentChallengesFragment"
+            android:id="@+id/action_instructionsFragment_to_challengesFragment"
+            app:destination="@id/challengesFragment"
             app:popUpTo="@id/instructionsFragment"
             app:popUpToInclusive="true"
             app:launchSingleTop="true"/>
@@ -67,8 +67,8 @@
     </fragment>
     <fragment android:id="@+id/unityPlayerActivity"/>
     <fragment
-        android:id="@+id/currentChallengesFragment"
-        android:name="dal.mitacsgri.treecare.screens.currentchallenges.CurrentChallengesFragment"
-        android:label="fragment_current_challenges"
-        tools:layout="@layout/fragment_current_challenges"/>
+        android:id="@+id/challengesFragment"
+        android:name="dal.mitacsgri.treecare.screens.challenges.ChallengesFragment"
+        android:label="fragment_challenges"
+        tools:layout="@layout/fragment_challenges"/>
 </navigation>

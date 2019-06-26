@@ -43,7 +43,7 @@ class InstructionsFragment : Fragment() {
                     }
                     CHALLENGER_MODE -> {
                         instructionsTV.text = context.getString(R.string.starter_mode_instructions)
-                        findNavController().navigate(R.id.action_instructionsFragment_to_currentChallengesFragment)
+                        findNavController().navigate(R.id.action_instructionsFragment_to_challengesFragment)
                     }
                 }
             }

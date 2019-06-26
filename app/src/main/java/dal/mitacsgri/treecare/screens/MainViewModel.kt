@@ -14,7 +14,6 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
@@ -25,6 +24,7 @@ import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
+import org.joda.time.Days
 import java.util.*
 
 class MainViewModel(
@@ -107,6 +107,7 @@ class MainViewModel(
                         firstLoginTime = it.firstLoginTime
                         sharedPrefsRepository.isFirstRun = false
                         performFitnessApiConfiguration(activity, user.email)
+                        expandDailyGoalMapIfNeeded(it)
                     }) {
                         sharedPrefsRepository.isFirstRun = true
                         performFitnessApiConfiguration(activity, user.email)
@@ -253,6 +254,24 @@ class MainViewModel(
             }
     }
 
-    private fun makeUserFromFirebaseUser(fUser: FirebaseUser)
-            = User(uid = fUser.uid, isFirstRun = false)
+    private fun expandDailyGoalMapIfNeeded(user: User) {
+        val dailyGoalMap = user.dailyGoalMap
+        var keysList = mutableListOf<Long>()
+        dailyGoalMap.keys.forEach {
+            keysList.add(it.toLong())
+        }
+        keysList = keysList.sorted().toMutableList()
+
+        val lastTime = keysList[keysList.size-1]
+        val days = Days.daysBetween(DateTime(lastTime), DateTime(user.lastGoalChangeTime)).days
+
+        val oldGoal = dailyGoalMap[lastTime.toString()]
+
+        for (i in 1..days) {
+            val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+            user.dailyGoalMap[key] = oldGoal!!
+        }
+
+        sharedPrefsRepository.user = user
+    }
 }

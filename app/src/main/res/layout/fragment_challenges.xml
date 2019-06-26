@@ -24,7 +24,8 @@
             app:titleTextAppearance="@style/Toolbar.TitleText"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_scrollFlags="scroll|enterAlways"
-            android:backgroundTint="@color/challenger_mode_primary_color"/>
+            android:backgroundTint="@color/challenger_mode_primary_color"
+            app:navigationIcon="?homeAsUpIndicator"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"

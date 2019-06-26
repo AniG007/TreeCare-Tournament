@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -52,7 +53,7 @@ class InstructionsFragment : Fragment() {
         return view
     }
 
-    private fun changeButtonColorAccordingToMode(button: View, mode: Int) {
+    private fun changeButtonColorAccordingToMode(button: Button, mode: Int) {
         when(mode) {
             STARTER_MODE -> {
                 changeBackgroundSolidAndStrokeColor(button,

@@ -241,6 +241,7 @@ class MainViewModel(
                     val user = it.toObject<User>() as User
                     userExistsAction(user)
                     sharedPrefsRepository.user = user
+                    storeDailyGoalInPrefs()
                 }
                 else {
                     val user = userDoesNotExistAction()
@@ -248,6 +249,7 @@ class MainViewModel(
                     Log.e("USER", it.toString())
                     sharedPrefsRepository.user = user
                 }
+                storeDailyGoalInPrefs()
             }
             .addOnFailureListener {
                 Log.e("USER", it.toString())
@@ -273,5 +275,15 @@ class MainViewModel(
         }
 
         sharedPrefsRepository.user = user
+    }
+
+    //Update the daily goal stored in SharedPrefs to display in Unity
+    //DailyGoalChecked is set to true only by Unity
+    private inline fun storeDailyGoalInPrefs() {
+        val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
+        if (sharedPrefsRepository.isDailyGoalChecked == 0) {
+            sharedPrefsRepository.storeDailyStepsGoal(
+                dailyGoalMap[DateTime().withTimeAtStartOfDay().millis.toString()] ?: 5000)
+        }
     }
 }

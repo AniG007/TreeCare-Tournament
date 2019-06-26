@@ -79,6 +79,14 @@ class SplashScreenViewModel(
                             calculateFruitsOnTree(it)
                             increaseStepCountDataFetchedCounter()
 
+                            val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
+
+                            //Updated the daily goal stored in SharedPrefs to display in Unity
+                            if (sharedPrefsRepository.isDailyGoalChecked == 0) {
+                                sharedPrefsRepository.storeDailyStepsGoal(
+                                    dailyGoalMap[DateTime().withTimeAtStartOfDay().millis.toString()] ?: 5000)
+                            }
+
                             var totalLeafCountTillLastDay = 0
                             it.forEach { (date, stepCount) ->
                                 val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]

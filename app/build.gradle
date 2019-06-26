@@ -63,14 +63,6 @@ dependencies {
     //Stetho, used here to test app via SharedPreferences
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    //Evernote Android Job using WorkManager
-    implementation 'com.evernote:android-job:1.3.0-rc1'
-
-    //WorkManager Kotlin
-    implementation "androidx.work:work-runtime-ktx:2.0.1"
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.0.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.0.0'
-
     //Navigation components - Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"

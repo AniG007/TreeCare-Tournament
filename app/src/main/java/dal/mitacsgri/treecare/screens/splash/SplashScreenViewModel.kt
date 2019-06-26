@@ -92,6 +92,7 @@ class SplashScreenViewModel(
                                 val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
                                 totalLeafCountTillLastDay +=
                                     calculateLeafCountFromStepCount(stepCount, goal!!)
+                                Log.d("Date: $date", "StepCount: $stepCount")
                             }
 
                             Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())

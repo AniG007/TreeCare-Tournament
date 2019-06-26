@@ -282,6 +282,8 @@ class MainViewModel(
     private inline fun storeDailyGoalInPrefs() {
         val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
         if (sharedPrefsRepository.isDailyGoalChecked == 0) {
+            //In reality, the queried entry will never be null as the User has atleast 2 entries by default,
+            //i.e., the current day and the next day
             sharedPrefsRepository.storeDailyStepsGoal(
                 dailyGoalMap[DateTime().withTimeAtStartOfDay().millis.toString()] ?: 5000)
         }

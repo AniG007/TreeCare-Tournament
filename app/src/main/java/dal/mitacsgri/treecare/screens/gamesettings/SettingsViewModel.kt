@@ -3,10 +3,10 @@ package dal.mitacsgri.treecare.screens.gamesettings
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dal.mitacsgri.treecare.data.User
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
-import dal.mitacsgri.treecare.data.User
 import org.joda.time.DateTime
 import org.joda.time.Days
 
@@ -65,6 +65,7 @@ class SettingsViewModel(
 
         val oldGoal = dailyGoalMap[lastTime.toString()]
 
+        //The days for which no change in daily goal was made by the user are filled by the last daily goal
         for (i in 1..days) {
             val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
             dailyGoalMap[key] = oldGoal!!

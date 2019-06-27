@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
 import org.joda.time.DateTime
@@ -33,7 +34,7 @@ class CreateChallengeFragment : Fragment() {
                     val (day, month, year) = viewModel.getCurrentDateDestructured()
                     val datePickerDialog = DatePickerDialog(context,
                         DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-                            setText("$dayOfMonth / ${monthOfYear+1} / $year")
+                            setText(viewModel.getDateText(year, monthOfYear, dayOfMonth))
                         }, year, month, day)
                     datePickerDialog.datePicker.minDate = DateTime().plusDays(1).millis
                     datePickerDialog.show()
@@ -42,6 +43,10 @@ class CreateChallengeFragment : Fragment() {
 
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 challengeGoalLayout.hint = viewModel.getGoalInputHint(checkedId)
+            }
+
+            toolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
             }
         }
 

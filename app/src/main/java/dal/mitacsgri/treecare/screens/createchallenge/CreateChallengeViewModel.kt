@@ -26,4 +26,6 @@ class CreateChallengeViewModel(
                 R.id.optionAggregateBased -> "Total steps"
                 else -> ""
     }
+
+    fun getDateText(year: Int, monthOfYear: Int, dayOfMonth: Int) = "$dayOfMonth / ${monthOfYear+1} / $year"
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_active_challenges.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -20,7 +21,8 @@ class ActiveChallengesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_active_challenges, container, false)
+        val view = inflater.createFragmentViewWithStyle(
+            activity, R.layout.fragment_active_challenges, R.style.challenger_mode_theme)
 
         view.recyclerView.apply {
             setHasFixedSize(true)

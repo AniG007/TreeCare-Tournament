@@ -47,6 +47,7 @@
             android:layout_height="wrap_content"
             tools:text="timings"
             android:drawableStart="@drawable/ic_time"
+            android:layout_marginBottom="@dimen/_10sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/descriptionTV"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,24 +64,25 @@
             app:layout_constraintTop_toBottomOf="@id/descriptionTV"
             style="@style/ItemActiveChallengeTextWithDrawableStyle"/>
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonJoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/join"
+            android:layout_marginTop="@dimen/_10sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV"
-            style="@style/ItemActiveChallengeButtonStyle"/>
+            app:layout_constraintTop_toBottomOf="@+id/durationTV"/>
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonLeaderBoard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/leaderboard"
-            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintTop_toBottomOf="@+id/durationTV"
             app:layout_constraintStart_toEndOf="@+id/buttonJoin"
-            style="@style/ItemActiveChallengeButtonStyle"/>
+            style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

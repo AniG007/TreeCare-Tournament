@@ -4,6 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Timestamp
@@ -32,3 +35,8 @@ fun DateTime.getStringRepresentation(): String = toString("MMM d, H:m")
 fun <T> MutableLiveData<T>.notifyObserver() {
     this.value = this.value
 }
+
+fun LayoutInflater.createFragmentViewWithStyle(
+    activity: Activity?, layout: Int, style: Int,
+    root: ViewGroup? = null, attachToRoot: Boolean = false) =
+        cloneInContext(ContextThemeWrapper(activity, style)).inflate(layout, root, attachToRoot)

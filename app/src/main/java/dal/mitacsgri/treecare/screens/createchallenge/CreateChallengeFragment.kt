@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
 import org.joda.time.DateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,8 +25,8 @@ class CreateChallengeFragment : Fragment() {
 
         val viewModel: CreateChallengeViewModel by viewModel()
 
-        val view = createLocalInflater(inflater)
-            .inflate(R.layout.fragment_create_challenge, null, false)
+        val view = inflater.createFragmentViewWithStyle(
+            activity, R.layout.fragment_create_challenge, R.style.challenger_mode_theme)
 
         view.apply {
             inputChallengeEndDate.apply {

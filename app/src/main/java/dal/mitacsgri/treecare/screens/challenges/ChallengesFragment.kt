@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_challenges.view.*
 
 class ChallengesFragment : Fragment() {
@@ -17,7 +18,8 @@ class ChallengesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_challenges, container, false)
+        val view = inflater.createFragmentViewWithStyle(
+            activity, R.layout.fragment_challenges, R.style.challenger_mode_theme)
 
         view.apply {
             //Use fragment's fragment manager instead of the activity's fragment manager

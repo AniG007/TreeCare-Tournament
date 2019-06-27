@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/challenger_mode_primary_color"
+            app:tabSelectedTextColor="@color/white"
             app:tabIndicatorColor="@color/challenger_mode_accent_color"
             app:tabIndicatorHeight="@dimen/_3sdp"/>
 

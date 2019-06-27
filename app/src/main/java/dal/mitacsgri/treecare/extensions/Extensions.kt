@@ -26,7 +26,7 @@ fun DateTime.toTimestamp() = Timestamp(millis/1000, 0)
 
 fun Timestamp.toDateTime() = DateTime(seconds*1000)
 
-fun DateTime.getStringRepresentation() = toString("EEE MMM d, H:m")
+fun DateTime.getStringRepresentation(): String = toString("MMM d, H:m")
 
 //Notify because if LiveData has a list, adding elements to list won't notify the observer
 fun <T> MutableLiveData<T>.notifyObserver() {

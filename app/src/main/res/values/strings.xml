@@ -65,5 +65,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="your_challenges">Your challenges</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="join">Join</string>
 
 </resources>

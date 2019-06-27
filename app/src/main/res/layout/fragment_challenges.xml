@@ -21,7 +21,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:title="Challenges"
-            app:titleTextAppearance="@style/Toolbar.TitleText"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_scrollFlags="scroll|enterAlways"
             android:backgroundTint="@color/challenger_mode_primary_color"
@@ -50,5 +49,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/_16sdp"
         android:backgroundTint="@color/challenger_mode_primary_color"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:src="@drawable/ic_add"
+        android:tint="@color/white"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

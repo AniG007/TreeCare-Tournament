@@ -13,5 +13,7 @@ data class Challenge(
     val finishTimestamp: Timestamp = Timestamp.now(),
     val players: List<String> = arrayListOf(),
     val isExist: Boolean = true,
-    val isActive: Boolean = true
+    val isActive: Boolean = true,
+    val creatorName: String = "",
+    val creatorUId: String = ""
 )

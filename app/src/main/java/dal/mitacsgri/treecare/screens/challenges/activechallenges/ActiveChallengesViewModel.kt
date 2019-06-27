@@ -1,6 +1,9 @@
 package dal.mitacsgri.treecare.screens.challenges.activechallenges
 
+import android.text.SpannedString
 import android.util.Log
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObjects
@@ -33,11 +36,18 @@ class ActiveChallengesViewModel(
             }
     }
 
-    fun getChallengeDurationText(challenge: Challenge): String {
-        val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
+    fun getChallengeDurationText(challenge: Challenge): SpannedString {
+        //val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
         val finishDateString =challenge.finishTimestamp.toDateTime().getStringRepresentation()
 
-        return "$createdDateString - $finishDateString"
+        return buildSpannedString {
+            bold {
+                append("Ends: ")
+            }
+            append(finishDateString)
+        }
     }
+
+    fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
 
 }

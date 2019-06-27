@@ -40,6 +40,10 @@ class ChallengesFragment : Fragment() {
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
+
+            fabCreateChallenge.setOnClickListener {
+                findNavController().navigate(R.id.action_challengesFragment_to_createChallengeFragment)
+            }
         }
 
         return view

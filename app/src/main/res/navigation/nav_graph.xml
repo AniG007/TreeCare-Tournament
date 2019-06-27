@@ -70,5 +70,14 @@
         android:id="@+id/challengesFragment"
         android:name="dal.mitacsgri.treecare.screens.challenges.ChallengesFragment"
         android:label="fragment_challenges"
-        tools:layout="@layout/fragment_challenges"/>
+        tools:layout="@layout/fragment_challenges">
+        <action
+            android:id="@+id/action_challengesFragment_to_createChallengeFragment"
+            app:destination="@id/createChallengeFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/createChallengeFragment"
+        android:name="dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeFragment"
+        android:label="fragment_create_challenge"
+        tools:layout="@layout/fragment_create_challenge"/>
 </navigation>

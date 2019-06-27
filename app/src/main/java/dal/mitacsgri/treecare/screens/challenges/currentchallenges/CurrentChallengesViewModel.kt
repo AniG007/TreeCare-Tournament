@@ -35,7 +35,7 @@ class CurrentChallengesViewModel(
                 }
             }
             .addOnFailureListener {
-                Log.d("Challenge not found", it.toString())
+                    Log.d("Challenge not found", it.toString())
             }
         }
     }

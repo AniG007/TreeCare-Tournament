@@ -4,7 +4,6 @@ package dal.mitacsgri.treecare.screens.createchallenge
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.InputType
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.extensions.validate
 import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
 import org.joda.time.DateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -49,12 +49,21 @@ class CreateChallengeFragment : Fragment() {
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
+
+            createChallengeButton.setOnClickListener {
+                challengeNameLayout.error = "Please enter a challenge name"
+            }
+
+            inputChallengeName.validate("Please enter name") {
+                it.isEmpty()
+            }
+
+
+
         }
 
         return view
     }
 
 
-    private fun createLocalInflater(inflater: LayoutInflater)
-            = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.challenger_mode_theme))
 }

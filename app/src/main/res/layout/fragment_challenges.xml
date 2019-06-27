@@ -32,8 +32,8 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/challenger_mode_primary_color"
             app:tabSelectedTextColor="@color/white"
-            app:tabIndicatorColor="@color/challenger_mode_accent_color"
-            app:tabIndicatorHeight="@dimen/_3sdp"/>
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="@dimen/_2sdp"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

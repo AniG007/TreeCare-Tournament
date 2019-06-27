@@ -4,11 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Timestamp
 import org.joda.time.DateTime
 
@@ -40,3 +44,16 @@ fun LayoutInflater.createFragmentViewWithStyle(
     activity: Activity?, layout: Int, style: Int,
     root: ViewGroup? = null, attachToRoot: Boolean = false) =
         cloneInContext(ContextThemeWrapper(activity, style)).inflate(layout, root, attachToRoot)
+
+fun TextInputEditText.validate(message: String, action: (String) -> Boolean) {
+    addTextChangedListener(object: TextWatcher {
+        val parentLayout = parent.parent as TextInputLayout
+        override fun afterTextChanged(s: Editable?) {
+            parentLayout.error = if (action(text.toString())) message else null
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+    })
+}

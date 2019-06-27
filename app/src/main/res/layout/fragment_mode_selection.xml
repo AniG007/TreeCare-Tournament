@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/heading"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/starter"
@@ -39,7 +39,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintTop_toTopOf="@+id/include"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/challenger"
@@ -54,7 +54,7 @@
         app:layout_constraintWidth_percent=".76"
         style="@style/ModeSelectionButtonStyle"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/tournament"

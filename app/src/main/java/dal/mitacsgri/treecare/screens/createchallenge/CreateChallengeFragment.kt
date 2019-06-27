@@ -1,12 +1,18 @@
 package dal.mitacsgri.treecare.screens.createchallenge
 
 
+import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.InputType
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
+import org.joda.time.DateTime
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreateChallengeFragment : Fragment() {
 
@@ -14,12 +20,35 @@ class CreateChallengeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_create_challenge, container, false)
 
+        val viewModel: CreateChallengeViewModel by viewModel()
 
+        val view = createLocalInflater(inflater)
+            .inflate(R.layout.fragment_create_challenge, null, false)
+
+        view.apply {
+            inputChallengeEndDate.apply {
+                inputType = InputType.TYPE_NULL
+                setOnClickListener {
+                    val (day, month, year) = viewModel.getCurrentDateDestructured()
+                    val datePickerDialog = DatePickerDialog(context,
+                        DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                            setText("$dayOfMonth / ${monthOfYear+1} / $year")
+                        }, year, month, day)
+                    datePickerDialog.datePicker.minDate = DateTime().plusDays(1).millis
+                    datePickerDialog.show()
+                }
+            }
+
+            radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                challengeGoalLayout.hint = viewModel.getGoalInputHint(checkedId)
+            }
+        }
 
         return view
     }
 
 
+    private fun createLocalInflater(inflater: LayoutInflater)
+            = inflater.cloneInContext(ContextThemeWrapper(activity, R.style.challenger_mode_theme))
 }

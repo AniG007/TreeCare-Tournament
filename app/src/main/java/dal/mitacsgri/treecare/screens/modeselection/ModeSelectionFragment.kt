@@ -1,14 +1,13 @@
 package dal.mitacsgri.treecare.screens.modeselection
 
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
@@ -58,13 +57,9 @@ class ModeSelectionFragment : Fragment() {
     }
 
     private fun changeBackgroundSolidAndStrokeColor(
-        button: Button, solidColor: String, strokeColor: String) {
+        button: MaterialButton, solidColor: String, strokeColor: String) {
 
-        val background = button.background as GradientDrawable
-        background.setColor(Color.parseColor("#$solidColor"))
-        background.setStroke(
-            resources.getDimension(com.intuit.sdp.R.dimen._4sdp).toInt(),
-            Color.parseColor("#$strokeColor"))
+        button.setBackgroundColor(Color.parseColor("#$solidColor"))
     }
 
     private fun startInstructionOrUnityActivity(mode: Int, hasInstructionsDisplayed: Boolean) {

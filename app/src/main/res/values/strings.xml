@@ -67,5 +67,9 @@
     <string name="your_challenges">Your challenges</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="join">Join</string>
+    <string name="challenge_description">Description</string>
+    <string name="challenge_option_daily_goal_based">Daily Goal Based</string>
+    <string name="challenge_option_aggregate_based">Aggregate based</string>
+    <string name="create_challenge">Create</string>
 
 </resources>

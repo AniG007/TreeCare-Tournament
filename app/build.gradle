@@ -86,7 +86,7 @@ dependencies {
     implementation 'joda-time:joda-time:2.9.4'
 
     //Firebase Firestore (with Kotlin extensions)
-    implementation 'com.google.firebase:firebase-firestore-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:20.1.0'
 
     //Gson
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -94,6 +94,6 @@ dependencies {
     //Fragment ktx
     implementation 'androidx.fragment:fragment-ktx:1.0.1'
 
-    //Folding cell
-    implementation 'com.ramotion.foldingcell:folding-cell:1.2.3'
+    //Material components
+    implementation 'com.google.android.material:material:1.1.0-alpha07'
 }

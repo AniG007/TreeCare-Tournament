@@ -45,11 +45,11 @@ fun LayoutInflater.createFragmentViewWithStyle(
     root: ViewGroup? = null, attachToRoot: Boolean = false) =
         cloneInContext(ContextThemeWrapper(activity, style)).inflate(layout, root, attachToRoot)
 
-fun TextInputEditText.validate(message: String, action: (String) -> Boolean) {
+fun TextInputEditText.validate(message: String, action: (String) -> Boolean = { it.isNotEmpty() }) {
     addTextChangedListener(object: TextWatcher {
         val parentLayout = parent.parent as TextInputLayout
         override fun afterTextChanged(s: Editable?) {
-            parentLayout.error = if (action(text.toString())) message else null
+            parentLayout.error = if (action(text.toString())) null else message
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

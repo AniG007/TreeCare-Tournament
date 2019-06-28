@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.extensions.validate
 import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
 import org.joda.time.DateTime
@@ -29,6 +31,29 @@ class CreateChallengeFragment : Fragment() {
             activity, R.layout.fragment_create_challenge, R.style.challenger_mode_theme)
 
         view.apply {
+
+            toolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+
+            viewModel.isGoalOptionSelected.observe(this@CreateChallengeFragment, Observer {
+                if (!it) {
+                    optionAggregateBased.error = "Please select an option"
+                    optionDailyGoalBased.error = ""
+                } else {
+                    optionDailyGoalBased.error = null
+                    optionAggregateBased.error = null
+                }
+            })
+
+            viewModel.messageLiveData.observe(this@CreateChallengeFragment, Observer {
+                it.toast(context)
+            })
+
+            viewModel.isFullDataValid.observe(this@CreateChallengeFragment, Observer {
+                createChallengeButton.isEnabled = it
+            })
+
             inputChallengeEndDate.apply {
                 inputType = InputType.TYPE_NULL
                 setOnClickListener {
@@ -44,22 +69,34 @@ class CreateChallengeFragment : Fragment() {
 
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 challengeGoalLayout.hint = viewModel.getGoalInputHint(checkedId)
+                viewModel.apply {
+                    isGoalOptionSelected.value = true
+                    areAllInputFieldsValid()
+                }
             }
 
-            toolbar.setNavigationOnClickListener {
-                findNavController().navigateUp()
+            inputChallengeName.validate("Please enter name (Should not contain ':')") {
+                viewModel.isNameValid = it.isNotEmpty() and !it.contains(':')
+                viewModel.areAllInputFieldsValid()
+                viewModel.isNameValid
+            }
+            inputChallengeGoal.validate("Goal should be a multiple of 1000 greater than 4000") {
+                viewModel.isGoalValid = it.matches(viewModel.getRegexToMatchStepsGoal())
+                viewModel.areAllInputFieldsValid()
+                viewModel.isGoalValid
+            }
+            inputChallengeEndDate.validate("Please provide a chalenge end date") {
+                viewModel.isEndDateValid = it.isNotEmpty()
+                viewModel.areAllInputFieldsValid()
+                viewModel.isEndDateValid
             }
 
             createChallengeButton.setOnClickListener {
-                challengeNameLayout.error = "Please enter a challenge name"
+                viewModel.createChallenge(name = inputChallengeName.text,
+                    description = inputChallengeDescription.text,
+                    type = viewModel.getGoalType(radioGroup.checkedRadioButtonId),
+                    goal = inputChallengeGoal.text)
             }
-
-            inputChallengeName.validate("Please enter name") {
-                it.isEmpty()
-            }
-
-
-
         }
 
         return view

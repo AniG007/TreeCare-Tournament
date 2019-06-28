@@ -157,6 +157,7 @@
                 android:backgroundTint="@color/challenger_mode_primary_color"
                 android:layout_marginTop="@dimen/_40sdp"
                 android:text="@string/create_challenge"
+                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/challengeEndDateLayout"/>

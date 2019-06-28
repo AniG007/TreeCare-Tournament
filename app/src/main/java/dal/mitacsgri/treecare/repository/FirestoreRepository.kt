@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
+import dal.mitacsgri.treecare.data.Challenge
 import dal.mitacsgri.treecare.data.User
 
 /**
@@ -37,4 +38,17 @@ class FirestoreRepository {
     fun getChallenge(id: String) = db.collection(COLLECTION_CHALLENGES).document(id).get()
 
     fun getAllActiveChallenges() = db.collection(COLLECTION_CHALLENGES).get()
+
+    fun storeChallenge(challenge: Challenge, action: (status: Boolean) -> Unit) {
+        db.collection(COLLECTION_CHALLENGES).document(challenge.name)
+            .set(challenge)
+            .addOnSuccessListener {
+                action(true)
+                Log.d("Challenge stored", challenge.toString())
+            }
+            .addOnFailureListener {
+                action(false)
+                Log.d("Challenge store failed ", it.toString() + "Challenge: $challenge")
+            }
+    }
 }

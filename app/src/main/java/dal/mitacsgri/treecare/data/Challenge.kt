@@ -11,6 +11,8 @@ data class Challenge(
     val description: String = "",
     val creationTimestamp: Timestamp = Timestamp.now(),
     val finishTimestamp: Timestamp = Timestamp.now(),
+    val type: Int = 0,
+    val goal: Int = 5000,
     val players: List<String> = arrayListOf(),
     val isExist: Boolean = true,
     val isActive: Boolean = true,

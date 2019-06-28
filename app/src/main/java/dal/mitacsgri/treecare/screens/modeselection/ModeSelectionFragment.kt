@@ -58,7 +58,6 @@ class ModeSelectionFragment : Fragment() {
 
     private fun changeBackgroundSolidAndStrokeColor(
         button: MaterialButton, solidColor: String, strokeColor: String) {
-
         button.setBackgroundColor(Color.parseColor("#$solidColor"))
     }
 

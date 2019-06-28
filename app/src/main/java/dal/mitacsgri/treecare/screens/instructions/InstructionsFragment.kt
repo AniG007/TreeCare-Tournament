@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.*
 import dal.mitacsgri.treecare.extensions.startNextActivity
@@ -34,7 +34,7 @@ class InstructionsFragment : Fragment() {
 
         view.apply {
             changeBackgroundSolidAndStrokeColor(scrollView, "ccffffff", "ff646464")
-            changeButtonColorAccordingToMode(continueButton, args.mode)
+            changeButtonColorAccordingToMode(continueButton as MaterialButton, args.mode)
 
             continueButton.setOnClickListener {
                 when(args.mode) {
@@ -53,19 +53,16 @@ class InstructionsFragment : Fragment() {
         return view
     }
 
-    private fun changeButtonColorAccordingToMode(button: Button, mode: Int) {
+    private fun changeButtonColorAccordingToMode(button: MaterialButton, mode: Int) {
         when(mode) {
             STARTER_MODE -> {
-                changeBackgroundSolidAndStrokeColor(button,
-                    STARTER_MODE_SOLID_COLOR, STARTER_MODE_STROKE_COLOR)
+                changeMaterialButtonBackgroundColor(button, STARTER_MODE_SOLID_COLOR)
             }
             CHALLENGER_MODE -> {
-                changeBackgroundSolidAndStrokeColor(button,
-                    CHALLENGER_MODE_SOLID_COLOR, CHALLENGER_MODE_STROKE_COLOR)
+                changeMaterialButtonBackgroundColor(button, CHALLENGER_MODE_SOLID_COLOR)
             }
             TOURNAMENT_MODE -> {
-                changeBackgroundSolidAndStrokeColor(button,
-                    TOURNAMENT_MODE_SOLID_COLOR, TOURNAMENT_MODE_STROKE_COLOR)
+                changeMaterialButtonBackgroundColor(button, TOURNAMENT_MODE_SOLID_COLOR)
             }
         }
     }
@@ -79,5 +76,9 @@ class InstructionsFragment : Fragment() {
             resources.getDimension(com.intuit.sdp.R.dimen._4sdp).toInt(),
             Color.parseColor("#$strokeColor"))
 
+    }
+
+    private fun changeMaterialButtonBackgroundColor(button: MaterialButton, color: String) {
+        button.setBackgroundColor(Color.parseColor("#$color"))
     }
 }

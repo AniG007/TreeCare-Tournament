@@ -27,7 +27,7 @@ class ChallengesPagerAdapter(private val fm: FragmentManager)
             when(position) {
                 0 -> "My challenges"
                 1 -> "New challenges"
-                2 -> "Challenges by you"
+                2 -> "Challenges by me"
                 else -> "Challenge"
             }
 }

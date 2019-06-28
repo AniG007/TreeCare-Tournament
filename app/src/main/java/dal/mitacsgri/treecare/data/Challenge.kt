@@ -14,8 +14,8 @@ data class Challenge(
     val type: Int = 0,
     val goal: Int = 5000,
     val players: List<String> = arrayListOf(),
-    val isExist: Boolean = true,
-    val isActive: Boolean = true,
+    val exist: Boolean = true,
+    val active: Boolean = true,
     val creatorName: String = "",
     val creatorUId: String = ""
 )

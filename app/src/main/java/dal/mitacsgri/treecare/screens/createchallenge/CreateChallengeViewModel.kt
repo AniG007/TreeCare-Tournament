@@ -78,8 +78,8 @@ class CreateChallengeViewModel(
                             creationTimestamp = Timestamp.now(),
                             creatorName = sharedPrefsRepository.user.name,
                             creatorUId = sharedPrefsRepository.user.uid,
-                            isExist = true,
-                            isActive = true)) {
+                            exist = true,
+                            active = true)) {
                         messageLiveData.value = if (it) "Challenge created successfully"
                                                 else "Challenge creation failed"
                     }

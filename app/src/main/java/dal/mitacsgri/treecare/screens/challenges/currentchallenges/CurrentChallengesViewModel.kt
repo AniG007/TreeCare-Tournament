@@ -28,10 +28,12 @@ class CurrentChallengesViewModel(
 
         for (i in 0 until challengeReferences.size) {
             firestoreRepository.getChallenge(challengeReferences[i]).addOnSuccessListener {
-                val challenge = it.toObject<Challenge>() ?: Challenge(isExist = false)
+                val challenge = it.toObject<Challenge>() ?: Challenge(exist = false)
                 synchronized(challengesList.value!!) {
-                    challengesList.value?.add(challenge)
-                    challengesList.notifyObserver()
+                    if (challenge.exist) {
+                        challengesList.value?.add(challenge)
+                        challengesList.notifyObserver()
+                    }
                 }
             }
             .addOnFailureListener {

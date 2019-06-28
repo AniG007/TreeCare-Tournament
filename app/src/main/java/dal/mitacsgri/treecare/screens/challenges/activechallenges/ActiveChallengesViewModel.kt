@@ -28,7 +28,7 @@ class ActiveChallengesViewModel(
     fun getAllActiveChallenges() {
         firestoreRepository.getAllActiveChallenges()
             .addOnSuccessListener {
-                challengesList.value = it.toObjects()
+                challengesList.value = it.toObjects<Challenge>().filter {it.exist}
                 challengesList.notifyObserver()
             }
             .addOnFailureListener {

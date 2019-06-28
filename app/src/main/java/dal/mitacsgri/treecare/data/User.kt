@@ -17,5 +17,5 @@ data class User (
         DateTime(firstLoginTime).plusDays(1).withTimeAtStartOfDay().millis.toString() to 5000
     ),
     var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis,
-    val currentChallenges: List<String> = listOf()
+    val currentChallenges: ArrayList<String> = arrayListOf()
 )

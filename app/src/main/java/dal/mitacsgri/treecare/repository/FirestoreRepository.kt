@@ -35,6 +35,10 @@ class FirestoreRepository {
             }
     }
 
+    fun updateUserData(userId: String, values: Map<String, Any>) =
+        db.collection(COLLECTION_USERS).document(userId)
+            .update(values)
+
     fun getChallenge(id: String) = db.collection(COLLECTION_CHALLENGES).document(id).get()
 
     fun getAllActiveChallenges() = db.collection(COLLECTION_CHALLENGES).get()

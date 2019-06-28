@@ -6,6 +6,7 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.data.Challenge
 import dal.mitacsgri.treecare.extensions.default
@@ -24,6 +25,7 @@ class ActiveChallengesViewModel(
     ): ViewModel()  {
 
     var challengesList = MutableLiveData<List<Challenge>>().default(listOf())
+    val statusMessage = MutableLiveData<String>()
 
     fun getAllActiveChallenges() {
         firestoreRepository.getAllActiveChallenges()
@@ -49,5 +51,18 @@ class ActiveChallengesViewModel(
     }
 
     fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
+
+    fun joinChallenge(challenge: Challenge) {
+        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
+            mapOf("currentChallenges" to FieldValue.arrayUnion(challenge.name)))
+            .addOnSuccessListener {
+                sharedPrefsRepository.user.currentChallenges.add(challenge.name)
+                statusMessage.value = "You are now a part of ${challenge.name}"
+            }
+            .addOnFailureListener {
+                statusMessage.value = "Error joining challenge"
+                Log.e("Error joining challenge", it.toString())
+            }
+    }
 
 }

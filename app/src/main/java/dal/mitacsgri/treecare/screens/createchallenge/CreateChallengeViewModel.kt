@@ -76,7 +76,8 @@ class CreateChallengeViewModel(
                             goal = goal.toString().toInt(),
                             finishTimestamp = Timestamp(endDate.timeInMillis/1000, 0),
                             creationTimestamp = Timestamp.now(),
-                            creatorName = sharedPrefsRepository.user.name,
+                            creatorName = sharedPrefsRepository.user.name
+                                    + " (${sharedPrefsRepository.user.email.split("@")[0]})",
                             creatorUId = sharedPrefsRepository.user.uid,
                             exist = true,
                             active = true)) {

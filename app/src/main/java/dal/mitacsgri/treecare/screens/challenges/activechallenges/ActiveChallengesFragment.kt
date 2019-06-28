@@ -30,21 +30,19 @@ class ActiveChallengesFragment : Fragment() {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = ActiveChallengesRecyclerViewAdapter(
-                    mViewModel.challengesList.value!!,
-                    mViewModel
-                )
+                    mViewModel.challengesList.value!!, mViewModel)
             }
 
             mViewModel.challengesList.observe(this@ActiveChallengesFragment, Observer {
                 //There should be a better approach to this
-                view.recyclerView.adapter = ActiveChallengesRecyclerViewAdapter(
-                    it,
-                    mViewModel
-                )
+                view.recyclerView.adapter = ActiveChallengesRecyclerViewAdapter(it, mViewModel)
             })
 
             mViewModel.statusMessage.observe(this@ActiveChallengesFragment, Observer {
-                it.toast(view.context)
+                if (!mViewModel.messageDisplayed) {
+                    it.toast(view.context)
+                    mViewModel.messageDisplayed = true
+                }
             })
 
             mViewModel.getAllActiveChallenges()

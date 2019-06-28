@@ -1,6 +1,8 @@
 package dal.mitacsgri.treecare.screens.challenges.activechallenges
 
+import android.content.DialogInterface
 import android.view.View
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.data.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import kotlinx.android.synthetic.main.item_active_challenge.view.*
@@ -20,7 +22,16 @@ class ActiveChallengesViewHolder(itemView: View, private val viewModel: ActiveCh
             participantsTV.text = viewModel.getParticipantsCountString(item)
 
             buttonJoin.setOnClickListener {
-                viewModel.joinChallenge(item)
+                MaterialAlertDialogBuilder(context)
+                    .setTitle("Join the challenge")
+                    .setMessage("Do you really want to join the challenge '${item.name}'")
+                    .setPositiveButton("Yes") { dialogInterface: DialogInterface, i: Int ->
+                        viewModel.joinChallenge(item)
+                    }
+                    .setNegativeButton("No") { dialogInterface: DialogInterface, i: Int ->
+                        dialogInterface.dismiss()
+                    }
+                    .show()
             }
         }
     }

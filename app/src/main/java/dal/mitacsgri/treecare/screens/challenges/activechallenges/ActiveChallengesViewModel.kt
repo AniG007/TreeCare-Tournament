@@ -26,6 +26,7 @@ class ActiveChallengesViewModel(
 
     var challengesList = MutableLiveData<List<Challenge>>().default(listOf())
     val statusMessage = MutableLiveData<String>()
+    var messageDisplayed = false
 
     fun getAllActiveChallenges() {
         firestoreRepository.getAllActiveChallenges()
@@ -57,9 +58,11 @@ class ActiveChallengesViewModel(
             mapOf("currentChallenges" to FieldValue.arrayUnion(challenge.name)))
             .addOnSuccessListener {
                 sharedPrefsRepository.user.currentChallenges.add(challenge.name)
+                messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
             }
             .addOnFailureListener {
+                messageDisplayed = false
                 statusMessage.value = "Error joining challenge"
                 Log.e("Error joining challenge", it.toString())
             }

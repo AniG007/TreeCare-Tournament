@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.extensions.toast
 import kotlinx.android.synthetic.main.fragment_challenges_by_you.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -36,6 +37,13 @@ class ChallengesByYouFragment : Fragment() {
         mViewModel.challengesList.observe(this, Observer {
             //TODO: There should be a better approach to this
             view.recyclerView.adapter = ChallengesByYouRecyclerViewAdapter(it, mViewModel)
+        })
+
+        mViewModel.statusMessage.observe(this, Observer {
+            if (!mViewModel.messageDisplayed) {
+                it.toast(view.context)
+                mViewModel.messageDisplayed = true
+            }
         })
 
         mViewModel.getAllCreatedChallengesChallenges(mViewModel.getCurrentUserId())

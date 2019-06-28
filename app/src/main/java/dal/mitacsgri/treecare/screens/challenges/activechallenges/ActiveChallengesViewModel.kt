@@ -63,6 +63,9 @@ class ActiveChallengesViewModel(
                 statusMessage.value = "Error joining challenge"
                 Log.e("Error joining challenge", it.toString())
             }
+
+        firestoreRepository.updateChallengeData(challenge.name,
+            mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
     }
 
 }

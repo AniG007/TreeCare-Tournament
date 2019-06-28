@@ -51,4 +51,8 @@ class FirestoreRepository {
                 Log.d("Challenge store failed ", it.toString() + "Challenge: $challenge")
             }
     }
+
+    fun getAllChallengesCreatedByUser(userId: String) =
+        db.collection(COLLECTION_CHALLENGES)
+            .whereEqualTo("creatorUId", userId).get()
 }

@@ -35,9 +35,14 @@ class ChallengesFragment : Fragment() {
                     when(position) {
                         0 -> fabCreateChallenge.hide()
                         1 -> fabCreateChallenge.show()
+                        2 -> fabCreateChallenge.show()
                     }
                 }
             })
+            if (viewPager.currentItem == 0) {
+                fabCreateChallenge.hide()
+            }
+
             tabLayout.setupWithViewPager(viewPager)
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()

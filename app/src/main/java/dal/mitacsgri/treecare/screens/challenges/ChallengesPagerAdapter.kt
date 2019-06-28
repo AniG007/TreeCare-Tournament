@@ -3,6 +3,7 @@ package dal.mitacsgri.treecare.screens.challenges
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import dal.mitacsgri.treecare.screens.challenges.activechallenges.ActiveChallengesFragment
+import dal.mitacsgri.treecare.screens.challenges.challengesbyyou.ChallengesByYouFragment
 import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChallengesFragment
 
 /**
@@ -15,18 +16,18 @@ class ChallengesPagerAdapter(private val fm: FragmentManager)
     override fun getItem(position: Int) =
         when(position) {
             0 -> CurrentChallengesFragment()
-            1 -> {
-                ActiveChallengesFragment()
-            }
+            1 -> ActiveChallengesFragment()
+            2 -> ChallengesByYouFragment()
             else -> ActiveChallengesFragment()
         }
 
-    override fun getCount() = 2
+    override fun getCount() = 3
 
     override fun getPageTitle(position: Int) =
             when(position) {
                 0 -> "My challenges"
                 1 -> "New challenges"
+                2 -> "Challenges by you"
                 else -> "Challenge"
             }
 }

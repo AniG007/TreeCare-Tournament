@@ -79,29 +79,18 @@
             android:layout_height="wrap_content"
             android:text="@string/leaderboard"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_8sdp"
             app:layout_constraintTop_toBottomOf="@+id/durationTV"
             app:layout_constraintStart_toEndOf="@+id/buttonJoin"
             style="@style/Widget.MaterialComponents.Button.TextButton"/>
-
-        <!--<com.google.android.material.button.MaterialButton-->
-            <!--android:id="@+id/buttonDelete"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="@dimen/_10sdp"-->
-            <!--app:iconPadding="0dp"-->
-            <!--app:icon="@drawable/ic_delete"-->
-            <!--app:iconGravity="start"-->
-            <!--app:layout_constraintRight_toRightOf="parent"-->
-            <!--app:layout_constraintTop_toBottomOf="@id/durationTV"-->
-            <!--style="@style/Widget.MaterialComponents.Button.OutlinedButton" />-->
 
         <ImageButton
             android:id="@+id/buttonDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete"
-            android:backgroundTint="@color/fui_transparent"
+            android:tint="@color/white"
+            android:backgroundTint="#f00"
             android:layout_marginTop="@dimen/_10sdp"
             app:layout_constraintTop_toBottomOf="@+id/durationTV"
             app:layout_constraintRight_toRightOf="parent" />

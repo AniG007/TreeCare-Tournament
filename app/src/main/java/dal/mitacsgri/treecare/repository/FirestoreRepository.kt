@@ -55,4 +55,8 @@ class FirestoreRepository {
     fun getAllChallengesCreatedByUser(userId: String) =
         db.collection(COLLECTION_CHALLENGES)
             .whereEqualTo("creatorUId", userId).get()
+
+    fun deleteChallenge(challengeName: String) =
+        db.collection(COLLECTION_CHALLENGES).document(challengeName)
+            .delete()
 }

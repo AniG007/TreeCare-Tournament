@@ -19,6 +19,10 @@ class ChallengesByYouViewHolder(
             descriptionTV.text = item.description
             durationTV.text = viewModel.getChallengeDurationText(item)
             participantsTV.text = viewModel.getParticipantsCountString(item)
+
+            buttonDelete.setOnClickListener {
+                viewModel.deleteChallenge(item)
+            }
         }
     }
 }

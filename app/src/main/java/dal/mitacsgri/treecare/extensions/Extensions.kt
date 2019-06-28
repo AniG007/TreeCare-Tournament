@@ -57,3 +57,11 @@ fun TextInputEditText.validate(message: String, action: (String) -> Boolean = { 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     })
 }
+
+fun <T> List<T>.toArrayList(): ArrayList<T> {
+    val arrayList = arrayListOf<T>()
+    forEach {
+        arrayList.add(it)
+    }
+    return arrayList
+}

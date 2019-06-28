@@ -8,10 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.data.Challenge
-import dal.mitacsgri.treecare.extensions.default
-import dal.mitacsgri.treecare.extensions.getStringRepresentation
-import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.extensions.toDateTime
+import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
@@ -23,12 +20,12 @@ class ChallengesByYouViewModel(
     private val firestoreRepository: FirestoreRepository
     ): ViewModel() {
 
-    var challengesList = MutableLiveData<List<Challenge>>().default(listOf())
+    var challengesList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
 
     fun getAllCreatedChallengesChallenges(userId: String) {
         firestoreRepository.getAllChallengesCreatedByUser(userId)
             .addOnSuccessListener {
-                challengesList.value = it.toObjects()
+                challengesList.value = it.toObjects<Challenge>().toArrayList()
                 challengesList.notifyObserver()
             }
             .addOnFailureListener {
@@ -50,5 +47,19 @@ class ChallengesByYouViewModel(
     fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
 
     fun getCurrentUserId() = sharedPrefsRepository.user.uid
+
+    fun deleteChallenge(challenge: Challenge) {
+        firestoreRepository.deleteChallenge(challenge.name)
+            .addOnSuccessListener {
+                val challengeToRemoveIndex = challengesList.value?.indexOf(challenge)
+                if (challengeToRemoveIndex != -1) {
+                    challengesList.value?.removeAt(challengeToRemoveIndex!!)
+                    challengesList.notifyObserver()
+                }
+            }
+            .addOnFailureListener {
+                Log.e("Deletion failed", it.toString())
+            }
+    }
 
 }

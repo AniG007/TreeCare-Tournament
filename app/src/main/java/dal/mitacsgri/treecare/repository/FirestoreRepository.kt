@@ -56,7 +56,7 @@ class FirestoreRepository {
         db.collection(COLLECTION_CHALLENGES)
             .whereEqualTo("creatorUId", userId).get()
 
-    fun deleteChallenge(challengeName: String) =
+    fun setChallengeAsNonExist(challengeName: String) =
         db.collection(COLLECTION_CHALLENGES).document(challengeName)
-            .delete()
+            .update("exist", false)
 }

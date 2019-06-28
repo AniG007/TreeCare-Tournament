@@ -49,7 +49,7 @@ class ChallengesByYouViewModel(
     fun getCurrentUserId() = sharedPrefsRepository.user.uid
 
     fun deleteChallenge(challenge: Challenge) {
-        firestoreRepository.deleteChallenge(challenge.name)
+        firestoreRepository.setChallengeAsNonExist(challenge.name)
             .addOnSuccessListener {
                 val challengeToRemoveIndex = challengesList.value?.indexOf(challenge)
                 if (challengeToRemoveIndex != -1) {

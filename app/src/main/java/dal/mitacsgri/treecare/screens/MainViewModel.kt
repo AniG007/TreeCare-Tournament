@@ -265,7 +265,7 @@ class MainViewModel(
         keysList = keysList.sorted().toMutableList()
 
         val lastTime = keysList[keysList.size-1]
-        val days = Days.daysBetween(DateTime(lastTime), DateTime(user.lastGoalChangeTime)).days
+        val days = Days.daysBetween(DateTime(lastTime), DateTime()).days
 
         val oldGoal = dailyGoalMap[lastTime.toString()]
 

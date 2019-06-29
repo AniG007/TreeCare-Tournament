@@ -10,10 +10,12 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
 import com.google.firebase.auth.FirebaseAuth
+import dal.mitacsgri.treecare.data.User
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
+import org.joda.time.Days
 import java.util.*
 
 /**
@@ -87,6 +89,8 @@ class SplashScreenViewModel(
                                     dailyGoalMap[DateTime().withTimeAtStartOfDay().millis.toString()] ?: 5000)
                             }
 
+                            expandDailyGoalMapIfNeeded(sharedPrefsRepository.user)
+
                             var totalLeafCountTillLastDay = 0
                             it.forEach { (date, stepCount) ->
                                 val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
@@ -157,6 +161,27 @@ class SplashScreenViewModel(
         }
 
         sharedPrefsRepository.currentDayOfWeek = currentDay
+    }
+
+    private fun expandDailyGoalMapIfNeeded(user: User) {
+        val dailyGoalMap = user.dailyGoalMap
+        var keysList = mutableListOf<Long>()
+        dailyGoalMap.keys.forEach {
+            keysList.add(it.toLong())
+        }
+        keysList = keysList.sorted().toMutableList()
+
+        val lastTime = keysList[keysList.size-1]
+        val days = Days.daysBetween(DateTime(lastTime), DateTime()).days
+
+        val oldGoal = dailyGoalMap[lastTime.toString()]
+
+        for (i in 1..days) {
+            val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+            user.dailyGoalMap[key] = oldGoal!!
+        }
+
+        sharedPrefsRepository.user = user
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

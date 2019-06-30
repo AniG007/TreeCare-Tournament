@@ -1,6 +1,9 @@
 package dal.mitacsgri.treecare.screens.challenges.currentchallenges
 
+import android.text.SpannedString
 import android.util.Log
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
@@ -42,11 +45,36 @@ class CurrentChallengesViewModel(
         }
     }
 
-    fun getChallengeDurationText(challenge: Challenge): String {
-        val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
+    fun getChallengeDurationText(challenge: Challenge): SpannedString {
+        //val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
         val finishDateString =challenge.finishTimestamp.toDateTime().getStringRepresentation()
 
-        return "$createdDateString - $finishDateString"
+        return buildSpannedString {
+            bold {
+                append("Ends: ")
+            }
+            append(finishDateString)
+        }
     }
 
+    fun getChallengeTypeText(challenge: Challenge) =
+            buildSpannedString {
+                bold {
+                    append("Type: ")
+                }
+                append(if (challenge.type == 0) "Daily Goal Based" else "Aggregate based")
+            }
+
+    fun getGoalText(challenge: Challenge) =
+            buildSpannedString {
+                bold {
+                    append(if(challenge.type == 0) "Daily Steps Goal: " else "Total steps goal: ")
+                }
+                append(challenge.goal.toString())
+            }
+
+    fun getPlayersCountText(challenge: Challenge) =
+            buildSpannedString {
+                append(challenge.players.size.toString())
+            }
 }

@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingStart="@dimen/_12sdp"
+        android:paddingEnd="@dimen/_12sdp"
         android:paddingBottom="@dimen/_10sdp"
         android:paddingTop="@dimen/_10sdp">
 
@@ -20,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="15,000 in 2 days"
-            android:textSize="@dimen/_20sdp"
+            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,31 +30,65 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/descriptionTV"
+            android:id="@+id/challengeTypeTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="This is the event description"
-            android:textSize="@dimen/_15sdp"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/_20sdp"
+            tools:text="Type: Aggregate based"
+            android:drawableStart="@drawable/ic_trophy"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTV"
-            app:layout_constraintHorizontal_bias="0.0"/>
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"/>
+
+        <TextView
+            android:id="@+id/goalTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Total steps goal: 15000"
+            android:drawableStart="@drawable/ic_goal"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/challengeTypeTV"/>
 
         <TextView
             android:id="@+id/durationTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="timings"
-            android:textSize="@dimen/_15sdp"
-            android:textColor="@color/black"
-            android:layout_marginTop="@dimen/_10sdp"
+            tools:text="Expires: Some date"
+            android:drawableStart="@drawable/ic_time"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/descriptionTV"
+            app:layout_constraintTop_toBottomOf="@+id/goalTV"/>
+
+        <TextView
+            android:id="@+id/playersTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2000"
+            android:drawableStart="@drawable/ic_user"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"/>
+            app:layout_constraintTop_toBottomOf="@+id/goalTV"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonTree"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Tree"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLeaderBoard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/leaderboard"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            app:layout_constraintStart_toEndOf="@+id/buttonTree"
+            app:layout_constraintTop_toBottomOf="@+id/durationTV"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

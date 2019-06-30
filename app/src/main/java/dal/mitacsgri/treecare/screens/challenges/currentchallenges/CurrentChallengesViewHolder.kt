@@ -16,8 +16,17 @@ class CurrentChallengesViewHolder(
     override fun bind(item: Challenge) {
         itemView.apply {
             nameTV.text = item.name
-            descriptionTV.text = item.description
+            challengeTypeTV.text = viewModel.getChallengeTypeText(item)
+            goalTV.text = viewModel.getGoalText(item)
             durationTV.text = viewModel.getChallengeDurationText(item)
+            playersTV.text = viewModel.getPlayersCountText(item)
+
+            buttonTree.setOnClickListener {
+
+            }
+            buttonLeaderBoard.setOnClickListener {
+
+            }
         }
     }
 }

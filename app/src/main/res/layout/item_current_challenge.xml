@@ -96,8 +96,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_exit"
             android:layout_marginTop="@dimen/_10sdp"
-            android:tint="#f00"
-            android:backgroundTint="@color/fui_transparent"
+            android:tint="@color/white"
+            android:backgroundTint="#f00"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/durationTV" />
     </androidx.constraintlayout.widget.ConstraintLayout>

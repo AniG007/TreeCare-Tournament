@@ -18,4 +18,14 @@ data class Challenge(
     val active: Boolean = true,
     val creatorName: String = "",
     val creatorUId: String = ""
-)
+) {
+
+    override fun equals(other: Any?): Boolean {
+        other as Challenge
+        return (name == other.name)
+    }
+
+    override fun hashCode(): Int {
+        return name.length
+    }
+}

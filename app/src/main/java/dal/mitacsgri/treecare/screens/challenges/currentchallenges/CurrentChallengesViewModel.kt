@@ -31,6 +31,8 @@ class CurrentChallengesViewModel(
         val challengeReferences = sharedPrefsRepository.user.currentChallenges
 
         for (i in 0 until challengeReferences.size) {
+            //Getting challenges from the Challenges DB after getting reference
+            // from the challenges list obtained from the user
             firestoreRepository.getChallenge(challengeReferences[i]).addOnSuccessListener {
                 val challenge = it.toObject<Challenge>() ?: Challenge(exist = false)
                 synchronized(challengesList.value!!) {
@@ -54,8 +56,10 @@ class CurrentChallengesViewModel(
             .addOnSuccessListener {
                 synchronized(counter) {
                     counter++
-                    if (counter == 2)
+                    if (counter == 2) {
                         challengesList.value?.remove(challenge)
+                        challengesList.notifyObserver()
+                    }
                 }
                 Log.d("Challenge deleted", "from DB")
             }
@@ -68,8 +72,10 @@ class CurrentChallengesViewModel(
             .addOnSuccessListener {
                 synchronized(counter) {
                     counter++
-                    if (counter == 2)
+                    if (counter == 2) {
                         challengesList.value?.remove(challenge)
+                        challengesList.notifyObserver()
+                    }
                 }
                 statusMessage.value = "Success"
             }

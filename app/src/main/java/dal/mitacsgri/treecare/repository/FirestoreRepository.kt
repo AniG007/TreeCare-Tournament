@@ -3,6 +3,7 @@ package dal.mitacsgri.treecare.repository
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -57,6 +58,14 @@ class FirestoreRepository {
                 Log.d("Challenge store failed ", it.toString() + "Challenge: $challenge")
             }
     }
+
+    fun deleteUserFromChallengeDB(challenge: Challenge, userId: String) =
+        db.collection(COLLECTION_CHALLENGES).document(challenge.name)
+            .update("players", FieldValue.arrayRemove(userId))
+
+    fun deleteChallengeFromUserDB(challenge: Challenge, userId: String) =
+        db.collection(COLLECTION_USERS).document(userId)
+            .update("currentChallenges", FieldValue.arrayRemove(challenge.name))
 
     fun getAllChallengesCreatedByUser(userId: String) =
         db.collection(COLLECTION_CHALLENGES)

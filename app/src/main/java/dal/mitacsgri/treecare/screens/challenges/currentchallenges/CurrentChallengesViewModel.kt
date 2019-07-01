@@ -25,6 +25,7 @@ class CurrentChallengesViewModel(
     ): ViewModel() {
 
     var challengesList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
+    val statusMessage = MutableLiveData<String>()
 
     fun getCurrentChallengesForUser() {
         val challengeReferences = sharedPrefsRepository.user.currentChallenges
@@ -40,9 +41,41 @@ class CurrentChallengesViewModel(
                 }
             }
             .addOnFailureListener {
-                    Log.d("Challenge not found", it.toString())
+                Log.d("Challenge not found", it.toString())
             }
         }
+    }
+
+    fun leaveChallenge(challenge: Challenge) {
+        val userId = sharedPrefsRepository.user.uid
+        var counter = 0
+
+        firestoreRepository.deleteUserFromChallengeDB(challenge, userId)
+            .addOnSuccessListener {
+                synchronized(counter) {
+                    counter++
+                    if (counter == 2)
+                        challengesList.value?.remove(challenge)
+                }
+                Log.d("Challenge deleted", "from DB")
+            }
+            .addOnFailureListener {
+                Log.e("Challenge delete failed", it.toString())
+            }
+
+        //TODO: Maybe later on we can think of only disabling the challenge instead of actually deleting from the database
+        firestoreRepository.deleteChallengeFromUserDB(challenge, userId)
+            .addOnSuccessListener {
+                synchronized(counter) {
+                    counter++
+                    if (counter == 2)
+                        challengesList.value?.remove(challenge)
+                }
+                statusMessage.value = "Success"
+            }
+            .addOnFailureListener {
+                statusMessage.value = "Failed"
+            }
     }
 
     fun getChallengeDurationText(challenge: Challenge): SpannedString {

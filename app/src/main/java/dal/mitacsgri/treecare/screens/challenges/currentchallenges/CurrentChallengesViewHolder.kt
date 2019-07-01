@@ -27,6 +27,10 @@ class CurrentChallengesViewHolder(
             buttonLeaderBoard.setOnClickListener {
 
             }
+
+            buttonExit.setOnClickListener {
+                viewModel.leaveChallenge(item)
+            }
         }
     }
 }

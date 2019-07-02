@@ -7,7 +7,7 @@ import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
-import dal.mitacsgri.treecare.data.Challenge
+import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.getStringRepresentation
 import dal.mitacsgri.treecare.extensions.notifyObserver
@@ -57,8 +57,7 @@ class CurrentChallengesViewModel(
                 synchronized(counter) {
                     counter++
                     if (counter == 2) {
-                        challengesList.value?.remove(challenge)
-                        challengesList.notifyObserver()
+                        updateUserChallengesList(challenge)
                     }
                 }
                 Log.d("Challenge deleted", "from DB")
@@ -73,8 +72,7 @@ class CurrentChallengesViewModel(
                 synchronized(counter) {
                     counter++
                     if (counter == 2) {
-                        challengesList.value?.remove(challenge)
-                        challengesList.notifyObserver()
+                        updateUserChallengesList(challenge)
                     }
                 }
                 statusMessage.value = "Success"
@@ -116,4 +114,15 @@ class CurrentChallengesViewModel(
             buildSpannedString {
                 append(challenge.players.size.toString())
             }
+
+    private fun updateUserChallengesList(challenge: Challenge) {
+        challengesList.value?.remove(challenge)
+        challengesList.notifyObserver()
+
+        val updatedUser = sharedPrefsRepository.user.let {
+            it.currentChallenges.remove(challenge.name)
+            it
+        }
+        sharedPrefsRepository.user = updatedUser
+    }
 }

@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.data
+package dal.mitacsgri.treecare.model
 
 import org.joda.time.DateTime
 

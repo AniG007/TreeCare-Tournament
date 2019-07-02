@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.data.Challenge
+import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import java.util.*

@@ -1,7 +1,7 @@
 package dal.mitacsgri.treecare.screens.challenges.currentchallenges
 
 import android.view.View
-import dal.mitacsgri.treecare.data.Challenge
+import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import kotlinx.android.synthetic.main.item_current_challenge.view.*
 

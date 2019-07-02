@@ -1,11 +1,10 @@
 package dal.mitacsgri.treecare.screens.gamesettings
 
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,19 +38,14 @@ class SettingsActivity : AppCompatActivity() {
             settingsViewModel.increaseDailyGoal()
         }
 
-        changeBackgroundSolidAndStrokeColor(buttonSaveDailyGoal, "FFCFCFCF", "FF828282")
+        changeBackgroundSolidAndStrokeColor(buttonSaveDailyGoal as MaterialButton, "FFCFCFCF", "FF828282")
         buttonSaveDailyGoal.setOnClickListener {
             settingsViewModel.storeUpdatedStepGoal(stepsCountText.text.toString().toInt())
         }
     }
 
     private fun changeBackgroundSolidAndStrokeColor(
-        button: Button, solidColor: String, strokeColor: String) {
-
-        val background = button.background as GradientDrawable
-        background.setColor(Color.parseColor("#$solidColor"))
-        background.setStroke(
-            resources.getDimension(com.intuit.sdp.R.dimen._4sdp).toInt(),
-            Color.parseColor("#$strokeColor"))
+        button: MaterialButton, solidColor: String, strokeColor: String) {
+        button.setBackgroundColor(Color.parseColor("#$solidColor"))
     }
 }

@@ -3,7 +3,7 @@ package dal.mitacsgri.treecare.screens.challenges.activechallenges
 import android.content.DialogInterface
 import android.view.View
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dal.mitacsgri.treecare.data.Challenge
+import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import kotlinx.android.synthetic.main.item_active_challenge.view.*
 

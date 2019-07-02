@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.data.User
+import dal.mitacsgri.treecare.model.User
 
 class SharedPreferencesRepository(val context: Context) {
 

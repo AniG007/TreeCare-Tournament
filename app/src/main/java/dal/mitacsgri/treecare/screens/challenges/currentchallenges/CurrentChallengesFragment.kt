@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.data.Challenge
+import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_current_challenges.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel

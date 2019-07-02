@@ -3,7 +3,7 @@ package dal.mitacsgri.treecare.screens.gamesettings
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dal.mitacsgri.treecare.data.User
+import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository

@@ -10,8 +10,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
-import dal.mitacsgri.treecare.data.Challenge
-import dal.mitacsgri.treecare.data.User
+import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.User
 
 /**
  * Created by Devansh on 22-06-2019

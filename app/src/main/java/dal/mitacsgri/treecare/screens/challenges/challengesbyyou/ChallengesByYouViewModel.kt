@@ -72,7 +72,7 @@ class ChallengesByYouViewModel(
         val userChallengeJson = userChallenge.toJson<UserChallenge>()
 
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges" to FieldValue.arrayUnion(userChallengeJson)))
+            mapOf("currentChallenges.${challenge.name}" to userChallengeJson))
             .addOnSuccessListener {
                 updateUserSharedPrefsData(userChallenge, userChallengeJson)
                 messageDisplayed = false

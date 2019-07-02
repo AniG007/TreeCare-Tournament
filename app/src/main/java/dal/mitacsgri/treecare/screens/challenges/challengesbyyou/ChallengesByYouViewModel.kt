@@ -8,10 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObjects
-import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.extensions.*
+import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import org.joda.time.DateTime
 
 /**
  * Created by Devansh on 28-06-2019
@@ -66,10 +68,13 @@ class ChallengesByYouViewModel(
     }
 
     fun joinChallenge(challenge: Challenge) {
+        val userChallenge = getUserChallenge(challenge)
+        val userChallengeJson = userChallenge.toJson<UserChallenge>()
+
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges" to FieldValue.arrayUnion(challenge.name)))
+            mapOf("currentChallenges" to FieldValue.arrayUnion(userChallengeJson)))
             .addOnSuccessListener {
-                sharedPrefsRepository.user.currentChallenges.add(challenge.name)
+                updateUserSharedPrefsData(userChallenge, userChallengeJson)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
             }
@@ -83,4 +88,17 @@ class ChallengesByYouViewModel(
             mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
     }
 
+    private fun updateUserSharedPrefsData(userChallenge: UserChallenge, userChallengeJson: String) {
+        val user = sharedPrefsRepository.user
+        user.currentChallenges[userChallenge.name] = userChallengeJson
+        sharedPrefsRepository.user = user
+    }
+
+    private fun getUserChallenge(challenge: Challenge) =
+        UserChallenge(
+            name = challenge.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = sharedPrefsRepository.getDailyStepCount(),
+            joinDate = DateTime().millis
+        )
 }

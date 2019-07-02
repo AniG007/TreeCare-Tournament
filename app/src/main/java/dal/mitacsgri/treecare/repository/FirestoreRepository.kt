@@ -12,6 +12,7 @@ import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.model.UserChallenge
 
 /**
  * Created by Devansh on 22-06-2019
@@ -63,9 +64,9 @@ class FirestoreRepository {
         db.collection(COLLECTION_CHALLENGES).document(challenge.name)
             .update("players", FieldValue.arrayRemove(userId))
 
-    fun deleteChallengeFromUserDB(challenge: Challenge, userId: String) =
+    fun deleteChallengeFromUserDB(userId: String, userChallenge: UserChallenge, userChallengeJson: String) =
         db.collection(COLLECTION_USERS).document(userId)
-            .update("currentChallenges", FieldValue.arrayRemove(challenge.name))
+            .update(mapOf("currentChallenges.${userChallenge.name}" to userChallengeJson))
 
     fun getAllChallengesCreatedByUser(userId: String) =
         db.collection(COLLECTION_CHALLENGES)

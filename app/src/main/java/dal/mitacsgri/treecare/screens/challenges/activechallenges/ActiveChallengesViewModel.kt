@@ -53,17 +53,13 @@ class ActiveChallengesViewModel(
     fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
 
     fun joinChallenge(challenge: Challenge) {
-        val challengeJson = UserChallenge(
-            name = challenge.name,
-            dailyStepsMap = mutableMapOf(),
-            totalSteps = sharedPrefsRepository.getDailyStepCount(),
-            joinDate = DateTime().millis
-        ).toJson<UserChallenge>()
+        val userChallenge = getUserChallenge(challenge)
+        val userChallengeJson = userChallenge.toJson<UserChallenge>()
 
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges" to FieldValue.arrayUnion(challengeJson)))
+            mapOf("currentChallenges.${challenge.name}" to userChallengeJson))
             .addOnSuccessListener {
-                updateUserSharedPrefsData(challengeJson)
+                updateUserSharedPrefsData(userChallenge, userChallengeJson)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
             }
@@ -77,10 +73,17 @@ class ActiveChallengesViewModel(
             mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
     }
 
-    private fun updateUserSharedPrefsData(challengeJson: String) {
+    private fun updateUserSharedPrefsData(userChallenge: UserChallenge, userChallengeJson: String) {
         val user = sharedPrefsRepository.user
-        user.currentChallenges.add(challengeJson)
+        user.currentChallenges[userChallenge.name] = userChallengeJson
         sharedPrefsRepository.user = user
     }
 
+    private fun getUserChallenge(challenge: Challenge) =
+        UserChallenge(
+            name = challenge.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = sharedPrefsRepository.getDailyStepCount(),
+            joinDate = DateTime().millis
+        )
 }

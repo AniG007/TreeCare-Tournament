@@ -7,11 +7,13 @@ import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
-import dal.mitacsgri.treecare.model.Challenge
+import com.google.gson.Gson
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.getStringRepresentation
 import dal.mitacsgri.treecare.extensions.notifyObserver
 import dal.mitacsgri.treecare.extensions.toDateTime
+import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
@@ -31,9 +33,10 @@ class CurrentChallengesViewModel(
         val challengeReferences = sharedPrefsRepository.user.currentChallenges
 
         for (i in 0 until challengeReferences.size) {
+            val challengeJson = Gson().fromJson(challengeReferences[i], UserChallenge::class.java)
             //Getting challenges from the Challenges DB after getting reference
             // from the challenges list obtained from the user
-            firestoreRepository.getChallenge(challengeReferences[i]).addOnSuccessListener {
+            firestoreRepository.getChallenge(challengeJson.name).addOnSuccessListener {
                 val challenge = it.toObject<Challenge>() ?: Challenge(exist = false)
                 synchronized(challengesList.value!!) {
                     if (challenge.exist) {

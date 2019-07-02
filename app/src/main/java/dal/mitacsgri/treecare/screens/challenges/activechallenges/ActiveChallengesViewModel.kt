@@ -8,13 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObjects
+import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
-import dal.mitacsgri.treecare.extensions.default
-import dal.mitacsgri.treecare.extensions.getStringRepresentation
-import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.extensions.toDateTime
+import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import org.joda.time.DateTime
 
 /**
  * Created by Devansh on 25-06-2019
@@ -41,7 +40,7 @@ class ActiveChallengesViewModel(
 
     fun getChallengeDurationText(challenge: Challenge): SpannedString {
         //val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
-        val finishDateString =challenge.finishTimestamp.toDateTime().getStringRepresentation()
+        val finishDateString = challenge.finishTimestamp.toDateTime().getStringRepresentation()
 
         return buildSpannedString {
             bold {
@@ -54,10 +53,17 @@ class ActiveChallengesViewModel(
     fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
 
     fun joinChallenge(challenge: Challenge) {
+        val challengeJson = UserChallenge(
+            name = challenge.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = sharedPrefsRepository.getDailyStepCount(),
+            joinDate = DateTime().millis
+        ).toJson<UserChallenge>()
+
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges" to FieldValue.arrayUnion(challenge.name)))
+            mapOf("currentChallenges" to FieldValue.arrayUnion(challengeJson)))
             .addOnSuccessListener {
-                sharedPrefsRepository.user.currentChallenges.add(challenge.name)
+                updateUserSharedPrefsData(challengeJson)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
             }
@@ -69,6 +75,12 @@ class ActiveChallengesViewModel(
 
         firestoreRepository.updateChallengeData(challenge.name,
             mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
+    }
+
+    private fun updateUserSharedPrefsData(challengeJson: String) {
+        val user = sharedPrefsRepository.user
+        user.currentChallenges.add(challengeJson)
+        sharedPrefsRepository.user = user
     }
 
 }

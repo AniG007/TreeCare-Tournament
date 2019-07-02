@@ -14,6 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Timestamp
+import com.google.gson.Gson
 import org.joda.time.DateTime
 
 fun Any.toast(context: Context, duration: Int = Toast.LENGTH_SHORT) {
@@ -65,3 +66,5 @@ fun <T> List<T>.toArrayList(): ArrayList<T> {
     }
     return arrayList
 }
+
+fun <T> Any.toJson() = Gson().toJson(this as T)

@@ -18,8 +18,8 @@ import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
-import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
@@ -142,7 +142,7 @@ class MainViewModel(
             .setAccountName(accountName)
             .addConnectionCallbacks(connectionCallbacksImpl)
             .addOnConnectionFailedListener {
-                Log.d("Connection failed: ", it.toString())
+                Log.e("Connection failed: ", it.toString())
             }.build()
 
         if (!mClient.isConnecting && !mClient.isConnected) {

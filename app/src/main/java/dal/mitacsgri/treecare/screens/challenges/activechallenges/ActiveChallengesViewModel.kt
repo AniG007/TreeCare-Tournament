@@ -84,6 +84,7 @@ class ActiveChallengesViewModel(
             name = challenge.name,
             dailyStepsMap = mutableMapOf(),
             totalSteps = sharedPrefsRepository.getDailyStepCount(),
-            joinDate = DateTime().millis
+            joinDate = DateTime().millis,
+            type = challenge.type
         )
 }

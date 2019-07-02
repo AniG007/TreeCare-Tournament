@@ -123,4 +123,42 @@ class StepCountRepository(private val context: Context) {
             }
         }
     }
+
+    fun getAggregateStepCountDataOverARange(mClient: GoogleApiClient,
+                                        startTime: Long, endTime: Long,
+                                        onDataObtained: (stepCount: Int) -> Unit) {
+        //This statement prevents running the following code when the app is being used for the first day
+        //Otherwise the app will crash
+        if (endTime <= startTime) {
+            return
+        }
+
+        val readRequest = DataReadRequest.Builder()
+            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .bucketByTime(1, TimeUnit.DAYS)
+            .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+            .build()
+
+        context.doAsync {
+            val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
+            var aggregateStepCount = 0
+            if (result.status.isSuccess) {
+                for (bucket in result.buckets) {
+                    val dataSets = bucket.dataSets
+                    for (dataSet in dataSets) {
+                        for (dataPoint in dataSet.dataPoints) {
+                            Log.d("Datapoint", dataPoint.toString())
+                            aggregateStepCount += dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
+                        }
+                    }
+                }
+
+                Log.d("Aggegate step count", aggregateStepCount.toString())
+
+                uiThread {
+                    onDataObtained(aggregateStepCount)
+                }
+            }
+        }
+    }
 }

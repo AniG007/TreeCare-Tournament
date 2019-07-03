@@ -52,7 +52,6 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                     DateTime(challenge.joinDate).withTimeAtStartOfDay().millis,
                     DateTime().millis) {
                         challenge.totalSteps =  it
-                        Log.d("Total aggregate", it.toString())
                         storeUserChallengeDataInSharedPrefs(challenge)
                 }
             }
@@ -84,22 +83,17 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
     private fun storeUserChallengeDataInSharedPrefs(challenge: UserChallenge) {
         synchronized(sharedPrefsRepository.user) {
-            val json = challenge.toJson<UserChallenge>()
             val user = sharedPrefsRepository.user
-            user.currentChallenges[challenge.name] = json
+            user.currentChallenges[challenge.name] = challenge.toJson<UserChallenge>()
             sharedPrefsRepository.user = user
-            Log.d("Challenge", json)
-            Log.d("Challenge name", sharedPrefsRepository.user.currentChallenges[challenge.name])
         }
     }
 
     private fun updateUserChallengeDataInFirestore(future: SettableFuture<Result>) {
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges,
-                "email" to DateTime().toString()))
+            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges))
             .addOnSuccessListener {
                 Log.d("Worker", "User data upload success")
-                Log.d("Worker", sharedPrefsRepository.user.currentChallenges.toString())
                 future.set(Result.success())
             }
             .addOnFailureListener {

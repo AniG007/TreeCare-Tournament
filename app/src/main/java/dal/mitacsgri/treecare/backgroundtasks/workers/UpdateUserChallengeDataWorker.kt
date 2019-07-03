@@ -45,7 +45,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                 stepCountRepository.getTodayStepCountData(mClient) {
                     challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-
+                    storeUserChallengeDataInSharedPrefs(challenge)
                 }
             } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
                 stepCountRepository.getAggregateStepCountDataOverARange(mClient,
@@ -54,10 +54,10 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                         challenge.totalSteps =  it
                         Log.d("Total aggregate", it.toString())
                         storeUserChallengeDataInSharedPrefs(challenge)
-                        updateUserChallengeDataInFirestore(future)
                 }
             }
         }
+        updateUserChallengeDataInFirestore(future)
 
         return future
     }

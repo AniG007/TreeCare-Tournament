@@ -3,12 +3,14 @@ package dal.mitacsgri.treecare.backgroundtasks.workers
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.work.Worker
+import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
@@ -23,7 +25,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerParameters)
-    : Worker(appContext, workerParams), KoinComponent {
+    : ListenableWorker(appContext, workerParams), KoinComponent {
 
     private val stepCountRepository: StepCountRepository by inject()
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
@@ -31,7 +33,9 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
     private lateinit var mClient: GoogleApiClient
 
-    override fun doWork(): Result {
+    override fun startWork(): ListenableFuture<Result> {
+        val future = SettableFuture.create<Result>()
+
         val user = sharedPrefsRepository.user
 
         user.currentChallenges.forEach { (_, challengeJson) ->
@@ -41,29 +45,21 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                 stepCountRepository.getTodayStepCountData(mClient) {
                     challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-                    storeUserChallengeDataInSharedPrefs(challenge)
+
                 }
             } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
                 stepCountRepository.getAggregateStepCountDataOverARange(mClient,
                     DateTime(challenge.joinDate).withTimeAtStartOfDay().millis,
                     DateTime().millis) {
                         challenge.totalSteps =  it
+                        Log.d("Total aggregate", it.toString())
                         storeUserChallengeDataInSharedPrefs(challenge)
+                        updateUserChallengeDataInFirestore(future)
                 }
             }
         }
 
-        firestoreRepository.updateUserData(user.uid,
-            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges,
-                "email" to DateTime().toString()))
-            .addOnSuccessListener {
-                Log.d("Worker", "User data upload success")
-            }
-            .addOnFailureListener {
-                Log.e("Worker", "User data upload failed")
-            }
-
-        return Result.success()
+        return future
     }
 
     private fun setupFitApiToGetData(context: Context) {
@@ -88,9 +84,27 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
     private fun storeUserChallengeDataInSharedPrefs(challenge: UserChallenge) {
         synchronized(sharedPrefsRepository.user) {
-            sharedPrefsRepository.user.currentChallenges[challenge.name] =
-                challenge.toJson<UserChallenge>()
+            val json = challenge.toJson<UserChallenge>()
+            val user = sharedPrefsRepository.user
+            user.currentChallenges[challenge.name] = json
+            sharedPrefsRepository.user = user
+            Log.d("Challenge", json)
+            Log.d("Challenge name", sharedPrefsRepository.user.currentChallenges[challenge.name])
         }
     }
 
+    private fun updateUserChallengeDataInFirestore(future: SettableFuture<Result>) {
+        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
+            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges,
+                "email" to DateTime().toString()))
+            .addOnSuccessListener {
+                Log.d("Worker", "User data upload success")
+                Log.d("Worker", sharedPrefsRepository.user.currentChallenges.toString())
+                future.set(Result.success())
+            }
+            .addOnFailureListener {
+                Log.e("Worker", "User data upload failed")
+                future.set(Result.failure())
+            }
+    }
 }

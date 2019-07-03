@@ -74,10 +74,22 @@
         <action
             android:id="@+id/action_challengesFragment_to_createChallengeFragment"
             app:destination="@id/createChallengeFragment"/>
+        <action
+            android:id="@+id/action_challengesFragment_to_leaderboardFragment"
+            app:destination="@id/leaderboardFragment" />
     </fragment>
     <fragment
         android:id="@+id/createChallengeFragment"
         android:name="dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeFragment"
         android:label="fragment_create_challenge"
         tools:layout="@layout/fragment_create_challenge"/>
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="dal.mitacsgri.treecare.screens.leaderboard.LeaderboardFragment"
+        android:label="fragment_leaderboard"
+        tools:layout="@layout/fragment_leaderboard" >
+        <argument
+            android:name="challenge_name"
+            app:argType="string" />
+    </fragment>
 </navigation>

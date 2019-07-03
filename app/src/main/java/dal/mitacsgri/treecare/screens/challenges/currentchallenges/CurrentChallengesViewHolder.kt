@@ -1,8 +1,10 @@
 package dal.mitacsgri.treecare.screens.challenges.currentchallenges
 
 import android.view.View
+import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
+import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import kotlinx.android.synthetic.main.item_current_challenge.view.*
 
 /**
@@ -25,7 +27,9 @@ class CurrentChallengesViewHolder(
 
             }
             buttonLeaderBoard.setOnClickListener {
-
+                val action = ChallengesFragmentDirections
+                    .actionChallengesFragmentToLeaderboardFragment(item.name)
+                findNavController().navigate(action)
             }
 
             buttonExit.setOnClickListener {

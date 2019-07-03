@@ -25,7 +25,6 @@ class SplashScreenFragment : Fragment() {
         splashScreenViewModel.apply {
             //testGameByManipulatingSharedPrefsData(this)
             resetDailyGoalCheckedFlag()
-
             stepCountDataFetchedCounter.observe(this@SplashScreenFragment, Observer {
                 //This value will be 2 only when login has been done
                 if (it == 2) {

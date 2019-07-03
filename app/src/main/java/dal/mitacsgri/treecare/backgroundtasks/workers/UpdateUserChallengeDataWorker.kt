@@ -38,7 +38,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             val challenge = Gson().fromJson(challengeJson, UserChallenge::class.java)
             setupFitApiToGetData(applicationContext)
 
-                if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
+            if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                 stepCountRepository.getTodayStepCountData(mClient) {
                     challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
                     storeUserChallengeDataInSharedPrefs(challenge)
@@ -54,7 +54,8 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         }
 
         firestoreRepository.updateUserData(user.uid,
-            mapOf("currentChallenges" to user.currentChallenges))
+            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges,
+                "email" to DateTime().toString()))
             .addOnSuccessListener {
                 Log.d("Worker", "User data upload success")
             }

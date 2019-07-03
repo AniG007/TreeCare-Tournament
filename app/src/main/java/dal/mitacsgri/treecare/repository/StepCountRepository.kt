@@ -135,7 +135,7 @@ class StepCountRepository(private val context: Context) {
 
         val readRequest = DataReadRequest.Builder()
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-            .bucketByTime(1, TimeUnit.DAYS)
+            .bucketByTime(1, TimeUnit.HOURS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
 
@@ -153,7 +153,7 @@ class StepCountRepository(private val context: Context) {
                     }
                 }
 
-                Log.d("Aggegate step count", aggregateStepCount.toString())
+                Log.d("Aggregate step count", aggregateStepCount.toString())
 
                 uiThread {
                     onDataObtained(aggregateStepCount)

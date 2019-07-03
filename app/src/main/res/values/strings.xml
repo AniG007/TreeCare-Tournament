@@ -71,5 +71,6 @@
     <string name="challenge_option_daily_goal_based">Daily Goal Based</string>
     <string name="challenge_option_aggregate_based">Aggregate based</string>
     <string name="create_challenge">Create</string>
+    <string name="leaderboard_challenge_name">Challenge name</string>
 
 </resources>

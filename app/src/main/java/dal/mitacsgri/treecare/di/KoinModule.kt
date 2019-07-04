@@ -9,6 +9,7 @@ import dal.mitacsgri.treecare.screens.challenges.challengesbyyou.ChallengesByYou
 import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChallengesViewModel
 import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
+import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
 import dal.mitacsgri.treecare.screens.splash.SplashScreenViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -37,4 +38,5 @@ val appModule = module {
     viewModel { ActiveChallengesViewModel(get(), get()) }
     viewModel { CreateChallengeViewModel(get(), get()) }
     viewModel { ChallengesByYouViewModel(get(), get()) }
+    viewModel { LeaderboardItemViewModel(get()) }
 }

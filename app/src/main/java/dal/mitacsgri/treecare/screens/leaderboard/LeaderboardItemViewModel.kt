@@ -17,7 +17,6 @@ import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
-import org.joda.time.DateTime
 
 class LeaderboardItemViewModel(
     private val firestoreRepository: FirestoreRepository
@@ -83,22 +82,8 @@ class LeaderboardItemViewModel(
             name = user.name,
             uid = user.uid,
             photoUrl = user.photoUrl,
-            challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user),
+            challengeGoalStreak = userChallengeData.challengeGoalStreak,
             totalSteps = userChallengeData.totalSteps)
-    }
-
-    private fun getChallengeGoalStreakForUser(challenge:Challenge, user: User): Int {
-        val userChallengeData = Gson().fromJson(user.currentChallenges[challenge.name], UserChallenge::class.java)
-        var streakCount = 0
-
-        userChallengeData.dailyStepsMap.forEach { (date, stepCount) ->
-            //This check prevents resetting streak count if goal is yet to be met today
-            if (date.toInt() < DateTime().withTimeAtStartOfDay().millis) {
-                if (stepCount >= challenge.goal) streakCount++
-                else streakCount = 0
-            }
-        }
-        return streakCount
     }
 
     private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {

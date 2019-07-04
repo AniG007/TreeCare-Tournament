@@ -16,6 +16,7 @@ import com.google.gson.Gson
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.toJson
+import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -42,6 +43,9 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             val challenge = Gson().fromJson(challengeJson, UserChallenge::class.java)
             setupFitApiToGetData(applicationContext)
 
+            challenge.leafCount = calculateLeavesForChallenge(challenge)
+            challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
+
             if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                 stepCountRepository.getTodayStepCountData(mClient) {
                     challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
@@ -59,6 +63,38 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         updateUserChallengeDataInFirestore(future)
 
         return future
+    }
+
+    fun calculateLeavesForChallenge(challenge: UserChallenge) =
+        when(challenge.type) {
+            CHALLENGE_TYPE_AGGREGATE_BASED -> {
+                challenge.totalSteps/1000
+            }
+
+            CHALLENGE_TYPE_DAILY_GOAL_BASED -> {
+                var leafCount = challenge.leafCount
+                val goal = challenge.goal
+                challenge.dailyStepsMap.forEach {(_, steps) ->
+                    leafCount += (steps - (if (steps < goal) goal else 0))/1000
+                }
+                leafCount
+            }
+
+            else -> 0
+        }
+
+    private fun getChallengeGoalStreakForUser(challenge: UserChallenge, user: User): Int {
+        val userChallengeData = Gson().fromJson(user.currentChallenges[challenge.name], UserChallenge::class.java)
+        var streakCount = 0
+
+        userChallengeData.dailyStepsMap.forEach { (date, stepCount) ->
+            //This check prevents resetting streak count if goal is yet to be met today
+            if (date.toInt() < DateTime().withTimeAtStartOfDay().millis) {
+                if (stepCount >= challenge.goal) streakCount++
+                else streakCount = 0
+            }
+        }
+        return streakCount
     }
 
     private fun setupFitApiToGetData(context: Context) {
@@ -80,8 +116,6 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             .build()
         mClient.connect()
     }
-
-
 
     private fun storeUserChallengeDataInSharedPrefs(challenge: UserChallenge) {
         synchronized(sharedPrefsRepository.user) {

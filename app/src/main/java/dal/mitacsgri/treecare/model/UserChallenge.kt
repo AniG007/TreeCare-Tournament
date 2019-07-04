@@ -4,8 +4,10 @@ data class UserChallenge(
     val name: String,
     val dailyStepsMap: MutableMap<String, Int>,
     var totalSteps: Int,
-    val challengeGoalStreak: Int = 0,
+    var challengeGoalStreak: Int = 0,
     val joinDate: Long,
     var isCurrentChallenge: Boolean = true,
-    val type: Int
+    val type: Int,
+    var leafCount: Int = 0,
+    val goal: Int = 5000
 )

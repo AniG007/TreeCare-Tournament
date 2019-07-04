@@ -11,8 +11,11 @@ import androidx.viewpager.widget.ViewPager
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_challenges.view.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ChallengesFragment : Fragment() {
+
+    private val challengesViewModel: ChallengesViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

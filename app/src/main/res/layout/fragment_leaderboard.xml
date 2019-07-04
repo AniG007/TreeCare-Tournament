@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".screens.leaderboard.LeaderboardFragment">
 
-<!--    <include-->
-<!--        layout="@layout/leaf_background_image" />-->
+    <include
+        layout="@layout/leaf_background_image" />
 
     <TextView
         android:id="@+id/headingTV"

@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_challenges_by_you.view.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ChallengesByYouFragment : Fragment() {
 
     private val mViewModel: ChallengesByYouViewModel by viewModel()
+    private val challengesViewModel: ChallengesViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

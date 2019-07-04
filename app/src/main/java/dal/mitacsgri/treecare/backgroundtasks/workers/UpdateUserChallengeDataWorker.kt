@@ -81,6 +81,8 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         mClient.connect()
     }
 
+
+
     private fun storeUserChallengeDataInSharedPrefs(challenge: UserChallenge) {
         synchronized(sharedPrefsRepository.user) {
             val user = sharedPrefsRepository.user

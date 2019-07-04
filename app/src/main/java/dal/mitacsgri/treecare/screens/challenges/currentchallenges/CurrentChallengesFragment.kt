@@ -9,14 +9,17 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_current_challenges.view.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrentChallengesFragment : Fragment() {
 
     private val mViewModel: CurrentChallengesViewModel by viewModel()
+    private val challengesViewModel: ChallengesViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

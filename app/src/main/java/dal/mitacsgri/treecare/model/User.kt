@@ -17,5 +17,6 @@ data class User (
         DateTime(firstLoginTime).plusDays(1).withTimeAtStartOfDay().millis.toString() to 5000
     ),
     var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis,
-    val currentChallenges: MutableMap<String, String> = mutableMapOf()
+    val currentChallenges: MutableMap<String, String> = mutableMapOf(),
+    val photoUrl: String = ""
 )

@@ -2,9 +2,11 @@ package dal.mitacsgri.treecare.screens.challenges.activechallenges
 
 import android.content.DialogInterface
 import android.view.View
+import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
+import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import kotlinx.android.synthetic.main.item_active_challenge.view.*
 
 /**
@@ -32,6 +34,12 @@ class ActiveChallengesViewHolder(itemView: View, private val viewModel: ActiveCh
                         dialogInterface.dismiss()
                     }
                     .show()
+            }
+
+            buttonLeaderBoard.setOnClickListener {
+                val action = ChallengesFragmentDirections
+                    .actionChallengesFragmentToLeaderboardFragment(item.name)
+                findNavController().navigate(action)
             }
         }
     }

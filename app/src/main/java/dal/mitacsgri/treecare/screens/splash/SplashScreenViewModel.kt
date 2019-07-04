@@ -38,14 +38,6 @@ class SplashScreenViewModel(
         sharedPrefsRepository.storeDailyStepsGoal(goal)
     }
 
-    fun test() {
-        stepCountRepository.getAggregateStepCountDataOverARange(mClient,
-            1562110285110,
-            DateTime().millis) {
-                Log.d("Challenge step count", it.toString())
-        }
-    }
-
     fun resetDailyGoalCheckedFlag() {
         //Will execute only once in each day, when the app is opened for thr first time in the day
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
@@ -78,8 +70,6 @@ class SplashScreenViewModel(
             .addConnectionCallbacks(object: GoogleApiClient.ConnectionCallbacks {
                 override fun onConnected(p0: Bundle?) {
                     stepCountRepository.apply {
-
-                        test()
 
                         //Get aggregate step count up to the last day
                         getStepCountDataOverARange(

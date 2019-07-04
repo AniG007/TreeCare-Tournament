@@ -238,7 +238,7 @@ class MainViewModel(
         firestoreRepository.getUserData(uid)
             .addOnSuccessListener {
                 if (it.exists()) {
-                    val user = it.toObject<User>() as User
+                    val user = it.toObject<User>()!!
                     userExistsAction(user)
                     sharedPrefsRepository.user = user
                     storeDailyGoalInPrefs()

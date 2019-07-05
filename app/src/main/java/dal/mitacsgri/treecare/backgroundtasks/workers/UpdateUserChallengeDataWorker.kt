@@ -65,7 +65,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         return future
     }
 
-    fun calculateLeavesForChallenge(challenge: UserChallenge) =
+    private fun calculateLeavesForChallenge(challenge: UserChallenge) =
         when(challenge.type) {
             CHALLENGE_TYPE_AGGREGATE_BASED -> {
                 challenge.totalSteps/1000

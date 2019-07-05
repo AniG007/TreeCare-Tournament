@@ -1,10 +1,12 @@
 package dal.mitacsgri.treecare.screens.challenges.currentchallenges
 
+import android.content.Intent
 import android.view.View
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
+import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.item_current_challenge.view.*
 
 /**
@@ -24,7 +26,9 @@ class CurrentChallengesViewHolder(
             playersTV.text = viewModel.getPlayersCountText(item)
 
             buttonTree.setOnClickListener {
-
+                viewModel.startUnityActivityForChallenge(item) {
+                    context.startActivity(Intent(context, TreeCareUnityActivity::class.java))
+                }
             }
             buttonLeaderBoard.setOnClickListener {
                 val action = ChallengesFragmentDirections

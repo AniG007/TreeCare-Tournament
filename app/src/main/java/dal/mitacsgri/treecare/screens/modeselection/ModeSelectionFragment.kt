@@ -33,11 +33,13 @@ class ModeSelectionFragment : Fragment() {
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
 
             starterModeButton.setOnClickListener {
+                mainViewModel.setGameMode(STARTER_MODE)
                 startInstructionOrUnityActivity(STARTER_MODE,
                     mainViewModel.hasInstructionsDisplayed(STARTER_MODE))
             }
 
             challengerModeButton.setOnClickListener {
+                mainViewModel.setGameMode(CHALLENGER_MODE)
                 if (mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
                     findNavController().navigate(R.id.action_modeSelectionFragment_to_challengesFragment)
                 else {

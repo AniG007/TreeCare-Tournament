@@ -43,6 +43,14 @@
     <string name="current_fruit_count">current_fruit_count</string>
     <string name="current_day_of_week">current_day_of_week</string>
     <string name="user">user</string>
+    <string name="game_mode">game_mode</string>
+    <string name="challenge_type">challenge_type</string>
+    <string name="challenge_leaf_count">challenge_leaf_count</string>
+    <string name="challenge_last_leaf_count">challenge_last_leaf_count</string>
+    <string name="challenge_goal">challenge_goal</string>
+    <string name="challenge_streak">challenge_streak</string>
+    <string name="challenge_name">challenge_name</string>
+    <string name="challenge_total_steps_count">challenge_total_steps_count</string>
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>

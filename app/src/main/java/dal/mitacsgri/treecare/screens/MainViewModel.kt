@@ -76,6 +76,10 @@ class MainViewModel(
         }
     }
 
+    fun setGameMode(mode: Int) {
+        sharedPrefsRepository.gameMode = mode
+    }
+
     fun startLoginAndConfiguration(activity: Activity) {
         // Choose authentication providers
         val providers = arrayListOf(

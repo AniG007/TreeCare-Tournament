@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
 import com.google.gson.Gson
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.UserChallenge
@@ -87,6 +88,22 @@ class CurrentChallengesViewModel(
             .addOnFailureListener {
                 statusMessage.value = "Failed"
             }
+    }
+
+    fun startUnityActivityForChallenge(challenge: Challenge, action: () -> Unit) {
+        sharedPrefsRepository.apply {
+
+            val userChallenge = Gson().fromJson(user.currentChallenges[challenge.name], UserChallenge::class.java)
+            gameMode = CHALLENGER_MODE
+            challengeType = userChallenge.type
+            challengeGoal = userChallenge.goal
+            challengeLeafCount = userChallenge.leafCount
+            challengeStreak = userChallenge.challengeGoalStreak
+            challengeName = userChallenge.name
+            challengeTotalStepsCount = userChallenge.totalSteps
+
+            action()
+        }
     }
 
     fun getChallengeDurationText(challenge: Challenge): SpannedString {

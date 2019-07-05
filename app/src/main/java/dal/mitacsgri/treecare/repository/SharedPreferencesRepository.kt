@@ -133,6 +133,48 @@ class SharedPreferencesRepository(val context: Context) {
             }
         }
 
+    var gameMode = 0
+        set(value) {
+            storeInt(R.string.game_mode , value)
+        }
+
+    var challengeType = 0
+        set(value) {
+            storeInt(R.string.challenge_type, value)
+        }
+
+    var challengeLeafCount: Int = 0
+        set(value) {
+            challengeLastLeafCount = getInt(R.string.challenge_leaf_count)
+            storeInt(R.string.challenge_leaf_count, value)
+        }
+
+    private var challengeLastLeafCount = 0
+        set(value) {
+            storeInt(R.string.challenge_last_leaf_count, value)
+        }
+
+    var challengeGoal = 0
+        set(value) {
+            storeInt(R.string.challenge_goal, value)
+        }
+
+    var challengeStreak = 0
+        set(value) {
+            storeInt(R.string.challenge_streak, value)
+        }
+
+    var challengeName = ""
+        set(value) {
+            sharedPref.edit {
+                putString(context.getString(R.string.challenge_name), value)
+            }
+        }
+
+    var challengeTotalStepsCount = 0
+        set(value) {
+            storeInt(R.string.challenge_total_steps_count, value)
+        }
 
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)

@@ -13,8 +13,10 @@ import kotlinx.android.synthetic.main.item_active_challenge.view.*
  * Created by Devansh on 25-06-2019
  */
 
-class ActiveChallengesViewHolder(itemView: View, private val viewModel: ActiveChallengesViewModel)
-    : BaseViewHolder<Challenge>(itemView) {
+class ActiveChallengesViewHolder(
+    itemView: View,
+    private val viewModel: ActiveChallengesViewModel
+    ): BaseViewHolder<Challenge>(itemView) {
 
     override fun bind(item: Challenge) {
         itemView.apply {
@@ -27,10 +29,10 @@ class ActiveChallengesViewHolder(itemView: View, private val viewModel: ActiveCh
                 MaterialAlertDialogBuilder(context)
                     .setTitle("Join the challenge")
                     .setMessage("Do you really want to join the challenge '${item.name}'")
-                    .setPositiveButton("Yes") { dialogInterface: DialogInterface, i: Int ->
+                    .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
                         viewModel.joinChallenge(item)
                     }
-                    .setNegativeButton("No") { dialogInterface: DialogInterface, i: Int ->
+                    .setNegativeButton("No") { dialogInterface: DialogInterface, _: Int ->
                         dialogInterface.dismiss()
                     }
                     .show()

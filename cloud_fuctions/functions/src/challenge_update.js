@@ -12,7 +12,7 @@ const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
 admin.initializeApp({
-	apiKey: 'AIzaSyA9ZSw2R96P-Tqe5lHS93Ew0C08EAMbREE', 
+	apiKey: '' /*API Key*/, 
 	authDomain: 'smooth-pivot-242815.firebaseapp.com',
 	projectId: 'smooth-pivot-242815',
 	databaseURL: "https://smooth-pivot-242815.firebaseio.com"
@@ -28,22 +28,21 @@ updateChallengeDaily = functions.https.onRequest((req, res) => {
 
 			const challenge = doc.data();
 
-			for (let property in challenge) {
-				if (challenge.hasOwnProperty(property)) {
-					console.log(challenge[property]);
-				}
-			}
-
 			const endTime = challenge.finishTimestamp.toDate().getTime();
 			const currentTime = new Date().getTime()
 			
-			if (endTime < currentTime ) {
+			if ((endTime < currentTime) && (challenge.active === true)) {
 				db.collection('challenges').doc(challenge.name)
 					.set({
 						active: false
 					}, {merge: true})
+				console.log(`Updated challenge: ${challenge.name}`);
 			}
 		})
+		return true
+	})
+	.catch(error => {
+		console.log('error', error);
 	})
 })
 

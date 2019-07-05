@@ -12,7 +12,7 @@ const functions = require('firebase-functions')
 const admin = require('firebase-admin')
 
 admin.initializeApp({
-	apiKey: 'AIzaSyA9ZSw2R96P-Tqe5lHS93Ew0C08EAMbREE', 
+	apiKey: '' //API Key, 
 	authDomain: 'smooth-pivot-242815.firebaseapp.com',
 	projectId: 'smooth-pivot-242815',
 	databaseURL: "https://smooth-pivot-242815.firebaseio.com"

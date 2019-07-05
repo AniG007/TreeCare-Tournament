@@ -22,7 +22,7 @@ const db = admin.firestore()
 
 updateChallengeDaily = functions.https.onRequest((req, res) => {
 
-	db.collection('challenges').get().then((querySnapshot) => {
+	db.collection('challenges').where('active', '==', true).get().then((querySnapshot) => {
 		querySnapshot.forEach((doc) => {
 			console.log(`${doc.id} => ${doc.data()}`);
 
@@ -31,7 +31,7 @@ updateChallengeDaily = functions.https.onRequest((req, res) => {
 			const endTime = challenge.finishTimestamp.toDate().getTime();
 			const currentTime = new Date().getTime()
 			
-			if ((endTime < currentTime) && (challenge.active === true)) {
+			if ((endTime < currentTime)) {
 				db.collection('challenges').doc(challenge.name)
 					.set({
 						active: false

@@ -38,5 +38,5 @@ val appModule = module {
     viewModel { ActiveChallengesViewModel(get(), get()) }
     viewModel { CreateChallengeViewModel(get(), get()) }
     viewModel { ChallengesByYouViewModel(get(), get()) }
-    viewModel { LeaderboardItemViewModel(get()) }
+    viewModel { LeaderboardItemViewModel(get(), get()) }
 }

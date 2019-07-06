@@ -17,12 +17,16 @@ import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
 class LeaderboardItemViewModel(
-    private val firestoreRepository: FirestoreRepository
+    private val firestoreRepository: FirestoreRepository,
+    private val sharedPrefsRepository: SharedPreferencesRepository
     ) : ViewModel() {
 
     private lateinit var challenge: Challenge
+
+    fun isCurrentUser(challenger: Challenger) = challenger.uid == sharedPrefsRepository.user.uid
 
     fun getAchievementText(challenger: Challenger): SpannedString =
             when(challenge.type) {

@@ -1,8 +1,10 @@
 package dal.mitacsgri.treecare.screens.leaderboard
 
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import kotlinx.android.synthetic.main.item_leaderboard.view.*
@@ -19,6 +21,11 @@ class LeaderboardItemViewHolder(
             Glide.with(this).load(item.photoUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageView)
+
+            if (viewModel.isCurrentUser(item)) {
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context,
+                    R.color.challenger_mode_primary_color_light))
+            }
         }
     }
 }

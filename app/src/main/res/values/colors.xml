@@ -12,4 +12,5 @@
 
     <color name="challenger_mode_primary_color">#FFFF6F00</color>
     <color name="challenger_mode_accent_color">#c43e00</color>
+    <color name="challenger_mode_primary_color_light">#FF9E50</color>
 </resources>

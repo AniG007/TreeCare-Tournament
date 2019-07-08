@@ -49,6 +49,22 @@ class ChallengesByYouViewModel(
         }
     }
 
+    fun getChallengeTypeText(challenge: Challenge) =
+        buildSpannedString {
+            bold {
+                append("Type: ")
+            }
+            append(if (challenge.type == 0) "Daily Goal Based" else "Aggregate based")
+        }
+
+    fun getGoalText(challenge: Challenge) =
+        buildSpannedString {
+            bold {
+                append(if(challenge.type == 0) "Daily Steps Goal: " else "Total steps goal: ")
+            }
+            append(challenge.goal.toString())
+        }
+
     fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
 
     fun getCurrentUserId() = sharedPrefsRepository.user.uid

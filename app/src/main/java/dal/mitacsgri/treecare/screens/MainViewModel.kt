@@ -7,11 +7,11 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.toObject
@@ -148,12 +148,10 @@ class MainViewModel(
             .addApi(Fitness.HISTORY_API)
             .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
             .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-            //.setAccountName(accountName)
-            .useDefaultAccount()
+            .setAccountName(accountName)
             .addConnectionCallbacks(connectionCallbacksImpl)
             .addOnConnectionFailedListener {
                 Log.e("Connection failed: ", it.toString())
-                mClient.connect()
             }.build()
 
         if (!mClient.isConnecting && !mClient.isConnected) {
@@ -162,27 +160,27 @@ class MainViewModel(
     }
 
     private fun subscribeToRecordSteps(setLoginProcessDone : () -> Unit) {
-//        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-//            .setResultCallback { status ->
-//                if (status.isSuccess) {
-//                    if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
-//                        Log.i("recording", "Existing subscription for activity detected.")
-//                    } else {
-//                        Log.i("recording", "Successfully subscribed!")
-//                    }
-//                    setLoginProcessDone()
-//                } else {
-//                    Log.w("recording", "There was a problem subscribing.")
-//                }
-//            }
-        Fitness.getRecordingClient(mActivity, GoogleSignIn.getLastSignedInAccount(mActivity)!!)
-            .listSubscriptions(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-            .addOnSuccessListener { subscriptions ->
-                for (sc in subscriptions) {
-                    val dt = sc.dataType
-                    Log.i("Recording", "Active subscription for data type: " + dt!!.name)
+        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
+            .setResultCallback { status ->
+                if (status.isSuccess) {
+                    if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
+                        Log.i("recording", "Existing subscription for activity detected.")
+                    } else {
+                        Log.i("recording", "Successfully subscribed!")
+                    }
+                    setLoginProcessDone()
+                } else {
+                    Log.w("recording", "There was a problem subscribing.")
                 }
             }
+//        Fitness.getRecordingClient(mActivity, GoogleSignIn.getLastSignedInAccount(mActivity)!!)
+//            .listSubscriptions(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+//            .addOnSuccessListener { subscriptions ->
+//                for (sc in subscriptions) {
+//                    val dt = sc.dataType
+//                    Log.i("Recording", "Active subscription for data type: " + dt!!.name)
+//                }
+//            }
     }
 
     private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {

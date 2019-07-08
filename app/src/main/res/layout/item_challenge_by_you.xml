@@ -13,20 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingStart="@dimen/_12sdp"
+        android:paddingTop="@dimen/_10sdp"
         android:paddingEnd="@dimen/_12sdp"
-        android:paddingBottom="@dimen/_10sdp"
-        android:paddingTop="@dimen/_10sdp">
+        android:paddingBottom="@dimen/_10sdp">
 
         <TextView
             android:id="@+id/nameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="15,000 in 2 days"
-            android:textSize="@dimen/_18sdp"
             android:textColor="@color/black"
+            android:textSize="@dimen/_18sdp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="15,000 in 2 days" />
 
         <TextView
             android:id="@+id/descriptionTV"
@@ -42,59 +44,75 @@
             app:layout_constraintHorizontal_bias="0.0"/>
 
         <TextView
-            android:id="@+id/durationTV"
+            android:id="@+id/challengeTypeTV"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="timings"
-            android:drawableStart="@drawable/ic_time"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:drawableStart="@drawable/ic_trophy"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/descriptionTV"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            style="@style/ItemActiveChallengeTextWithDrawableStyle"/>
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTV"
+            tools:text="Type: Aggregate based" />
+
+        <TextView
+            android:id="@+id/goalTV"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_goal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/challengeTypeTV"
+            tools:text="Total steps goal: 15000" />
+
+        <TextView
+            android:id="@+id/durationTV"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/goalTV"
+            tools:text="Expires: Some date" />
 
         <TextView
             android:id="@+id/participantsTV"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="20,000"
             android:drawableStart="@drawable/ic_user"
+            android:text="2000"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/descriptionTV"
-            style="@style/ItemActiveChallengeTextWithDrawableStyle"/>
+            app:layout_constraintTop_toBottomOf="@+id/goalTV" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonJoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/join"
             android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/join"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV"/>
+            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonLeaderBoard"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/leaderboard"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV"
+            android:text="@string/leaderboard"
             app:layout_constraintStart_toEndOf="@+id/buttonJoin"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
 
         <ImageButton
             android:id="@+id/buttonDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete"
+            android:layout_marginTop="@dimen/_10sdp"
             android:tint="@color/white"
             android:backgroundTint="#f00"
-            android:layout_marginTop="@dimen/_10sdp"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV"
-            app:layout_constraintRight_toRightOf="parent" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

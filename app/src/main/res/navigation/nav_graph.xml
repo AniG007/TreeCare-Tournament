@@ -91,5 +91,12 @@
         <argument
             android:name="challenge_name"
             app:argType="string" />
+        <action
+            android:id="@+id/action_leaderboardFragment_to_challengeCompleteDialog"
+            app:destination="@id/challengeCompleteDialog" />
     </fragment>
+    <dialog
+        android:id="@+id/challengeCompleteDialog"
+        android:name="dal.mitacsgri.treecare.dialog.ChallengeCompleteDialog"
+        android:label="ChallengeCompleteDialog" />
 </navigation>

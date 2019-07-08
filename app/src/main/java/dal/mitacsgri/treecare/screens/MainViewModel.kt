@@ -7,11 +7,11 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.FitnessStatusCodes
 import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.toObject
@@ -27,6 +27,8 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import java.util.*
 
+
+
 class MainViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository,
@@ -36,6 +38,8 @@ class MainViewModel(
     private lateinit var mClient: GoogleApiClient
     private var authInProgress = false
     private var RC_SIGN_IN = 1000
+
+    private lateinit var mActivity: Activity
 
     //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
     //Value 2 means both the steps counts have been obtained
@@ -117,7 +121,7 @@ class MainViewModel(
                         performFitnessApiConfiguration(activity, user.email)
                         return@checkIfUserExists User(
                             uid = user.uid,
-                            isFirstRun = false,
+                            isFirstRun = true,
                             name = user.displayName!!,
                             firstLoginTime = DateTime().millis,
                             email = user.email!!)
@@ -138,15 +142,18 @@ class MainViewModel(
 
 
     private fun performFitnessApiConfiguration(activity: Activity, accountName: String?) {
+        mActivity = activity
         mClient = GoogleApiClient.Builder(activity)
             .addApi(Fitness.RECORDING_API)
             .addApi(Fitness.HISTORY_API)
             .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
             .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-            .setAccountName(accountName)
+            //.setAccountName(accountName)
+            .useDefaultAccount()
             .addConnectionCallbacks(connectionCallbacksImpl)
             .addOnConnectionFailedListener {
                 Log.e("Connection failed: ", it.toString())
+                mClient.connect()
             }.build()
 
         if (!mClient.isConnecting && !mClient.isConnected) {
@@ -155,17 +162,25 @@ class MainViewModel(
     }
 
     private fun subscribeToRecordSteps(setLoginProcessDone : () -> Unit) {
-        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-            .setResultCallback { status ->
-                if (status.isSuccess) {
-                    if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
-                        Log.i("recording", "Existing subscription for activity detected.")
-                    } else {
-                        Log.i("recording", "Successfully subscribed!")
-                    }
-                    setLoginProcessDone()
-                } else {
-                    Log.w("recording", "There was a problem subscribing.")
+//        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
+//            .setResultCallback { status ->
+//                if (status.isSuccess) {
+//                    if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
+//                        Log.i("recording", "Existing subscription for activity detected.")
+//                    } else {
+//                        Log.i("recording", "Successfully subscribed!")
+//                    }
+//                    setLoginProcessDone()
+//                } else {
+//                    Log.w("recording", "There was a problem subscribing.")
+//                }
+//            }
+        Fitness.getRecordingClient(mActivity, GoogleSignIn.getLastSignedInAccount(mActivity)!!)
+            .listSubscriptions(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+            .addOnSuccessListener { subscriptions ->
+                for (sc in subscriptions) {
+                    val dt = sc.dataType
+                    Log.i("Recording", "Active subscription for data type: " + dt!!.name)
                 }
             }
     }
@@ -217,7 +232,9 @@ class MainViewModel(
             }
         }
 
-        override fun onConnectionSuspended(p0: Int) {}
+        override fun onConnectionSuspended(p0: Int) {
+            Log.d("Suspended", p0.toString())
+        }
     }
 
     private fun increaseStepCountDataFetchedCounter() {

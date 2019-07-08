@@ -8,6 +8,7 @@ import dal.mitacsgri.treecare.screens.challenges.activechallenges.ActiveChalleng
 import dal.mitacsgri.treecare.screens.challenges.challengesbyyou.ChallengesByYouViewModel
 import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChallengesViewModel
 import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
+import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
 import dal.mitacsgri.treecare.screens.splash.SplashScreenViewModel
@@ -39,4 +40,5 @@ val appModule = module {
     viewModel { CreateChallengeViewModel(get(), get()) }
     viewModel { ChallengesByYouViewModel(get(), get()) }
     viewModel { LeaderboardItemViewModel(get(), get()) }
+    viewModel { ChallengeCompleteDialogViewModel() }
 }

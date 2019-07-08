@@ -19,13 +19,13 @@ class LeaderboardFragment : Fragment() {
     private val args: LeaderboardFragmentArgs by navArgs()
     private val mViewModel: LeaderboardItemViewModel by viewModel()
 
+    private var isDialogShown = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_leaderboard, container, false)
-
-        findNavController().navigate(R.id.action_leaderboardFragment_to_challengeCompleteDialog)
 
         view.apply {
             headingTV.text = args.challengeName
@@ -34,6 +34,14 @@ class LeaderboardFragment : Fragment() {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = LeaderboardRecyclerViewAdapter(it, mViewModel)
+
+                    if (!isDialogShown && (it.size > 0)) {
+                        isDialogShown = true
+                        val pos = mViewModel.getCurrentChallengerPosition(it)
+                        val action = LeaderboardFragmentDirections
+                            .actionLeaderboardFragmentToChallengeCompleteDialog(pos)
+                        findNavController().navigate(action)
+                    }
                 }
             })
 

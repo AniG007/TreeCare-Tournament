@@ -6,4 +6,9 @@ data class Challenger(
     val photoUrl: String,
     val challengeGoalStreak: Int,
     val totalSteps: Int
-)
+) {
+
+    override fun equals(other: Any?) = if (other is Challenger) uid == other.uid else false
+
+    override fun hashCode() = uid.length
+}

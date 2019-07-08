@@ -78,6 +78,15 @@ class LeaderboardItemViewModel(
         return challengersList
     }
 
+    fun getCurrentChallengerPosition(challengers: ArrayList<Challenger>): Int {
+        val currentUserUid = sharedPrefsRepository.user.uid
+        for (i in 0 until challengers.size) {
+            if (challengers[i].uid == currentUserUid)
+                return i+1
+        }
+        return -1
+    }
+
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
         val userChallengeData = Gson().fromJson(
             user.currentChallenges[challenge.name], UserChallenge::class.java)

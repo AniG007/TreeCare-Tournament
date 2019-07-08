@@ -97,6 +97,10 @@
     </fragment>
     <dialog
         android:id="@+id/challengeCompleteDialog"
-        android:name="dal.mitacsgri.treecare.dialog.ChallengeCompleteDialog"
-        android:label="ChallengeCompleteDialog" />
+        android:name="dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialog"
+        android:label="ChallengeCompleteDialog" >
+        <argument
+            android:name="position"
+            app:argType="integer" />
+    </dialog>
 </navigation>

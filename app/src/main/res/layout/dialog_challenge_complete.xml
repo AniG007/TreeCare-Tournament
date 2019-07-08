@@ -33,6 +33,7 @@
         app:layout_constraintTop_toBottomOf="@id/trophyAnimation" />
 
     <TextView
+        android:id="@+id/positionTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

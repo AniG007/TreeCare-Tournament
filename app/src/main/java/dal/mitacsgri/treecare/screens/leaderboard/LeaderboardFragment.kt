@@ -19,8 +19,6 @@ class LeaderboardFragment : Fragment() {
     private val args: LeaderboardFragmentArgs by navArgs()
     private val mViewModel: LeaderboardItemViewModel by viewModel()
 
-    private var isDialogShown = false
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,8 +33,9 @@ class LeaderboardFragment : Fragment() {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = LeaderboardRecyclerViewAdapter(it, mViewModel)
 
-                    if (!isDialogShown && (it.size > 0)) {
-                        isDialogShown = true
+                    if ((it.size > 0) && !mViewModel.isDialogDisplayed) {
+                        mViewModel.isDialogDisplayed = false
+
                         val pos = mViewModel.getCurrentChallengerPosition(it)
                         val action = LeaderboardFragmentDirections
                             .actionLeaderboardFragmentToChallengeCompleteDialog(pos)

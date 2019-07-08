@@ -9,6 +9,6 @@ data class UserChallenge(
     var isCurrentChallenge: Boolean = true,
     val type: Int,
     var leafCount: Int = 0,
-    val goal: Int = 5000,
+    val goal: Int,
     var isActive: Boolean = true
 )

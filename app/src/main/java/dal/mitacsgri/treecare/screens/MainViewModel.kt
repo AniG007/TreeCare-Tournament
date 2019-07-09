@@ -23,6 +23,7 @@ import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
+import dal.mitacsgri.treecare.screens.dialog.logindataloading.LoginDataLoadingDialog
 import org.joda.time.DateTime
 import org.joda.time.Days
 import java.util.*
@@ -38,8 +39,9 @@ class MainViewModel(
     private lateinit var mClient: GoogleApiClient
     private var authInProgress = false
     private var RC_SIGN_IN = 1000
-
+    private val loadingDialog = LoginDataLoadingDialog()
     private lateinit var mActivity: Activity
+
 
     //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
     //Value 2 means both the steps counts have been obtained
@@ -102,14 +104,12 @@ class MainViewModel(
         if (requestCode == RC_SIGN_IN) {
             authInProgress = false
             if (resultCode == Activity.RESULT_OK) {
-
                 val user = FirebaseAuth.getInstance().currentUser
+
+                userFirstName.value = user?.displayName?.split(" ")?.get(0)
 
                 //Store user dal.mitacsgri.treecare.data if user does not exist
                 user?.let {
-                    userFirstName.value = user.displayName?.let {
-                        it.split(" ")[0]
-                    }
 
                     checkIfUserExists(user.uid, {
                         firstLoginTime = it.firstLoginTime

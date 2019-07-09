@@ -13,10 +13,6 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 android {
     signingConfigs {
         release {
-            storeFile file('E:\\AndroidStudioProjects\\Projects Res\\TreeCare Res\\Keystore\\TreeCare.jks')
-            storePassword 'Devansh$#123'
-            keyAlias = 'TreeCare'
-            keyPassword 'Devansh$#123'
         }
     }
     compileSdkVersion 28
@@ -30,10 +26,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable = true
-            signingConfig signingConfigs.release
         }
     }
 }

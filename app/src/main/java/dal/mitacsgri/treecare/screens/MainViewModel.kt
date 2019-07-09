@@ -124,7 +124,8 @@ class MainViewModel(
                             isFirstRun = true,
                             name = user.displayName!!,
                             firstLoginTime = DateTime().millis,
-                            email = user.email!!)
+                            email = user.email!!,
+                            photoUrl = user.photoUrl.toString())
                     }
 
                     Log.d("User: ", userFirstName.toString())

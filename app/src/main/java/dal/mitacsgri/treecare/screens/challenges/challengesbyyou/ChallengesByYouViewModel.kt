@@ -6,8 +6,12 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.google.common.util.concurrent.MoreExecutors
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObjects
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.UserChallenge
@@ -102,6 +106,15 @@ class ChallengesByYouViewModel(
 
         firestoreRepository.updateChallengeData(challenge.name,
             mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
+
+        //Update data as soon as user joins a challenge
+        val updateUserChallengeDataRequest =
+            OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>().build()
+        WorkManager.getInstance().enqueue(updateUserChallengeDataRequest).result.addListener(
+            Runnable {
+                Log.d("Challenge data", "updated by work manager")
+            }, MoreExecutors.directExecutor()
+        )
     }
 
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge, userChallengeJson: String) {

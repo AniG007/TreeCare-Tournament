@@ -28,6 +28,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
+
         view.signInButton.setOnClickListener {
             mainViewModel.startLoginAndConfiguration(activity!!)
         }

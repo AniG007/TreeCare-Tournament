@@ -17,6 +17,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        mainViewModel.performLogin(requestCode, resultCode, data, this)
+        mainViewModel.onSignInResult(requestCode, resultCode, data, this)
     }
 }

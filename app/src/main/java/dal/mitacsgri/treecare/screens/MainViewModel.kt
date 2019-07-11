@@ -6,14 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.common.Scopes
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.Scope
 import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.FitnessStatusCodes
+import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataType
-import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
@@ -28,8 +29,6 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import java.util.*
 
-
-
 class MainViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository,
@@ -37,7 +36,7 @@ class MainViewModel(
     ) : ViewModel() {
 
     private lateinit var mClient: GoogleApiClient
-    private var authInProgress = false
+    private lateinit var mAccount: GoogleSignInAccount
     private var RC_SIGN_IN = 1000
     private val loadingDialog = LoginDataLoadingDialog()
     private lateinit var mActivity: Activity
@@ -87,49 +86,71 @@ class MainViewModel(
     }
 
     fun startLoginAndConfiguration(activity: Activity) {
-        // Choose authentication providers
-        val providers = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build())
 
-        // Create and launch sign-in intent
-        activity.startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build(),
-            RC_SIGN_IN)
+        val fitnessOptions = FitnessOptions.builder()
+            .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+            .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
+            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .build()
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(""/*Web application type client ID*/)
+            .requestEmail()
+            .addExtension(fitnessOptions)
+            .build()
+
+        val mGoogleSignInClient = GoogleSignIn.getClient(activity, gso)
+
+        val signInIntent = mGoogleSignInClient.signInIntent
+        activity.startActivityForResult(signInIntent, RC_SIGN_IN)
+
+//        // Choose authentication providers
+//        val providers = arrayListOf(
+//            AuthUI.IdpConfig.GoogleBuilder().build())
+//
+//        // Create and launch sign-in intent
+//        activity.startActivityForResult(
+//            AuthUI.getInstance()
+//                .createSignInIntentBuilder()
+//                .setAvailableProviders(providers)
+//                .build(),
+//            RC_SIGN_IN)
     }
 
-    fun performLogin(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
+    fun onSignInResult(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
         if (requestCode == RC_SIGN_IN) {
-            authInProgress = false
             if (resultCode == Activity.RESULT_OK) {
-                val user = FirebaseAuth.getInstance().currentUser
 
-                userFirstName.value = user?.displayName?.split(" ")?.get(0)
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                mActivity = activity
+                handleSignInResult(task)
 
-                //Store user dal.mitacsgri.treecare.data if user does not exist
-                user?.let {
-
-                    checkIfUserExists(user.uid, {
-                        firstLoginTime = it.firstLoginTime
-                        sharedPrefsRepository.isFirstRun = false
-                        performFitnessApiConfiguration(activity, user.email)
-                        expandDailyGoalMapIfNeeded(it)
-                    }) {
-                        sharedPrefsRepository.isFirstRun = true
-                        performFitnessApiConfiguration(activity, user.email)
-                        return@checkIfUserExists User(
-                            uid = user.uid,
-                            isFirstRun = true,
-                            name = user.displayName!!,
-                            firstLoginTime = DateTime().millis,
-                            email = user.email!!,
-                            photoUrl = user.photoUrl.toString())
-                    }
-
-                    Log.d("User: ", userFirstName.toString())
-                }
+//                val user = FirebaseAuth.getInstance().currentUser
+//
+//                userFirstName.value = user?.displayName?.split(" ")?.get(0)
+//
+//                //Store user dal.mitacsgri.treecare.data if user does not exist
+//                user?.let {
+//
+//                    checkIfUserExists(user.uid, {
+//                        firstLoginTime = it.firstLoginTime
+//                        sharedPrefsRepository.isFirstRun = false
+//                        performFitnessApiConfiguration(activity, user.email)
+//                        expandDailyGoalMapIfNeeded(it)
+//                    }) {
+//                        sharedPrefsRepository.isFirstRun = true
+//                        performFitnessApiConfiguration(activity, user.email)
+//                        return@checkIfUserExists User(
+//                            uid = user.uid,
+//                            isFirstRun = true,
+//                            name = user.displayName!!,
+//                            firstLoginTime = DateTime().millis,
+//                            email = user.email!!,
+//                            photoUrl = user.photoUrl.toString())
+//                    }
+//
+//                    Log.d("User: ", userFirstName.toString())
+//                }
 
                 lastLoginTime = Date().time
 
@@ -141,55 +162,33 @@ class MainViewModel(
         }
     }
 
-
-    private fun performFitnessApiConfiguration(activity: Activity, accountName: String?) {
-        mActivity = activity
-        mClient = GoogleApiClient.Builder(activity)
-            .addApi(Fitness.RECORDING_API)
-            .addApi(Fitness.HISTORY_API)
-            .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
-            .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-            .setAccountName(accountName)
-            .addConnectionCallbacks(connectionCallbacksImpl)
-            .addOnConnectionFailedListener {
-                Log.e("Connection failed: ", it.toString())
-            }.build()
-
-        if (!mClient.isConnecting && !mClient.isConnected) {
-            mClient.connect()
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            completedTask.addOnSuccessListener {
+                mAccount = it
+                subscribeToRecordSteps {}
+            }
+        } catch (e: ApiException) {
+            Log.w("LoginFailure", "signInResult:failedCode=" + e.statusCode)
         }
     }
 
-    private fun subscribeToRecordSteps(setLoginProcessDone : () -> Unit) {
-        Fitness.RecordingApi.subscribe(mClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-            .setResultCallback { status ->
-                if (status.isSuccess) {
-                    if (status.statusCode == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
-                        Log.i("recording", "Existing subscription for activity detected.")
-                    } else {
-                        Log.i("recording", "Successfully subscribed!")
-                    }
-                    setLoginProcessDone()
-                } else {
-                    Log.w("recording", "There was a problem subscribing.")
-                }
+    private fun subscribeToRecordSteps(action: () -> Unit) {
+
+        val TAG = "RecordingAPI"
+
+        Fitness.getRecordingClient(mActivity, mAccount).subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
+            .addOnSuccessListener {
+                Log.d(TAG, "success")
+                action()
             }
-//        Fitness.getRecordingClient(mActivity, GoogleSignIn.getLastSignedInAccount(mActivity)!!)
-//            .listSubscriptions(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-//            .addOnSuccessListener { subscriptions ->
-//                for (sc in subscriptions) {
-//                    val dt = sc.dataType
-//                    Log.i("Recording", "Active subscription for data type: " + dt!!.name)
-//                }
-//            }
+            .addOnFailureListener {
+                Log.d(TAG, "failure: $it")
+            }
     }
 
     private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {
         override fun onConnected(p0: Bundle?) {
-
-            subscribeToRecordSteps {
-                sharedPrefsRepository.isLoginDone = true
-            }
 
             stepCountRepository.apply {
                 if (sharedPrefsRepository.isFirstRun) {

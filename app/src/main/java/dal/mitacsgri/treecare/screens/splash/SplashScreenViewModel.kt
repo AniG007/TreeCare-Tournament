@@ -104,7 +104,7 @@ class SplashScreenViewModel(
                             var currentLeafCount = totalLeafCountTillLastDay
                             //Add today's leaf count to leafCountTillLastDay
                             //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
-                            getTodayStepCountData(mClient) {
+                            getTodayStepCountData {
                                 currentLeafCount += it/1000
                                 sharedPrefsRepository.currentLeafCount = currentLeafCount
 

@@ -47,7 +47,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
 
             if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
-                stepCountRepository.getTodayStepCountData(mClient) {
+                stepCountRepository.getTodayStepCountData {
                     challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
                     storeUserChallengeDataInSharedPrefs(challenge)
                 }

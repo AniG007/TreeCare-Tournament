@@ -2,6 +2,7 @@ package dal.mitacsgri.treecare.repository
 
 import android.content.Context
 import android.util.Log
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.data.DataType
@@ -17,25 +18,38 @@ class StepCountRepository(private val context: Context) {
 
     private val TAG = "DailyStepCount"
 
-    fun getTodayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Int) -> Unit) {
+    fun getTodayStepCountData(onDataObtained: (stepCount: Int) -> Unit) {
 
-        context.doAsync {
-            var total = 0
+        var total = 0
+        doAsync {
 
-            val result = Fitness.HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA)
-            val totalResult = result.await(1, TimeUnit.SECONDS)
-            if (totalResult.status.isSuccess) {
-                val totalSet = totalResult.total
-                total = (if (totalSet!!.isEmpty) 0
-                else totalSet.dataPoints[0].getValue(Field.FIELD_STEPS).asInt())
-            } else {
-                Log.w(TAG, "There was a problem getting the step count.")
-            }
+            val response = Fitness.getHistoryClient(context,
+                GoogleSignIn.getLastSignedInAccount(context)!!)
+                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
 
-            uiThread {
+            response.addOnSuccessListener {
+                total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
+                Log.d("DailyStepCount", total.toString())
+                onDataObtained(total)
+            }.addOnFailureListener {
+                Log.e("DailyStepCount", "error: $it")
                 onDataObtained(total)
             }
         }
+//
+//            val result = Fitness.HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA)
+//            val totalResult = result.await(1, TimeUnit.SECONDS)
+//            if (totalResult.status.isSuccess) {
+//                val totalSet = totalResult.total
+//                total = (if (totalSet!!.isEmpty) 0
+//                else totalSet.dataPoints[0].getValue(Field.FIELD_STEPS).asInt())
+//            } else {
+//                Log.w(TAG, "There was a problem getting the step count.")
+//            }
+//
+//            uiThread {
+//                onDataObtained(total)
+//            }
     }
 
     fun getLastDayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Int) -> Unit) {
@@ -92,18 +106,21 @@ class StepCountRepository(private val context: Context) {
             return
         }
 
+        val stepCountMap = mutableMapOf<Long, Int>()
+
         val readRequest = DataReadRequest.Builder()
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
             .bucketByTime(1, TimeUnit.DAYS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
 
-        context.doAsync {
-            val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
-            val stepCountMap = mutableMapOf<Long, Int>()
+        val account = GoogleSignIn.getLastSignedInAccount(context)
+        Log.d("Account", account?.displayName)
 
-            if (result.status.isSuccess) {
-                for (bucket in result.buckets) {
+        Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
+            .readData(readRequest)
+            .addOnSuccessListener {
+                for (bucket in it.buckets) {
                     val dataSets = bucket.dataSets
                     for (dataSet in dataSets) {
                         for (dataPoint in dataSet.dataPoints) {
@@ -115,13 +132,34 @@ class StepCountRepository(private val context: Context) {
                     }
                 }
 
+                onDataObtained(stepCountMap)
                 Log.d("Step count map", stepCountMap.toString())
-
-                uiThread {
-                    onDataObtained(stepCountMap)
-                }
             }
-        }
+
+//        context.doAsync {
+//            val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
+//            val stepCountMap = mutableMapOf<Long, Int>()
+//
+//            if (result.status.isSuccess) {
+//                for (bucket in result.buckets) {
+//                    val dataSets = bucket.dataSets
+//                    for (dataSet in dataSets) {
+//                        for (dataPoint in dataSet.dataPoints) {
+//                            Log.d("Datapoint", dataPoint.toString())
+//                            val stepCount = dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
+//                            val dpStartTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS)
+//                            stepCountMap[DateTime(dpStartTime).withTimeAtStartOfDay().millis]= stepCount
+//                        }
+//                    }
+//                }
+//
+//                Log.d("Step count map", stepCountMap.toString())
+//
+//                uiThread {
+//                    onDataObtained(stepCountMap)
+//                }
+//            }
+//        }
     }
 
     fun getAggregateStepCountDataOverARange(mClient: GoogleApiClient,

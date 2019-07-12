@@ -4,17 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataType
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
@@ -37,10 +36,11 @@ class MainViewModel(
 
     private lateinit var mClient: GoogleApiClient
     private lateinit var mAccount: GoogleSignInAccount
-    private var RC_SIGN_IN = 1000
     private val loadingDialog = LoginDataLoadingDialog()
     private lateinit var mActivity: Activity
 
+    private var RC_SIGN_IN = 1000
+    private val RC_GOOGLE_FIT_PERMISSIONS = 4
 
     //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
     //Value 2 means both the steps counts have been obtained
@@ -85,91 +85,113 @@ class MainViewModel(
         sharedPrefsRepository.gameMode = mode
     }
 
-    fun startLoginAndConfiguration(activity: Activity) {
+    fun startLoginAndConfiguration(activity: FragmentActivity) {
 
         val fitnessOptions = FitnessOptions.builder()
-            .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-            .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
-            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
+            .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
             .build()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(""/*Web application type client ID*/)
+            .requestIdToken("628888141862-lmblquvs5s3gl9rmshvag3sin348kaam.apps.googleusercontent.com"/*Web application type client ID*/)
             .requestEmail()
-            .addExtension(fitnessOptions)
             .build()
 
         val mGoogleSignInClient = GoogleSignIn.getClient(activity, gso)
-
         val signInIntent = mGoogleSignInClient.signInIntent
         activity.startActivityForResult(signInIntent, RC_SIGN_IN)
-
-//        // Choose authentication providers
-//        val providers = arrayListOf(
-//            AuthUI.IdpConfig.GoogleBuilder().build())
-//
-//        // Create and launch sign-in intent
-//        activity.startActivityForResult(
-//            AuthUI.getInstance()
-//                .createSignInIntentBuilder()
-//                .setAvailableProviders(providers)
-//                .build(),
-//            RC_SIGN_IN)
     }
 
     fun onSignInResult(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
+            when(requestCode) {
+                RC_SIGN_IN -> {
 
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                mActivity = activity
-                handleSignInResult(task)
+                    GoogleSignIn.getSignedInAccountFromIntent(data)
+                        .addOnSuccessListener {
+                            mAccount = GoogleSignIn.getLastSignedInAccount(activity)!!
+                            mActivity = activity
+                            //accessFitApi(task)
 
-//                val user = FirebaseAuth.getInstance().currentUser
-//
-//                userFirstName.value = user?.displayName?.split(" ")?.get(0)
-//
-//                //Store user dal.mitacsgri.treecare.data if user does not exist
-//                user?.let {
-//
-//                    checkIfUserExists(user.uid, {
-//                        firstLoginTime = it.firstLoginTime
-//                        sharedPrefsRepository.isFirstRun = false
-//                        performFitnessApiConfiguration(activity, user.email)
-//                        expandDailyGoalMapIfNeeded(it)
-//                    }) {
-//                        sharedPrefsRepository.isFirstRun = true
-//                        performFitnessApiConfiguration(activity, user.email)
-//                        return@checkIfUserExists User(
-//                            uid = user.uid,
-//                            isFirstRun = true,
-//                            name = user.displayName!!,
-//                            firstLoginTime = DateTime().millis,
-//                            email = user.email!!,
-//                            photoUrl = user.photoUrl.toString())
-//                    }
-//
-//                    Log.d("User: ", userFirstName.toString())
-//                }
+                            val fitnessOptions = FitnessOptions.builder()
+                                .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
+                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                                .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_WRITE)
+                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
+                                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
+                                .build()
 
-                lastLoginTime = Date().time
+                            if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(mActivity), fitnessOptions)) {
+                                GoogleSignIn.requestPermissions(
+                                    mActivity, // your activity
+                                    RC_GOOGLE_FIT_PERMISSIONS,
+                                    GoogleSignIn.getLastSignedInAccount(mActivity),
+                                    fitnessOptions)
+                            } else {
+                                Log.d("FitAPI", "permissions exist")
+                                accessFitApi()
+                            }
 
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Log.e("GoogleFit", "RESULT_CANCELED")
+                        }
+
+        /*//                val user = FirebaseAuth.getInstance().currentUser
+        //
+        //                userFirstName.value = user?.displayName?.split(" ")?.get(0)
+        //
+        //                //Store user dal.mitacsgri.treecare.data if user does not exist
+        //                user?.let {
+        //
+        //                    checkIfUserExists(user.uid, {
+        //                        firstLoginTime = it.firstLoginTime
+        //                        sharedPrefsRepository.isFirstRun = false
+        //                        performFitnessApiConfiguration(activity, user.email)
+        //                        expandDailyGoalMapIfNeeded(it)
+        //                    }) {
+        //                        sharedPrefsRepository.isFirstRun = true
+        //                        performFitnessApiConfiguration(activity, user.email)
+        //                        return@checkIfUserExists User(
+        //                            uid = user.uid,
+        //                            isFirstRun = true,
+        //                            name = user.displayName!!,
+        //                            firstLoginTime = DateTime().millis,
+        //                            email = user.email!!,
+        //                            photoUrl = user.photoUrl.toString())
+        //                    }
+        //
+        //                    Log.d("User: ", userFirstName.toString())
+        //                }
+                         */
+
+                    lastLoginTime = Date().time
+
+                }
+                RC_GOOGLE_FIT_PERMISSIONS -> {
+                    Log.d("FitAPI", "permissions do not")
+                    accessFitApi()
+                }
             }
         } else {
-            Log.e("GoogleFit", "requestCode NOT request_oauth")
+            Log.e("TreeCare", "RESULT_CANCELED")
         }
     }
 
-    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            completedTask.addOnSuccessListener {
-                mAccount = it
-                subscribeToRecordSteps {}
+    private fun accessFitApi() {
+        subscribeToRecordSteps {
+            //stepCountRepository.getTodayStepCountData {  }
+            stepCountRepository.getStepCountDataOverARange(
+                GoogleApiClient.Builder(mActivity)
+                    .addApi(Fitness.HISTORY_API).build(),
+                DateTime().minusDays(7).withTimeAtStartOfDay().millis,
+                DateTime().millis
+            ) {
+
             }
-        } catch (e: ApiException) {
-            Log.w("LoginFailure", "signInResult:failedCode=" + e.statusCode)
+
+            stepCountRepository.getTodayStepCountData {
+
+            }
         }
     }
 
@@ -185,6 +207,15 @@ class MainViewModel(
             .addOnFailureListener {
                 Log.d(TAG, "failure: $it")
             }
+
+        Fitness.getRecordingClient(mActivity, mAccount).subscribe(DataType.TYPE_STEP_COUNT_DELTA)
+            .addOnSuccessListener {
+                Log.d(TAG, "success")
+                action()
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "failure: $it")
+            }
     }
 
     private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {
@@ -192,7 +223,7 @@ class MainViewModel(
 
             stepCountRepository.apply {
                 if (sharedPrefsRepository.isFirstRun) {
-                    getTodayStepCountData(mClient) {
+                    getTodayStepCountData {
                         sharedPrefsRepository.storeDailyStepCount(it)
                         Log.d("DailyStepCount", it.toString())
                         sharedPrefsRepository.currentLeafCount = it / 1000
@@ -218,7 +249,7 @@ class MainViewModel(
                         var currentLeafCount = totalLeafCountTillLastDay
                         //Add today's leaf count to leafCountTillLastDay
                         //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
-                        getTodayStepCountData(mClient) {
+                        getTodayStepCountData {
                             currentLeafCount += it / 1000
                             sharedPrefsRepository.currentLeafCount = currentLeafCount
                             sharedPrefsRepository.storeDailyStepCount(it)

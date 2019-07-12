@@ -52,7 +52,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                     storeUserChallengeDataInSharedPrefs(challenge)
                 }
             } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
-                stepCountRepository.getAggregateStepCountDataOverARange(mClient,
+                stepCountRepository.getAggregateStepCountDataOverARange(
                     DateTime(challenge.joinDate).withTimeAtStartOfDay().millis,
                     DateTime().millis) {
                         challenge.totalSteps =  it

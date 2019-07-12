@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit
 
 class StepCountRepository(private val context: Context) {
 
-    private val TAG = "DailyStepCount"
-
     fun getTodayStepCountData(onDataObtained: (stepCount: Int) -> Unit) {
 
         var total = 0
@@ -36,20 +34,6 @@ class StepCountRepository(private val context: Context) {
                 onDataObtained(total)
             }
         }
-//
-//            val result = Fitness.HistoryApi.readDailyTotal(mClient, DataType.TYPE_STEP_COUNT_DELTA)
-//            val totalResult = result.await(1, TimeUnit.SECONDS)
-//            if (totalResult.status.isSuccess) {
-//                val totalSet = totalResult.total
-//                total = (if (totalSet!!.isEmpty) 0
-//                else totalSet.dataPoints[0].getValue(Field.FIELD_STEPS).asInt())
-//            } else {
-//                Log.w(TAG, "There was a problem getting the step count.")
-//            }
-//
-//            uiThread {
-//                onDataObtained(total)
-//            }
     }
 
     fun getLastDayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Int) -> Unit) {
@@ -95,9 +79,7 @@ class StepCountRepository(private val context: Context) {
         }
     }
 
-    fun getStepCountDataOverARange(mClient: GoogleApiClient,
-                                   startTime: Long, endTime: Long,
-                                   onDataObtained: (stepCount: Map<Long, Int>) -> Unit) {
+    fun getStepCountDataOverARange(startTime: Long, endTime: Long, onDataObtained: (stepCount: Map<Long, Int>) -> Unit) {
 
         //This statement prevents running the following code when the app is being used for the first day
         //Otherwise the app will crash
@@ -113,9 +95,6 @@ class StepCountRepository(private val context: Context) {
             .bucketByTime(1, TimeUnit.DAYS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
-
-        val account = GoogleSignIn.getLastSignedInAccount(context)
-        Log.d("Account", account?.displayName)
 
         Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
             .readData(readRequest)
@@ -135,39 +114,15 @@ class StepCountRepository(private val context: Context) {
                 onDataObtained(stepCountMap)
                 Log.d("Step count map", stepCountMap.toString())
             }
-
-//        context.doAsync {
-//            val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
-//            val stepCountMap = mutableMapOf<Long, Int>()
-//
-//            if (result.status.isSuccess) {
-//                for (bucket in result.buckets) {
-//                    val dataSets = bucket.dataSets
-//                    for (dataSet in dataSets) {
-//                        for (dataPoint in dataSet.dataPoints) {
-//                            Log.d("Datapoint", dataPoint.toString())
-//                            val stepCount = dataPoint.getValue(dataPoint.dataType.fields[0]).asInt()
-//                            val dpStartTime = dataPoint.getStartTime(TimeUnit.MILLISECONDS)
-//                            stepCountMap[DateTime(dpStartTime).withTimeAtStartOfDay().millis]= stepCount
-//                        }
-//                    }
-//                }
-//
-//                Log.d("Step count map", stepCountMap.toString())
-//
-//                uiThread {
-//                    onDataObtained(stepCountMap)
-//                }
-//            }
-//        }
     }
 
-    fun getAggregateStepCountDataOverARange(mClient: GoogleApiClient,
-                                        startTime: Long, endTime: Long,
-                                        onDataObtained: (stepCount: Int) -> Unit) {
+    fun getAggregateStepCountDataOverARange(startTime: Long, endTime: Long, onDataObtained: (stepCount: Int) -> Unit) {
+        var aggregateStepCount = 0
+
         //This statement prevents running the following code when the app is being used for the first day
         //Otherwise the app will crash
         if (endTime <= startTime) {
+            onDataObtained(aggregateStepCount)
             return
         }
 
@@ -177,11 +132,10 @@ class StepCountRepository(private val context: Context) {
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
 
-        context.doAsync {
-            val result = Fitness.HistoryApi.readData(mClient, readRequest).await(30, TimeUnit.SECONDS)
-            var aggregateStepCount = 0
-            if (result.status.isSuccess) {
-                for (bucket in result.buckets) {
+        Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
+            .readData(readRequest)
+            .addOnSuccessListener {
+                for (bucket in it.buckets) {
                     val dataSets = bucket.dataSets
                     for (dataSet in dataSets) {
                         for (dataPoint in dataSet.dataPoints) {
@@ -191,12 +145,8 @@ class StepCountRepository(private val context: Context) {
                     }
                 }
 
+                onDataObtained(aggregateStepCount)
                 Log.d("Aggregate step count", aggregateStepCount.toString())
-
-                uiThread {
-                    onDataObtained(aggregateStepCount)
-                }
             }
-        }
     }
 }

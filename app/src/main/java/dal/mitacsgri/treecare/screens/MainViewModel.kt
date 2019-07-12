@@ -2,7 +2,6 @@ package dal.mitacsgri.treecare.screens
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
@@ -59,12 +58,6 @@ class MainViewModel(
         }
         get() = sharedPrefsRepository.lastLoginTime
 
-    var lastLogoutTime: Long
-        set(value) {
-        sharedPrefsRepository.lastLogoutTime = value
-        }
-        get() = sharedPrefsRepository.lastLogoutTime
-
     fun hasInstructionsDisplayed(mode: Int) =
             when(mode) {
                 STARTER_MODE -> sharedPrefsRepository.starterModeInstructionsDisplayed
@@ -87,14 +80,8 @@ class MainViewModel(
 
     fun startLoginAndConfiguration(activity: FragmentActivity) {
 
-        val fitnessOptions = FitnessOptions.builder()
-            .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
-            .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-            .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-            .build()
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("628888141862-lmblquvs5s3gl9rmshvag3sin348kaam.apps.googleusercontent.com"/*Web application type client ID*/)
+            .requestIdToken(""/*Web application type client ID*/)
             .requestEmail()
             .build()
 
@@ -112,7 +99,6 @@ class MainViewModel(
                         .addOnSuccessListener {
                             mAccount = GoogleSignIn.getLastSignedInAccount(activity)!!
                             mActivity = activity
-                            //accessFitApi(task)
 
                             val fitnessOptions = FitnessOptions.builder()
                                 .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
@@ -123,9 +109,10 @@ class MainViewModel(
                                 .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
                                 .build()
 
-                            if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(mActivity), fitnessOptions)) {
+                            if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(mActivity),
+                                    fitnessOptions)) {
                                 GoogleSignIn.requestPermissions(
-                                    mActivity, // your activity
+                                    mActivity,
                                     RC_GOOGLE_FIT_PERMISSIONS,
                                     GoogleSignIn.getLastSignedInAccount(mActivity),
                                     fitnessOptions)
@@ -165,10 +152,9 @@ class MainViewModel(
                          */
 
                     lastLoginTime = Date().time
-
                 }
                 RC_GOOGLE_FIT_PERMISSIONS -> {
-                    Log.d("FitAPI", "permissions do not")
+                    Log.d("FitAPI", "permissions granted")
                     accessFitApi()
                 }
             }
@@ -178,19 +164,47 @@ class MainViewModel(
     }
 
     private fun accessFitApi() {
+
         subscribeToRecordSteps {
-            //stepCountRepository.getTodayStepCountData {  }
-            stepCountRepository.getStepCountDataOverARange(
-                GoogleApiClient.Builder(mActivity)
-                    .addApi(Fitness.HISTORY_API).build(),
-                DateTime().minusDays(7).withTimeAtStartOfDay().millis,
-                DateTime().millis
-            ) {
+            sharedPrefsRepository.isLoginDone = true
+        }
 
-            }
+        stepCountRepository.apply {
+            if (sharedPrefsRepository.isFirstRun) {
+                getTodayStepCountData {
+                    sharedPrefsRepository.storeDailyStepCount(it)
+                    Log.d("DailyStepCount", it.toString())
+                    sharedPrefsRepository.currentLeafCount = it / 1000
+                    increaseStepCountDataFetchedCounter()
+                    increaseStepCountDataFetchedCounter()
+                }
+                sharedPrefsRepository.lastLeafCount = 0
+            } else {
+                //Get aggregate step count up to the last day + current day step count
+                getStepCountDataOverARange(
+                    DateTime(sharedPrefsRepository.firstLoginTime).withTimeAtStartOfDay().millis,
+                    DateTime().withTimeAtStartOfDay().millis) {
 
-            stepCountRepository.getTodayStepCountData {
+                    var totalLeafCountTillLastDay = 0
+                    it.forEach { (date, stepCount) ->
+                        val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
+                        totalLeafCountTillLastDay +=
+                            calculateLeafCountFromStepCount(stepCount, goal!!)
+                    }
+                    sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
+                    increaseStepCountDataFetchedCounter()
 
+                    var currentLeafCount = totalLeafCountTillLastDay
+                    //Add today's leaf count to leafCountTillLastDay
+                    //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
+                    getTodayStepCountData {
+                        currentLeafCount += it / 1000
+                        sharedPrefsRepository.currentLeafCount = currentLeafCount
+                        sharedPrefsRepository.storeDailyStepCount(it)
+                        Log.d("DailyStepCount", it.toString())
+                        increaseStepCountDataFetchedCounter()
+                    }
+                }
             }
         }
     }
@@ -201,7 +215,7 @@ class MainViewModel(
 
         Fitness.getRecordingClient(mActivity, mAccount).subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
             .addOnSuccessListener {
-                Log.d(TAG, "success")
+                Log.d(TAG, "success: TYPE_STEP_COUNT_CUMULATIVE")
                 action()
             }
             .addOnFailureListener {
@@ -210,60 +224,12 @@ class MainViewModel(
 
         Fitness.getRecordingClient(mActivity, mAccount).subscribe(DataType.TYPE_STEP_COUNT_DELTA)
             .addOnSuccessListener {
-                Log.d(TAG, "success")
+                Log.d(TAG, "success: TYPE_STEP_COUNT_DELTA")
                 action()
             }
             .addOnFailureListener {
                 Log.d(TAG, "failure: $it")
             }
-    }
-
-    private val connectionCallbacksImpl = object: GoogleApiClient.ConnectionCallbacks {
-        override fun onConnected(p0: Bundle?) {
-
-            stepCountRepository.apply {
-                if (sharedPrefsRepository.isFirstRun) {
-                    getTodayStepCountData {
-                        sharedPrefsRepository.storeDailyStepCount(it)
-                        Log.d("DailyStepCount", it.toString())
-                        sharedPrefsRepository.currentLeafCount = it / 1000
-                        increaseStepCountDataFetchedCounter()
-                        increaseStepCountDataFetchedCounter()
-                    }
-                    sharedPrefsRepository.lastLeafCount = 0
-                } else {
-                    //Get aggregate step count up to the last day + current day step count
-                    getStepCountDataOverARange(mClient,
-                        DateTime(sharedPrefsRepository.firstLoginTime).withTimeAtStartOfDay().millis,
-                        DateTime().withTimeAtStartOfDay().millis) {
-
-                        var totalLeafCountTillLastDay = 0
-                        it.forEach { (date, stepCount) ->
-                            val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
-                            totalLeafCountTillLastDay +=
-                                calculateLeafCountFromStepCount(stepCount, goal!!)
-                        }
-                        sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
-                        increaseStepCountDataFetchedCounter()
-
-                        var currentLeafCount = totalLeafCountTillLastDay
-                        //Add today's leaf count to leafCountTillLastDay
-                        //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
-                        getTodayStepCountData {
-                            currentLeafCount += it / 1000
-                            sharedPrefsRepository.currentLeafCount = currentLeafCount
-                            sharedPrefsRepository.storeDailyStepCount(it)
-                            Log.d("DailyStepCount", it.toString())
-                            increaseStepCountDataFetchedCounter()
-                        }
-                    }
-                }
-            }
-        }
-
-        override fun onConnectionSuspended(p0: Int) {
-            Log.d("Suspended", p0.toString())
-        }
     }
 
     private fun increaseStepCountDataFetchedCounter() {

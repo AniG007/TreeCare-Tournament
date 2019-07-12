@@ -1,15 +1,9 @@
 package dal.mitacsgri.treecare.screens.splash
 
-import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.common.api.Scope
-import com.google.android.gms.fitness.Fitness
-import com.google.firebase.auth.FirebaseAuth
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -56,69 +50,52 @@ class SplashScreenViewModel(
         }
     }
 
-    fun setupFitApiToGetData(context: Context) {
+    fun setupFitApiToGetData() {
 
-        val connectionFailedImpl = GoogleApiClient.OnConnectionFailedListener {
-            Log.e("Connection failed", it.toString())
-        }
+        stepCountRepository.apply {
 
-        mClient = GoogleApiClient.Builder(context)
-            .addApi(Fitness.HISTORY_API)
-            .addScope(Scope(Scopes.FITNESS_BODY_READ_WRITE))
-            .addScope(Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-            .setAccountName(FirebaseAuth.getInstance().currentUser?.email)
-            .addConnectionCallbacks(object: GoogleApiClient.ConnectionCallbacks {
-                override fun onConnected(p0: Bundle?) {
-                    stepCountRepository.apply {
+            //Get aggregate step count up to the last day
+            getStepCountDataOverARange(
+                DateTime(sharedPrefsRepository.user.firstLoginTime).withTimeAtStartOfDay().millis,
+                DateTime().withTimeAtStartOfDay().millis
+            ) {
 
-                        //Get aggregate step count up to the last day
-                        getStepCountDataOverARange(
-                            DateTime(sharedPrefsRepository.user.firstLoginTime).withTimeAtStartOfDay().millis,
-                            DateTime().withTimeAtStartOfDay().millis
-                        ) {
+                calculateFruitsOnTree(it)
+                increaseStepCountDataFetchedCounter()
 
-                            calculateFruitsOnTree(it)
-                            increaseStepCountDataFetchedCounter()
+                val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
 
-                            val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
-
-                            //Updated the daily goal stored in SharedPrefs to display in Unity
-                            if (sharedPrefsRepository.isDailyGoalChecked == 0) {
-                                sharedPrefsRepository.storeDailyStepsGoal(
-                                    dailyGoalMap[DateTime().withTimeAtStartOfDay().millis.toString()] ?: 5000)
-                            }
-
-                            expandDailyGoalMapIfNeeded(sharedPrefsRepository.user)
-
-                            var totalLeafCountTillLastDay = 0
-                            it.forEach { (date, stepCount) ->
-                                val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
-                                totalLeafCountTillLastDay +=
-                                    calculateLeafCountFromStepCount(stepCount, goal!!)
-                                Log.d("Date: $date", "StepCount: $stepCount")
-                            }
-
-                            Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())
-
-                            var currentLeafCount = totalLeafCountTillLastDay
-                            //Add today's leaf count to leafCountTillLastDay
-                            //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
-                            getTodayStepCountData {
-                                currentLeafCount += it/1000
-                                sharedPrefsRepository.currentLeafCount = currentLeafCount
-
-                                sharedPrefsRepository.storeDailyStepCount(it)
-                                Log.d("DailyStepCount", it.toString())
-                                increaseStepCountDataFetchedCounter()
-                            }
-                        }
-                    }
+                //Updated the daily goal stored in SharedPrefs to display in Unity
+                if (sharedPrefsRepository.isDailyGoalChecked == 0) {
+                    sharedPrefsRepository.storeDailyStepsGoal(
+                        dailyGoalMap[DateTime().withTimeAtStartOfDay().millis.toString()] ?: 5000)
                 }
-                override fun onConnectionSuspended(p0: Int) {}
-            })
-            .addOnConnectionFailedListener(connectionFailedImpl)
-            .build()
-        mClient.connect()
+
+                expandDailyGoalMapIfNeeded(sharedPrefsRepository.user)
+
+                var totalLeafCountTillLastDay = 0
+                it.forEach { (date, stepCount) ->
+                    val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
+                    totalLeafCountTillLastDay +=
+                        calculateLeafCountFromStepCount(stepCount, goal!!)
+                    Log.d("Date: $date", "StepCount: $stepCount")
+                }
+
+                Log.d("Last day leaf count", totalLeafCountTillLastDay.toString())
+
+                var currentLeafCount = totalLeafCountTillLastDay
+                //Add today's leaf count to leafCountTillLastDay
+                //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
+                getTodayStepCountData {
+                    currentLeafCount += it/1000
+                    sharedPrefsRepository.currentLeafCount = currentLeafCount
+
+                    sharedPrefsRepository.storeDailyStepCount(it)
+                    Log.d("DailyStepCount", it.toString())
+                    increaseStepCountDataFetchedCounter()
+                }
+            }
+        }
     }
 
     private inline fun increaseStepCountDataFetchedCounter() {

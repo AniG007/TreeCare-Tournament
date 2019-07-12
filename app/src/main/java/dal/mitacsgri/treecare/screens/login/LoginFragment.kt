@@ -52,12 +52,12 @@ class LoginFragment : Fragment() {
             userFirstName.observe(this@LoginFragment, Observer {
                 "Welcome $it !".toast(context)
                 walkAnimation.pauseAnimation()
-                loadingDialog.show(fragmentManager!!, "login_dialog")
+                //loadingDialog.show(fragmentManager!!, "login_dialog")
             })
 
             stepCountDataFetchedCounter.observe(this@LoginFragment, Observer {
                 if (it == 2) {
-                    loadingDialog.dismiss()
+                    //loadingDialog.dismiss()
                     findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
                 }
             })

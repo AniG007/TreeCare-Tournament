@@ -19,20 +19,19 @@ class StepCountRepository(private val context: Context) {
     fun getTodayStepCountData(onDataObtained: (stepCount: Int) -> Unit) {
 
         var total = 0
-        doAsync {
 
-            val response = Fitness.getHistoryClient(context,
-                GoogleSignIn.getLastSignedInAccount(context)!!)
-                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
+        val response = Fitness.getHistoryClient(context,
+            GoogleSignIn.getLastSignedInAccount(context)!!)
+            .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
 
-            response.addOnSuccessListener {
+        response.addOnSuccessListener {
+            if (it.dataPoints.size > 0)
                 total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
-                Log.d("DailyStepCount", total.toString())
-                onDataObtained(total)
-            }.addOnFailureListener {
-                Log.e("DailyStepCount", "error: $it")
-                onDataObtained(total)
-            }
+            Log.d("DailyStepCount", total.toString())
+            onDataObtained(total)
+        }.addOnFailureListener {
+            Log.e("DailyStepCount", "error: $it")
+            onDataObtained(total)
         }
     }
 

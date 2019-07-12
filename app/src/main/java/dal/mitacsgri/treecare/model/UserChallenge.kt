@@ -1,14 +1,14 @@
 package dal.mitacsgri.treecare.model
 
 data class UserChallenge(
-    val name: String,
-    val dailyStepsMap: MutableMap<String, Int>,
-    var totalSteps: Int,
+    val name: String = "",
+    val dailyStepsMap: MutableMap<String, Int> = mutableMapOf(),
+    var totalSteps: Int = 0,
     var challengeGoalStreak: Int = 0,
-    val joinDate: Long,
+    val joinDate: Long = 0,
     var isCurrentChallenge: Boolean = true,
-    val type: Int,
+    val type: Int = 0,
     var leafCount: Int = 0,
-    val goal: Int,
+    val goal: Int = 0,
     var isActive: Boolean = true
 )

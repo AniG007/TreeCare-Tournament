@@ -91,7 +91,7 @@ class ActiveChallengesViewModel(
 
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge, userChallengeJson: String) {
         val user = sharedPrefsRepository.user
-        user.currentChallenges[userChallenge.name] = userChallengeJson
+        user.currentChallenges[userChallenge.name] = userChallenge
         sharedPrefsRepository.user = user
     }
 

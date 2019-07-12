@@ -3,9 +3,9 @@ package dal.mitacsgri.treecare.screens.splash
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.common.api.GoogleApiClient
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
@@ -22,7 +22,6 @@ class SplashScreenViewModel(
     : ViewModel() {
 
     val isLoginDone = sharedPrefsRepository.isLoginDone
-    private lateinit var mClient: GoogleApiClient
 
     //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
     //Value 2 means both the steps counts have been obtained

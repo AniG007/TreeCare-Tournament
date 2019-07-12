@@ -7,7 +7,6 @@ import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
-import com.google.gson.Gson
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
@@ -31,11 +30,10 @@ class CurrentChallengesViewModel(
     fun getCurrentChallengesForUser() {
         val challengeReferences = sharedPrefsRepository.user.currentChallenges
 
-        challengeReferences.forEach { (_, userChallengeString) ->
-            val challengeJson = Gson().fromJson(userChallengeString, UserChallenge::class.java)
+        challengeReferences.forEach { (_, userChallenge) ->
             //Getting challenges from the Challenges DB after getting reference
             // from the challenges list obtained from the user
-            firestoreRepository.getChallenge(challengeJson.name)
+            firestoreRepository.getChallenge(userChallenge.name)
                 .addOnSuccessListener {
                 val challenge = it.toObject<Challenge>() ?: Challenge(exist = false)
                 synchronized(challengesList.value!!) {
@@ -93,7 +91,7 @@ class CurrentChallengesViewModel(
     fun startUnityActivityForChallenge(challenge: Challenge, action: () -> Unit) {
         sharedPrefsRepository.apply {
 
-            val userChallenge = Gson().fromJson(user.currentChallenges[challenge.name], UserChallenge::class.java)
+            val userChallenge = user.currentChallenges[challenge.name]!!
             gameMode = CHALLENGER_MODE
             challengeType = userChallenge.type
             challengeGoal = userChallenge.goal

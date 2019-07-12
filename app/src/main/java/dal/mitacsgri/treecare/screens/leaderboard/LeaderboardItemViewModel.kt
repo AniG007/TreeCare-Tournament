@@ -7,12 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
-import com.google.gson.Gson
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.extensions.toJson
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.User
@@ -34,7 +32,7 @@ class LeaderboardItemViewModel(
             userChallenge.isActive = value
 
             val user = sharedPrefsRepository.user
-            user.currentChallenges.put(userChallenge.name, userChallenge.toJson<UserChallenge>())
+            user.currentChallenges[userChallenge.name] = userChallenge
             sharedPrefsRepository.user = user
 
             firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
@@ -71,8 +69,7 @@ class LeaderboardItemViewModel(
         firestoreRepository.getChallenge(challengeName)
             .addOnSuccessListener {
                 challenge = it.toObject<Challenge>()!!
-                userChallenge = Gson().fromJson(
-                    sharedPrefsRepository.user.currentChallenges[challengeName], UserChallenge::class.java)
+                userChallenge = sharedPrefsRepository.user.currentChallenges[challengeName]!!
 
                 val challengers = challenge.players
                 val challengersCount = challenge.players.size
@@ -106,8 +103,7 @@ class LeaderboardItemViewModel(
     }
 
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
-        val userChallengeData = Gson().fromJson(
-            user.currentChallenges[challenge.name], UserChallenge::class.java)
+        val userChallengeData = user.currentChallenges[challenge.name]!!
 
         return Challenger(
             name = user.name,

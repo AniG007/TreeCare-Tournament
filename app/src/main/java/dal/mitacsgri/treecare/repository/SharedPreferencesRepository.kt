@@ -2,10 +2,12 @@ package dal.mitacsgri.treecare.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.User
+import org.json.JSONException
 
 class SharedPreferencesRepository(val context: Context) {
 
@@ -126,7 +128,17 @@ class SharedPreferencesRepository(val context: Context) {
         set(value) { storeInt(R.string.current_day_of_week, value) }
 
     var user: User
-        get() = Gson().fromJson(sharedPref.getString(context.getString(R.string.user), ""), User::class.java)
+        get() {
+            try {
+                return Gson().fromJson(
+                    sharedPref.getString(context.getString(R.string.user), ""),
+                    User::class.java
+                )
+            } catch (e: JSONException) {
+                Log.e("Exception", e.toString())
+            }
+            return User()
+        }
         set(value) {
             sharedPref.edit {
                 putString(context.getString(R.string.user), Gson().toJson(value))

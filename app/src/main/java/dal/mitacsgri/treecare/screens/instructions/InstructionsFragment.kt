@@ -46,6 +46,10 @@ class InstructionsFragment : Fragment() {
                         instructionsTV.text = context.getString(R.string.starter_mode_instructions)
                         findNavController().navigate(R.id.action_instructionsFragment_to_challengesFragment)
                     }
+                    TOURNAMENT_MODE -> {
+                        instructionsTV.text = context.getString(R.string.starter_mode_instructions)
+                        findNavController().navigate(R.id.action_instructionsFragment_to_tournamentModeFragment)
+                    }
                 }
             }
         }

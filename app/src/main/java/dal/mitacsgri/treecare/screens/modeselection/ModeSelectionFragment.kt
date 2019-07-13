@@ -11,6 +11,7 @@ import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
+import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
@@ -50,9 +51,17 @@ class ModeSelectionFragment : Fragment() {
                 }
             }
 
-//            tournamentModeButton.setOnClickListener {
-//                startInstructionOrUnityActivity(TOURNAMENT_MODE)
-//            }
+            tournamentModeButton.setOnClickListener {
+                mainViewModel.setGameMode(TOURNAMENT_MODE)
+                if (mainViewModel.hasInstructionsDisplayed(TOURNAMENT_MODE))
+                    findNavController().navigate(R.id.action_modeSelectionFragment_to_tournamentModeFragment)
+                else {
+                    mainViewModel.setInstructionsDisplayed(TOURNAMENT_MODE, true)
+                    val action = ModeSelectionFragmentDirections
+                        .actionModeSelectionFragmentToInstructionsFragment(TOURNAMENT_MODE)
+                    findNavController().navigate(action)
+                }
+            }
         }
 
         return view

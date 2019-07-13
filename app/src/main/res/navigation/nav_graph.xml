@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_modeSelectionFragment_to_challengesFragment"
             app:destination="@id/challengesFragment"/>
+        <action
+            android:id="@+id/action_modeSelectionFragment_to_tournamentModeFragment"
+            app:destination="@id/tournamentModeFragment" />
     </fragment>
     <fragment
         android:id="@+id/instructionsFragment"
@@ -64,6 +67,9 @@
             app:launchSingleTop="true"/>
         <argument android:name="mode"
                   app:argType="integer"/>
+        <action
+            android:id="@+id/action_instructionsFragment_to_tournamentModeFragment"
+            app:destination="@id/tournamentModeFragment" />
     </fragment>
     <fragment android:id="@+id/unityPlayerActivity"/>
     <fragment
@@ -103,4 +109,9 @@
             android:name="position"
             app:argType="integer" />
     </dialog>
+    <fragment
+        android:id="@+id/tournamentModeFragment"
+        android:name="dal.mitacsgri.treecare.screens.tournamentmode.TournamentModeFragment"
+        android:label="fragment_tournament_mode"
+        tools:layout="@layout/fragment_tournament_mode" />
 </navigation>

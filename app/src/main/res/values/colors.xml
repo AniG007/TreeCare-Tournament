@@ -9,6 +9,7 @@
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="gray">#646464</color>
+    <color name="transparent">#00000000</color>
 
     <color name="challenger_mode_primary_color">#FFFF6F00</color>
     <color name="challenger_mode_accent_color">#c43e00</color>

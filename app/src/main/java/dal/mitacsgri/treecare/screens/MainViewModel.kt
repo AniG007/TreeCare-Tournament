@@ -80,7 +80,7 @@ class MainViewModel(
     fun startLoginAndConfiguration(activity: FragmentActivity) {
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(""/*Web application type client ID*/)
+            .requestIdToken("628888141862-lmblquvs5s3gl9rmshvag3sin348kaam.apps.googleusercontent.com"/*Web application type client ID*/)
             .requestEmail()
             .build()
 

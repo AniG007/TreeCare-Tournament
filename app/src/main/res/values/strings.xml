@@ -81,5 +81,8 @@
     <string name="create_challenge">Create</string>
     <string name="leaderboard_challenge_name">Challenge name</string>
     <string name="challenge_finished">Challenge finished</string>
+    <string name="tournament_mode">Tournament Mode</string>
+    <string name="tournaments">Tournaments</string>
+    <string name="teams">Teams</string>
 
 </resources>

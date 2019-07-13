@@ -10,7 +10,7 @@ import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChalle
  * Created by Devansh on 25-06-2019
  */
 
-class ChallengesPagerAdapter(private val fm: FragmentManager)
+class ChallengesPagerAdapter(fm: FragmentManager)
     : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int) =

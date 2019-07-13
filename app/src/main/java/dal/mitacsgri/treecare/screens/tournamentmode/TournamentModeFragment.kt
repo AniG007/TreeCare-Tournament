@@ -5,19 +5,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_tournament_mode.view.*
 
-/**
- * A simple [Fragment] subclass.
- */
 class TournamentModeFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tournament_mode, container, false)
+        val view = inflater.inflate(R.layout.fragment_tournament_mode, container, false)
+
+        view.apply {
+            tournaments.setOnClickListener {
+                findNavController().navigate(R.id.action_tournamentModeFragment_to_tournamentsFragment)
+            }
+        }
+
+        return view
     }
 
 

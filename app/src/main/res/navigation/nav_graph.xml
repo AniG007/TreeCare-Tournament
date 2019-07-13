@@ -113,5 +113,14 @@
         android:id="@+id/tournamentModeFragment"
         android:name="dal.mitacsgri.treecare.screens.tournamentmode.TournamentModeFragment"
         android:label="fragment_tournament_mode"
-        tools:layout="@layout/fragment_tournament_mode" />
+        tools:layout="@layout/fragment_tournament_mode" >
+        <action
+            android:id="@+id/action_tournamentModeFragment_to_tournamentsFragment"
+            app:destination="@id/tournamentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tournamentsFragment"
+        android:name="dal.mitacsgri.treecare.screens.tournaments.TournamentsFragment"
+        android:label="fragment_tournaments"
+        tools:layout="@layout/fragment_tournaments" />
 </navigation>

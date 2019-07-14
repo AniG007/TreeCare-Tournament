@@ -9,6 +9,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
+import dal.mitacsgri.treecare.consts.COLLECTION_TOURNAMENTS
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.User
@@ -75,4 +76,6 @@ class FirestoreRepository {
     fun setChallengeAsNonExist(challengeName: String) =
         db.collection(COLLECTION_CHALLENGES).document(challengeName)
             .update("exist", false)
+
+    fun getAllActiveTournaments() = db.collection(COLLECTION_TOURNAMENTS).get()
 }

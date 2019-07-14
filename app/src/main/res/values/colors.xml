@@ -14,4 +14,7 @@
     <color name="challenger_mode_primary_color">#FFFF6F00</color>
     <color name="challenger_mode_accent_color">#c43e00</color>
     <color name="challenger_mode_primary_color_light">#FF9E50</color>
+
+    <color name="tournament_mode_primary_color">#9C27B0</color>
+    <color name="tournament_mode_accent_color">#650D74</color>
 </resources>

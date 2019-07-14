@@ -74,7 +74,7 @@
             tools:text="Expires: Some date" />
 
         <TextView
-            android:id="@+id/participantsTV"
+            android:id="@+id/teamsCountTV"
             style="@style/ItemActiveChallengeTextWithDrawableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

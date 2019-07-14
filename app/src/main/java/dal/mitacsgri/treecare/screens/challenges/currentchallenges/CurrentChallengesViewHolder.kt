@@ -25,7 +25,7 @@ class CurrentChallengesViewHolder(
             challengeTypeTV.text = viewModel.getChallengeTypeText(item)
             goalTV.text = viewModel.getGoalText(item)
             durationTV.text = viewModel.getChallengeDurationText(item)
-            participantsTV.text = viewModel.getPlayersCountText(item)
+            teamsCountTV.text = viewModel.getPlayersCountText(item)
 
             buttonTree.setOnClickListener {
                 viewModel.startUnityActivityForChallenge(item) {

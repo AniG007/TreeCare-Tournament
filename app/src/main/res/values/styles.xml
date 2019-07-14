@@ -14,6 +14,12 @@
         <item name="colorPrimaryDark">@color/challenger_mode_accent_color</item>
     </style>
 
+    <style name="tournament_mode_theme" parent="AppTheme">
+        <item name="colorPrimary">@color/tournament_mode_primary_color</item>
+        <item name="colorAccent">@color/tournament_mode_accent_color</item>
+        <item name="colorPrimaryDark">@color/tournament_mode_accent_color</item>
+    </style>
+
     <style name="login_screen_text">
         <item name="android:textSize">@dimen/_20sdp</item>
         <item name="android:textStyle">bold</item>
@@ -29,10 +35,6 @@
         <item name="android:padding">@dimen/_8sdp</item>
         <item name="android:background">@drawable/mode_selection_button_background</item>
     </style>
-
-    <!--<style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">-->
-        <!--<item name="android:textSize">@dimen/_20sdp</item>-->
-    <!--</style>-->
 
     <style name="ItemActiveChallengeButtonStyle">
         <item name="android:layout_marginTop">@dimen/_20sdp</item>

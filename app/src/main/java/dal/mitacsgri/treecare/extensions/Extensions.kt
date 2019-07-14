@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
@@ -43,7 +44,7 @@ fun <T> MutableLiveData<T>.notifyObserver() {
 
 fun LayoutInflater.createFragmentViewWithStyle(
     activity: Activity?, layout: Int, style: Int,
-    root: ViewGroup? = null, attachToRoot: Boolean = false) =
+    root: ViewGroup? = null, attachToRoot: Boolean = false): View =
         cloneInContext(ContextThemeWrapper(activity, style)).inflate(layout, root, attachToRoot)
 
 fun TextInputEditText.validate(message: String, action: (String) -> Boolean = { it.isNotEmpty() }) {

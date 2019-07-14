@@ -44,24 +44,15 @@
             app:layout_constraintHorizontal_bias="0.0"/>
 
         <TextView
-            android:id="@+id/challengeTypeTV"
-            style="@style/ItemActiveChallengeTextWithDrawableStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_trophy"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTV"
-            tools:text="Type: Aggregate based" />
-
-        <TextView
             android:id="@+id/goalTV"
             style="@style/ItemActiveChallengeTextWithDrawableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_goal"
+            android:drawableTint="@color/tournament_mode_primary_color"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/challengeTypeTV"
-            tools:text="Total steps goal: 15000" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTV"
+            tools:text="Daily goal: 20000" />
 
         <TextView
             android:id="@+id/durationTV"
@@ -69,6 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_time"
+            android:drawableTint="@color/tournament_mode_primary_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/goalTV"
             tools:text="Expires: Some date" />
@@ -80,6 +72,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_user"
             android:text="2000"
+            android:drawableTint="@color/tournament_mode_primary_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/goalTV" />
 

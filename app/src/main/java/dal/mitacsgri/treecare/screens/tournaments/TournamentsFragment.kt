@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_tournaments.view.*
 
 class TournamentsFragment : Fragment() {
@@ -15,7 +16,8 @@ class TournamentsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_tournaments, container, false)
+        val view = inflater.createFragmentViewWithStyle(
+            activity, R.layout.fragment_tournaments, R.style.tournament_mode_theme)
 
         view.apply {
             viewPager.adapter = TournamentsPagerAdapter(childFragmentManager)

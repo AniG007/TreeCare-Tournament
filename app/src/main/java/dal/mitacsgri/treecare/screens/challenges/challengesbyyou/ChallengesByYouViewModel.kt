@@ -104,7 +104,7 @@ class ChallengesByYouViewModel(
             }
 
         firestoreRepository.updateChallengeData(challenge.name,
-            mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
+            mapOf("members" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
 
         //Update data as soon as user joins a challenge
         val updateUserChallengeDataRequest =

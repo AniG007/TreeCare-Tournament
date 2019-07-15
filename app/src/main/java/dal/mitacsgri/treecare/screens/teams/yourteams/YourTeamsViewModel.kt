@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens.teams.yourcaptainedteams
+package dal.mitacsgri.treecare.screens.teams.yourteams
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +9,7 @@ import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
-class YourCaptainedTeamsViewModel(
+class YourTeamsViewModel(
     private val firestoreRepository: FirestoreRepository,
     private val sharedPrefsRepository: SharedPreferencesRepository
 ): ViewModel() {
@@ -17,10 +17,11 @@ class YourCaptainedTeamsViewModel(
     fun getCaptainedTeams(): LiveData<List<Team>> {
         val teamsLiveData = MutableLiveData<List<Team>>()
 
-        firestoreRepository.getAllCaptainedTeams(sharedPrefsRepository.user.uid)
-            .addOnSuccessListener {
-                teamsLiveData.value = it.toObjects()
-                teamsLiveData.notifyObserver()
+        val userId = sharedPrefsRepository.user.uid
+            firestoreRepository.getAllTeamsForUserAsMember(userId)
+                .addOnSuccessListener {
+                    teamsLiveData.value = it.toObjects()
+                    teamsLiveData.notifyObserver()
             }
             .addOnFailureListener {
 

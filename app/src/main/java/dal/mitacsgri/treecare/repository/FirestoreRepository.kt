@@ -64,7 +64,7 @@ class FirestoreRepository {
 
     fun deleteUserFromChallengeDB(challenge: Challenge, userId: String) =
         db.collection(COLLECTION_CHALLENGES).document(challenge.name)
-            .update("players", FieldValue.arrayRemove(userId))
+            .update("members", FieldValue.arrayRemove(userId))
 
     fun deleteChallengeFromUserDB(userId: String, userChallenge: UserChallenge, userChallengeJson: String) =
         db.collection(COLLECTION_USERS).document(userId)
@@ -82,4 +82,7 @@ class FirestoreRepository {
 
     fun getAllCaptainedTeams(userId: String) = db.collection(COLLECTION_TEAMS)
         .whereEqualTo("captain", userId).get()
+
+    fun getAllTeamsForUserAsMember(userId: String) = db.collection(COLLECTION_TEAMS)
+        .whereArrayContains("members", userId).get()
 }

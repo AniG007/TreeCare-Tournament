@@ -3,6 +3,8 @@ package dal.mitacsgri.treecare.extensions
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Timestamp
@@ -69,3 +72,8 @@ fun <T> List<T>.toArrayList(): ArrayList<T> {
 }
 
 fun <T> Any.toJson() = Gson().toJson(this as T)
+
+fun MaterialButton.disable() {
+    isEnabled = false
+    background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
+}

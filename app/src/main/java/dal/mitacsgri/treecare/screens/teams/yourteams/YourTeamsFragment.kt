@@ -8,7 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import dal.mitacsgri.treecare.R
-import kotlinx.android.synthetic.main.fragment_your_captained_teams.view.*
+import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import kotlinx.android.synthetic.main.fragment_your_teams.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class YourTeamsFragment : Fragment() {
@@ -19,10 +20,11 @@ class YourTeamsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_your_captained_teams, container, false)
+        val view = inflater.createFragmentViewWithStyle(activity,
+            R.layout.fragment_your_teams, R.style.tournament_mode_theme)
 
         view.apply {
-            mViewModel.getCaptainedTeams().observe(this@YourTeamsFragment, Observer {
+            mViewModel.getAllMyTeams().observe(this@YourTeamsFragment, Observer {
                 recyclerView.adapter = YourTeamsRecyclerViewAdapter(it)
             })
         }

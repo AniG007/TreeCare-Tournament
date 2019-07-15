@@ -4,9 +4,11 @@ import com.google.firebase.Timestamp
 
 data class Team (
     val name: String = "",
+    val description: String = "",
     val members: ArrayList<String> = arrayListOf(),
     val currentTournaments: ArrayList<String> = arrayListOf(),
     val captain: String = "",
+    val captainName: String = "",
     val creationTimestamp: Timestamp = Timestamp.now(),
     val newCaptain: String = ""
 )

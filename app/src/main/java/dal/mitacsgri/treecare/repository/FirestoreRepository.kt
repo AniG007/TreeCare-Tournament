@@ -80,6 +80,8 @@ class FirestoreRepository {
 
     fun getAllActiveTournaments() = db.collection(COLLECTION_TOURNAMENTS).get()
 
+    fun getAllTeams() = db.collection(COLLECTION_TEAMS).get()
+
     fun getAllCaptainedTeams(userId: String) = db.collection(COLLECTION_TEAMS)
         .whereEqualTo("captain", userId).get()
 

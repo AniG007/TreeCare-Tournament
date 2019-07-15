@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -28,37 +28,31 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="15,000 in 2 days" />
+            tools:text="Super Kings" />
 
         <TextView
-            android:id="@+id/challengeTypeTV"
-            style="@style/ItemActiveChallengeTextWithDrawableStyle"
+            android:id="@+id/descriptionTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_trophy"
+            tools:text="This is the team description"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:layout_marginTop="@dimen/_15sdp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTV"
-            tools:text="Type: Aggregate based" />
+            app:layout_constraintHorizontal_bias="0.0"/>
 
         <TextView
-            android:id="@+id/goalTV"
+            android:id="@+id/captainNameTV"
             style="@style/ItemActiveChallengeTextWithDrawableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_goal"
+            android:drawableStart="@drawable/ic_user"
+            tools:text="Captain: Rohit Sharma"
+            android:drawableTint="@color/tournament_mode_primary_color"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/challengeTypeTV"
-            tools:text="Total steps goal: 15000" />
-
-        <TextView
-            android:id="@+id/durationTV"
-            style="@style/ItemActiveChallengeTextWithDrawableStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/goalTV"
-            tools:text="Expires: Some date" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTV" />
 
         <TextView
             android:id="@+id/membersCountTV"
@@ -66,40 +60,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_user"
-            android:text="2000"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/goalTV" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonTree"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="Tree"
+            tools:text="Members: 2000"
+            android:drawableTint="@color/tournament_mode_primary_color"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
+            app:layout_constraintTop_toBottomOf="@+id/captainNameTV" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonLeaderBoard"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:id="@+id/buttonJoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/leaderboard"
-            app:layout_constraintStart_toEndOf="@+id/buttonTree"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
+            tools:text="@string/request_to_join"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/membersCountTV" />
 
-        <ImageButton
-            android:id="@+id/buttonExit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_exit"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:tint="@color/white"
-            android:backgroundTint="#f00"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

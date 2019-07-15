@@ -84,5 +84,6 @@
     <string name="tournament_mode">Tournament Mode</string>
     <string name="tournaments">Tournaments</string>
     <string name="teams">Teams</string>
+    <string name="request_to_join">Request to join</string>
 
 </resources>

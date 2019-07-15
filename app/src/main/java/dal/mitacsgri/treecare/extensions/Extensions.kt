@@ -13,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -77,3 +79,11 @@ fun MaterialButton.disable() {
     isEnabled = false
     background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
 }
+
+fun getCardItemDescriptorText(property: String, value: String) =
+        buildSpannedString {
+            bold {
+                append("$property: ")
+            }
+            append(value)
+        }

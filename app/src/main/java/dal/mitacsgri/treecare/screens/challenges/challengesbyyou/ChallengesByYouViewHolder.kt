@@ -23,7 +23,7 @@ class ChallengesByYouViewHolder(
             nameTV.text = item.name
             descriptionTV.text = item.description
             durationTV.text = viewModel.getChallengeDurationText(item)
-            teamsCountTV.text = viewModel.getParticipantsCountString(item)
+            membersCountTV.text = viewModel.getParticipantsCountString(item)
             challengeTypeTV.text = viewModel.getChallengeTypeText(item)
             goalTV.text = viewModel.getGoalText(item)
 

@@ -17,7 +17,7 @@ class ActiveTournamentsViewHolder(
             nameTV.text = item.name
             goalTV.text = viewModel.getGoalText(item)
             durationTV.text = viewModel.getTournamentDurationText(item)
-            teamsCountTV.text = viewModel.getTeamsCountText(item)
+            membersCountTV.text = viewModel.getTeamsCountText(item)
         }
     }
 }

@@ -19,12 +19,16 @@ class TournamentModeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_tournament_mode, container, false)
 
         view.apply {
+            Glide.with(this).load(R.drawable.tournament_stadium).into(tournamentsImage)
+            Glide.with(this).load(R.drawable.team_run).into(teamsImage)
+
             tournaments.setOnClickListener {
                 findNavController().navigate(R.id.action_tournamentModeFragment_to_tournamentsFragment)
             }
 
-            Glide.with(this).load(R.drawable.tournament_stadium).into(tournamentsImage)
-            Glide.with(this).load(R.drawable.team_run).into(teamsImage)
+            teams.setOnClickListener {
+                findNavController().navigate(R.id.action_tournamentModeFragment_to_teamsFragment)
+            }
         }
 
         return view

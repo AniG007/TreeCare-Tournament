@@ -9,6 +9,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
+import dal.mitacsgri.treecare.consts.COLLECTION_TEAMS
 import dal.mitacsgri.treecare.consts.COLLECTION_TOURNAMENTS
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
 import dal.mitacsgri.treecare.model.Challenge
@@ -78,4 +79,7 @@ class FirestoreRepository {
             .update("exist", false)
 
     fun getAllActiveTournaments() = db.collection(COLLECTION_TOURNAMENTS).get()
+
+    fun getAllCaptainedTeams(userId: String) = db.collection(COLLECTION_TEAMS)
+        .whereEqualTo("captain", userId).get()
 }

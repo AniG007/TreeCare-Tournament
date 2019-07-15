@@ -12,6 +12,7 @@ import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeComplete
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
 import dal.mitacsgri.treecare.screens.splash.SplashScreenViewModel
+import dal.mitacsgri.treecare.screens.teams.yourcaptainedteams.YourCaptainedTeamsViewModel
 import dal.mitacsgri.treecare.screens.tournaments.activetournaments.ActiveTournamentsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -43,4 +44,5 @@ val appModule = module {
     viewModel { LeaderboardItemViewModel(get(), get()) }
     viewModel { ChallengeCompleteDialogViewModel() }
     viewModel { ActiveTournamentsViewModel(get(), get()) }
+    viewModel { YourCaptainedTeamsViewModel(get(), get()) }
 }

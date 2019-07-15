@@ -31,20 +31,21 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
         user.currentChallenges.forEach { (_, challenge) ->
 
-            challenge.leafCount = calculateLeavesForChallenge(challenge)
-            challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
+            if (challenge.isActive) {
+                challenge.leafCount = calculateLeavesForChallenge(challenge)
+                challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
 
-            if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
-                stepCountRepository.getTodayStepCountData {
-                    challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-                    storeUserChallengeDataInSharedPrefs(challenge)
-                }
-            } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
-                stepCountRepository.getAggregateStepCountDataOverARange(
-                    DateTime(challenge.joinDate).withTimeAtStartOfDay().millis,
-                    DateTime().millis) {
-                        challenge.totalSteps =  it
+                if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
+                    stepCountRepository.getTodayStepCountData {
+                        challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
                         storeUserChallengeDataInSharedPrefs(challenge)
+                    }
+                } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
+                    stepCountRepository.getAggregateStepCountDataOverARange(
+                        DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, DateTime().millis) {
+                        challenge.totalSteps = it
+                        storeUserChallengeDataInSharedPrefs(challenge)
+                    }
                 }
             }
         }

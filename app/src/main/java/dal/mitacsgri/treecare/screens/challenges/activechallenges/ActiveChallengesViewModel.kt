@@ -8,7 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObjects
-import dal.mitacsgri.treecare.extensions.*
+import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.extensions.getStringRepresentation
+import dal.mitacsgri.treecare.extensions.notifyObserver
+import dal.mitacsgri.treecare.extensions.toDateTime
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
@@ -70,12 +73,11 @@ class ActiveChallengesViewModel(
 
     fun joinChallenge(challenge: Challenge) {
         val userChallenge = getUserChallenge(challenge)
-        val userChallengeJson = userChallenge.toJson<UserChallenge>()
 
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges.${challenge.name}" to userChallengeJson))
+            mapOf("currentChallenges.${challenge.name}" to userChallenge))
             .addOnSuccessListener {
-                updateUserSharedPrefsData(userChallenge, userChallengeJson)
+                updateUserSharedPrefsData(userChallenge)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
             }
@@ -89,7 +91,7 @@ class ActiveChallengesViewModel(
             mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
     }
 
-    private fun updateUserSharedPrefsData(userChallenge: UserChallenge, userChallengeJson: String) {
+    private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user
         user.currentChallenges[userChallenge.name] = userChallenge
         sharedPrefsRepository.user = user

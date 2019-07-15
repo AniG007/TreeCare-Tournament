@@ -89,12 +89,11 @@ class ChallengesByYouViewModel(
 
     fun joinChallenge(challenge: Challenge) {
         val userChallenge = getUserChallenge(challenge)
-        val userChallengeJson = userChallenge.toJson<UserChallenge>()
 
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges.${challenge.name}" to userChallengeJson))
+            mapOf("currentChallenges.${challenge.name}" to userChallenge))
             .addOnSuccessListener {
-                updateUserSharedPrefsData(userChallenge, userChallengeJson)
+                updateUserSharedPrefsData(userChallenge)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
             }
@@ -113,11 +112,10 @@ class ChallengesByYouViewModel(
         WorkManager.getInstance().enqueue(updateUserChallengeDataRequest).result.addListener(
             Runnable {
                 Log.d("Challenge data", "updated by work manager")
-            }, MoreExecutors.directExecutor()
-        )
+            }, MoreExecutors.directExecutor())
     }
 
-    private fun updateUserSharedPrefsData(userChallenge: UserChallenge, userChallengeJson: String) {
+    private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user
         user.currentChallenges[userChallenge.name] = userChallenge
         sharedPrefsRepository.user = user

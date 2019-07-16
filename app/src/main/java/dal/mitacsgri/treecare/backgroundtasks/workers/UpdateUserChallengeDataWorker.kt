@@ -8,6 +8,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
+import dal.mitacsgri.treecare.extensions.toDateTime
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
@@ -26,12 +27,18 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
     override fun startWork(): ListenableFuture<Result> {
         val future = SettableFuture.create<Result>()
-
         val user = sharedPrefsRepository.user
 
         user.currentChallenges.forEach { (_, challenge) ->
 
+            //Two condition checks are applied because the 'isActive' variable is set only after
+            //the dialog has been displayed. The second condition check prevents update of challenge step count
+            //in the database even when the dialog has not been displayed
             if (challenge.isActive) {
+                val goalEndTimeInMillis = challenge.endDate.toDateTime().millis
+                val endTimeLimit =
+                    if (DateTime().millis < goalEndTimeInMillis) DateTime().millis else goalEndTimeInMillis
+
                 challenge.leafCount = calculateLeavesForChallenge(challenge)
                 challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
 
@@ -42,7 +49,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                     }
                 } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
                     stepCountRepository.getAggregateStepCountDataOverARange(
-                        DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, DateTime().millis) {
+                        DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, endTimeLimit) {
                         challenge.totalSteps = it
                         storeUserChallengeDataInSharedPrefs(challenge)
                     }

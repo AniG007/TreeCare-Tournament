@@ -1,5 +1,7 @@
 package dal.mitacsgri.treecare.model
 
+import com.google.firebase.Timestamp
+
 data class UserChallenge(
     val name: String = "",
     val dailyStepsMap: MutableMap<String, Int> = mutableMapOf(),
@@ -10,5 +12,6 @@ data class UserChallenge(
     val type: Int = 0,
     var leafCount: Int = 0,
     val goal: Int = 0,
-    var isActive: Boolean = true
+    var isActive: Boolean = true,
+    val endDate: Timestamp = Timestamp.now()
 )

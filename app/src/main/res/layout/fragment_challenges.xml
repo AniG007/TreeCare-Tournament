@@ -52,6 +52,6 @@
         android:backgroundTint="@color/challenger_mode_primary_color"
         app:icon="@drawable/ic_add"
         app:iconTint="@color/white"
-        android:text="@string/create_challenge"
+        android:text="@string/create"
         android:textColor="@color/white"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

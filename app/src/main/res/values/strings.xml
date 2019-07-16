@@ -78,12 +78,14 @@
     <string name="challenge_description">Description</string>
     <string name="challenge_option_daily_goal_based">Daily Goal Based</string>
     <string name="challenge_option_aggregate_based">Aggregate based</string>
-    <string name="create_challenge">Create</string>
+    <string name="create">Create</string>
     <string name="leaderboard_challenge_name">Challenge name</string>
     <string name="challenge_finished">Challenge finished</string>
     <string name="tournament_mode">Tournament Mode</string>
     <string name="tournaments">Tournaments</string>
     <string name="teams">Teams</string>
     <string name="request_to_join">Request to join</string>
+    <string name="team_name_hint">Team name</string>
+    <string name="create_team_info">\u2022 You will be the captain of the new team created by you. However you can change the captain after creating the team. \n\n\u2022 You can invite other members to be the part of your team after creating the team</string>
 
 </resources>

@@ -41,7 +41,7 @@
             android:layout_marginBottom="@dimen/_16sdp">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/challengeNameLayout"
+                android:id="@+id/teamNameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Challenge name"
@@ -52,24 +52,24 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputChallengeName"
+                    android:id="@+id/inputTeamName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/challengeDescriptionLayout"
+                android:id="@+id/teamDescriptionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/challenge_description"
                 android:layout_marginTop="@dimen/create_challenge_input_fields_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/challengeNameLayout"
+                app:layout_constraintTop_toBottomOf="@id/teamNameLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/inputChallengeDescription"
+                    android:id="@+id/inputTeamDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minLines="4"
@@ -88,7 +88,7 @@
                 android:layout_marginTop="@dimen/create_challenge_input_fields_margin"
                 android:textSize="@dimen/_16sdp"
                 android:textColor="@color/challenger_mode_primary_color"
-                app:layout_constraintTop_toBottomOf="@+id/challengeDescriptionLayout"/>
+                app:layout_constraintTop_toBottomOf="@+id/teamDescriptionLayout"/>
 
             <RadioGroup
                 android:layout_width="match_parent"
@@ -156,7 +156,7 @@
                 android:textColor="@color/white"
                 android:backgroundTint="@color/challenger_mode_primary_color"
                 android:layout_marginTop="@dimen/_40sdp"
-                android:text="@string/create_challenge"
+                android:text="@string/create"
                 android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

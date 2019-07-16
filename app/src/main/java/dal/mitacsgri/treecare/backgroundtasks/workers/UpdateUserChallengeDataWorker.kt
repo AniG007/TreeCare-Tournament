@@ -40,20 +40,16 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                 val endTimeLimit =
                     if (DateTime().millis < goalEndTimeInMillis) DateTime().millis else goalEndTimeInMillis
 
-                challenge.leafCount = calculateLeavesForChallenge(challenge)
-                challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
-                challenge.lastUpdateTime = Timestamp.now()
-
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     stepCountRepository.getTodayStepCountData {
                         challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-                        storeUserChallengeDataInSharedPrefs(challenge)
+                        updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
                     }
                 } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
                     stepCountRepository.getAggregateStepCountDataOverARange(
                         DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, endTimeLimit) {
                         challenge.totalSteps = it
-                        storeUserChallengeDataInSharedPrefs(challenge)
+                        updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
                     }
                 }
             }
@@ -95,7 +91,11 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         return streakCount
     }
 
-    private fun storeUserChallengeDataInSharedPrefs(challenge: UserChallenge) {
+    private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User) {
+        challenge.leafCount = calculateLeavesForChallenge(challenge)
+        challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
+        challenge.lastUpdateTime = Timestamp.now()
+
         synchronized(sharedPrefsRepository.user) {
             val user = sharedPrefsRepository.user
             user.currentChallenges[challenge.name] = challenge

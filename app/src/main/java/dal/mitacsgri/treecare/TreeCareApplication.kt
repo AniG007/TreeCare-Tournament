@@ -26,6 +26,6 @@ class TreeCareApplication : Application() {
         val updateUserChallengeDataRequest =
             PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, TimeUnit.MINUTES).build()
 
-        WorkManager.getInstance().enqueue(updateUserChallengeDataRequest)
+        WorkManager.getInstance(this).enqueue(updateUserChallengeDataRequest)
     }
 }

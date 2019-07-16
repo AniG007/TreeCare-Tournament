@@ -8,6 +8,7 @@ import dal.mitacsgri.treecare.screens.challenges.activechallenges.ActiveChalleng
 import dal.mitacsgri.treecare.screens.challenges.challengesbyyou.ChallengesByYouViewModel
 import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChallengesViewModel
 import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
+import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
@@ -47,4 +48,5 @@ val appModule = module {
     viewModel { ActiveTournamentsViewModel(get(), get()) }
     viewModel { YourTeamsViewModel(get(), get()) }
     viewModel { AllTeamsViewModel(get(), get()) }
+    viewModel { CreateTeamViewModel(get(), get()) }
 }

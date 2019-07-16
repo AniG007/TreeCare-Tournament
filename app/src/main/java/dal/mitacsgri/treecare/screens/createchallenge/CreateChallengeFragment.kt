@@ -75,7 +75,7 @@ class CreateChallengeFragment : Fragment() {
                 }
             }
 
-            inputChallengeName.validate("Please enter name (Should not contain ':')") {
+            inputTeamName.validate("Please enter name (Should not contain ':')") {
                 viewModel.isNameValid = it.isNotEmpty() and !it.contains(':')
                 viewModel.areAllInputFieldsValid()
                 viewModel.isNameValid
@@ -92,8 +92,8 @@ class CreateChallengeFragment : Fragment() {
             }
 
             createChallengeButton.setOnClickListener {
-                viewModel.createChallenge(name = inputChallengeName.text,
-                    description = inputChallengeDescription.text,
+                viewModel.createChallenge(name = inputTeamName.text,
+                    description = inputTeamDescription.text,
                     type = viewModel.getGoalType(radioGroup.checkedRadioButtonId),
                     goal = inputChallengeGoal.text)
             }

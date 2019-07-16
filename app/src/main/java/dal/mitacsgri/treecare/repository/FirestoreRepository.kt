@@ -13,6 +13,7 @@ import dal.mitacsgri.treecare.consts.COLLECTION_TEAMS
 import dal.mitacsgri.treecare.consts.COLLECTION_TOURNAMENTS
 import dal.mitacsgri.treecare.consts.COLLECTION_USERS
 import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserChallenge
 
@@ -87,4 +88,19 @@ class FirestoreRepository {
 
     fun getAllTeamsForUserAsMember(userId: String) = db.collection(COLLECTION_TEAMS)
         .whereArrayContains("members", userId).get()
+
+    fun getTeam(teamName: String)  = db.collection(COLLECTION_TEAMS).document(teamName).get()
+
+    fun storeTeam(team: Team, action: (status: Boolean) -> Unit) {
+        db.collection(COLLECTION_TEAMS).document(team.name)
+            .set(team)
+            .addOnSuccessListener {
+                action(true)
+                Log.d("Team store success", "Team: $team")
+            }
+            .addOnFailureListener {
+                action(false)
+                Log.d("Team store failed", it.toString() + "Challenge: $team")
+            }
+    }
 }

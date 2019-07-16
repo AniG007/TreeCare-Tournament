@@ -29,7 +29,7 @@ class TeamsFragment : Fragment() {
             }
 
             fabCreateTeam.setOnClickListener {
-
+                findNavController().navigate(R.id.action_teamsFragment_to_createTeamFragment)
             }
         }
 

@@ -6,6 +6,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
+import com.google.firebase.Timestamp
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.toDateTime
@@ -41,6 +42,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
                 challenge.leafCount = calculateLeavesForChallenge(challenge)
                 challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
+                challenge.lastUpdateTime = Timestamp.now()
 
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     stepCountRepository.getTodayStepCountData {
@@ -102,6 +104,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
     }
 
     private fun updateUserChallengeDataInFirestore(future: SettableFuture<Result>) {
+
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
             mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges))
             .addOnSuccessListener {

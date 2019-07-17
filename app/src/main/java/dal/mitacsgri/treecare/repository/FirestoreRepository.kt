@@ -103,4 +103,7 @@ class FirestoreRepository {
                 Log.d("Team store failed", it.toString() + "Challenge: $team")
             }
     }
+
+    fun updateTeamData(teamName: String, values: Map<String, Any>) =
+        db.collection(COLLECTION_TEAMS).document(teamName).update(values)
 }

@@ -19,5 +19,6 @@ data class User (
     var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis,
     val currentChallenges: MutableMap<String, UserChallenge> = mutableMapOf(),
     val currentTeams: ArrayList<String> = arrayListOf(),
+    val teamJoinRequests: ArrayList<String> = arrayListOf(),
     val photoUrl: String = ""
 )

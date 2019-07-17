@@ -7,6 +7,7 @@ data class Team (
     val description: String = "",
     val members: ArrayList<String> = arrayListOf(),
     val invitedMembers: ArrayList<String> = arrayListOf(),
+    val joinRequests: ArrayList<String> = arrayListOf(),
     val currentTournaments: ArrayList<String> = arrayListOf(),
     val captain: String = "",
     val captainName: String = "",

@@ -38,7 +38,8 @@ class CreateTeamViewModel(
                         Team(name = name.toString(),
                             description = description.toString(),
                             captain = sharedPrefsRepository.user.uid,
-                            captainName = sharedPrefsRepository.user.name
+                            captainName = sharedPrefsRepository.user.name,
+                            members = arrayListOf(sharedPrefsRepository.user.uid)
                             )) {
                         messageLiveData.value = if (it) "Team created successfully"
                                                 else "Team creation failed"

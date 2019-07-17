@@ -13,13 +13,21 @@
         <action
             android:id="@+id/action_splashScreenFragment_to_loginFragment"
             app:destination="@id/loginFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/splashScreenFragment"
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_splashScreenFragment_to_modeSelectionFragment"
             app:destination="@id/modeSelectionFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/splashScreenFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -29,6 +37,10 @@
         <action
             android:id="@+id/action_loginFragment_to_modeSelectionFragment"
             app:destination="@id/modeSelectionFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true"/>
     </fragment>
@@ -38,16 +50,32 @@
         android:label="ModeSelectionFragment">
         <action
             android:id="@+id/action_modeSelectionFragment_to_instructionsFragment"
-            app:destination="@id/instructionsFragment"/>
+            app:destination="@id/instructionsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_modeSelectionFragment_to_unityPlayerActivity"
-            app:destination="@id/unityPlayerActivity"/>
+            app:destination="@id/unityPlayerActivity"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_modeSelectionFragment_to_challengesFragment"
-            app:destination="@id/challengesFragment"/>
+            app:destination="@id/challengesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_modeSelectionFragment_to_tournamentModeFragment"
-            app:destination="@id/tournamentModeFragment" />
+            app:destination="@id/tournamentModeFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/instructionsFragment"
@@ -56,12 +84,20 @@
         <action
             android:id="@+id/action_instructionsFragment_to_unityPlayerActivity"
             app:destination="@id/unityPlayerActivity"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/instructionsFragment"
             app:popUpToInclusive="true"
             app:launchSingleTop="true"/>
         <action
             android:id="@+id/action_instructionsFragment_to_challengesFragment"
             app:destination="@id/challengesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/instructionsFragment"
             app:popUpToInclusive="true"
             app:launchSingleTop="true"/>
@@ -69,7 +105,11 @@
                   app:argType="integer"/>
         <action
             android:id="@+id/action_instructionsFragment_to_tournamentModeFragment"
-            app:destination="@id/tournamentModeFragment" />
+            app:destination="@id/tournamentModeFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment android:id="@+id/unityPlayerActivity"/>
     <fragment
@@ -79,10 +119,18 @@
         tools:layout="@layout/fragment_challenges">
         <action
             android:id="@+id/action_challengesFragment_to_createChallengeFragment"
-            app:destination="@id/createChallengeFragment"/>
+            app:destination="@id/createChallengeFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_challengesFragment_to_leaderboardFragment"
-            app:destination="@id/leaderboardFragment" />
+            app:destination="@id/leaderboardFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/createChallengeFragment"
@@ -99,7 +147,11 @@
             app:argType="string" />
         <action
             android:id="@+id/action_leaderboardFragment_to_challengeCompleteDialog"
-            app:destination="@id/challengeCompleteDialog" />
+            app:destination="@id/challengeCompleteDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <dialog
         android:id="@+id/challengeCompleteDialog"
@@ -116,10 +168,18 @@
         tools:layout="@layout/fragment_tournament_mode" >
         <action
             android:id="@+id/action_tournamentModeFragment_to_tournamentsFragment"
-            app:destination="@id/tournamentsFragment" />
+            app:destination="@id/tournamentsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_tournamentModeFragment_to_teamsFragment"
-            app:destination="@id/teamsFragment" />
+            app:destination="@id/teamsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/tournamentsFragment"
@@ -133,7 +193,11 @@
         tools:layout="@layout/fragment_teams" >
         <action
             android:id="@+id/action_teamsFragment_to_createTeamFragment"
-            app:destination="@id/createTeamFragment" />
+            app:destination="@id/createTeamFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/createTeamFragment"

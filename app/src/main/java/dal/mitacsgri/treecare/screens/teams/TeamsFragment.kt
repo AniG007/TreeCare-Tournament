@@ -1,18 +1,23 @@
 package dal.mitacsgri.treecare.screens.teams
 
-
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_teams.view.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TeamsFragment : Fragment() {
 
+    private val mViewModel: TeamsViewModel by viewModel()
+
+    @SuppressLint("RestrictedApi")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,8 +30,12 @@ class TeamsFragment : Fragment() {
 
             tabLayout.setupWithViewPager(viewPager)
             toolbar.setNavigationOnClickListener {
-                findNavController().navigateUp()
+                    findNavController().navigateUp()
             }
+
+            mViewModel.hasTeamRequests().observe(this@TeamsFragment, Observer {
+                memberRequestsBadge.visibility = if (it) View.VISIBLE else View.GONE
+            })
 
             fabCreateTeam.setOnClickListener {
                 findNavController().navigate(R.id.action_teamsFragment_to_createTeamFragment)
@@ -35,6 +44,4 @@ class TeamsFragment : Fragment() {
 
         return view
     }
-
-
 }

@@ -5,15 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".screens.login.LoginActivity">
+    tools:context=".screens.login.LoginFragment">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/leaf_pattern"
-        android:scaleType="centerCrop"
-        android:tint="#ddffffff"
-        android:id="@+id/imageView"/>
+    <include
+        layout="@layout/leaf_background_image" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/walkAnimation"
@@ -58,19 +53,24 @@
         android:id="@+id/textView3"
         />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/signInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:text="@string/sign_in_with_google"
-        android:drawableStart="@drawable/ic_google"
-        android:drawablePadding="@dimen/_4sdp"
+        android:textColor="@color/black"
         android:padding="@dimen/_6sdp"
+        app:icon="@drawable/ic_google"
+        app:iconTint="@null"
+        app:iconPadding="@dimen/_4sdp"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/_4sdp"
+        app:elevation="@dimen/_4sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="0.29000002"/>
+        app:layout_constraintVertical_bias="0.29000002"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

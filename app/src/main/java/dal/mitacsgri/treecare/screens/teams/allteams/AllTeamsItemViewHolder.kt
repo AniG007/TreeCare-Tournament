@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.teams.allteams
 
 import android.view.View
+import androidx.navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Team
@@ -23,9 +24,9 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
             captainNameTV.text = viewModel.getCaptainNameText(item)
 
             if (viewModel.isUserCaptain(item.captain)) {
-                button.text = context.getString(R.string.invite_members)
+                button.text = context.getString(R.string.invite_member)
                 button.setOnClickListener {
-
+                    findNavController().navigate(R.id.action_teamsFragment_to_inviteMembersDialog)
                 }
             } else {
                 button.text =

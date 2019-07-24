@@ -21,7 +21,7 @@ class ChallengeCompleteDialog: DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.dialog_challenge_complete, container)
+        val view = inflater.inflate(R.layout.dialog_challenge_complete, container, true)
 
         view.apply {
             positionTV.text = mViewModel.getChallengerPositionText(

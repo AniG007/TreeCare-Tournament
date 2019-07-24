@@ -8,6 +8,7 @@ import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.item_active_challenge.view.*
 
 /**
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.item_active_challenge.view.*
 
 class ActiveChallengesViewHolder(
     itemView: View,
-    private val viewModel: ActiveChallengesViewModel
+    private val viewModel: ChallengesViewModel
     ): BaseViewHolder<Challenge>(itemView) {
 
     override fun bind(item: Challenge) {

@@ -13,7 +13,7 @@ data class Challenge(
     val finishTimestamp: Timestamp = Timestamp.now(),
     val type: Int = 0,
     val goal: Int = 5000,
-    val players: List<String> = arrayListOf(),
+    var players: ArrayList<String> = arrayListOf(),
     val exist: Boolean = true,
     val active: Boolean = true,
     val creatorName: String = "",

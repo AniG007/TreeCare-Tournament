@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_active_challenges.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActiveChallengesFragment : Fragment() {
 
-    private val mViewModel: ActiveChallengesViewModel by viewModel()
+    private val mViewModel: ChallengesViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +37,13 @@ class ActiveChallengesFragment : Fragment() {
             mViewModel.challengesList.observe(this@ActiveChallengesFragment, Observer {
                 //There should be a better approach to this
                 view.recyclerView.adapter = ActiveChallengesRecyclerViewAdapter(it, mViewModel)
+            })
+
+            mViewModel.statusMessage.observe(this@ActiveChallengesFragment, Observer {
+                if (!mViewModel.messageDisplayed) {
+                    it.toast(view.context)
+                    mViewModel.messageDisplayed = true
+                }
             })
 
             mViewModel.statusMessage.observe(this@ActiveChallengesFragment, Observer {

@@ -87,3 +87,5 @@ fun getCardItemDescriptorText(property: String, value: String) =
             }
             append(value)
         }
+
+infix fun Boolean.xnor(other: Boolean): Boolean = !(this.xor(other))

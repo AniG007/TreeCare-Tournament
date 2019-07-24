@@ -88,7 +88,7 @@ class ActiveChallengesViewModel(
             }
 
         firestoreRepository.updateChallengeData(challenge.name,
-            mapOf("members" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
+            mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
     }
 
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {

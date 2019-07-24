@@ -11,6 +11,7 @@ import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.notifyObserver
+import dal.mitacsgri.treecare.extensions.xnor
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.User
@@ -24,19 +25,23 @@ class LeaderboardItemViewModel(
     ) : ViewModel() {
 
     private lateinit var challenge: Challenge
-    private lateinit var userChallenge: UserChallenge
+    private var userChallenge: UserChallenge? = null
 
     var isDialogDisplayed: Boolean
-        get() = !challenge.active.xor(userChallenge.isActive)
+        get() = challenge.active.xnor(userChallenge?.isActive ?: challenge.active)
         set(value) {
-            userChallenge.isActive = value
+            userChallenge?.let {
+                it.isActive = value
 
-            val user = sharedPrefsRepository.user
-            user.currentChallenges[userChallenge.name] = userChallenge
-            sharedPrefsRepository.user = user
+                val user = sharedPrefsRepository.user
+                user.currentChallenges[it.name] = it
+                sharedPrefsRepository.user = user
 
-            firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-                mapOf("currentChallenges" to user.currentChallenges))
+                firestoreRepository.updateUserData(
+                    sharedPrefsRepository.user.uid,
+                    mapOf("currentChallenges" to user.currentChallenges)
+                )
+            }
         }
 
     fun isCurrentUser(challenger: Challenger) = challenger.uid == sharedPrefsRepository.user.uid
@@ -69,7 +74,8 @@ class LeaderboardItemViewModel(
         firestoreRepository.getChallenge(challengeName)
             .addOnSuccessListener {
                 challenge = it.toObject<Challenge>()!!
-                userChallenge = sharedPrefsRepository.user.currentChallenges[challengeName]!!
+
+                userChallenge = sharedPrefsRepository.user.currentChallenges[challengeName]
 
                 val challengers = challenge.players
                 val challengersCount = challenge.players.size
@@ -79,7 +85,7 @@ class LeaderboardItemViewModel(
                     firestoreRepository.getUserData(challengers[i])
                         .addOnSuccessListener {
                             val user = it.toObject<User>()
-                            val challenger = user?.let{ makeChallengerFromUser(user, challenge) }
+                            val challenger = user?.let { makeChallengerFromUser(user, challenge) }
                             challengersList.value?.add(challenger!!)
 
                             if (challengersList.value?.size == limit) {

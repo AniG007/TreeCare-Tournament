@@ -170,11 +170,14 @@ class ChallengesViewModel(
     fun deleteChallenge(challenge: Challenge) {
         firestoreRepository.setChallengeAsNonExist(challenge.name)
             .addOnSuccessListener {
-                val challengeToRemoveIndex = challengesByYouList.value?.indexOf(challenge)
-                if (challengeToRemoveIndex != -1) {
-                    challengesByYouList.value?.removeAt(challengeToRemoveIndex!!)
-                    challengesByYouList.notifyObserver()
-                }
+                activeChallengesList.value?.remove(challenge)
+                activeChallengesList.notifyObserver()
+
+                currentChallengesList.value?.remove(challenge)
+                currentChallengesList.notifyObserver()
+
+                challengesByYouList.value?.remove(challenge)
+                challengesByYouList.notifyObserver()
             }
             .addOnFailureListener {
                 Log.e("Deletion failed", it.toString())

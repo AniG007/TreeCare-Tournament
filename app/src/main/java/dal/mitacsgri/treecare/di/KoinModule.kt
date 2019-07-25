@@ -5,7 +5,6 @@ import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
-import dal.mitacsgri.treecare.screens.challenges.challengesbyyou.ChallengesByYouViewModel
 import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
 import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
@@ -40,7 +39,6 @@ val appModule = module {
     viewModel { SplashScreenViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
     viewModel { CreateChallengeViewModel(get(), get()) }
-    viewModel { ChallengesByYouViewModel(get(), get()) }
     viewModel { LeaderboardItemViewModel(get(), get()) }
     viewModel { ChallengeCompleteDialogViewModel() }
     viewModel { ActiveTournamentsViewModel(get(), get()) }

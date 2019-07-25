@@ -29,17 +29,22 @@ class ChallengesByYouViewHolder(
             challengeTypeTV.text = viewModel.getChallengeTypeText(item)
             goalTV.text = viewModel.getGoalText(item)
 
-            buttonDelete.setOnClickListener {
-                MaterialAlertDialogBuilder(context)
-                    .setTitle("Delete challenge")
-                    .setMessage("Do you really want to delete the challenge '${item.name}' ?")
-                    .setPositiveButton("No") { dialogInterface: DialogInterface, i: Int ->
-                        dialogInterface.dismiss()
-                    }
-                    .setNegativeButton("Yes") { _: DialogInterface, _: Int ->
-                        viewModel.deleteChallenge(item)
-                    }
-                    .show()
+            if (item.active) {
+                buttonDelete.isEnabled = true
+                buttonDelete.setOnClickListener {
+                    MaterialAlertDialogBuilder(context)
+                        .setTitle("Delete challenge")
+                        .setMessage("Do you really want to delete the challenge '${item.name}' ?")
+                        .setPositiveButton("No") { dialogInterface: DialogInterface, i: Int ->
+                            dialogInterface.dismiss()
+                        }
+                        .setNegativeButton("Yes") { _: DialogInterface, _: Int ->
+                            viewModel.deleteChallenge(item)
+                        }
+                        .show()
+                }
+            } else {
+                buttonDelete.disable()
             }
 
             if (item.active) {

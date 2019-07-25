@@ -12,6 +12,7 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -76,6 +77,11 @@ fun <T> List<T>.toArrayList(): ArrayList<T> {
 fun <T> Any.toJson() = Gson().toJson(this as T)
 
 fun MaterialButton.disable() {
+    isEnabled = false
+    background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
+}
+
+fun ImageButton.disable() {
     isEnabled = false
     background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
 }

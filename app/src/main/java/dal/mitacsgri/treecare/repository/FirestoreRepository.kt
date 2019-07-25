@@ -65,7 +65,7 @@ class FirestoreRepository {
 
     fun deleteUserFromChallengeDB(challenge: Challenge, userId: String) =
         db.collection(COLLECTION_CHALLENGES).document(challenge.name)
-            .update("members", FieldValue.arrayRemove(userId))
+            .update("players", FieldValue.arrayRemove(userId))
 
     fun deleteChallengeFromUserDB(userId: String, userChallenge: UserChallenge, userChallengeJson: String) =
         db.collection(COLLECTION_USERS).document(userId)

@@ -5,13 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 
 /**
  * Created by Devansh on 28-06-2019
  */
 class ChallengesByYouRecyclerViewAdapter(
     private val challengesList: List<Challenge>,
-    private val viewModel: ChallengesByYouViewModel
+    private val viewModel: ChallengesViewModel
     ): RecyclerView.Adapter<ChallengesByYouViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChallengesByYouViewHolder =

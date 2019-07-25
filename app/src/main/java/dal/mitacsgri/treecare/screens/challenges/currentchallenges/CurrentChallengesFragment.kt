@@ -14,12 +14,10 @@ import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_current_challenges.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CurrentChallengesFragment : Fragment() {
 
-    private val mViewModel: CurrentChallengesViewModel by viewModel()
-    private val challengesViewModel: ChallengesViewModel by sharedViewModel()
+    private val mViewModel: ChallengesViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,15 +29,15 @@ class CurrentChallengesFragment : Fragment() {
         //This clear needs to be done here otherwise whenever this fragment is created as a result of coming
         //back from a fragment up in the navigation stack, the elements are added to the list, as a result of which,
         //the elements are duplicated
-        mViewModel.challengesList.value?.clear()
+        mViewModel.currentChallengesList.value?.clear()
 
         view.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = CurrentChallengesRecyclerViewAdapter(mViewModel.challengesList.value!!, mViewModel)
+            adapter = CurrentChallengesRecyclerViewAdapter(mViewModel.currentChallengesList.value!!, mViewModel)
         }
 
-        mViewModel.challengesList.observe(this, Observer {
+        mViewModel.currentChallengesList.observe(this, Observer {
             view.recyclerView.adapter?.notifyDataSetChanged()
         })
 

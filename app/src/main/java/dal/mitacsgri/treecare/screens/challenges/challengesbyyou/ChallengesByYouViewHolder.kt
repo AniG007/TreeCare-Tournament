@@ -8,6 +8,8 @@ import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel.Types.CHALLENGES_BY_YOU
 import kotlinx.android.synthetic.main.item_challenge_by_you.view.*
 
 /**
@@ -15,7 +17,7 @@ import kotlinx.android.synthetic.main.item_challenge_by_you.view.*
  */
 class ChallengesByYouViewHolder(
     itemView: View,
-    private val viewModel: ChallengesByYouViewModel
+    private val viewModel: ChallengesViewModel
     ): BaseViewHolder<Challenge>(itemView) {
 
     override fun bind(item: Challenge) {
@@ -23,7 +25,7 @@ class ChallengesByYouViewHolder(
             nameTV.text = item.name
             descriptionTV.text = item.description
             durationTV.text = viewModel.getChallengeDurationText(item)
-            membersCountTV.text = viewModel.getParticipantsCountString(item)
+            membersCountTV.text = viewModel.getPlayersCountText(item)
             challengeTypeTV.text = viewModel.getChallengeTypeText(item)
             goalTV.text = viewModel.getGoalText(item)
 
@@ -46,7 +48,7 @@ class ChallengesByYouViewHolder(
                         .setTitle("Join the challenge")
                         .setMessage("Do you really want to join the challenge '${item.name}'")
                         .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
-                            viewModel.joinChallenge(item)
+                            viewModel.joinChallenge(item, CHALLENGES_BY_YOU)
                         }
                         .setNegativeButton("No") { dialogInterface: DialogInterface, i: Int ->
                             dialogInterface.dismiss()

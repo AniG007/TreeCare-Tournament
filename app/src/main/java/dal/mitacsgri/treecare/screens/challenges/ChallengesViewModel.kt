@@ -10,12 +10,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
-import dal.mitacsgri.treecare.extensions.default
-import dal.mitacsgri.treecare.extensions.getStringRepresentation
-import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.extensions.toDateTime
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
@@ -27,24 +26,64 @@ class ChallengesViewModel(
     private val firestoreRepository: FirestoreRepository
     ): ViewModel() {
 
-    var challengesList = MutableLiveData<List<Challenge>>().default(listOf())
+    companion object Types {
+        const val ACTIVE_CHALLENGES = 0
+        const val CHALLENGES_BY_YOU = 1
+    }
+
+    val activeChallengesList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
+    val currentChallengesList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
+    val challengesByYouList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
+
     val statusMessage = MutableLiveData<String>()
     var messageDisplayed = true
 
     fun getAllActiveChallenges() {
         firestoreRepository.getAllActiveChallenges()
             .addOnSuccessListener {
-                challengesList.value = it.toObjects<Challenge>().filter {it.exist}
-                challengesList.notifyObserver()
+                activeChallengesList.value = it.toObjects<Challenge>().filter { it.exist }.toArrayList()
+                activeChallengesList.notifyObserver()
             }
             .addOnFailureListener {
                 Log.e("Active challenges", "Fetch failed: $it")
             }
     }
 
-    fun joinChallenge(challenge: Challenge) {
-        val userChallenge = getUserChallenge(challenge)
+    fun getCurrentChallengesForUser() {
+        val challengeReferences = sharedPrefsRepository.user.currentChallenges
 
+        challengeReferences.forEach { (_, userChallenge) ->
+            //Getting challenges from the Challenges DB after getting reference
+            // from the challenges list obtained from the user
+            firestoreRepository.getChallenge(userChallenge.name)
+                .addOnSuccessListener {
+                    val challenge = it.toObject<Challenge>() ?: Challenge(exist = false)
+                    synchronized(currentChallengesList.value!!) {
+                        if (challenge.exist) {
+                            currentChallengesList.value?.add(challenge)
+                            currentChallengesList.notifyObserver()
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    Log.d("Challenge not found", it.toString())
+                }
+        }
+    }
+
+    fun getAllCreatedChallengesChallenges(userId: String) {
+        firestoreRepository.getAllChallengesCreatedByUser(userId)
+            .addOnSuccessListener {
+                challengesByYouList.value = it.toObjects<Challenge>().filter { it.exist }.toArrayList()
+                challengesByYouList.notifyObserver()
+            }
+            .addOnFailureListener {
+                Log.e("Active challenges", "Fetch failed: $it")
+            }
+    }
+
+    fun joinChallenge(challenge: Challenge, source: Int) {
+        val userChallenge = getUserChallenge(challenge)
         val uid = sharedPrefsRepository.user.uid
 
         firestoreRepository.updateUserData(uid,
@@ -54,9 +93,11 @@ class ChallengesViewModel(
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
 
-                val index = challengesList.value?.indexOf(challenge)!!
-                challengesList.value?.get(index)?.players?.add(uid)
-                challengesList.notifyObserver()
+                var index = activeChallengesList.value?.indexOf(challenge)!!
+                activeChallengesList.value?.get(index)?.players?.add(uid)
+
+                index = challengesByYouList.value?.indexOf(challenge)!!
+                challengesByYouList.value?.get(index)?.players?.add(uid)
             }
             .addOnFailureListener {
                 messageDisplayed = false
@@ -67,6 +108,9 @@ class ChallengesViewModel(
         firestoreRepository.updateChallengeData(challenge.name,
             mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
 
+        currentChallengesList.value?.add(challenge)
+        currentChallengesList.notifyObserver()
+
         //Update data as soon as user joins a challenge
         val updateUserChallengeDataRequest =
             OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>().build()
@@ -76,21 +120,82 @@ class ChallengesViewModel(
             }, MoreExecutors.directExecutor())
     }
 
-    private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
-        val user = sharedPrefsRepository.user
-        user.currentChallenges[userChallenge.name] = userChallenge
-        sharedPrefsRepository.user = user
+    fun leaveChallenge(challenge: Challenge) {
+        val userId = sharedPrefsRepository.user.uid
+        var counter = 0
+
+        firestoreRepository.deleteUserFromChallengeDB(challenge, userId)
+            .addOnSuccessListener {
+                synchronized(counter) {
+                    counter++
+                    if (counter == 2) {
+                        removeChallengeFromCurrentChallengesLists(challenge)
+                    }
+                }
+                Log.d("Challenge deleted", "from DB")
+            }
+            .addOnFailureListener {
+                Log.e("Challenge delete failed", it.toString())
+            }
+
+        val userChallenge = getUserChallenge(challenge).let {
+            it.isCurrentChallenge = false
+            it
+        }
+
+        //TODO: Maybe later on we can think of only disabling the challenge instead of actually deleting from the database
+        firestoreRepository.deleteChallengeFromUserDB(userId, userChallenge, userChallenge.toJson<UserChallenge>())
+            .addOnSuccessListener {
+                synchronized(counter) {
+                    counter++
+                    if (counter == 2) {
+                        removeChallengeFromCurrentChallengesLists(challenge)
+                    }
+                }
+                statusMessage.value = "Success"
+            }
+            .addOnFailureListener {
+                statusMessage.value = "Failed"
+            }
+
+        var index = activeChallengesList.value?.indexOf(challenge)!!
+        activeChallengesList.value?.get(index)?.players?.remove(sharedPrefsRepository.user.uid)
+        activeChallengesList.notifyObserver()
+
+        index = currentChallengesList.value?.indexOf(challenge)!!
+        currentChallengesList.value?.get(index)?.players?.remove(sharedPrefsRepository.user.uid)
+        currentChallengesList.notifyObserver()
     }
 
-    private fun getUserChallenge(challenge: Challenge) =
-        UserChallenge(
-            name = challenge.name,
-            dailyStepsMap = mutableMapOf(),
-            totalSteps = sharedPrefsRepository.getDailyStepCount(),
-            joinDate = DateTime().millis,
-            type = challenge.type,
-            goal = challenge.goal
-        )
+    fun deleteChallenge(challenge: Challenge) {
+        firestoreRepository.setChallengeAsNonExist(challenge.name)
+            .addOnSuccessListener {
+                val challengeToRemoveIndex = challengesByYouList.value?.indexOf(challenge)
+                if (challengeToRemoveIndex != -1) {
+                    challengesByYouList.value?.removeAt(challengeToRemoveIndex!!)
+                    challengesByYouList.notifyObserver()
+                }
+            }
+            .addOnFailureListener {
+                Log.e("Deletion failed", it.toString())
+            }
+    }
+
+    fun startUnityActivityForChallenge(challenge: Challenge, action: () -> Unit) {
+        sharedPrefsRepository.apply {
+
+            val userChallenge = user.currentChallenges[challenge.name]!!
+            gameMode = CHALLENGER_MODE
+            challengeType = userChallenge.type
+            challengeGoal = userChallenge.goal
+            challengeLeafCount = userChallenge.leafCount
+            challengeStreak = userChallenge.challengeGoalStreak
+            challengeName = userChallenge.name
+            challengeTotalStepsCount = userChallenge.totalSteps
+
+            action()
+        }
+    }
 
     fun getChallengeDurationText(challenge: Challenge): SpannedString {
         //val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
@@ -120,5 +225,33 @@ class ChallengesViewModel(
             append(challenge.goal.toString())
         }
 
-    fun getParticipantsCountString(challenge: Challenge) = challenge.players.size.toString()
+    fun getPlayersCountText(challenge: Challenge) = challenge.players.size.toString()
+
+    fun getCurrentUserId() = sharedPrefsRepository.user.uid
+
+    private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
+        val user = sharedPrefsRepository.user
+        user.currentChallenges[userChallenge.name] = userChallenge
+        sharedPrefsRepository.user = user
+    }
+
+    private fun getUserChallenge(challenge: Challenge) =
+        UserChallenge(
+            name = challenge.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = sharedPrefsRepository.getDailyStepCount(),
+            joinDate = DateTime().millis,
+            type = challenge.type,
+            goal = challenge.goal
+        )
+
+    private fun removeChallengeFromCurrentChallengesLists(challenge: Challenge) {
+        currentChallengesList.value?.remove(challenge)
+        currentChallengesList.notifyObserver()
+
+        sharedPrefsRepository.user = sharedPrefsRepository.user.let {
+            it.currentChallenges.remove(challenge.name)
+            it
+        }
+    }
 }

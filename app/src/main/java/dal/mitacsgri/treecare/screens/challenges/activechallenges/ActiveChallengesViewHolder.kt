@@ -9,6 +9,7 @@ import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel.Types.ACTIVE_CHALLENGES
 import kotlinx.android.synthetic.main.item_active_challenge.view.*
 
 /**
@@ -25,7 +26,7 @@ class ActiveChallengesViewHolder(
             nameTV.text = item.name
             descriptionTV.text = item.description
             durationTV.text = viewModel.getChallengeDurationText(item)
-            membersCountTV.text = viewModel.getParticipantsCountString(item)
+            membersCountTV.text = viewModel.getPlayersCountText(item)
             challengeTypeTV.text = viewModel.getChallengeTypeText(item)
             goalTV.text = viewModel.getGoalText(item)
 
@@ -35,7 +36,7 @@ class ActiveChallengesViewHolder(
                         .setTitle("Join the challenge")
                         .setMessage("Do you really want to join the challenge '${item.name}'")
                         .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
-                            viewModel.joinChallenge(item)
+                            viewModel.joinChallenge(item, ACTIVE_CHALLENGES)
                         }
                         .setNegativeButton("No") { dialogInterface: DialogInterface, _: Int ->
                             dialogInterface.dismiss()

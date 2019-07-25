@@ -8,6 +8,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
+import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.item_current_challenge.view.*
 
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.item_current_challenge.view.*
  */
 class CurrentChallengesViewHolder(
     itemView: View,
-    private val viewModel: CurrentChallengesViewModel
+    private val viewModel: ChallengesViewModel
     ): BaseViewHolder<Challenge>(itemView) {
 
     override fun bind(item: Challenge) {

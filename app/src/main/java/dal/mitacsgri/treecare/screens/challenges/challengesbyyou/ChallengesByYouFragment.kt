@@ -15,12 +15,10 @@ import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_challenges_by_you.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ChallengesByYouFragment : Fragment() {
 
-    private val mViewModel: ChallengesByYouViewModel by viewModel()
-    private val challengesViewModel: ChallengesViewModel by sharedViewModel()
+    private val mViewModel: ChallengesViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,10 +32,10 @@ class ChallengesByYouFragment : Fragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             adapter = ChallengesByYouRecyclerViewAdapter(
-                mViewModel.challengesList.value!!, mViewModel)
+                mViewModel.challengesByYouList.value!!, mViewModel)
         }
 
-        mViewModel.challengesList.observe(this, Observer {
+        mViewModel.challengesByYouList.observe(this, Observer {
             //TODO: There should be a better approach to this
             view.recyclerView.adapter = ChallengesByYouRecyclerViewAdapter(it, mViewModel)
         })

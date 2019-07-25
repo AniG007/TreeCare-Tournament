@@ -13,11 +13,11 @@ import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_active_challenges.view.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ActiveChallengesFragment : Fragment() {
 
-    private val mViewModel: ChallengesViewModel by viewModel()
+    private val mViewModel: ChallengesViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,10 +31,10 @@ class ActiveChallengesFragment : Fragment() {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                 adapter = ActiveChallengesRecyclerViewAdapter(
-                    mViewModel.challengesList.value!!, mViewModel)
+                    mViewModel.activeChallengesList.value!!, mViewModel)
             }
 
-            mViewModel.challengesList.observe(this@ActiveChallengesFragment, Observer {
+            mViewModel.activeChallengesList.observe(this@ActiveChallengesFragment, Observer {
                 //There should be a better approach to this
                 view.recyclerView.adapter = ActiveChallengesRecyclerViewAdapter(it, mViewModel)
             })

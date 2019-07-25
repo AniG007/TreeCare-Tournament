@@ -83,7 +83,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
         userChallengeData.dailyStepsMap.forEach { (date, stepCount) ->
             //This check prevents resetting streak count if goal is yet to be met today
-            if (date.toInt() < DateTime().withTimeAtStartOfDay().millis) {
+            if (date.toLong() < DateTime().withTimeAtStartOfDay().millis) {
                 if (stepCount >= challenge.goal) streakCount++
                 else streakCount = 0
             }

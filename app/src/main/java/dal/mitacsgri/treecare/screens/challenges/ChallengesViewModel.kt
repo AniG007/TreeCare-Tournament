@@ -97,7 +97,7 @@ class ChallengesViewModel(
                 activeChallengesList.value?.get(index)?.players?.add(uid)
 
                 index = challengesByYouList.value?.indexOf(challenge)!!
-                challengesByYouList.value?.get(index)?.players?.add(uid)
+                if (index != -1) challengesByYouList.value?.get(index)?.players?.add(uid)
             }
             .addOnFailureListener {
                 messageDisplayed = false

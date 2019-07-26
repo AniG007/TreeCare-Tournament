@@ -93,7 +93,6 @@ class MainViewModel(
         if (resultCode == Activity.RESULT_OK) {
             when(requestCode) {
                 RC_SIGN_IN -> {
-
                     GoogleSignIn.getSignedInAccountFromIntent(data)
                         .addOnSuccessListener {
                             val account = GoogleSignIn.getLastSignedInAccount(activity)!!

@@ -4,7 +4,6 @@ import android.text.Editable
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
-import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -23,7 +22,6 @@ class CreateChallengeViewModel(
     var isGoalValid = false
     var isEndDateValid = false
 
-    val isGoalOptionSelected = MutableLiveData<Boolean>()
     val messageLiveData = MutableLiveData<String>()
     val isFullDataValid = MutableLiveData<Boolean>()
 
@@ -34,20 +32,6 @@ class CreateChallengeViewModel(
         return Triple(endDate.get(Calendar.DAY_OF_MONTH), endDate.get(Calendar.MONTH), endDate.get(Calendar.YEAR))
     }
 
-    fun getGoalInputHint(checkedId: Int) =
-            when(checkedId) {
-                R.id.optionDailyGoalBased -> "Daily steps goal"
-                R.id.optionAggregateBased -> "Total steps"
-                else -> ""
-    }
-
-    fun getGoalType(checkedId: Int) =
-            when(checkedId) {
-                R.id.optionDailyGoalBased -> 0
-                R.id.optionAggregateBased -> 1
-                else -> 2
-            }
-
     fun getDateText(year: Int, monthOfYear: Int, dayOfMonth: Int): String {
         storeEndDate(dayOfMonth, monthOfYear, year)
         return "$dayOfMonth / ${monthOfYear+1} / $year"
@@ -56,9 +40,7 @@ class CreateChallengeViewModel(
     fun getRegexToMatchStepsGoal() = Regex("([5-9][0-9]*(000)+)|([1-9]+0*0000)")
 
     fun areAllInputFieldsValid(): Boolean {
-        if(isGoalOptionSelected.value == null)
-            isGoalOptionSelected.value = false
-        isFullDataValid.value = isNameValid and (isGoalOptionSelected.value ?: false) and isGoalValid and isEndDateValid
+        isFullDataValid.value = isNameValid and isGoalValid and isEndDateValid
         return isFullDataValid.value ?: false
     }
 

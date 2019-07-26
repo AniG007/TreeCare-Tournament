@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.extensions.validate
@@ -36,15 +37,6 @@ class CreateChallengeFragment : Fragment() {
                 findNavController().navigateUp()
             }
 
-            viewModel.isGoalOptionSelected.observe(this@CreateChallengeFragment, Observer {
-                if (!it) {
-                    optionAggregateBased.error = "Please select an option"
-                    optionDailyGoalBased.error = ""
-                } else {
-                    optionDailyGoalBased.error = null
-                    optionAggregateBased.error = null
-                }
-            })
 
             viewModel.messageLiveData.observe(this@CreateChallengeFragment, Observer {
                 it.toast(context)
@@ -67,14 +59,6 @@ class CreateChallengeFragment : Fragment() {
                 }
             }
 
-            radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                challengeGoalLayout.hint = viewModel.getGoalInputHint(checkedId)
-                viewModel.apply {
-                    isGoalOptionSelected.value = true
-                    areAllInputFieldsValid()
-                }
-            }
-
             inputTeamName.validate("Please enter name (Should not contain ':')") {
                 viewModel.isNameValid = it.isNotEmpty() and !it.contains(':')
                 viewModel.areAllInputFieldsValid()
@@ -94,7 +78,7 @@ class CreateChallengeFragment : Fragment() {
             createChallengeButton.setOnClickListener {
                 viewModel.createChallenge(name = inputTeamName.text,
                     description = inputTeamDescription.text,
-                    type = viewModel.getGoalType(radioGroup.checkedRadioButtonId),
+                    type = CHALLENGE_TYPE_DAILY_GOAL_BASED,
                     goal = inputChallengeGoal.text)
             }
         }

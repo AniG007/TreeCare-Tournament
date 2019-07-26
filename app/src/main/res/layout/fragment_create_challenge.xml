@@ -78,42 +78,6 @@
                     android:gravity="top|start"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/challengeTypeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Challenge type"
-                app:layout_constraintStart_toStartOf="parent"
-                android:paddingBottom="@dimen/create_challenge_input_fields_margin"
-                android:layout_marginTop="@dimen/create_challenge_input_fields_margin"
-                android:textSize="@dimen/_16sdp"
-                android:textColor="@color/challenger_mode_primary_color"
-                app:layout_constraintTop_toBottomOf="@+id/teamDescriptionLayout"/>
-
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/challengeTypeText"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:id="@+id/radioGroup">
-
-                <RadioButton
-                    android:id="@+id/optionDailyGoalBased"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/challenge_option_daily_goal_based"/>
-
-                <RadioButton
-                    android:id="@+id/optionAggregateBased"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/challenge_option_aggregate_based"/>
-            </RadioGroup>
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/challengeGoalLayout"
                 android:layout_width="match_parent"
@@ -123,7 +87,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:layout_constraintTop_toBottomOf="@+id/radioGroup">
+                app:layout_constraintTop_toBottomOf="@+id/teamDescriptionLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputChallengeGoal"
@@ -151,7 +115,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/createChallengeButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/challenger_mode_primary_color"

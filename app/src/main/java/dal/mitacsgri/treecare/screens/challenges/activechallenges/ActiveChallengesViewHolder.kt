@@ -33,8 +33,8 @@ class ActiveChallengesViewHolder(
             if (item.active) {
                 buttonJoin.setOnClickListener {
                     MaterialAlertDialogBuilder(context)
-                        .setTitle("Join the challenge")
-                        .setMessage("Do you really want to join the challenge '${item.name}'")
+                        .setTitle(viewModel.getJoinChallengeDialogTitleText(item))
+                        .setMessage(viewModel.getJoinChallengeMessageText())
                         .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
                             viewModel.joinChallenge(item, ACTIVE_CHALLENGES)
                         }

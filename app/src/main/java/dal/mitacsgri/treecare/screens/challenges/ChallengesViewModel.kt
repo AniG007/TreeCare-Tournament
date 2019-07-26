@@ -235,6 +235,16 @@ class ChallengesViewModel(
 
     fun getCurrentUserId() = sharedPrefsRepository.user.uid
 
+    fun getJoinChallengeDialogTitleText(challenge: Challenge) =
+        buildSpannedString {
+            append("Join challenge ")
+            bold {
+                append("'${challenge.name}'")
+            }
+        }
+
+    fun getJoinChallengeMessageText() = "Are you ready to join now?"
+
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user
         user.currentChallenges[userChallenge.name] = userChallenge

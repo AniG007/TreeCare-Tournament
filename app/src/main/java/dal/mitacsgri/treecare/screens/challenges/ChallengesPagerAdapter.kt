@@ -25,9 +25,9 @@ class ChallengesPagerAdapter(fm: FragmentManager)
 
     override fun getPageTitle(position: Int) =
             when(position) {
-                0 -> "My challenges"
-                1 -> "New challenges"
-                2 -> "Challenges by me"
+                0 -> "Current challenges"
+                1 -> "Active challenges"
+                2 -> "My Challenges"
                 else -> "Challenge"
             }
 }

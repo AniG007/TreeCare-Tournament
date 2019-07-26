@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
+import android.util.Log
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import org.koin.core.KoinComponent
@@ -17,6 +18,10 @@ class StepCountChangedListener: SensorEventListener, KoinComponent {
     private var lastStepCount = 0
     private var isFirstRun = true
     private var stepCountDelta = 0
+
+    init {
+        Log.d("Sensor listener", "Created")
+    }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
@@ -32,6 +37,7 @@ class StepCountChangedListener: SensorEventListener, KoinComponent {
                 sharedPrefsRepository.storeDailyStepCount(
                     sharedPrefsRepository.getDailyStepCount() + stepCountDelta)
                 sharedPrefsRepository.getDailyStepCount().toast(context)
+                Log.d("Step detector", sharedPrefsRepository.getDailyStepCount().toString())
             }
         }
     }

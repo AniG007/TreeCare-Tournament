@@ -14,6 +14,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.UserChallenge
@@ -217,13 +218,15 @@ class ChallengesViewModel(
             bold {
                 append("Type: ")
             }
-            append(if (challenge.type == 0) "Daily Goal Based" else "Aggregate based")
+            append(if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) "Daily Goal Based"
+                    else "Aggregate based")
         }
 
     fun getGoalText(challenge: Challenge) =
         buildSpannedString {
             bold {
-                append(if(challenge.type == 0) "Daily Steps Goal: " else "Total steps goal: ")
+                append(if(challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) "Minimum Daily Goal: "
+                        else "Total steps goal: ")
             }
             append(challenge.goal.toString())
         }

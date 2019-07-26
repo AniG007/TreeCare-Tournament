@@ -12,7 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".screens.createteam.CreateTournamen"></activity>
         <activity android:name=".screens.gamesettings.SettingsActivity" />
         <activity
             android:name=".screens.MainActivity"

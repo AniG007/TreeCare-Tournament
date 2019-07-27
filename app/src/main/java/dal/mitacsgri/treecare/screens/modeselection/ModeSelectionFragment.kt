@@ -1,6 +1,9 @@
 package dal.mitacsgri.treecare.screens.modeselection
 
+import android.content.Context
 import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.StepCountChangedListener
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.fragment_mode_selection.view.*
@@ -62,6 +67,14 @@ class ModeSelectionFragment : Fragment() {
                     findNavController().navigate(action)
                 }
             }
+        }
+
+        val sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+        stepSensor?.toast(context!!)
+        if (stepSensor != null) {
+            sensorManager.registerListener(
+                StepCountChangedListener(context!!), stepSensor, SensorManager.SENSOR_DELAY_FASTEST).toast(context!!)
         }
 
         return view

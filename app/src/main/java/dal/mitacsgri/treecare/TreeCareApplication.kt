@@ -31,10 +31,6 @@ class TreeCareApplication : Application() {
             PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, TimeUnit.MINUTES).build()
 
         WorkManager.getInstance(this).enqueue(updateUserChallengeDataRequest)
-        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-        if (stepSensor != null) {
-            sensorManager.registerListener(StepCountChangedListener(), stepSensor, SensorManager.SENSOR_DELAY_FASTEST).toast(this)
-        }
+
     }
 }

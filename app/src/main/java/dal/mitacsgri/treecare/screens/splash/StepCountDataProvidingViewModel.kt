@@ -15,7 +15,7 @@ import java.util.*
  * Created by Devansh on 20-06-2019
  */
 
-class SplashScreenViewModel(
+class StepCountDataProvidingViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository)
     : ViewModel() {

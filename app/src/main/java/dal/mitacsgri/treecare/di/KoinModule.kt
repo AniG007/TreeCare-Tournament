@@ -10,7 +10,7 @@ import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
-import dal.mitacsgri.treecare.screens.splash.SplashScreenViewModel
+import dal.mitacsgri.treecare.screens.splash.StepCountDataProvidingViewModel
 import dal.mitacsgri.treecare.screens.teams.TeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.allteams.AllTeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.yourteams.YourTeamsViewModel
@@ -36,7 +36,7 @@ val firestoreRepositoryModule = module {
 
 val appModule = module {
     viewModel { MainViewModel(get(), get(), get()) }
-    viewModel { SplashScreenViewModel(get(), get()) }
+    viewModel { StepCountDataProvidingViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
     viewModel { CreateChallengeViewModel(get(), get()) }
     viewModel { LeaderboardItemViewModel(get(), get()) }

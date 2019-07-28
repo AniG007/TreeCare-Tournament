@@ -168,6 +168,8 @@ class MainViewModel(
             }
     }
 
+
+
     private fun accessFitApi(account: GoogleSignInAccount) {
 
         subscribeToRecordSteps(account) {

@@ -14,7 +14,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashScreenFragment : Fragment() {
 
-    private val splashScreenViewModel: SplashScreenViewModel by viewModel()
+    private val stepCountDataProvidingViewModel: StepCountDataProvidingViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,7 +22,7 @@ class SplashScreenFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_splash_screen, container, false)
 
-        splashScreenViewModel.apply {
+        stepCountDataProvidingViewModel.apply {
             //testGameByManipulatingSharedPrefsData(this)
             resetDailyGoalCheckedFlag()
             stepCountDataFetchedCounter.observe(this@SplashScreenFragment, Observer {

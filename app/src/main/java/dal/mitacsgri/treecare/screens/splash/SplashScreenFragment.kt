@@ -32,7 +32,7 @@ class SplashScreenFragment : Fragment() {
                 }
             })
 
-            if (isLoginDone) setupFitApiToGetData()
+            if (isLoginDone) accessStepCountDataUsingApi()
             else navigateWithDelay(R.id.action_splashScreenFragment_to_loginFragment)
         }
 

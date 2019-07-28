@@ -40,9 +40,8 @@ class MainViewModel(
     private var RC_SIGN_IN = 1000
     private val RC_GOOGLE_FIT_PERMISSIONS = 4
 
-    //This variable is accessed synchronously. The moment its value reaches 2, we move to new fragment
-    //Value 2 means both the steps counts have been obtained
-    val stepCountDataFetchedCounter = MutableLiveData<Int>().default(0)
+    val isLoginDone = MutableLiveData<Boolean>().default(false)
+
     val userFirstName =  MutableLiveData<String>()
 
     var firstLoginTime: Long
@@ -91,7 +90,7 @@ class MainViewModel(
 
     fun onSignInResult(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
         if (resultCode == Activity.RESULT_OK) {
-            when(requestCode) {
+            when (requestCode) {
                 RC_SIGN_IN -> {
                     GoogleSignIn.getSignedInAccountFromIntent(data)
                         .addOnSuccessListener {
@@ -109,8 +108,9 @@ class MainViewModel(
                                 .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
                                 .build()
 
-                            if (!GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(mActivity),
-                                    fitnessOptions)) {
+                            if (!GoogleSignIn.hasPermissions(
+                                    GoogleSignIn.getLastSignedInAccount(mActivity), fitnessOptions)
+                            ) {
                                 GoogleSignIn.requestPermissions(
                                     mActivity,
                                     RC_GOOGLE_FIT_PERMISSIONS,
@@ -118,20 +118,26 @@ class MainViewModel(
                                     fitnessOptions)
                             } else {
                                 Log.d("FitAPI", "permissions exist")
-                                accessFitApi(account)
+                                subscribeToRecordSteps(account) {
+                                    sharedPrefsRepository.isLoginDone = true
+                                    isLoginDone.value = true
+                                }
                             }
-                        }
 
-                    lastLoginTime = Date().time
+                            lastLoginTime = Date().time
+                        }
                 }
                 RC_GOOGLE_FIT_PERMISSIONS -> {
-                    Log.d("FitAPI", "permissions granted")
-                    accessFitApi(GoogleSignIn.getLastSignedInAccount(activity)!!)
+                        Log.d("FitAPI", "permissions granted")
+                        subscribeToRecordSteps(GoogleSignIn.getLastSignedInAccount(activity)!!) {
+                            sharedPrefsRepository.isLoginDone = true
+                            isLoginDone.value = true
+                        }
+                    }
                 }
+            } else {
+                Log.e("TreeCare", "RESULT_CANCELED")
             }
-        } else {
-            Log.e("TreeCare", "RESULT_CANCELED")
-        }
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
@@ -168,55 +174,7 @@ class MainViewModel(
             }
     }
 
-
-
-    private fun accessFitApi(account: GoogleSignInAccount) {
-
-        subscribeToRecordSteps(account) {
-            sharedPrefsRepository.isLoginDone = true
-        }
-
-        stepCountRepository.apply {
-            if (sharedPrefsRepository.isFirstRun) {
-                getTodayStepCountData {
-                    sharedPrefsRepository.storeDailyStepCount(it)
-                    Log.d("DailyStepCount", it.toString())
-                    sharedPrefsRepository.currentLeafCount = it / 1000
-                    increaseStepCountDataFetchedCounter()
-                    increaseStepCountDataFetchedCounter()
-                }
-                sharedPrefsRepository.lastLeafCount = 0
-            } else {
-                //Get aggregate step count up to the last day + current day step count
-                getStepCountDataOverARange(
-                    DateTime(sharedPrefsRepository.firstLoginTime).withTimeAtStartOfDay().millis,
-                    DateTime().withTimeAtStartOfDay().millis) {
-
-                    var totalLeafCountTillLastDay = 0
-                    it.forEach { (date, stepCount) ->
-                        val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
-                        totalLeafCountTillLastDay +=
-                            calculateLeafCountFromStepCount(stepCount, goal!!)
-                    }
-                    sharedPrefsRepository.lastLeafCount = totalLeafCountTillLastDay
-                    increaseStepCountDataFetchedCounter()
-
-                    var currentLeafCount = totalLeafCountTillLastDay
-                    //Add today's leaf count to leafCountTillLastDay
-                    //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
-                    getTodayStepCountData {
-                        currentLeafCount += it / 1000
-                        sharedPrefsRepository.currentLeafCount = currentLeafCount
-                        sharedPrefsRepository.storeDailyStepCount(it)
-                        Log.d("DailyStepCount", it.toString())
-                        increaseStepCountDataFetchedCounter()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun subscribeToRecordSteps(account: GoogleSignInAccount,action: () -> Unit) {
+    private fun subscribeToRecordSteps(account: GoogleSignInAccount, action: () -> Unit) {
 
         val TAG = "RecordingAPI"
 
@@ -237,22 +195,6 @@ class MainViewModel(
             .addOnFailureListener {
                 Log.d(TAG, "failure: $it")
             }
-    }
-
-    private fun increaseStepCountDataFetchedCounter() {
-        synchronized(stepCountDataFetchedCounter) {
-            stepCountDataFetchedCounter.value = stepCountDataFetchedCounter.value?.plus(1)
-            Log.d("Counter value", stepCountDataFetchedCounter.value.toString())
-        }
-    }
-
-    private fun calculateLeafCountFromStepCount(stepCount: Int, dailyGoal: Int): Int {
-        var leafCount = stepCount / 1000
-        if (stepCount < dailyGoal) {
-            leafCount -= Math.ceil((dailyGoal - stepCount) / 1000.0).toInt()
-            if (leafCount < 0) leafCount = 0
-        }
-        return leafCount
     }
 
     private inline fun checkIfUserExists(uid: String,

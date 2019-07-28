@@ -48,7 +48,7 @@ class StepCountDataProvidingViewModel(
         }
     }
 
-    fun setupFitApiToGetData() {
+    fun accessStepCountDataUsingApi() {
 
         stepCountRepository.apply {
 

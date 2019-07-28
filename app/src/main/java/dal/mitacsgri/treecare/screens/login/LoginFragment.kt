@@ -13,14 +13,18 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.dialog.logindataloading.LoginDataLoadingDialog
+import dal.mitacsgri.treecare.screens.splash.StepCountDataProvidingViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginFragment : Fragment() {
 
     //Shared ViewModel with parent activity
     private val mainViewModel: MainViewModel by sharedViewModel()
+    private val stepCountDataProvidingViewModel: StepCountDataProvidingViewModel by viewModel()
+
     private val loadingDialog = LoginDataLoadingDialog()
 
     override fun onCreateView(
@@ -55,10 +59,18 @@ class LoginFragment : Fragment() {
                 //loadingDialog.show(fragmentManager!!, "login_dialog")
             })
 
-            stepCountDataFetchedCounter.observe(this@LoginFragment, Observer {
-                if (it == 2) {
-                    //loadingDialog.dismiss()
-                    findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+            isLoginDone.observe(this@LoginFragment, Observer {value ->
+                if (value) {
+                    stepCountDataProvidingViewModel.let {
+                        it.stepCountDataFetchedCounter.observe(this@LoginFragment, Observer {
+                            if (it == 2) {
+                                //loadingDialog.dismiss()
+                                findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+                            }
+                        })
+
+                        it.accessStepCountDataUsingApi()
+                    }
                 }
             })
         }

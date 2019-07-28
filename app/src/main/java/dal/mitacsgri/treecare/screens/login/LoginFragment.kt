@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainViewModel
@@ -61,18 +61,18 @@ class LoginFragment : Fragment() {
 
             isLoginDone.observe(this@LoginFragment, Observer {value ->
                 if (value) {
-                    stepCountDataProvidingViewModel.let {
-                        it.stepCountDataFetchedCounter.observe(this@LoginFragment, Observer {
-                            if (it == 2) {
-                                //loadingDialog.dismiss()
-                                findNavController().navigate(R.id.action_loginFragment_to_modeSelectionFragment)
-                            }
-                        })
-
-                        it.accessStepCountDataUsingApi()
-                    }
+                    stepCountDataProvidingViewModel.accessStepCountDataUsingApi()
                 }
             })
+
+            stepCountDataProvidingViewModel.stepCountDataFetchedCounter
+                .observe(this@LoginFragment, Observer {
+                    if (it == 2) {
+                        //loadingDialog.dismiss()
+                        NavHostFragment.findNavController(this@LoginFragment)
+                            .navigate(R.id.action_loginFragment_to_modeSelectionFragment)
+                    }
+                })
         }
     }
 }

@@ -97,34 +97,34 @@ class MainViewModel(
                             val account = GoogleSignIn.getLastSignedInAccount(activity)!!
                             mActivity = activity
 
-                            firebaseAuthWithGoogle(account)
+                            firebaseAuthWithGoogle(account) {
+                                val fitnessOptions = FitnessOptions.builder()
+                                    .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
+                                    .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                                    .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
+                                    .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_WRITE)
+                                    .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
+                                    .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
+                                    .build()
 
-                            val fitnessOptions = FitnessOptions.builder()
-                                .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
-                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                                .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_WRITE)
-                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
-                                .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_WRITE)
-                                .build()
-
-                            if (!GoogleSignIn.hasPermissions(
-                                    GoogleSignIn.getLastSignedInAccount(mActivity), fitnessOptions)
-                            ) {
-                                GoogleSignIn.requestPermissions(
-                                    mActivity,
-                                    RC_GOOGLE_FIT_PERMISSIONS,
-                                    GoogleSignIn.getLastSignedInAccount(mActivity),
-                                    fitnessOptions)
-                            } else {
-                                Log.d("FitAPI", "permissions exist")
-                                subscribeToRecordSteps(account) {
-                                    sharedPrefsRepository.isLoginDone = true
-                                    isLoginDone.value = true
+                                if (!GoogleSignIn.hasPermissions(
+                                        GoogleSignIn.getLastSignedInAccount(mActivity), fitnessOptions)
+                                ) {
+                                    GoogleSignIn.requestPermissions(
+                                        mActivity,
+                                        RC_GOOGLE_FIT_PERMISSIONS,
+                                        GoogleSignIn.getLastSignedInAccount(mActivity),
+                                        fitnessOptions)
+                                } else {
+                                    Log.d("FitAPI", "permissions exist")
+                                    subscribeToRecordSteps(account) {
+                                        sharedPrefsRepository.isLoginDone = true
+                                        isLoginDone.value = true
+                                    }
                                 }
-                            }
 
-                            lastLoginTime = Date().time
+                                lastLoginTime = Date().time
+                            }
                         }
                 }
                 RC_GOOGLE_FIT_PERMISSIONS -> {
@@ -140,7 +140,8 @@ class MainViewModel(
             }
     }
 
-    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount,
+                                       action: (account: GoogleSignInAccount) -> Unit) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         val auth = FirebaseAuth.getInstance()
         auth.signInWithCredential(credential)
@@ -153,11 +154,11 @@ class MainViewModel(
 
                     userFirstName.value = it.displayName?.split(" ")?.get(0)
 
-                    checkIfUserExists(user.uid, {
+                    checkIfUserExists(user.uid, account, {
                         firstLoginTime = it.firstLoginTime
                         sharedPrefsRepository.isFirstRun = false
                         expandDailyGoalMapIfNeeded(it)
-                    }) {
+                    }, {
                         sharedPrefsRepository.isFirstRun = true
                         return@checkIfUserExists User(
                             uid = user.uid,
@@ -166,6 +167,8 @@ class MainViewModel(
                             firstLoginTime = DateTime().millis,
                             email = user.email!!,
                             photoUrl = user.photoUrl.toString())
+                    }) {
+                        action(account)
                     }
 
                     Log.d("User: ", userFirstName.toString())
@@ -198,8 +201,10 @@ class MainViewModel(
     }
 
     private inline fun checkIfUserExists(uid: String,
+                                  account: GoogleSignInAccount,
                                   crossinline userExistsAction: (User) -> Unit,
-                                  crossinline userDoesNotExistAction: () -> User) {
+                                  crossinline userDoesNotExistAction: () -> User,
+                                  crossinline actionAfterStoringUserData: (account: GoogleSignInAccount) -> Unit) {
         firestoreRepository.getUserData(uid)
             .addOnSuccessListener {
                 if (it.exists()) {
@@ -215,6 +220,7 @@ class MainViewModel(
                     sharedPrefsRepository.user = user
                 }
                 storeDailyGoalInPrefs()
+                actionAfterStoringUserData(account)
             }
             .addOnFailureListener {
                 Log.e("USER", it.toString())

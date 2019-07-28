@@ -51,6 +51,10 @@ class StepDetectorService: Service() {
                 "Step Monitor Service",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
+            serviceChannel.apply {
+                setSound(null, null)
+                enableVibration(false)
+            }
 
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)

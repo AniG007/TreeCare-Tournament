@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.treecareunityactivity
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
@@ -18,13 +19,13 @@ class TreeCareUnityActivity : UnityPlayerActivity() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         startService()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         stopService()
     }
 

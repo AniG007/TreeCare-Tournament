@@ -13,7 +13,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.dialog.logindataloading.LoginDataLoadingDialog
-import dal.mitacsgri.treecare.screens.splash.StepCountDataProvidingViewModel
+import dal.mitacsgri.treecare.screens.StepCountDataProvidingViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel

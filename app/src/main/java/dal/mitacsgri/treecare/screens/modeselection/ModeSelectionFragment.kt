@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
@@ -15,7 +17,8 @@ import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
-import dal.mitacsgri.treecare.screens.splash.StepCountDataProvidingViewModel
+import dal.mitacsgri.treecare.screens.StepCountDataProvidingViewModel
+import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.fragment_mode_selection.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -25,6 +28,7 @@ class ModeSelectionFragment : Fragment() {
 
     private val mainViewModel: MainViewModel by sharedViewModel()
     private val stepCountDataProvidingViewModel: StepCountDataProvidingViewModel by viewModel()
+    private val profileViewModel: ProfileViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,6 +80,13 @@ class ModeSelectionFragment : Fragment() {
                 })
 
                 it.accessStepCountDataUsingApi()
+
+                Glide.with(this).load(profileViewModel.getUserPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(buttonProfile)
+                buttonProfile.setOnClickListener {
+                    findNavController().navigate(R.id.action_modeSelectionFragment_to_profileFragment)
+                }
             }
         }
 

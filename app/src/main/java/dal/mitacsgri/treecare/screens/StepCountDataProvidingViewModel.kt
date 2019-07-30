@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens.splash
+package dal.mitacsgri.treecare.screens
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

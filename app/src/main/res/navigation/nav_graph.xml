@@ -76,6 +76,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_modeSelectionFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/instructionsFragment"
@@ -211,4 +214,9 @@
         android:id="@+id/inviteMembersDialog"
         android:name="dal.mitacsgri.treecare.screens.dialog.Invitemembers.InviteMembersDialog"
         android:label="InviteMembersDialog" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="dal.mitacsgri.treecare.screens.profile.ProfileFragment"
+        android:label="profile_fragment"
+        tools:layout="@layout/profile_fragment" />
 </navigation>

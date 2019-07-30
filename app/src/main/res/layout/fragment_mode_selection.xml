@@ -58,6 +58,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/tournament"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -66,5 +67,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/include"
         app:layout_constraintWidth_percent=".76"
         style="@style/ModeSelectionButtonStyle"/>
+
+    <ImageButton
+        android:id="@+id/buttonProfile"
+        android:layout_width="@dimen/_56sdp"
+        android:layout_height="@dimen/_56sdp"
+        android:background="@drawable/profile_button_background"
+        android:padding="@dimen/_2sdp"
+        android:elevation="@dimen/_2sdp"
+        tools:src="@tools:sample/avatars"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="@dimen/_12sdp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

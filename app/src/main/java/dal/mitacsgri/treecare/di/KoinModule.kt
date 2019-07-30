@@ -4,13 +4,14 @@ import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainViewModel
+import dal.mitacsgri.treecare.screens.StepCountDataProvidingViewModel
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
 import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
-import dal.mitacsgri.treecare.screens.splash.StepCountDataProvidingViewModel
+import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
 import dal.mitacsgri.treecare.screens.teams.TeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.allteams.AllTeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.yourteams.YourTeamsViewModel
@@ -47,4 +48,5 @@ val appModule = module {
     viewModel { CreateTeamViewModel(get(), get()) }
     viewModel { TeamsViewModel(get(), get()) }
     viewModel { ChallengesViewModel(get(), get())}
+    viewModel { ProfileViewModel(get()) }
 }

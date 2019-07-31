@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.PorterDuff
 import android.os.Handler
 import android.text.Editable
@@ -13,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -95,3 +98,9 @@ fun getCardItemDescriptorText(property: String, value: String) =
         }
 
 infix fun Boolean.xnor(other: Boolean): Boolean = !(this.xor(other))
+
+fun ImageView.makeGrayscale() {
+    val matrix = ColorMatrix()
+    matrix.setSaturation(0f)
+    colorFilter = ColorMatrixColorFilter(matrix)
+}

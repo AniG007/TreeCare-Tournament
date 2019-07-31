@@ -20,5 +20,6 @@ data class User (
     val currentChallenges: MutableMap<String, UserChallenge> = mutableMapOf(),
     val currentTeams: ArrayList<String> = arrayListOf(),
     val teamJoinRequests: ArrayList<String> = arrayListOf(),
-    val photoUrl: String = ""
+    val photoUrl: String = "",
+    val dailyGoalStreakCount: Int = 0
 )

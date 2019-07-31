@@ -58,7 +58,9 @@ class StepCountDataProvidingViewModel(
                 DateTime().withTimeAtStartOfDay().millis
             ) {
 
-                calculateFruitsOnTree(it)
+                if (sharedPrefsRepository.isDailyGoalChecked == 0) {
+                    calculateFruitsOnTree(it)
+                }
                 increaseStepCountDataFetchedCounter()
 
                 val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
@@ -135,6 +137,8 @@ class StepCountDataProvidingViewModel(
         }
 
         sharedPrefsRepository.currentDayOfWeek = currentDay
+
+        calculateDailyGoalStreak(currentDay, stepCountMap)
     }
 
     private fun expandDailyGoalMapIfNeeded(user: User) {
@@ -156,6 +160,24 @@ class StepCountDataProvidingViewModel(
         }
 
         sharedPrefsRepository.user = user
+    }
+
+    private fun calculateDailyGoalStreak(currentDay: Int, stepCountMap: Map<Long, Int>) {
+        val mapSize = stepCountMap.size
+        val mapKeys = stepCountMap.keys.sorted()
+        var streakCount = 0
+        val dailyGoal = sharedPrefsRepository.getDailyStepsGoal()
+
+        for (i in (mapSize - (currentDay)) until mapSize) {
+            if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
+                streakCount++
+            } else {
+                streakCount = 0
+                break
+            }
+        }
+
+        sharedPrefsRepository.dailyGoalStreak = streakCount
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

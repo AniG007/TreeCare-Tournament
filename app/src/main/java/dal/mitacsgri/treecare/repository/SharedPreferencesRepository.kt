@@ -127,6 +127,10 @@ class SharedPreferencesRepository(val context: Context) {
         get() = getInt(R.string.current_day_of_week)
         set(value) { storeInt(R.string.current_day_of_week, value) }
 
+    var dailyGoalStreak
+        get() = getInt(R.string.daily_goal_streak)
+        set(value) { storeInt(R.string.daily_goal_streak, value) }
+
     var user: User
         get() {
             try {

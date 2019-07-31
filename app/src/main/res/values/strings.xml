@@ -93,5 +93,7 @@
     <string name="join_request_cancelled">Join request cancelled</string>
     <string name="member_requests">Member requests</string>
     <string name="invite">Invite</string>
+    <string name="profile">Profile</string>
+    <string name="profile_picture">Profile picture</string>
 
 </resources>

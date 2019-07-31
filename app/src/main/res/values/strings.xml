@@ -42,6 +42,7 @@
     <string name="last_fruit_count">last_fruit_count</string>
     <string name="current_fruit_count">current_fruit_count</string>
     <string name="current_day_of_week">current_day_of_week</string>
+    <string name="daily_goal_streak">daily_goal_streak</string>
     <string name="user">user</string>
     <string name="game_mode">game_mode</string>
     <string name="challenge_type">challenge_type</string>
@@ -95,5 +96,9 @@
     <string name="invite">Invite</string>
     <string name="profile">Profile</string>
     <string name="profile_picture">Profile picture</string>
+    <string name="awards">Awards</string>
+    <string name="challenger_mode">Challenger mode</string>
+    <string name="go_to_challenger_mode">Go to Challenger Mode</string>
+    <string name="streak">Streak</string>
 
 </resources>

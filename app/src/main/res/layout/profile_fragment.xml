@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="@dimen/_16sdp"
+    android:paddingEnd="@dimen/_16sdp"
     tools:context=".screens.profile.ProfileFragment">
 
     <TextView
@@ -15,6 +18,7 @@
         android:text="@string/profile"
         android:textColor="@color/black"
         android:textSize="@dimen/_24sdp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,7 +27,6 @@
         android:id="@+id/profileImageView"
         android:layout_width="@dimen/_60sdp"
         android:layout_height="@dimen/_60sdp"
-        android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_20sdp"
         android:contentDescription="@string/profile_picture"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,14 +35,17 @@
 
     <TextView
         android:id="@+id/nameTV"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginBottom="@dimen/_5sdp"
         android:textColor="@color/black"
         android:textSize="@dimen/_16sdp"
         android:textStyle="bold"
+        android:paddingEnd="@dimen/_4sdp"
         app:layout_constraintBottom_toTopOf="@+id/email"
+        app:layout_constraintEnd_toStartOf="@id/buttonProgressReport"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/profileImageView"
         app:layout_constraintTop_toTopOf="@id/profileImageView"
         app:layout_constraintVertical_chainStyle="packed"
@@ -47,14 +53,218 @@
 
     <TextView
         android:id="@+id/email"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_16sdp"
+        android:maxLines="1"
+        android:paddingEnd="@dimen/_2sdp"
         android:textColor="@color/black"
-        android:textSize="@dimen/_14sdp"
+        android:textSize="@dimen/_12sdp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/profileImageView"
+        app:layout_constraintEnd_toStartOf="@id/buttonProgressReport"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/profileImageView"
         app:layout_constraintTop_toBottomOf="@+id/nameTV"
         tools:text="devansh233@gmail.com" />
+
+    <ImageView
+        android:id="@+id/buttonProgressReport"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_bar_chart"
+        android:scaleType="fitXY"
+        android:paddingTop="@dimen/_4sdp"
+        app:layout_constraintBottom_toBottomOf="@id/profileImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/profileImageView" />
+
+    <View
+        android:id="@+id/divider1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:background="#333333"
+        app:layout_constraintTop_toBottomOf="@id/profileImageView" />
+
+    <TextView
+        android:id="@+id/streakTV"
+        style="@style/ProfileSectionsTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/streak"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+    <ImageView
+        android:id="@+id/streakApple1"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintEnd_toStartOf="@+id/streakApple2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <ImageView
+        android:id="@+id/streakApple2"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintEnd_toStartOf="@+id/streakApple3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple1"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <ImageView
+        android:id="@+id/streakApple3"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintEnd_toStartOf="@+id/streakApple4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple2"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <ImageView
+        android:id="@+id/streakApple4"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintEnd_toStartOf="@+id/streakApple5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple3"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <ImageView
+        android:id="@+id/streakApple5"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintEnd_toStartOf="@+id/streakApple6"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple4"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <ImageView
+        android:id="@+id/streakApple6"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintEnd_toStartOf="@+id/streakApple7"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple5"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <ImageView
+        android:id="@+id/streakApple7"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_apple"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/streakTV" />
+
+    <TextView
+        android:id="@+id/streakDescriptionTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        tools:text="You are on a 4 days streak"
+        app:layout_constraintTop_toBottomOf="@id/streakApple1"/>
+
+    <TextView
+        android:id="@+id/awardsTV"
+        style="@style/ProfileSectionsTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/awards"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/streakApple7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+    <ImageView
+        android:id="@+id/awardFirstImage"
+        android:layout_width="@dimen/_64sdp"
+        android:layout_height="@dimen/_64sdp"
+        android:src="@drawable/ic_trophy_first"
+        app:layout_constraintEnd_toStartOf="@id/awardSecondImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/awardsTV" />
+
+    <ImageView
+        android:id="@+id/awardSecondImage"
+        android:layout_width="@dimen/_64sdp"
+        android:layout_height="@dimen/_64sdp"
+        android:src="@drawable/ic_trophy_second"
+        app:layout_constraintEnd_toStartOf="@id/awardThirdImage"
+        app:layout_constraintStart_toEndOf="@id/awardFirstImage"
+        app:layout_constraintTop_toBottomOf="@id/awardsTV" />
+
+    <ImageView
+        android:id="@+id/awardThirdImage"
+        android:layout_width="@dimen/_64sdp"
+        android:layout_height="@dimen/_64sdp"
+        android:src="@drawable/ic_trophy_third"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/awardSecondImage"
+        app:layout_constraintTop_toBottomOf="@id/awardsTV" />
+
+    <TextView
+        style="@style/ProfileAwardsTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/awardFirstImage"
+        app:layout_constraintStart_toStartOf="@id/awardFirstImage"
+        app:layout_constraintTop_toBottomOf="@id/awardFirstImage"
+        tools:text="4" />
+
+    <TextView
+        style="@style/ProfileAwardsTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/awardSecondImage"
+        app:layout_constraintStart_toStartOf="@id/awardSecondImage"
+        app:layout_constraintTop_toBottomOf="@id/awardSecondImage"
+        tools:text="4" />
+
+    <TextView
+        style="@style/ProfileAwardsTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/awardThirdImage"
+        app:layout_constraintStart_toStartOf="@id/awardThirdImage"
+        app:layout_constraintTop_toBottomOf="@id/awardThirdImage"
+        tools:text="4" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/challengerModeButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginBottom="@dimen/_40sdp"
+        android:backgroundTint="@color/challenger_mode_primary_color"
+        android:text="@string/go_to_challenger_mode"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/awardFirstImage" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:background="#333333"
+        app:layout_constraintTop_toBottomOf="@id/streakDescriptionTV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

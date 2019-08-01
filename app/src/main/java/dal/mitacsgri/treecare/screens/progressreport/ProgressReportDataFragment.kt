@@ -19,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ProgressReportDataFragment : Fragment() {
 
     private val mViewModel: ProgressReportDataViewModel by viewModel()
+    private var dataType: Long = 1
 
     companion object {
         const val DATA_TYPE = "data_type"
@@ -39,7 +40,7 @@ class ProgressReportDataFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val dataType = arguments?.getLong(DATA_TYPE)!!
+        dataType = arguments?.getLong(DATA_TYPE)!!
 
         val view = inflater.inflate(R.layout.fragment_progress_report_data, container, false)
         view.apply {
@@ -58,7 +59,7 @@ class ProgressReportDataFragment : Fragment() {
 
     fun reanimateBarChart(durationMillis: Int) {
         if (view != null) {
-            barChart.animateXY(durationMillis, durationMillis)
+            barChart.animateY(durationMillis)
         }
     }
 
@@ -69,12 +70,17 @@ class ProgressReportDataFragment : Fragment() {
             val newDescription = Description()
             newDescription.text = ""
             description = newDescription
-            setDrawGridBackground(false)
-            setDrawBorders(false)
-            setDrawValueAboveBar(false)
-            xAxis.valueFormatter = XAxisWeekLabelValueFormatter()
+            xAxis.apply {
+                if (dataType == WEEK_DATA) valueFormatter = XAxisWeekDataFormatter()
+                setDrawAxisLine(false)
+                setDrawGridLines(false)
+            }
+            axisRight.isEnabled = false
+            legend.isEnabled = false
 
-            animateXY(3000, 3000)
+            axisLeft.setDrawAxisLine(false)
+
+            animateY(3000)
         }
     }
 

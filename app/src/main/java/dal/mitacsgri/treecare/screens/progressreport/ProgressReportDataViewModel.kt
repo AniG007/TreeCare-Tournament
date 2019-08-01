@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import dal.mitacsgri.treecare.extensions.i
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.*
@@ -31,9 +32,7 @@ class ProgressReportDataViewModel(
                 entries[dayOfWeek-1] = BarEntry(dayOfWeek-1.toFloat(), steps.toFloat())
             }
             val set = BarDataSet(entries, "Weekly Step Count")
-            val data = BarData(set)
-            data.barWidth = 0.4f
-            barLiveData.value = data
+            barLiveData.value = createBarData(set)
         }
 
         return barLiveData
@@ -55,12 +54,18 @@ class ProgressReportDataViewModel(
             }
 
             val set = BarDataSet(entries, "Daily Step Count")
-            val data = BarData(set)
-            data.barWidth = 0.4f
-            barLiveData.value = data
+            barLiveData.value = createBarData(set)
         }
 
         return barLiveData
+    }
+
+    private fun createBarData(set: BarDataSet): BarData {
+        set.setGradientColor(0xff53c710.i, 0xFF6CFF13.i)
+        val data = BarData(set)
+        data.barWidth = 0.4f
+        data.setValueFormatter(XAxisDataLabelFormatter())
+        return data
     }
 
     private fun getStartOfWeek(): Long {

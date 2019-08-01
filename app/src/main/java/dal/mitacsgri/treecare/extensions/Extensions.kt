@@ -104,3 +104,6 @@ fun ImageView.makeGrayscale() {
     matrix.setSaturation(0f)
     colorFilter = ColorMatrixColorFilter(matrix)
 }
+
+val Int.i: Int get() = this
+val Long.i: Int get() = toInt()

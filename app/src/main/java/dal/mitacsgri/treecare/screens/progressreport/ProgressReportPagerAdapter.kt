@@ -11,6 +11,8 @@ class ProgressReportPagerAdapter(fm: FragmentManager)
     : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private var mCurrentFragment = ProgressReportDataFragment()
+    private var position1ShownOnce = false
+    private var position0ShownOnce = false
 
     override fun getItem(position: Int): Fragment =
         when(position) {
@@ -30,9 +32,22 @@ class ProgressReportPagerAdapter(fm: FragmentManager)
 
     override fun setPrimaryItem(container: ViewGroup, position: Int, any: Any) {
         if (mCurrentFragment != any) {
-            mCurrentFragment = any as ProgressReportDataFragment
-            mCurrentFragment.reanimateBarChart(1000)
+            when(position) {
+                0 -> if (!position0ShownOnce) {
+                    position0ShownOnce = true
+                    reanimateFragmentChart()
+                }
+
+                1 -> if (!position1ShownOnce) {
+                    position1ShownOnce = true
+                    reanimateFragmentChart()
+                }
+            }
         }
         super.setPrimaryItem(container, position, any)
+    }
+
+    private fun reanimateFragmentChart() {
+        mCurrentFragment.reanimateBarChart(1000)
     }
 }

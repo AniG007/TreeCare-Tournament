@@ -18,6 +18,7 @@ class ProgressReportFragment : Fragment() {
 
         view.apply {
             viewPager.adapter = ProgressReportPagerAdapter(childFragmentManager)
+            tabLayout.setupWithViewPager(viewPager)
         }
 
         return view

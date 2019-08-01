@@ -1,11 +1,12 @@
 package dal.mitacsgri.treecare.screens.progressreport
 
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
 
-class XAxisWeekLabelValueFormatter: ValueFormatter() {
+class XAxisWeekDataFormatter: ValueFormatter() {
 
-    override fun getFormattedValue(value: Float): String {
-        return when(value.toInt()) {
+    override fun getFormattedValue(value: Float): String =
+        when(value.toInt()) {
             0 -> "MON"
             1 -> "TUE"
             2 -> "WED"
@@ -15,5 +16,6 @@ class XAxisWeekLabelValueFormatter: ValueFormatter() {
             6 -> "SUN"
             else -> ""
         }
-    }
+
+    override fun getBarLabel(barEntry: BarEntry?): String = ""
 }

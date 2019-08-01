@@ -48,5 +48,5 @@ val appModule = module {
     viewModel { CreateTeamViewModel(get(), get()) }
     viewModel { TeamsViewModel(get(), get()) }
     viewModel { ChallengesViewModel(get(), get())}
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get()) }
 }

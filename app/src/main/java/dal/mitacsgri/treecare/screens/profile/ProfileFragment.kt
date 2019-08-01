@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import dal.mitacsgri.treecare.R
@@ -31,11 +33,21 @@ class ProfileFragment : Fragment() {
             nameTV.text = mViewModel.getUserFullName()
 
             buttonProgressReport.setOnClickListener {
-
+                findNavController().navigate(R.id.action_profileFragment_to_progressReportFragment)
             }
 
             grayscaleStreakIcons(this, mViewModel.getDailyGoalCompletionStreakCount())
             streakDescriptionTV.text = mViewModel.getDailyGoalStreakText()
+
+            mViewModel.trophiesCountData.observe(this@ProfileFragment, Observer {
+                goldAwardCountTV.text = it.first
+                silverAwardCountTV.text = it.second
+                bronzeAwardCount.text = it.third
+            })
+
+            challengerModeButton.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
+            }
         }
 
         return view

@@ -8,10 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import dal.mitacsgri.treecare.consts.COLLECTION_CHALLENGES
-import dal.mitacsgri.treecare.consts.COLLECTION_TEAMS
-import dal.mitacsgri.treecare.consts.COLLECTION_TOURNAMENTS
-import dal.mitacsgri.treecare.consts.COLLECTION_USERS
+import dal.mitacsgri.treecare.consts.*
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.User
@@ -106,4 +103,7 @@ class FirestoreRepository {
 
     fun updateTeamData(teamName: String, values: Map<String, Any>) =
         db.collection(COLLECTION_TEAMS).document(teamName).update(values)
+
+    fun getTrophiesData(userId: String) =
+            db.collection(COLLECTION_TROPHIES).document(userId).get()
 }

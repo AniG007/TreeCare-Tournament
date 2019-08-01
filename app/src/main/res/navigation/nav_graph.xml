@@ -218,5 +218,17 @@
         android:id="@+id/profileFragment"
         android:name="dal.mitacsgri.treecare.screens.profile.ProfileFragment"
         android:label="profile_fragment"
-        tools:layout="@layout/profile_fragment" />
+        tools:layout="@layout/profile_fragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_progressReportFragment"
+            app:destination="@id/progressReportFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_challengesFragment"
+            app:destination="@id/challengesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/progressReportFragment"
+        android:name="dal.mitacsgri.treecare.screens.progressreport.ProgressReportFragment"
+        android:label="fragment_progress_report"
+        tools:layout="@layout/fragment_progress_report" />
 </navigation>

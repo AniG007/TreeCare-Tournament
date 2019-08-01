@@ -20,10 +20,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ProgressReportDataFragment : Fragment() {
 
     private val mViewModel: ProgressReportDataViewModel by viewModel()
-    private var dataType: Long = 1
+    private var reportType: Long = 1
 
     companion object {
-        const val DATA_TYPE = "data_type"
+        const val REPORT_TYPE = "report_type"
         const val WEEK_DATA = 0L
         const val MONTH_DATA = 1L
 
@@ -31,7 +31,7 @@ class ProgressReportDataFragment : Fragment() {
 
             val fragment = ProgressReportDataFragment()
             val args = Bundle()
-            args.putLong(DATA_TYPE, dataType)
+            args.putLong(REPORT_TYPE, dataType)
             fragment.arguments = args
             return fragment
         }
@@ -41,19 +41,22 @@ class ProgressReportDataFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dataType = arguments?.getLong(DATA_TYPE)!!
+        reportType = arguments?.getLong(REPORT_TYPE)!!
 
         val view = inflater.inflate(R.layout.fragment_progress_report_data, container, false)
         view.apply {
             val barChartLiveData =
-                when(dataType) {
+                when(reportType) {
                     WEEK_DATA -> mViewModel.getStepsDataForWeek()
                     MONTH_DATA -> mViewModel.getStepsDataForMonth()
                     else -> MutableLiveData()
                 }
             barChartLiveData.observe(this@ProgressReportDataFragment, Observer {
                 updateBarChart(barChart, it)
+                totalStepCountTV.text = mViewModel.getAggregateStepCount()
             })
+
+            progressReportDurationTV.text = mViewModel.getProgressReportDurationText(reportType)
         }
         return view
     }
@@ -68,11 +71,15 @@ class ProgressReportDataFragment : Fragment() {
         barChart.apply {
             data = barData
             setFitBars(true)
+
             val newDescription = Description()
             newDescription.text = ""
             description = newDescription
+
+            setTouchEnabled(false)
+
             xAxis.apply {
-                if (dataType == WEEK_DATA) valueFormatter = XAxisWeekDataFormatter()
+                if (reportType == WEEK_DATA) valueFormatter = XAxisWeekDataFormatter()
                 position = XAxis.XAxisPosition.BOTTOM_INSIDE
                 setDrawAxisLine(false)
                 setDrawGridLines(false)
@@ -82,7 +89,7 @@ class ProgressReportDataFragment : Fragment() {
 
             axisLeft.setDrawAxisLine(false)
 
-            animateY(3000)
+            animateY(1000)
         }
     }
 

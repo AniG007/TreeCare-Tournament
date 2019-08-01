@@ -34,6 +34,7 @@ class StepCountDataProvidingViewModel(
         //Will execute only once in each day, when the app is opened for thr first time in the day
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
             sharedPrefsRepository.isDailyGoalChecked = 0
+            sharedPrefsRepository.isGoalCompletionSteakChecked = false
 
             val timeToStore = DateTime().plusDays(1).withTimeAtStartOfDay().millis
 
@@ -58,8 +59,8 @@ class StepCountDataProvidingViewModel(
                 DateTime().withTimeAtStartOfDay().millis
             ) {
 
-                if (true) {
-                    //calculateFruitsOnTree(it)
+                if (!sharedPrefsRepository.isGoalCompletionSteakChecked) {
+                    calculateFruitsOnTree(it)
                     calculateDailyGoalStreak(sharedPrefsRepository.currentDayOfWeek, it)
                 }
 
@@ -193,28 +194,4 @@ class StepCountDataProvidingViewModel(
         sharedPrefsRepository.dailyGoalStreakString = goalStreakStringBuilder.toString()
         sharedPrefsRepository.isGoalCompletionSteakChecked = true
     }
-
-    private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {
-        sharedPrefsRepository.apply {
-            storeDailyStepsGoal(5000)
-            //storeLastDayStepCount(0)
-            //storeDailyStepCount(8000)
-            //dailyGoalChecked(0)
-//            storeLeafCountBeforeToday(8)
-//            storeLastDayStepCount(8000)
-
-//            with(sharedPref.edit()) {
-//                //putInt(getString(R.string.leaf_count_before_today), 50)
-//                //putInt(getString(R.string.is_first_run), 1)
-//                putInt(getString(R.string.leaves_gained_today), 6)
-//
-//                putString(getString(R.string.goal_achieved_streak), "1111111")
-//                storeInt(R.string.current_day, 6)
-//                storeInt(R.string.total_fruits_on_tree, 8)
-//
-//                apply()
-//            }
-        }
-    }
-
 }

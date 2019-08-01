@@ -1,13 +1,16 @@
 package dal.mitacsgri.treecare.screens.progressreport
 
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import dal.mitacsgri.treecare.screens.progressreport.ProgressReportDataFragment.Companion.MONTH_DATA
 import dal.mitacsgri.treecare.screens.progressreport.ProgressReportDataFragment.Companion.WEEK_DATA
 
 class ProgressReportPagerAdapter(fm: FragmentManager)
-    : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+    private var mCurrentFragment = ProgressReportDataFragment()
 
     override fun getItem(position: Int): Fragment =
         when(position) {
@@ -24,4 +27,12 @@ class ProgressReportPagerAdapter(fm: FragmentManager)
                 1 -> "Month"
                 else -> ""
             }
+
+    override fun setPrimaryItem(container: ViewGroup, position: Int, any: Any) {
+        if (mCurrentFragment != any) {
+            mCurrentFragment = any as ProgressReportDataFragment
+            mCurrentFragment.reanimateBarChart(2000)
+        }
+        super.setPrimaryItem(container, position, any)
+    }
 }

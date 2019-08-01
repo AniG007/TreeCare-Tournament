@@ -11,6 +11,7 @@ import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.data.BarData
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_progress_report_data.*
 import kotlinx.android.synthetic.main.fragment_progress_report_data.view.*
 import org.intellij.lang.annotations.MagicConstant
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,6 +54,12 @@ class ProgressReportDataFragment : Fragment() {
             })
         }
         return view
+    }
+
+    fun reanimateBarChart(durationMillis: Int) {
+        if (view != null) {
+            barChart.animateXY(durationMillis, durationMillis)
+        }
     }
 
     private fun updateBarChart(barChart: BarChart, barData: BarData) {

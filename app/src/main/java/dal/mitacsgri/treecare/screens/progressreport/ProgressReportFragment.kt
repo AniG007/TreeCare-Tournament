@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_progress_report.view.*
 
 class ProgressReportFragment : Fragment() {
 
@@ -13,8 +14,13 @@ class ProgressReportFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_progress_report, container, false)
+        val view = inflater.inflate(R.layout.fragment_progress_report, container, false)
+
+        view.apply {
+            viewPager.adapter = ProgressReportPagerAdapter(childFragmentManager)
+        }
+
+        return view
     }
 
 

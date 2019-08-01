@@ -100,5 +100,6 @@
     <string name="challenger_mode">Challenger mode</string>
     <string name="go_to_challenger_mode">Go to Challenger Mode</string>
     <string name="streak">Streak</string>
+    <string name="progress_report">Progress Report</string>
 
 </resources>

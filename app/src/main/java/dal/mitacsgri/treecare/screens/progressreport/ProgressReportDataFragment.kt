@@ -1,15 +1,19 @@
 package dal.mitacsgri.treecare.screens.progressreport
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_progress_report_data.view.*
 import org.intellij.lang.annotations.MagicConstant
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProgressReportDataFragment : Fragment() {
+
+    private val mViewModel: ProgressReportDataViewModel by viewModel()
 
     companion object {
         const val DATA_TYPE = "data_type"
@@ -34,9 +38,12 @@ class ProgressReportDataFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_progress_report_data, container, false)
         view.apply {
-
+            mViewModel.getStepsDataForWeek().observe(this@ProgressReportDataFragment, Observer {
+                barChart.data = it
+                barChart.setFitBars(true)
+                barChart.invalidate()
+            })
         }
-
         return view
     }
 

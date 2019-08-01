@@ -25,6 +25,19 @@ class ProfileViewModel(
 
     fun getDailyGoalCompletionStreakCount() = sharedPrefsRepository.dailyGoalStreak
 
+    fun getCurrentWeekDayForStreak() = sharedPrefsRepository.currentDayOfWeek
+
+    fun getGoalCompletionStreakData(): Array<Boolean> {
+        val goalCompletionString = sharedPrefsRepository.dailyGoalStreakString ?: ""
+        val boolArray = arrayOf(false, false, false, false, false, false, false)
+
+        for (i in 0 until goalCompletionString.length) {
+            boolArray[i] = goalCompletionString[i] == '1'
+        }
+
+        return boolArray
+    }
+
     fun getDailyGoalStreakText() = buildSpannedString {
         append("Daily goal achieved ")
         bold {

@@ -31,7 +31,7 @@ class ProgressReportPagerAdapter(fm: FragmentManager)
     override fun setPrimaryItem(container: ViewGroup, position: Int, any: Any) {
         if (mCurrentFragment != any) {
             mCurrentFragment = any as ProgressReportDataFragment
-            mCurrentFragment.reanimateBarChart(2000)
+            mCurrentFragment.reanimateBarChart(1000)
         }
         super.setPrimaryItem(container, position, any)
     }

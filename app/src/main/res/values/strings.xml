@@ -20,6 +20,8 @@
     If 1, it means that daily_goal has been checked. It is set to 1 always by Unity-->
     <string name="daily_goal_checked">daily_goal_checked</string>
 
+    <string name="goal_completion_streak_checked">goal_completion_streak_checked</string>
+
     <string name="starter_mode_instructions_displayed">starter_mode_instructions_displayed</string>
     <string name="challenger_mode_instructions_displayed">challenger_mode_instructions_displayed</string>
     <string name="tournament_mode_instructions_displayed">tournament_mode_instructions_displayed</string>
@@ -43,6 +45,7 @@
     <string name="current_fruit_count">current_fruit_count</string>
     <string name="current_day_of_week">current_day_of_week</string>
     <string name="daily_goal_streak">daily_goal_streak</string>
+    <string name="daily_goal_streak_string">daily_goal_streak_string</string>
     <string name="user">user</string>
     <string name="game_mode">game_mode</string>
     <string name="challenge_type">challenge_type</string>

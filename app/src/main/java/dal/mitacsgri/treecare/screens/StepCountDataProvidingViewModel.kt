@@ -58,9 +58,11 @@ class StepCountDataProvidingViewModel(
                 DateTime().withTimeAtStartOfDay().millis
             ) {
 
-                if (sharedPrefsRepository.isDailyGoalChecked == 0) {
-                    calculateFruitsOnTree(it)
+                if (true) {
+                    //calculateFruitsOnTree(it)
+                    calculateDailyGoalStreak(sharedPrefsRepository.currentDayOfWeek, it)
                 }
+
                 increaseStepCountDataFetchedCounter()
 
                 val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
@@ -137,8 +139,6 @@ class StepCountDataProvidingViewModel(
         }
 
         sharedPrefsRepository.currentDayOfWeek = currentDay
-
-        calculateDailyGoalStreak(currentDay, stepCountMap)
     }
 
     private fun expandDailyGoalMapIfNeeded(user: User) {
@@ -167,6 +167,11 @@ class StepCountDataProvidingViewModel(
         val mapKeys = stepCountMap.keys.sorted()
         var streakCount = 0
         val dailyGoal = sharedPrefsRepository.getDailyStepsGoal()
+        val goalStreakStringBuilder = StringBuilder(sharedPrefsRepository.dailyGoalStreakString)
+
+        for (i in 0..6) {
+            goalStreakStringBuilder[i] = '0'
+        }
 
         for (i in (mapSize - (currentDay)) until mapSize) {
             if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
@@ -177,7 +182,16 @@ class StepCountDataProvidingViewModel(
             }
         }
 
+        val startIndex = mapSize - currentDay
+        for (i in (mapSize - (currentDay)) until mapSize) {
+            if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
+                goalStreakStringBuilder[i - startIndex] = '1'
+            }
+        }
+
         sharedPrefsRepository.dailyGoalStreak = streakCount
+        sharedPrefsRepository.dailyGoalStreakString = goalStreakStringBuilder.toString()
+        sharedPrefsRepository.isGoalCompletionSteakChecked = true
     }
 
     private fun testGameByManipulatingSharedPrefsData(sharedPrefsRepository: SharedPreferencesRepository) {

@@ -30,6 +30,12 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.daily_goal_checked, value)
         }
 
+    var isGoalCompletionSteakChecked
+        get() = getBoolean(R.string.goal_completion_streak_checked, false)
+        set(value) {
+            storeBoolean(R.string.goal_completion_streak_checked, value)
+        }
+
     var isLoginDone: Boolean
         get() = sharedPref.getBoolean(context.getString(R.string.login_done), false)
         set(value) {
@@ -130,6 +136,14 @@ class SharedPreferencesRepository(val context: Context) {
     var dailyGoalStreak
         get() = getInt(R.string.daily_goal_streak)
         set(value) { storeInt(R.string.daily_goal_streak, value) }
+
+    var dailyGoalStreakString
+        get() = sharedPref.getString(context.getString(R.string.daily_goal_streak_string), "0000000")
+        set(value) {
+            sharedPref.edit {
+                putString(context.getString(R.string.daily_goal_streak_string), value)
+            }
+        }
 
     var user: User
         get() {

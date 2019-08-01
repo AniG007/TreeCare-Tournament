@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.makeGrayscale
-import kotlinx.android.synthetic.main.profile_fragment.view.*
+import kotlinx.android.synthetic.main.fragment_profile.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProfileFragment : Fragment() {
@@ -22,7 +22,7 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.profile_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
         view.apply {
             Glide.with(this)
@@ -36,7 +36,9 @@ class ProfileFragment : Fragment() {
                 findNavController().navigate(R.id.action_profileFragment_to_progressReportFragment)
             }
 
-            grayscaleStreakIcons(this, mViewModel.getDailyGoalCompletionStreakCount())
+            grayscaleStreakIcons(this, mViewModel.getGoalCompletionStreakData(),
+                mViewModel.getCurrentWeekDayForStreak())
+
             streakDescriptionTV.text = mViewModel.getDailyGoalStreakText()
 
             mViewModel.trophiesCountData.observe(this@ProfileFragment, Observer {
@@ -53,13 +55,19 @@ class ProfileFragment : Fragment() {
         return view
     }
 
-    private fun grayscaleStreakIcons(view: View, streakCount: Int) {
+    private fun grayscaleStreakIcons(view: View, streakArray: Array<Boolean>, currentDayOfWeek: Int) {
         view.apply {
             val streakAppleImages = arrayOf(streakApple1, streakApple2, streakApple3,
                 streakApple4, streakApple5, streakApple6, streakApple7)
 
-            for (i in streakCount until streakAppleImages.size) {
-                streakAppleImages[i].makeGrayscale()
+            for(i in 0 until streakArray.size) {
+                if (!streakArray[i]) {
+                    streakAppleImages[i].makeGrayscale()
+                }
+            }
+
+            for (i in (currentDayOfWeek+1)..6) {
+                streakAppleImages[i].visibility = View.INVISIBLE
             }
         }
     }

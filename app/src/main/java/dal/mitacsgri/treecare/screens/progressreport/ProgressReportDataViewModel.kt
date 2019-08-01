@@ -32,7 +32,7 @@ class ProgressReportDataViewModel(
                 entries[dayOfWeek-1] = BarEntry(dayOfWeek-1.toFloat(), steps.toFloat())
             }
             val set = BarDataSet(entries, "Weekly Step Count")
-            barLiveData.value = createBarData(set)
+            barLiveData.value = createBarData(set, ProgressReportDataFragment.WEEK_DATA)
         }
 
         return barLiveData
@@ -54,17 +54,18 @@ class ProgressReportDataViewModel(
             }
 
             val set = BarDataSet(entries, "Daily Step Count")
-            barLiveData.value = createBarData(set)
+            barLiveData.value = createBarData(set, ProgressReportDataFragment.MONTH_DATA)
         }
 
         return barLiveData
     }
 
-    private fun createBarData(set: BarDataSet): BarData {
+    private fun createBarData(set: BarDataSet, progressReportType: Long): BarData {
         set.setGradientColor(0xff53c710.i, 0xFF6CFF13.i)
         val data = BarData(set)
         data.barWidth = 0.4f
-        data.setValueFormatter(XAxisDataLabelFormatter())
+        if (progressReportType == ProgressReportDataFragment.MONTH_DATA)
+            data.setValueFormatter(XAxisDataLabelFormatter())
         return data
     }
 

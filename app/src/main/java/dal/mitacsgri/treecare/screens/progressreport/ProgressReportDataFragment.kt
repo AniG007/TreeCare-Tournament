@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import dal.mitacsgri.treecare.R
 import kotlinx.android.synthetic.main.fragment_progress_report_data.*
@@ -72,6 +73,7 @@ class ProgressReportDataFragment : Fragment() {
             description = newDescription
             xAxis.apply {
                 if (dataType == WEEK_DATA) valueFormatter = XAxisWeekDataFormatter()
+                position = XAxis.XAxisPosition.BOTTOM_INSIDE
                 setDrawAxisLine(false)
                 setDrawGridLines(false)
             }

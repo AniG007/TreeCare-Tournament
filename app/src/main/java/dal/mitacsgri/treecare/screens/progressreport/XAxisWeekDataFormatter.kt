@@ -1,6 +1,6 @@
 package dal.mitacsgri.treecare.screens.progressreport
 
-import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.ValueFormatter
 
 class XAxisWeekDataFormatter: ValueFormatter() {
@@ -17,5 +17,4 @@ class XAxisWeekDataFormatter: ValueFormatter() {
             else -> ""
         }
 
-    override fun getBarLabel(barEntry: BarEntry?): String = ""
 }

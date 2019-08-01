@@ -4,13 +4,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import dal.mitacsgri.treecare.screens.progressreport.ProgressReportDataFragment.Companion.MONTH_DATA
-import dal.mitacsgri.treecare.screens.progressreport.ProgressReportDataFragment.Companion.WEEK_DATA
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.MONTH_DATA
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.WEEK_DATA
 
 class ProgressReportPagerAdapter(fm: FragmentManager)
     : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    private var mCurrentFragment = ProgressReportDataFragment()
+    private var mCurrentFragment =
+        ProgressReportDataFragment()
     private var position1ShownOnce = false
     private var position0ShownOnce = false
 

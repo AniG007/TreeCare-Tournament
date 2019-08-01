@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens.progressreport
+package dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph
 
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.BarEntry

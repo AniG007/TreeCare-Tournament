@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens.progressreport
+package dal.mitacsgri.treecare.screens.progressreport.progressreportdata
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -6,9 +6,11 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import dal.mitacsgri.treecare.extensions.i
+import dal.mitacsgri.treecare.model.ProgressReportDataItem
 import dal.mitacsgri.treecare.repository.StepCountRepository
-import dal.mitacsgri.treecare.screens.progressreport.ProgressReportDataFragment.Companion.MONTH_DATA
-import dal.mitacsgri.treecare.screens.progressreport.ProgressReportDataFragment.Companion.WEEK_DATA
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.MONTH_DATA
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.WEEK_DATA
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph.XAxisDataLabelFormatter
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.*
 import org.joda.time.LocalDate
@@ -21,6 +23,7 @@ class ProgressReportDataViewModel(
 ): ViewModel() {
 
     private var aggregateStepCount = 0
+    private val progressReportDataList = arrayListOf<ProgressReportDataItem>()
 
     fun getProgressReportDurationText(progressReportType: Long): String {
         return when(progressReportType) {
@@ -58,6 +61,7 @@ class ProgressReportDataViewModel(
                 entries[dayOfWeek-1] = BarEntry(dayOfWeek-1.toFloat(), steps.toFloat())
 
                 aggregateStepCount += steps
+                progressReportDataList.add(getProgressReportDataItem(date, steps))
             }
             val set = BarDataSet(entries, "Weekly Step Count")
             barLiveData.value = createBarData(set, WEEK_DATA)
@@ -72,7 +76,7 @@ class ProgressReportDataViewModel(
         addBarEntriesBasedOnDaysInMonth(entries)
 
         stepCountRepository.getStepCountDataOverARange(
-            getStartOfMonth(), DateTime.now().minusDays(3).millis
+            getStartOfMonth(), DateTime().millis
         ) {map ->
             val keys = map.keys.sorted()
 
@@ -80,6 +84,7 @@ class ProgressReportDataViewModel(
             keys.forEach {
                 entries.add(BarEntry((++i).toFloat(), map[it]?.toFloat() ?: 0f))
                 aggregateStepCount += map[it] ?: 0
+                progressReportDataList.add(getProgressReportDataItem(it, map[it] ?: 0))
             }
 
             val set = BarDataSet(entries, "Daily Step Count")
@@ -92,6 +97,9 @@ class ProgressReportDataViewModel(
     //Must be called from inside the observer for BarData live data
     fun getAggregateStepCount(): String =
         NumberFormat.getNumberInstance(Locale.getDefault()).format(aggregateStepCount)
+
+    //Must be called from inside the observer for BarData live data
+    fun getProgressReportDataList(): ArrayList<ProgressReportDataItem> = progressReportDataList
 
     private fun createBarData(set: BarDataSet, progressReportType: Long): BarData {
         set.setGradientColor(0xff53c710.i, 0xFF6CFF13.i)
@@ -109,7 +117,7 @@ class ProgressReportDataViewModel(
     }
 
     private fun getStartOfMonth(): Long {
-        val now = LocalDate.now().minusDays(2)
+        val now = LocalDate.now()
         val monthStartDate = now.withDayOfMonth(1)
         return monthStartDate.toDateTimeAtCurrentTime().withTimeAtStartOfDay().millis
     }
@@ -135,5 +143,13 @@ class ProgressReportDataViewModel(
                     entries.add(BarEntry(i.toFloat(), 0f))
                 }
         }
+    }
+
+    private fun getProgressReportDataItem(date: Long, stepCount: Int)
+            : ProgressReportDataItem {
+        val formatter = DateTimeFormat.forPattern("EEEE, MMMM d")
+        return ProgressReportDataItem(
+            formatter.print(date),
+            NumberFormat.getNumberInstance(Locale.getDefault()).format(stepCount))
     }
 }

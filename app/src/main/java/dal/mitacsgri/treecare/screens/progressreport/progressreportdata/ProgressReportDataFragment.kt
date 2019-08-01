@@ -1,4 +1,4 @@
-package dal.mitacsgri.treecare.screens.progressreport
+package dal.mitacsgri.treecare.screens.progressreport.progressreportdata
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +12,7 @@ import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph.XAxisWeekDataFormatter
 import kotlinx.android.synthetic.main.fragment_progress_report_data.*
 import kotlinx.android.synthetic.main.fragment_progress_report_data.view.*
 import org.intellij.lang.annotations.MagicConstant
@@ -29,7 +30,8 @@ class ProgressReportDataFragment : Fragment() {
 
         fun newInstance(@MagicConstant(intValues = [WEEK_DATA, MONTH_DATA]) dataType: Long): ProgressReportDataFragment {
 
-            val fragment = ProgressReportDataFragment()
+            val fragment =
+                ProgressReportDataFragment()
             val args = Bundle()
             args.putLong(REPORT_TYPE, dataType)
             fragment.arguments = args
@@ -54,6 +56,8 @@ class ProgressReportDataFragment : Fragment() {
             barChartLiveData.observe(this@ProgressReportDataFragment, Observer {
                 updateBarChart(barChart, it)
                 totalStepCountTV.text = mViewModel.getAggregateStepCount()
+                recyclerView.adapter = ProgressReportRecyclerViewAdapter(
+                    mViewModel.getProgressReportDataList())
             })
 
             progressReportDurationTV.text = mViewModel.getProgressReportDurationText(reportType)
@@ -79,7 +83,8 @@ class ProgressReportDataFragment : Fragment() {
             setTouchEnabled(false)
 
             xAxis.apply {
-                if (reportType == WEEK_DATA) valueFormatter = XAxisWeekDataFormatter()
+                if (reportType == WEEK_DATA) valueFormatter =
+                    XAxisWeekDataFormatter()
                 position = XAxis.XAxisPosition.BOTTOM_INSIDE
                 setDrawAxisLine(false)
                 setDrawGridLines(false)

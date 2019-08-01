@@ -1,6 +1,5 @@
-package dal.mitacsgri.treecare.screens.progressreport
+package dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph
 
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.formatter.ValueFormatter
 
 class XAxisWeekDataFormatter: ValueFormatter() {
@@ -16,5 +15,4 @@ class XAxisWeekDataFormatter: ValueFormatter() {
             6 -> "SUN"
             else -> ""
         }
-
 }

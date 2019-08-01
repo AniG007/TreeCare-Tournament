@@ -5,7 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.data.BarData
 import dal.mitacsgri.treecare.R
 import kotlinx.android.synthetic.main.fragment_progress_report_data.view.*
 import org.intellij.lang.annotations.MagicConstant
@@ -38,13 +42,33 @@ class ProgressReportDataFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_progress_report_data, container, false)
         view.apply {
-            mViewModel.getStepsDataForWeek().observe(this@ProgressReportDataFragment, Observer {
-                barChart.data = it
-                barChart.setFitBars(true)
-                barChart.invalidate()
+            val barChartLiveData =
+                when(dataType) {
+                    WEEK_DATA -> mViewModel.getStepsDataForWeek()
+                    MONTH_DATA -> mViewModel.getStepsDataForMonth()
+                    else -> MutableLiveData()
+                }
+            barChartLiveData.observe(this@ProgressReportDataFragment, Observer {
+                updateBarChart(barChart, it)
             })
         }
         return view
+    }
+
+    private fun updateBarChart(barChart: BarChart, barData: BarData) {
+        barChart.apply {
+            data = barData
+            setFitBars(true)
+            val newDescription = Description()
+            newDescription.text = ""
+            description = newDescription
+            setDrawGridBackground(false)
+            setDrawBorders(false)
+            setDrawValueAboveBar(false)
+            xAxis.valueFormatter = XAxisWeekLabelValueFormatter()
+
+            animateXY(3000, 3000)
+        }
     }
 
 

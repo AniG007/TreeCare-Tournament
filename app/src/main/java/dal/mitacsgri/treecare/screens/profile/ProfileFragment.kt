@@ -47,7 +47,7 @@ class ProfileFragment : Fragment() {
                 bronzeAwardCount.text = it.third
             })
 
-            challengerModeButton.setOnClickListener {
+            challengerModeButtonHolder.setOnClickListener {
                 findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
             }
         }

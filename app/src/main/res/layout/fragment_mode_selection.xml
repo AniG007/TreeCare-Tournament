@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <include
-        layout="@layout/leaf_background_image"
+        layout="@layout/layout_background_image"
         android:id="@+id/backgroundLayout"/>
 
     <TextView
@@ -18,40 +18,89 @@
         android:textSize="@dimen/_50sdp"
         android:fontFamily="@font/pinewood"
         android:textColor="@color/black"
-        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_16sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/heading"/>
 
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/starterModeButtonHolder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/starter"
+        android:backgroundTint="@color/colorPrimaryDarkTransparent"
+        app:strokeColor="@color/black"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardCornerRadius="@dimen/_2sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/starterModeButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintBottom_toTopOf="@+id/challengerModeButton"
+        app:layout_constraintBottom_toTopOf="@+id/challengerModeButtonHolder"
         app:layout_constraintWidth_percent=".76"
-        style="@style/ModeSelectionButtonStyle"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintTop_toTopOf="@+id/backgroundLayout"/>
+        app:layout_constraintTop_toTopOf="@+id/backgroundLayout">
 
-    <com.google.android.material.button.MaterialButton
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:src="@drawable/ic_run"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/_10sdp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/starterModeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/starter"
+                style="@style/ModeSelectionButtonStyle"/>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/challengerModeButtonHolder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/challenger"
+        android:backgroundTint="@color/colorPrimaryDarkTransparent"
         android:layout_marginTop="@dimen/_40sdp"
-        android:layout_marginBottom="@dimen/_40sdp"
+        app:strokeColor="@color/black"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardCornerRadius="@dimen/_2sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        android:id="@+id/challengerModeButton"
-        app:layout_constraintTop_toBottomOf="@+id/starterModeButton"
+        app:layout_constraintTop_toBottomOf="@+id/starterModeButtonHolder"
         app:layout_constraintBottom_toTopOf="@+id/tournamentModeButton"
         app:layout_constraintWidth_percent=".76"
-        style="@style/ModeSelectionButtonStyle"/>
+        style="@style/ModeSelectionButtonStyle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:src="@drawable/ic_challenger"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/_10sdp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/challengerModeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/challenger"
+                style="@style/ModeSelectionButtonStyle" />
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
@@ -62,7 +111,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         android:id="@+id/tournamentModeButton"
-        app:layout_constraintTop_toBottomOf="@+id/challengerModeButton"
+        app:layout_constraintTop_toBottomOf="@+id/challengerModeButtonHolder"
         app:layout_constraintBottom_toBottomOf="@+id/backgroundLayout"
         app:layout_constraintWidth_percent=".76"
         style="@style/ModeSelectionButtonStyle"/>

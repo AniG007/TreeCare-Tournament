@@ -34,28 +34,22 @@ class ModeSelectionFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_mode_selection, container, false)
 
         view.apply {
-            changeBackgroundSolidAndStrokeColor(starterModeButton, "FF0189F1", "FF0000FF")
-            changeBackgroundSolidAndStrokeColor(challengerModeButton, "FFFF6F00", "FFBF360C")
+            //changeBackgroundSolidAndStrokeColor(starterModeButton, "FF0189F1", "FF0000FF")
+            //changeBackgroundSolidAndStrokeColor(challengerModeButton, "FFFF6F00", "FFBF360C")
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
 
+            starterModeButtonHolder.setOnClickListener {
+                starterModeButtonAction()
+            }
             starterModeButton.setOnClickListener {
-                mainViewModel.setGameMode(STARTER_MODE)
-                startInstructionOrUnityActivity(
-                    STARTER_MODE,
-                    mainViewModel.hasInstructionsDisplayed(STARTER_MODE)
-                )
+                starterModeButtonAction()
             }
 
+            challengerModeButtonHolder.setOnClickListener {
+                challengerModeButtonAction()
+            }
             challengerModeButton.setOnClickListener {
-                mainViewModel.setGameMode(CHALLENGER_MODE)
-                if (mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
-                    findNavController().navigate(R.id.action_modeSelectionFragment_to_challengesFragment)
-                else {
-                    mainViewModel.setInstructionsDisplayed(CHALLENGER_MODE, true)
-                    val action = ModeSelectionFragmentDirections
-                        .actionModeSelectionFragmentToInstructionsFragment(CHALLENGER_MODE)
-                    findNavController().navigate(action)
-                }
+                challengerModeButtonAction()
             }
 
             tournamentModeButton.setOnClickListener {
@@ -79,6 +73,26 @@ class ModeSelectionFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun starterModeButtonAction() {
+        mainViewModel.setGameMode(STARTER_MODE)
+        startInstructionOrUnityActivity(
+            STARTER_MODE,
+            mainViewModel.hasInstructionsDisplayed(STARTER_MODE)
+        )
+    }
+
+    private fun challengerModeButtonAction() {
+        mainViewModel.setGameMode(CHALLENGER_MODE)
+        if (mainViewModel.hasInstructionsDisplayed(CHALLENGER_MODE))
+            findNavController().navigate(R.id.action_modeSelectionFragment_to_challengesFragment)
+        else {
+            mainViewModel.setInstructionsDisplayed(CHALLENGER_MODE, true)
+            val action = ModeSelectionFragmentDirections
+                .actionModeSelectionFragmentToInstructionsFragment(CHALLENGER_MODE)
+            findNavController().navigate(action)
+        }
     }
 
     private fun changeBackgroundSolidAndStrokeColor(

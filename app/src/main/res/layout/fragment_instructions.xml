@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <include
-        layout="@layout/leaf_background_image"
+        layout="@layout/layout_background_image"
         android:id="@+id/imageView"
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="-56dp"/>

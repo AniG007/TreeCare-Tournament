@@ -8,7 +8,7 @@
     tools:context=".screens.teams.TeamsFragment">
 
     <include
-        layout="@layout/leaf_background_image" />
+        layout="@layout/layout_background_image" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"

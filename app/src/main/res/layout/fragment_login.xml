@@ -8,7 +8,7 @@
     tools:context=".screens.login.LoginFragment">
 
     <include
-        layout="@layout/leaf_background_image" />
+        layout="@layout/layout_background_image" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/walkAnimation"

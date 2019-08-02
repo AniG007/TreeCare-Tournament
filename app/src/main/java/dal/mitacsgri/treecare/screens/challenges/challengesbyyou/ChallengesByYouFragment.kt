@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_challenges_by_you.view.*
@@ -25,8 +24,9 @@ class ChallengesByYouFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val view = inflater.createFragmentViewWithStyle(
-            activity, R.layout.fragment_challenges_by_you, R.style.challenger_mode_theme)
+//        val view = inflater.createFragmentViewWithStyle(
+//            activity, R.layout.fragment_challenges_by_you, R.style.challenger_mode_theme)
+        val view = inflater.inflate(R.layout.fragment_challenges_by_you, container, false)
 
         view.recyclerView.apply {
             setHasFixedSize(true)

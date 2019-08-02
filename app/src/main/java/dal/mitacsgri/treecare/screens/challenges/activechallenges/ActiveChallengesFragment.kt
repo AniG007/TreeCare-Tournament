@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_active_challenges.view.*
@@ -23,8 +22,9 @@ class ActiveChallengesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.createFragmentViewWithStyle(
-            activity, R.layout.fragment_active_challenges, R.style.challenger_mode_theme)
+//        val view = inflater.createFragmentViewWithStyle(
+//            activity, R.layout.fragment_active_challenges, R.style.challenger_mode_theme)
+        val view = inflater.inflate(R.layout.fragment_active_challenges, container, false)
 
         view.apply {
             recyclerView.apply {

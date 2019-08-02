@@ -34,8 +34,6 @@ class ModeSelectionFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_mode_selection, container, false)
 
         view.apply {
-            //changeBackgroundSolidAndStrokeColor(starterModeButton, "FF0189F1", "FF0000FF")
-            //changeBackgroundSolidAndStrokeColor(challengerModeButton, "FFFF6F00", "FFBF360C")
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
 
             starterModeButtonHolder.setOnClickListener {

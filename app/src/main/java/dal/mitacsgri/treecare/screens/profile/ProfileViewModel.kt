@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
-import dal.mitacsgri.treecare.model.UserChallenegeTrophies
+import dal.mitacsgri.treecare.model.UserChallengeTrophies
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
@@ -54,7 +54,7 @@ class ProfileViewModel(
     fun getTrophiesCount() {
         firestoreRepository.getTrophiesData(sharedPrefsRepository.user.uid)
             .addOnSuccessListener {
-                val userTrophies = it.toObject<UserChallenegeTrophies>()
+                val userTrophies = it.toObject<UserChallengeTrophies>()
                 userTrophies?.let {
                     trophiesCountData.value = Triple(
                         userTrophies.gold.size.toString(),

@@ -9,10 +9,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.consts.*
-import dal.mitacsgri.treecare.model.Challenge
-import dal.mitacsgri.treecare.model.Team
-import dal.mitacsgri.treecare.model.User
-import dal.mitacsgri.treecare.model.UserChallenge
+import dal.mitacsgri.treecare.model.*
 
 /**
  * Created by Devansh on 22-06-2019
@@ -106,4 +103,7 @@ class FirestoreRepository {
 
     fun getTrophiesData(userId: String) =
             db.collection(COLLECTION_TROPHIES).document(userId).get()
+
+    fun storeTrophiesData(userId: String, trophies: UserChallengeTrophies) =
+            db.collection(COLLECTION_TROPHIES).document(userId).set(trophies)
 }

@@ -27,5 +27,8 @@ class TreeCareApplication : Application() {
             PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, TimeUnit.MINUTES).build()
 
         WorkManager.getInstance(this).enqueue(updateUserChallengeDataRequest)
+
+//        JobManager.create(this).addJobCreator(TrophiesUpdateJobCreator())
+//        TrophiesUpdateJob.scheduleJob()
     }
 }

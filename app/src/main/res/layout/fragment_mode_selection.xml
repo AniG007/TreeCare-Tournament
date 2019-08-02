@@ -8,7 +8,7 @@
 
     <include
         layout="@layout/leaf_background_image"
-        android:id="@+id/include"/>
+        android:id="@+id/backgroundLayout"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         app:layout_constraintWidth_percent=".76"
         style="@style/ModeSelectionButtonStyle"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintTop_toTopOf="@+id/include"/>
+        app:layout_constraintTop_toTopOf="@+id/backgroundLayout"/>
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="0dp"
@@ -63,7 +63,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         android:id="@+id/tournamentModeButton"
         app:layout_constraintTop_toBottomOf="@+id/challengerModeButton"
-        app:layout_constraintBottom_toBottomOf="@+id/include"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundLayout"
         app:layout_constraintWidth_percent=".76"
         style="@style/ModeSelectionButtonStyle"/>
 

@@ -12,9 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
-import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
-import dal.mitacsgri.treecare.extensions.toast
-import dal.mitacsgri.treecare.extensions.validate
+import dal.mitacsgri.treecare.extensions.*
 import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
 import org.joda.time.DateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -29,7 +27,7 @@ class CreateChallengeFragment : Fragment() {
         val viewModel: CreateChallengeViewModel by viewModel()
 
         val view = inflater.createFragmentViewWithStyle(
-            activity, R.layout.fragment_create_challenge, R.style.challenger_mode_theme)
+            activity, R.layout.fragment_create_challenge, R.style.AppTheme)
 
         view.apply {
 
@@ -37,13 +35,14 @@ class CreateChallengeFragment : Fragment() {
                 findNavController().navigateUp()
             }
 
+            createChallengeButton.disable()
 
             viewModel.messageLiveData.observe(this@CreateChallengeFragment, Observer {
                 it.toast(context)
             })
 
             viewModel.isFullDataValid.observe(this@CreateChallengeFragment, Observer {
-                createChallengeButton.isEnabled = it
+                createChallengeButton.enable()
             })
 
             inputChallengeEndDate.apply {

@@ -89,6 +89,16 @@ fun ImageButton.disable() {
     background.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN)
 }
 
+fun MaterialButton.enable() {
+    isEnabled = true
+    background.clearColorFilter()
+}
+
+fun ImageButton.enable() {
+    isEnabled = true
+    background.clearColorFilter()
+}
+
 fun getCardItemDescriptorText(property: String, value: String) =
         buildSpannedString {
             bold {

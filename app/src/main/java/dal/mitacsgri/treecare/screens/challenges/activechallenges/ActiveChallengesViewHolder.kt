@@ -27,7 +27,6 @@ class ActiveChallengesViewHolder(
             descriptionTV.text = item.description
             durationTV.text = viewModel.getChallengeDurationText(item)
             membersCountTV.text = viewModel.getPlayersCountText(item)
-            challengeTypeTV.text = viewModel.getChallengeTypeText(item)
             goalTV.text = viewModel.getGoalText(item)
 
             if (item.active) {

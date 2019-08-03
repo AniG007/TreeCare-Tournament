@@ -5,9 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="@dimen/_20sdp"
-    app:cardElevation="@dimen/_8sdp"
-    app:cardCornerRadius="@dimen/_10sdp">
+    android:layout_marginBottom="@dimen/_16sdp"
+    android:layout_marginStart="@dimen/_16sdp"
+    android:layout_marginEnd="@dimen/_16sdp"
+    app:cardElevation="@dimen/_6sdp"
+    app:cardCornerRadius="@dimen/_6sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -37,21 +39,11 @@
             tools:text="This is the event description"
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black"
-            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTV"
             app:layout_constraintHorizontal_bias="0.0"/>
-
-        <TextView
-            android:id="@+id/challengeTypeTV"
-            style="@style/ItemActiveChallengeTextWithDrawableStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_trophy"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionTV"
-            tools:text="Type: Aggregate based" />
 
         <TextView
             android:id="@+id/goalTV"
@@ -60,7 +52,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_goal"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/challengeTypeTV"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionTV"
             tools:text="Total steps goal: 15000" />
 
         <TextView

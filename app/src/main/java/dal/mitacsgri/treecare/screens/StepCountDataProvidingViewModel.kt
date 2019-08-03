@@ -126,16 +126,16 @@ class StepCountDataProvidingViewModel(
         stepCountMap.forEach { (_, stepCount) ->
             goalAchievedStreak[currentDay] =
                 stepCount >= sharedPrefsRepository.getDailyStepsGoal()
+        }
 
-            currentDay = (currentDay + 1) % 7
+        currentDay = (currentDay + 1) % 7
 
-            if (currentDay == 0) {
-                sharedPrefsRepository.lastFruitCount = sharedPrefsRepository.currentFruitCount
-                if (goalAchievedStreak.contentEquals(fullStreak))
-                    sharedPrefsRepository.currentFruitCount += 1
-                else {
-                    sharedPrefsRepository.currentFruitCount -= 1
-                }
+        if (currentDay == 0) {
+            sharedPrefsRepository.lastFruitCount = sharedPrefsRepository.currentFruitCount
+            if (goalAchievedStreak.contentEquals(fullStreak))
+                sharedPrefsRepository.currentFruitCount += 1
+            else {
+                sharedPrefsRepository.currentFruitCount -= 1
             }
         }
 

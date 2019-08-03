@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import calculateLeafCountFromStepCount
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.google.firebase.Timestamp
@@ -43,6 +44,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     stepCountRepository.getTodayStepCountData {
                         challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
+                        challenge.leafCount = getTotalLeafCountForChallenge(challenge)
                         updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
                     }
                 } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
@@ -115,5 +117,36 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                 Log.e("Worker", "User data upload failed")
                 future.set(Result.failure())
             }
+    }
+
+    private fun getTotalLeafCountForChallenge(challenge: UserChallenge): Int {
+        //Get aggregate step count up to the last day
+//        stepCountRepository.getStepCountDataOverARange(
+//            challenge.joinDate,
+//            DateTime().withTimeAtStartOfDay().millis
+//        ) {
+//
+//            val user = sharedPrefsRepository.user
+//
+//            it.forEach { (date, stepCount) ->
+//                val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
+//                challenge.leafCount +=
+//                    calculateLeafCountFromStepCount(stepCount, goal!!)
+//            }
+//
+//            //Add today's leaf count to leafCountTillLastDay
+//            stepCountRepository.getTodayStepCountData {
+//                challenge.leafCount += it/1000
+//            }
+//        }
+        val stepsMap = challenge.dailyStepsMap
+        val goal = challenge.goal
+        var leafCount = 0
+
+        stepsMap.forEach { (_, steps) ->
+            leafCount += calculateLeafCountFromStepCount(steps, goal)
+        }
+
+        return leafCount
     }
 }

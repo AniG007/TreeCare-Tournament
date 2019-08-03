@@ -5,7 +5,8 @@ data class Challenger(
     val uid: String,
     val photoUrl: String,
     val challengeGoalStreak: Int,
-    val totalSteps: Int
+    val totalSteps: Int,
+    val totalLeaves: Int
 ) {
 
     override fun equals(other: Any?) = if (other is Challenger) uid == other.uid else false

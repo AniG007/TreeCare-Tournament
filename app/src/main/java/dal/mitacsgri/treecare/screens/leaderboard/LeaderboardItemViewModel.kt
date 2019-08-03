@@ -94,8 +94,6 @@ class LeaderboardItemViewModel(
             append(challenger.totalSteps.toString())
         }
 
-
-
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
         val userChallengeData = user.currentChallenges[challenge.name]!!
 
@@ -104,7 +102,8 @@ class LeaderboardItemViewModel(
             uid = user.uid,
             photoUrl = user.photoUrl,
             challengeGoalStreak = userChallengeData.challengeGoalStreak,
-            totalSteps = userChallengeData.totalSteps)
+            totalSteps = userChallengeData.totalSteps,
+            totalLeaves = userChallengeData.leafCount)
     }
 
     private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {

@@ -44,7 +44,6 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     stepCountRepository.getTodayStepCountData {
                         challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-                        challenge.leafCount = getTotalLeafCountForChallenge(challenge)
                         updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
                     }
                 } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
@@ -94,7 +93,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
     }
 
     private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User) {
-        challenge.leafCount = calculateLeavesForChallenge(challenge)
+        challenge.leafCount = getTotalLeafCountForChallenge(challenge)
         challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
         challenge.lastUpdateTime = Timestamp.now()
 

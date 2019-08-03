@@ -29,7 +29,7 @@ class ActiveChallengesViewHolder(
             membersCountTV.text = viewModel.getPlayersCountText(item)
             goalTV.text = viewModel.getGoalText(item)
 
-            if (item.active) {
+            if (item.active && !viewModel.hasUserJoinedChallenge(item)) {
                 buttonJoin.setOnClickListener {
                     MaterialAlertDialogBuilder(context)
                         .setTitle(viewModel.getJoinChallengeDialogTitleText(item))

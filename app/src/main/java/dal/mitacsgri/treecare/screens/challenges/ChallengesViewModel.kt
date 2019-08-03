@@ -213,6 +213,10 @@ class ChallengesViewModel(
         }
     }
 
+    fun hasUserJoinedChallenge(challenge: Challenge): Boolean {
+        return sharedPrefsRepository.user.currentChallenges[challenge.name] != null
+    }
+
     fun getChallengeTypeText(challenge: Challenge) =
         buildSpannedString {
             bold {

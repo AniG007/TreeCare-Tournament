@@ -46,7 +46,7 @@ class ChallengesByYouViewHolder(
                 buttonDelete.disable()
             }
 
-            if (item.active) {
+            if (item.active && !viewModel.hasUserJoinedChallenge(item)) {
                 buttonJoin.setOnClickListener {
                     MaterialAlertDialogBuilder(context)
                         .setTitle("Join the challenge")

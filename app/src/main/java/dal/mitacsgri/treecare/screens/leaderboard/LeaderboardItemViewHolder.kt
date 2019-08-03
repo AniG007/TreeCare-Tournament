@@ -18,6 +18,7 @@ class LeaderboardItemViewHolder(
         itemView.apply {
             nameTV.text = item.name
             stepsCountTV.text = viewModel.getTotalStepsText(item)
+            leafCountTV.text = viewModel.getLeafCountText(item)
             Glide.with(this).load(item.photoUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageView)

@@ -94,6 +94,8 @@ class LeaderboardItemViewModel(
             append(challenger.totalSteps.toString())
         }
 
+    fun getLeafCountText(challenger: Challenger): String = challenger.totalLeaves.toString()
+
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
         val userChallengeData = user.currentChallenges[challenge.name]!!
 

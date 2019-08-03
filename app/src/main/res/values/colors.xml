@@ -6,6 +6,8 @@
 
     <color name="colorPrimaryTransparent">#aa53c710</color>
     <color name="colorPrimaryDarkTransparent">#aa398610</color>
+    <color name="colorPrimaryLight">#96E46B</color>
+
     <color name="green">#00ff00</color>
     <color name="darkreen">@color/colorPrimaryDark</color>
     <color name="white">#fff</color>

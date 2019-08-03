@@ -46,28 +46,6 @@ class LeaderboardItemViewModel(
 
     fun isCurrentUser(challenger: Challenger) = challenger.uid == sharedPrefsRepository.user.uid
 
-    fun getAchievementText(challenger: Challenger): SpannedString =
-            when(challenge.type) {
-                CHALLENGE_TYPE_DAILY_GOAL_BASED ->
-                    buildSpannedString {
-                        bold {
-                            append("Daily Goal Streak: ")
-                        }
-                        append(challenger.challengeGoalStreak.toString())
-                    }
-
-                CHALLENGE_TYPE_AGGREGATE_BASED -> {
-                    buildSpannedString {
-                        bold {
-                            append("Total Steps: ")
-                        }
-                        append(challenger.totalSteps.toString())
-                    }
-                }
-
-                else -> buildSpannedString {  }
-            }
-
     fun getChallengersList(challengeName: String): LiveData<ArrayList<Challenger>> {
         val challengersList = MutableLiveData<ArrayList<Challenger>>().default(arrayListOf())
 
@@ -78,7 +56,7 @@ class LeaderboardItemViewModel(
                 userChallenge = sharedPrefsRepository.user.currentChallenges[challengeName]
 
                 val challengers = challenge.players
-                val challengersCount = challenge.players.size
+                val challengersCount = challengers.size
                 val limit = if (challengersCount > 10) 10 else challengersCount
 
                 for (i in 0 until limit) {
@@ -108,6 +86,16 @@ class LeaderboardItemViewModel(
         return -1
     }
 
+    fun getTotalStepsText(challenger: Challenger): SpannedString =
+        buildSpannedString {
+            bold {
+                append("Total steps: ")
+            }
+            append(challenger.totalSteps.toString())
+        }
+
+
+
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
         val userChallengeData = user.currentChallenges[challenge.name]!!
 
@@ -122,7 +110,7 @@ class LeaderboardItemViewModel(
     private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {
         sortByDescending {
             when(challengeType) {
-                CHALLENGE_TYPE_DAILY_GOAL_BASED -> it.challengeGoalStreak
+                CHALLENGE_TYPE_DAILY_GOAL_BASED -> it.totalSteps
                 CHALLENGE_TYPE_AGGREGATE_BASED -> it.totalSteps
                 else -> it.totalSteps
             }

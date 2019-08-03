@@ -8,45 +8,64 @@
     tools:context=".screens.leaderboard.LeaderboardFragment">
 
     <include
-        layout="@layout/layout_background_image" />
+        layout="@layout/layout_leaf_background" />
 
-    <TextView
-        android:id="@+id/headingTV"
-        style="@style/TextAppearance.MaterialComponents.Headline4"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/titleToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:gravity="center"
-        android:text="@string/leaderboard_challenge_name"
-        android:textColor="@color/black"
-        android:textAllCaps="true"
-        android:textStyle="bold"
+        android:background="@drawable/green_linear_gradient"
+        android:paddingBottom="@dimen/_15sdp"
+        android:elevation="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/recyclerView">
 
-    <TextView
-        android:id="@+id/subheadingTV"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_6sdp"
-        android:gravity="center"
-        android:text="@string/leaderboard"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headingTV" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/headingTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:gravity="start"
+            android:text="@string/leaderboard_challenge_name"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:textSize="@dimen/_30sdp"
+            android:fontFamily="@font/montserrat_extra_bold" />
+
+        <TextView
+            android:id="@+id/subheadingTV"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:gravity="start"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            android:text="@string/leaderboard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/headingTV" />
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:overScrollMode="never"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subheadingTV" />
+        app:layout_constraintTop_toBottomOf="@+id/titleToolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

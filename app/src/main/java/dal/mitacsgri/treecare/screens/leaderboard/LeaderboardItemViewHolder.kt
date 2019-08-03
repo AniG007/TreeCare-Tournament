@@ -17,14 +17,14 @@ class LeaderboardItemViewHolder(
     override fun bind(item: Challenger) {
         itemView.apply {
             nameTV.text = item.name
-            achievementTV.text = viewModel.getAchievementText(item)
+            stepsCountTV.text = viewModel.getTotalStepsText(item)
             Glide.with(this).load(item.photoUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageView)
 
             if (viewModel.isCurrentUser(item)) {
                 cardView.setCardBackgroundColor(ContextCompat.getColor(context,
-                    R.color.challenger_mode_primary_color_light))
+                    R.color.colorPrimaryLight))
             }
         }
     }

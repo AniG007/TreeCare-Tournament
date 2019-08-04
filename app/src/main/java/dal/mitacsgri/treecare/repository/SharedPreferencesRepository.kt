@@ -206,6 +206,14 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.challenge_total_steps_count, value)
         }
 
+    var volume
+        get() = sharedPref.getFloat(context.getString(R.string.volume), .5f)
+        set(value) {
+            sharedPref.edit {
+                putFloat(context.getString(R.string.volume), value)
+            }
+        }
+
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)
     }

@@ -23,16 +23,8 @@ class FirestoreRepository {
         return docRef.get()
     }
 
-    fun storeUser(user: User) {
-        db.collection(COLLECTION_USERS).document(user.uid)
+    fun storeUser(user: User) = db.collection(COLLECTION_USERS).document(user.uid)
             .set(user, SetOptions.merge())
-            .addOnSuccessListener {
-                Log.d("USER stored", user.toString())
-            }
-            .addOnFailureListener {
-                Log.d("USER store failed", it.toString())
-            }
-    }
 
     fun updateUserData(userId: String, values: Map<String, Any>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)

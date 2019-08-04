@@ -3,8 +3,8 @@ package dal.mitacsgri.treecare.screens.gamesettings
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import org.joda.time.DateTime
@@ -20,20 +20,40 @@ class SettingsViewModel(
     ): ViewModel() {
 
     val dailyGoal = MutableLiveData<Int>().default(5000)
+    val settingsChanged = MutableLiveData<Boolean>().default(false)
 
-    fun increaseDailyGoal() {
-        dailyGoal.value = dailyGoal.value?.plus(1000)
-    }
-
-    fun decreaseDailyGoal() {
-        val v = dailyGoal.value as Int
-        if (v > 5000) {
-            dailyGoal.value = dailyGoal.value?.minus(1000)
-            Log.d("DailyGoal", dailyGoal.value?.toString())
+    var hasSettingsChanged
+        get() = settingsChanged.value ?: true
+        set(value) {
+            settingsChanged.value = value
         }
+
+    fun getCurrentVolume() = (sharedPrefRepository.volume*10).toInt()
+
+    fun getCurrentDailyStepsGoal() = sharedPrefRepository.user
+        .dailyGoalMap[DateTime().plusDays(1).millis.toString()] ?: 5000
+
+    fun saveSettings(volume: Int, updatedStepGoal: Int, action: () -> Unit) {
+        val oldVolume = sharedPrefRepository.volume
+        val newVolume = volume / 10f
+
+        sharedPrefRepository.volume = newVolume
+        storeUpdatedStepGoalInPrefs(updatedStepGoal)
+
+        //Doing this to prevent database update when changing only volume
+        if (oldVolume != newVolume) {
+            firestoreRepository.storeUser(sharedPrefRepository.user)
+                .addOnSuccessListener {
+                    action()
+                }
+                .addOnFailureListener {
+                    Log.d("Goal update in DB", "failed: $it")
+                }
+        } else
+            action()
     }
 
-    fun storeUpdatedStepGoal(updatedStepGoal: Int) {
+    private fun storeUpdatedStepGoalInPrefs(updatedStepGoal: Int) {
         val user = sharedPrefRepository.user
         //Actually, this will be the date from which the new goal will be applicable
         val lastGoalChangeTime = DateTime().plusDays(1).withTimeAtStartOfDay().millis
@@ -45,7 +65,6 @@ class SettingsViewModel(
 
         sharedPrefRepository.user = user
         sharedPrefRepository.storeDailyStepsGoal(updatedStepGoal)
-        firestoreRepository.storeUser(user)
     }
 
     //This function will add missing daily step goal dal.mitacsgri.treecare.data if user does not opens app for many days

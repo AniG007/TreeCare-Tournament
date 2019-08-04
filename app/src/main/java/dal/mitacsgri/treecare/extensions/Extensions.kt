@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -26,6 +27,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.Timestamp
 import com.google.gson.Gson
 import org.joda.time.DateTime
+
+val Int.i: Int get() = this
+val Long.i: Int get() = toInt()
 
 fun Any.toast(context: Context, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(context, toString(), duration).show()
@@ -115,5 +119,6 @@ fun ImageView.makeGrayscale() {
     colorFilter = ColorMatrixColorFilter(matrix)
 }
 
-val Int.i: Int get() = this
-val Long.i: Int get() = toInt()
+fun TextView.getTextAsInt() = text.toString().toIntOrNull() ?: 0
+
+fun TextView.getTextAsFloat() = text.toString().toFloatOrNull() ?: 0.0f

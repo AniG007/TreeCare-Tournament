@@ -104,5 +104,12 @@
     <string name="go_to_challenger_mode">Go to Challenger Mode</string>
     <string name="streak">Streak</string>
     <string name="progress_report">Progress Report</string>
-
+    <string name="settings">Settings</string>
+    <string name="change_volume">Change volume</string>
+    <string name="volume">Volume</string>
+    <string name="daily_goal">Daily Goal</string>
+    <string name="save">Save</string>
+    <string name="daily_goal_changes_are_applicable_from_the_next_day">Daily goal changes are applicable from the next day</string>
+    <string name="unsaved_changes_warning">You have unsaved changes</string>
+    <string name="warning">Warning</string>
 </resources>

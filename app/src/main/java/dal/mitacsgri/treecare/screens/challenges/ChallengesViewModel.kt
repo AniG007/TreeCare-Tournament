@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import calculateLeafCountFromStepCount
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
@@ -36,6 +37,8 @@ class ChallengesViewModel(
     val currentChallengesList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
     val challengesByYouList = MutableLiveData<ArrayList<Challenge>>().default(arrayListOf())
 
+    //The error status message must contain 'error' in string because it is used to check whether to
+    //disable or enable join button
     val statusMessage = MutableLiveData<String>()
     var messageDisplayed = true
 
@@ -99,6 +102,15 @@ class ChallengesViewModel(
 
                 index = challengesByYouList.value?.indexOf(challenge)!!
                 if (index != -1) challengesByYouList.value?.get(index)?.players?.add(uid)
+
+                //Do this to display the leaf count as soon as the user joins the challenge
+                if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
+                    userChallenge.leafCount = calculateLeafCountFromStepCount(
+                        sharedPrefsRepository.getDailyStepCount(), challenge.goal)
+                }
+                val user = sharedPrefsRepository.user
+                user.currentChallenges[challenge.name] = userChallenge
+                sharedPrefsRepository.user = user
             }
             .addOnFailureListener {
                 messageDisplayed = false

@@ -5,20 +5,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="@dimen/_16sdp"
-    android:paddingEnd="@dimen/_16sdp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:clipToPadding="false"
     tools:context=".screens.profile.ProfileFragment">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginEnd="-40dp"
+        android:layout_marginStart="-40dp"
+        android:background="@drawable/green_linear_gradient"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/title"/>
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_20sdp"
-        android:gravity="center"
+        android:paddingTop="@dimen/_16sdp"
+        android:paddingBottom="10sp"
+        android:gravity="start"
         android:text="@string/profile"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
+        android:fontFamily="@font/montserrat_extra_bold"
         android:textSize="@dimen/_24sdp"
-        android:textStyle="bold"
+        android:textStyle=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

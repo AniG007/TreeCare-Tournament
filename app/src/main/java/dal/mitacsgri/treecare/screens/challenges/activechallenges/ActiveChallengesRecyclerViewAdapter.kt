@@ -24,6 +24,6 @@ class ActiveChallengesRecyclerViewAdapter(
     override fun getItemCount() = activeChallengesList.size
 
     override fun onBindViewHolder(holder: ActiveChallengesViewHolder, position: Int) {
-        if (activeChallengesList[position].exist) holder.bind(activeChallengesList[position])
+        holder.bind(activeChallengesList[position])
     }
 }

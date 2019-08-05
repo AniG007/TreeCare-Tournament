@@ -45,7 +45,7 @@ class ChallengesViewModel(
     fun getAllActiveChallenges() {
         firestoreRepository.getAllActiveChallenges()
             .addOnSuccessListener {
-                activeChallengesList.value = it.toObjects<Challenge>().filter { it.exist }.toArrayList()
+                activeChallengesList.value = it.toObjects<Challenge>().filter { it.exist && it.active }.toArrayList()
                 activeChallengesList.notifyObserver()
             }
             .addOnFailureListener {
@@ -65,7 +65,14 @@ class ChallengesViewModel(
                     synchronized(currentChallengesList.value!!) {
                         if (challenge.exist) {
                             currentChallengesList.value?.add(challenge)
-                            currentChallengesList.notifyObserver()
+
+                            if (challengeReferences.size == currentChallengesList.value!!.size) {
+                                currentChallengesList.value?.sortByDescending {
+                                    it.finishTimestamp.toDateTime().millis
+                                }
+                                currentChallengesList.notifyObserver()
+                            }
+
                         }
                     }
                 }

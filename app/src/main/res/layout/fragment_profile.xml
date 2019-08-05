@@ -10,6 +10,18 @@
     android:clipToPadding="false"
     tools:context=".screens.profile.ProfileFragment">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/leaf_pattern"
+        android:scaleType="centerCrop"
+        android:id="@+id/imageView"
+        android:tint="#ddffffff"
+        android:layout_marginStart="-20dp"
+        android:layout_marginEnd="-20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -91,12 +103,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/profileImageView" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Progress"
+        android:textSize="@dimen/_8sdp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@id/buttonProgressReport"
+        app:layout_constraintEnd_toEndOf="@id/buttonProgressReport"
+        app:layout_constraintTop_toBottomOf="@id/buttonProgressReport"/>
+
     <View
         android:id="@+id/divider1"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/_16sdp"
-        android:background="#333333"
+        android:background="@color/colorPrimaryDark"
         app:layout_constraintTop_toBottomOf="@id/profileImageView" />
 
     <TextView
@@ -265,7 +287,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_40sdp"
         android:layout_marginBottom="@dimen/_40sdp"
-        android:backgroundTint="@color/challenger_mode_primary_color"
+        android:backgroundTint="@color/colorPrimary"
         android:text="@string/go_to_challenger_mode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -277,7 +299,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginTop="@dimen/_16sdp"
-        android:background="#333333"
+        android:background="@color/colorPrimaryDark"
         app:layout_constraintTop_toBottomOf="@id/streakDescriptionTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

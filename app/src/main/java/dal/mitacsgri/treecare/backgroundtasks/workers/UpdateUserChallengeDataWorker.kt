@@ -33,10 +33,11 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
         user.currentChallenges.forEach { (_, challenge) ->
 
+            val endTimeMillis = challenge.endDate.toDateTime().millis
             //Two condition checks are applied because the 'isActive' variable is set only after
             //the dialog has been displayed. The second condition check prevents update of challenge step count
             //in the database even when the dialog has not been displayed
-            if (challenge.isActive) {
+            if (challenge.isActive && endTimeMillis < DateTime().millis) {
                 val goalEndTimeInMillis = challenge.endDate.toDateTime().millis
                 val endTimeLimit =
                     if (DateTime().millis < goalEndTimeInMillis) DateTime().millis else goalEndTimeInMillis
@@ -96,6 +97,12 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         challenge.leafCount = getTotalLeafCountForChallenge(challenge)
         challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
         challenge.lastUpdateTime = Timestamp.now()
+
+        var totalSteps = 0
+        challenge.dailyStepsMap.forEach { (time, steps) ->
+            totalSteps += steps
+        }
+        challenge.totalSteps = totalSteps
 
         synchronized(sharedPrefsRepository.user) {
             val user = sharedPrefsRepository.user

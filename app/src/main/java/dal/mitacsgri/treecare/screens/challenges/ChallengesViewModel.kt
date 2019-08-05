@@ -274,7 +274,8 @@ class ChallengesViewModel(
             totalSteps = sharedPrefsRepository.getDailyStepCount(),
             joinDate = DateTime().millis,
             type = challenge.type,
-            goal = challenge.goal
+            goal = challenge.goal,
+            endDate = challenge.finishTimestamp
         )
 
     private fun removeChallengeFromCurrentChallengesLists(challenge: Challenge) {

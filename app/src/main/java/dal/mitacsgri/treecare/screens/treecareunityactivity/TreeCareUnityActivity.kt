@@ -23,7 +23,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
 
     private val TAG: String = "SensorAPI"
     private var volume = 0f
-    private var isSoundFadingIn = false
+    private var isSoundFadingIn = true
 
     private lateinit var mediaPlayer: MediaPlayer
 
@@ -85,7 +85,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         val timerTask = object : TimerTask() {
             override fun run() {
                 fadeInStep(deltaVolume)
-                if (volume >= 1f) {
+                if (volume >= MAX_VOLUME) {
                     timer.cancel()
                     timer.purge()
                     isSoundFadingIn = false

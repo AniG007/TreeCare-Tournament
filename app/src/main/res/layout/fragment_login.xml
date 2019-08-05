@@ -8,7 +8,28 @@
     tools:context=".screens.login.LoginFragment">
 
     <include
-        layout="@layout/layout_background_image" />
+        layout="@layout/layout_leaf_background" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/green_linear_gradient"
+        android:elevation="@dimen/_6sdp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_extra_bold"
+            android:textSize="@dimen/_24sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"/>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/walkAnimation"
@@ -24,14 +45,15 @@
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login_screen_quote"
-        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:fontFamily="@font/montserrat_regular"
         app:layout_constraintTop_toBottomOf="@+id/walkAnimation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,12 +65,11 @@
         android:layout_height="wrap_content"
         android:text="@string/login_text"
         android:layout_marginTop="@dimen/_30sdp"
-        android:textSize="@dimen/_15sdp"
+        android:textSize="@dimen/_12sdp"
         android:textStyle="normal"
         style="@style/login_screen_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         android:id="@+id/textView3"
         />

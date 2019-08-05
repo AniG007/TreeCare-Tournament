@@ -46,7 +46,7 @@ dependencies {
     def nav_version = "2.1.0-alpha05"
     def lifecycle_version = "2.0.0"
     def koin_version = "2.0.1"
-    def work_version = "2.2.0-beta02"
+    def work_version = "2.2.0-rc01"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

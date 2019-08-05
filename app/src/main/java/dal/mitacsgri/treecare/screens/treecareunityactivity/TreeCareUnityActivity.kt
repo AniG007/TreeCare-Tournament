@@ -1,6 +1,8 @@
 package dal.mitacsgri.treecare.screens.treecareunityactivity
 
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -12,7 +14,6 @@ import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.*
-
 
 /**
  * Created by Devansh on 24-06-2019
@@ -26,6 +27,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     private var isSoundFadingIn = true
 
     private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var audioManager: AudioManager
 
     //Called from Unity
     fun Launch() {
@@ -35,9 +37,17 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startService()
-        mediaPlayer = MediaPlayer.create(this, R.raw.tree_background_sound)
-        mediaPlayer.isLooping = true
-        startFadeIn()
+
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        val res = audioManager.requestAudioFocus(audioFocusChangedListener, AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN)
+
+        if (res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mediaPlayer = MediaPlayer.create(this, R.raw.tree_background_sound)
+            mediaPlayer.isLooping = true
+            startFadeIn()
+        }
     }
 
     override fun onStart() {
@@ -59,6 +69,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         super.onDestroy()
         stopService()
         mediaPlayer.stop()
+        audioManager.abandonAudioFocus(audioFocusChangedListener)
     }
 
     private fun startService() {
@@ -99,5 +110,20 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     private fun fadeInStep(deltaVolume: Float) {
         mediaPlayer.setVolume(volume, volume)
         volume += deltaVolume
+    }
+
+    private val audioFocusChangedListener = AudioManager.OnAudioFocusChangeListener {
+        when(it) {
+            AudioManager.AUDIOFOCUS_LOSS -> mediaPlayer.pause()
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> mediaPlayer.pause()
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                val volume = sharedPrefsRepository.volume
+                if (volume < 0.2) {
+                    mediaPlayer.setVolume(volume, volume)
+                } else
+                    mediaPlayer.setVolume(0.2f, 0.2f)
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> mediaPlayer.start()
+        }
     }
 }

@@ -64,15 +64,8 @@ class ChallengesViewModel(
                     val challenge = it.toObject<Challenge>() ?: Challenge(exist = false)
                     synchronized(currentChallengesList.value!!) {
                         if (challenge.exist) {
-                            currentChallengesList.value?.add(challenge)
-
-                            if (challengeReferences.size == currentChallengesList.value!!.size) {
-                                currentChallengesList.value?.sortByDescending {
-                                    it.finishTimestamp.toDateTime().millis
-                                }
-                                currentChallengesList.notifyObserver()
-                            }
-
+                            currentChallengesList.value?.sortAndAddToList(challenge)
+                            currentChallengesList.notifyObserver()
                         }
                     }
                 }
@@ -293,5 +286,21 @@ class ChallengesViewModel(
             it.currentChallenges.remove(challenge.name)
             it
         }
+    }
+
+    private fun ArrayList<Challenge>.sortAndAddToList(challenge: Challenge) {
+        val finishTimestampMillis = challenge.finishTimestamp.toDateTime().millis
+        if (size == 0) {
+            add(challenge)
+            return
+        }
+
+        for(i in 0 until size) {
+            if (this[i].finishTimestamp.toDateTime().millis < finishTimestampMillis) {
+                add(i, challenge)
+                return
+            }
+        }
+        this.add(challenge)
     }
 }

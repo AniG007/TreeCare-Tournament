@@ -9,11 +9,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import kotlinx.android.synthetic.main.fragment_active_challenges.view.*
-import kotlinx.android.synthetic.main.item_challenge_by_you.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class ActiveChallengesFragment : Fragment() {
@@ -45,7 +43,6 @@ class ActiveChallengesFragment : Fragment() {
                 if (!mViewModel.messageDisplayed) {
                     it.toast(view.context)
                     mViewModel.messageDisplayed = true
-                    if (!it.contains("error", true)) buttonJoin.disable()
                 }
             })
 

@@ -47,13 +47,13 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                         challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
                         updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
                     }
-                } else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
-                    stepCountRepository.getAggregateStepCountDataOverARange(
-                        DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, endTimeLimit) {
-                        challenge.totalSteps = it
-                        updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
-                    }
-                }
+                } //else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
+//                    stepCountRepository.getAggregateStepCountDataOverARange(
+//                        DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, endTimeLimit) {
+//                        challenge.totalSteps = it
+//                        updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
+//                    }
+//                }
             }
         }
         updateUserChallengeDataInFirestore(future)
@@ -149,9 +149,14 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         val goal = challenge.goal
         var leafCount = 0
 
-        stepsMap.forEach { (_, steps) ->
-            leafCount += calculateLeafCountFromStepCount(steps, goal)
+        val keys = stepsMap.keys.sortedBy {
+            it.toLong()
         }
+
+        for (i in 0 until keys.size-1) {
+            leafCount += calculateLeafCountFromStepCount(stepsMap[keys[i]]!!, goal)
+        }
+        leafCount += stepsMap[keys[keys.size-1]]!! / 1000
 
         return leafCount
     }

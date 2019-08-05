@@ -61,7 +61,7 @@
         android:fontFamily="@font/montserrat_extra_bold"
         app:layout_constraintBaseline_toBaselineOf="@id/volumeChangeTV"
         app:layout_constraintTop_toTopOf="@id/volumeChangeTV"
-        app:layout_constraintStart_toStartOf="@id/dailyGoalTV"/>
+        app:layout_constraintStart_toStartOf="@id/guideline1"/>
 
     <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
         android:id="@+id/seekBarVolume"
@@ -109,8 +109,7 @@
         android:fontFamily="@font/montserrat_extra_bold"
         app:layout_constraintBaseline_toBaselineOf="@id/dailyGoalChangeTV"
         app:layout_constraintTop_toTopOf="@id/dailyGoalChangeTV"
-        app:layout_constraintStart_toEndOf="@id/dailyGoalChangeTV"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/guideline1"/>
 
     <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
         android:id="@+id/seekBarGoal"
@@ -153,5 +152,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.62" />
 </androidx.constraintlayout.widget.ConstraintLayout>

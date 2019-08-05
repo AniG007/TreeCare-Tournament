@@ -22,7 +22,7 @@
         android:paddingStart="@dimen/_16sdp"
         android:textColor="@color/white"
         android:textSize="@dimen/_20sdp"
-        android:textStyle="bold"
+        android:fontFamily="@font/montserrat_extra_bold"
         android:layout_marginTop="@dimen/_12sdp"
         app:layout_constraintTop_toTopOf="parent"/>
 

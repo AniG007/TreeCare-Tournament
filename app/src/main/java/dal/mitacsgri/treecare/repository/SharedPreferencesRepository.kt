@@ -163,7 +163,8 @@ class SharedPreferencesRepository(val context: Context) {
             }
         }
 
-    var gameMode = 0
+    var gameMode
+        get() = getInt(R.string.game_mode)
         set(value) {
             storeInt(R.string.game_mode , value)
         }

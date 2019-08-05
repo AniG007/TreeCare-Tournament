@@ -2,10 +2,12 @@ package dal.mitacsgri.treecare.screens.gamesettings
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.extensions.getTextAsInt
@@ -31,9 +33,17 @@ class SettingsActivity : AppCompatActivity() {
             saveSettingsAction()
         }
 
-        val currentDailyGoal = settingsViewModel.getCurrentDailyStepsGoal()
-        dailyGoalTV.text = currentDailyGoal.toString()
-        seekBarGoal.progress = currentDailyGoal/1000
+        if (settingsViewModel.getGameMode() == CHALLENGER_MODE) {
+            dailyGoalTV.visibility = View.GONE
+            seekBarGoal.visibility = View.GONE
+            dailyGoalChangeTV.visibility = View.GONE
+            dailyGoalChangeInfoTV.visibility = View.GONE
+            iconGoal.visibility = View.GONE
+        } else {
+            val currentDailyGoal = settingsViewModel.getCurrentDailyStepsGoal()
+            dailyGoalTV.text = currentDailyGoal.toString()
+            seekBarGoal.progress = currentDailyGoal / 1000
+        }
 
         val currentVolume = settingsViewModel.getCurrentVolume()
         volumeTV.text = currentVolume.toString()

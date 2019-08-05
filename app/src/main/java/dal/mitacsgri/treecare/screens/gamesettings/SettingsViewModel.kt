@@ -53,6 +53,8 @@ class SettingsViewModel(
             action()
     }
 
+    fun getGameMode() = sharedPrefRepository.gameMode
+
     private fun storeUpdatedStepGoalInPrefs(updatedStepGoal: Int) {
         val user = sharedPrefRepository.user
         //Actually, this will be the date from which the new goal will be applicable

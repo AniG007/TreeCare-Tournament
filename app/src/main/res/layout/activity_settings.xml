@@ -76,7 +76,7 @@
         app:layout_constraintTop_toBottomOf="@id/volumeChangeTV"/>
 
     <ImageView
-        android:id="@+id/goalImage"
+        android:id="@+id/iconGoal"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:tint="@color/colorPrimaryDark"
@@ -97,7 +97,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/_20sdp"
         app:layout_constraintTop_toBottomOf="@id/seekBarVolume"
-        app:layout_constraintStart_toEndOf="@id/goalImage"/>
+        app:layout_constraintStart_toEndOf="@id/iconGoal"/>
 
     <TextView
         android:id="@+id/dailyGoalTV"
@@ -125,7 +125,7 @@
         app:layout_constraintTop_toBottomOf="@id/dailyGoalChangeTV"/>
 
     <TextView
-        android:id="@+id/dailyGoalInfoTV"
+        android:id="@+id/dailyGoalChangeInfoTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_10sdp"

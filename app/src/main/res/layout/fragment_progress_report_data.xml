@@ -47,6 +47,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/totalStepCountTV"
+            app:layout_constraintBottom_toTopOf="@id/divider"
             app:layout_constraintDimensionRatio="4:3"/>
 
         <View
@@ -54,6 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
             android:background="@color/gray"
+            android:layout_marginTop="10sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barChart" />

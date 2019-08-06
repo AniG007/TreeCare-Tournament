@@ -123,12 +123,12 @@ class StepCountDataProvidingViewModel(
         val goalAchievedStreak = arrayOf(false, false, false, false, false, false, false)
         val fullStreak = arrayOf(true, true, true, true, true, true, true)
 
+        currentDay = (currentDay + 1) % 7
+
         stepCountMap.forEach { (_, stepCount) ->
             goalAchievedStreak[currentDay] =
                 stepCount >= sharedPrefsRepository.getDailyStepsGoal()
         }
-
-        currentDay = (currentDay + 1) % 7
 
         if (currentDay == 0) {
             sharedPrefsRepository.lastFruitCount = sharedPrefsRepository.currentFruitCount

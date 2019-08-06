@@ -85,14 +85,17 @@ class ProgressReportDataFragment : Fragment() {
             xAxis.apply {
                 if (reportType == WEEK_DATA) valueFormatter =
                     XAxisWeekDataFormatter()
-                position = XAxis.XAxisPosition.BOTTOM_INSIDE
+                position = XAxis.XAxisPosition.BOTTOM
                 setDrawAxisLine(false)
                 setDrawGridLines(false)
             }
             axisRight.isEnabled = false
             legend.isEnabled = false
 
-            axisLeft.setDrawAxisLine(false)
+            axisLeft.apply {
+                setDrawAxisLine(false)
+                axisLeft.axisMinimum = 0f
+            }
 
             animateY(1000)
         }

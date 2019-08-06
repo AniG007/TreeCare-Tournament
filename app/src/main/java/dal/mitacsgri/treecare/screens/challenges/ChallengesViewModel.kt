@@ -86,7 +86,7 @@ class ChallengesViewModel(
             }
     }
 
-    fun joinChallenge(challenge: Challenge, source: Int) {
+    fun joinChallenge(challenge: Challenge, successAction: () -> Unit) {
         val userChallenge = getUserChallenge(challenge)
         val uid = sharedPrefsRepository.user.uid
 
@@ -111,6 +111,8 @@ class ChallengesViewModel(
                 val user = sharedPrefsRepository.user
                 user.currentChallenges[challenge.name] = userChallenge
                 sharedPrefsRepository.user = user
+
+                successAction()
             }
             .addOnFailureListener {
                 messageDisplayed = false

@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.challenges.challengesbyyou
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.view.View
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -9,7 +10,7 @@ import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
-import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel.Types.CHALLENGES_BY_YOU
+import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.item_challenge_by_you.view.*
 
 /**
@@ -52,7 +53,11 @@ class ChallengesByYouViewHolder(
                         .setTitle("Join the challenge")
                         .setMessage("Do you really want to join the challenge '${item.name}'")
                         .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
-                            viewModel.joinChallenge(item, CHALLENGES_BY_YOU)
+                            viewModel.joinChallenge(item) {
+                                viewModel.startUnityActivityForChallenge(item) {
+                                    context.startActivity(Intent(context, TreeCareUnityActivity::class.java))
+                                }
+                            }
                         }
                         .setNegativeButton("No") { dialogInterface: DialogInterface, i: Int ->
                             dialogInterface.dismiss()

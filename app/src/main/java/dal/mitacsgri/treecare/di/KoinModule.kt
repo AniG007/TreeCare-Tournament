@@ -10,6 +10,7 @@ import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
 import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
+import dal.mitacsgri.treecare.screens.instructions.InstructionsViewModel
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
 import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataViewModel
@@ -50,9 +51,6 @@ val appModule = module {
     viewModel { TeamsViewModel(get(), get()) }
     viewModel { ChallengesViewModel(get(), get())}
     viewModel { ProfileViewModel(get(), get()) }
-    viewModel {
-        ProgressReportDataViewModel(
-            get()
-        )
-    }
+    viewModel { ProgressReportDataViewModel(get()) }
+    viewModel { InstructionsViewModel() }
 }

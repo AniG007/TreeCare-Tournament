@@ -96,8 +96,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/instructionsFragment"
-            app:popUpToInclusive="true"
-            app:launchSingleTop="true"/>
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_instructionsFragment_to_challengesFragment"
             app:destination="@id/challengesFragment"
@@ -106,8 +105,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/instructionsFragment"
-            app:popUpToInclusive="true"
-            app:launchSingleTop="true"/>
+            app:popUpToInclusive="true"/>
         <argument android:name="mode"
                   app:argType="integer"/>
         <action

@@ -52,6 +52,7 @@ class InstructionsFragment : Fragment() {
                         findNavController().navigate(R.id.action_instructionsFragment_to_tournamentModeFragment)
                     }
                 }
+                findNavController().popBackStack(R.id.instructionsFragment, true)
             }
         }
 

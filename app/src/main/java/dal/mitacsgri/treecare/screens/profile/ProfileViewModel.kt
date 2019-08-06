@@ -44,7 +44,7 @@ class ProfileViewModel(
     fun getDailyGoalStreakText() = buildSpannedString {
         append("Daily goal achieved ")
         bold {
-            append("consecutively for ${getDailyGoalCompletionStreakCount()} " +
+            append("for ${getDailyGoalCompletionStreakCount()} " +
                     if (getDailyGoalCompletionStreakCount() > 1) "days" else "day")
         }
         append(" in ")

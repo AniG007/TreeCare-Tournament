@@ -25,7 +25,8 @@ class TrophiesUpdateJob: DailyJob(), KoinComponent {
 
         fun scheduleJob() {
             DailyJob.schedule(JobRequest.Builder(TAG),
-                TimeUnit.HOURS.toMillis(5), TimeUnit.HOURS.toMillis(6))
+                TimeUnit.HOURS.toMillis(0) + TimeUnit.MINUTES.toMillis(15),
+                TimeUnit.HOURS.toMillis(0) + TimeUnit.MINUTES.toMillis(40))
         }
     }
 

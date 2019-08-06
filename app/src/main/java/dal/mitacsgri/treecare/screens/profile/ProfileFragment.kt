@@ -50,6 +50,8 @@ class ProfileFragment : Fragment() {
             challengerModeButtonHolder.setOnClickListener {
                 findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
             }
+
+            mViewModel.getTrophiesCount()
         }
 
         return view

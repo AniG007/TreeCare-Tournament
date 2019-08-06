@@ -18,10 +18,12 @@ import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.fragment_instructions.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class InstructionsFragment : Fragment() {
 
     private val mainViewModel: MainViewModel by sharedViewModel()
+    private val instructionsViewModel: InstructionsViewModel by viewModel()
     private val args: InstructionsFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -35,19 +37,18 @@ class InstructionsFragment : Fragment() {
         view.apply {
             changeBackgroundSolidAndStrokeColor(scrollView, "ccffffff", "ff646464")
             changeButtonColorAccordingToMode(continueButton as MaterialButton, args.mode)
+            modeNameTV.text = instructionsViewModel.getModeName(args.mode)
+            instructionsTV.text = instructionsViewModel.getInstructions(args.mode, context)
 
             continueButton.setOnClickListener {
                 when(args.mode) {
                     STARTER_MODE -> {
-                        instructionsTV.text = context.getString(R.string.starter_mode_instructions)
                         activity?.startNextActivity(TreeCareUnityActivity::class.java)
                     }
                     CHALLENGER_MODE -> {
-                        instructionsTV.text = context.getString(R.string.starter_mode_instructions)
                         findNavController().navigate(R.id.action_instructionsFragment_to_challengesFragment)
                     }
                     TOURNAMENT_MODE -> {
-                        instructionsTV.text = context.getString(R.string.starter_mode_instructions)
                         findNavController().navigate(R.id.action_instructionsFragment_to_tournamentModeFragment)
                     }
                 }

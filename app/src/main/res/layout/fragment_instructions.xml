@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
-        android:id="@+id/textView5"/>
+        android:id="@+id/modeNameTV"/>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -49,7 +49,7 @@
         android:padding="@dimen/_15sdp"
         android:paddingBottom="@dimen/_5sdp"
         android:paddingEnd="@dimen/_10sdp"
-        app:layout_constraintTop_toBottomOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/modeNameTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/continueButton">

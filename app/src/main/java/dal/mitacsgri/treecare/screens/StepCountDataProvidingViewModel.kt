@@ -174,19 +174,21 @@ class StepCountDataProvidingViewModel(
             goalStreakStringBuilder[i] = '0'
         }
 
-        for (i in (mapSize - (currentDay)) until mapSize) {
-            if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
-                streakCount++
-            } else {
-                streakCount = 0
-                break
+        if (mapSize > 0) {
+            for (i in (mapSize - (currentDay)) until mapSize) {
+                if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
+                    streakCount++
+                } else {
+                    streakCount = 0
+                    break
+                }
             }
-        }
 
-        val startIndex = mapSize - currentDay
-        for (i in (mapSize - (currentDay)) until mapSize) {
-            if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
-                goalStreakStringBuilder[i - startIndex] = '1'
+            val startIndex = mapSize - currentDay
+            for (i in (mapSize - (currentDay)) until mapSize) {
+                if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
+                    goalStreakStringBuilder[i - startIndex] = '1'
+                }
             }
         }
 

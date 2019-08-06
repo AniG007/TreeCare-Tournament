@@ -130,7 +130,7 @@ class SharedPreferencesRepository(val context: Context) {
         }
 
     var currentDayOfWeek
-        get() = getInt(R.string.current_day_of_week)
+        get() = getInt(R.string.current_day_of_week, -1)    //-1 because the value is incremented by 1 in first run itself
         set(value) { storeInt(R.string.current_day_of_week, value) }
 
     var dailyGoalStreak

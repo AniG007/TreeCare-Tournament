@@ -122,4 +122,7 @@
     <string name="daily_goal_changes_are_applicable_from_the_next_day">Daily goal changes are applicable from the next day</string>
     <string name="unsaved_changes_warning">You have unsaved changes</string>
     <string name="warning">Warning</string>
+    <string name="log_out">Logout</string>
+    <string name="logout_message">Do you want to log out or switch accounts?</string>
+    <string name="logout_title">Logout/Switch account</string>
 </resources>

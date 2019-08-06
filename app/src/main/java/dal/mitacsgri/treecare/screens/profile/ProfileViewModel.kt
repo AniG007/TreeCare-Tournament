@@ -1,10 +1,13 @@
 package dal.mitacsgri.treecare.screens.profile
 
+import android.content.Context
 import android.util.Log
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.fitness.Fitness
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.UserChallengeTrophies
@@ -65,5 +68,11 @@ class ProfileViewModel(
             .addOnFailureListener {
                 Log.d("Profile", "Failed to obtain trophies data")
             }
+    }
+
+    fun logout(context: Context) {
+        sharedPrefsRepository.clearSharedPrefs()
+        Fitness.getConfigClient(context, GoogleSignIn.getLastSignedInAccount(context)!!).disableFit()
+        //TODO: Maybe cancellation of jobs is needed
     }
 }

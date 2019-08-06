@@ -237,6 +237,12 @@ class SharedPreferencesRepository(val context: Context) {
         storeInt(R.string.leaf_count_before_today, leafCount)
     }
 
+    fun clearSharedPrefs() {
+        sharedPref.edit {
+            clear()
+        }
+    }
+
     private fun storeInt(key: Int, value: Int) {
         with(sharedPref.edit()) {
             putInt(context.getString(key), value)

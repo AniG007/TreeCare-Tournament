@@ -5,8 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        layout="@layout/layout_background_image" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/tree_background"
+        android:scaleType="centerCrop"
+        android:id="@+id/imageView"
+        android:tint="#aaffffff"/>
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"

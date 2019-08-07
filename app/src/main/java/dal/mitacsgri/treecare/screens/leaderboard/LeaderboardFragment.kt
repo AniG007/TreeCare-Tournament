@@ -28,6 +28,10 @@ class LeaderboardFragment : Fragment() {
         view.apply {
             headingTV.text = args.challengeName
 
+            backButton.setOnClickListener {
+                findNavController().navigateUp()
+            }
+
             mViewModel.getChallengersList(args.challengeName).observe(this@LeaderboardFragment, Observer {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)

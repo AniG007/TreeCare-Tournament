@@ -22,8 +22,18 @@
         android:background="@drawable/green_linear_gradient"
         android:paddingTop="@dimen/_10sdp"
         android:paddingBottom="@dimen/_10sdp"
-        android:paddingStart="@dimen/_16sdp"
+        android:paddingStart="@dimen/_36sdp"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="@dimen/_15sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:src="@drawable/ic_back_arrow"
+        android:layout_marginStart="@dimen/_10sdp"
+        app:layout_constraintTop_toTopOf="@id/titleTV"
+        app:layout_constraintStart_toStartOf="@id/titleTV"
+        app:layout_constraintBottom_toBottomOf="@id/titleTV"/>
 
     <ImageView
         android:id="@+id/iconVolume"

@@ -33,6 +33,10 @@ class SettingsActivity : AppCompatActivity() {
             saveSettingsAction()
         }
 
+        backButton.setOnClickListener {
+            finish()
+        }
+
         if (settingsViewModel.getGameMode() == CHALLENGER_MODE) {
             dailyGoalTV.visibility = View.GONE
             seekBarGoal.visibility = View.GONE

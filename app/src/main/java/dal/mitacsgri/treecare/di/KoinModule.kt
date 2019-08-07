@@ -51,6 +51,6 @@ val appModule = module {
     viewModel { TeamsViewModel(get(), get()) }
     viewModel { ChallengesViewModel(get(), get())}
     viewModel { ProfileViewModel(get(), get()) }
-    viewModel { ProgressReportDataViewModel(get()) }
+    viewModel { ProgressReportDataViewModel(get(), get()) }
     viewModel { InstructionsViewModel() }
 }

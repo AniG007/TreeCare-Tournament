@@ -1,17 +1,27 @@
 package dal.mitacsgri.treecare.screens.progressreport.progressreportdata
 
+import android.content.Context
+import android.graphics.Color
+import android.text.SpannedString
+import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.i
 import dal.mitacsgri.treecare.model.ProgressReportDataItem
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.MONTH_DATA
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.WEEK_DATA
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph.XAxisDataLabelFormatter
 import getStartOfWeek
+import org.jetbrains.anko.append
+import org.jetbrains.anko.foregroundColor
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.*
 import org.joda.time.LocalDate
@@ -20,7 +30,8 @@ import java.text.NumberFormat
 import java.util.*
 
 class ProgressReportDataViewModel(
-    private val stepCountRepository: StepCountRepository
+    private val stepCountRepository: StepCountRepository,
+    private val sharedPreferencesRepository: SharedPreferencesRepository
 ): ViewModel() {
 
     private var aggregateStepCount = 0
@@ -116,6 +127,32 @@ class ProgressReportDataViewModel(
     //Must be called from inside the observer for BarData live data
     fun getProgressReportDataList(): ArrayList<ProgressReportDataItem> = progressReportDataList
 
+    fun getFormattedDateText(date: Long): String {
+        val formatter = DateTimeFormat.forPattern("EEEE, MMMM d")
+        return formatter.print(date)
+    }
+
+    fun getStepsCountText(stepCount: Int) =
+        NumberFormat.getNumberInstance(Locale.getDefault()).format(stepCount) + " steps"
+
+    fun getLeavesGainedAndLostText(data: ProgressReportDataItem, context: Context): SpannedString {
+        val stepCount = data.steps
+        val goal = data.goal
+        val leavesGained = stepCount / 1000
+        val leavesLost = if (stepCount < goal) (goal - (stepCount/1000)*1000) / 1000 else 0
+
+        return buildSpannedString {
+            bold {
+                append("+", foregroundColor(ContextCompat.getColor(context, R.color.colorPrimary)))
+            }
+            append(" $leavesGained\t\t\t")
+            bold {
+                append("-", foregroundColor(Color.RED))
+            }
+            append(" $leavesLost")
+        }
+    }
+
     private fun createBarData(set: BarDataSet, progressReportType: Long): BarData {
         set.setGradientColor(0xff53c710.i, 0xFF6CFF13.i)
         val data = BarData(set)
@@ -150,9 +187,7 @@ class ProgressReportDataViewModel(
 
     private fun getProgressReportDataItem(date: Long, stepCount: Int)
             : ProgressReportDataItem {
-        val formatter = DateTimeFormat.forPattern("EEEE, MMMM d")
-        return ProgressReportDataItem(
-            formatter.print(date),
-            NumberFormat.getNumberInstance(Locale.getDefault()).format(stepCount))
+        return ProgressReportDataItem(date, stepCount,
+            sharedPreferencesRepository.user.dailyGoalMap[date.toString()] ?: 5000)
     }
 }

@@ -63,7 +63,7 @@ class ProgressReportDataFragment : Fragment() {
                 updateBarChart(barChart, it)
                 totalStepCountTV.text = mViewModel.getAggregateStepCount()
                 recyclerView.adapter = ProgressReportRecyclerViewAdapter(
-                    mViewModel.getProgressReportDataList())
+                    mViewModel.getProgressReportDataList(), mViewModel)
                 nestedScrollView.smoothScrollTo(nestedScrollView.x.toInt(), 0)
             })
 

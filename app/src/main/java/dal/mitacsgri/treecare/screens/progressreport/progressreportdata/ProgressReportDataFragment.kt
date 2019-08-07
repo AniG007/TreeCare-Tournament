@@ -15,25 +15,26 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph.XAxisWeekDataFormatter
 import kotlinx.android.synthetic.main.fragment_progress_report_data.*
 import kotlinx.android.synthetic.main.fragment_progress_report_data.view.*
-import org.intellij.lang.annotations.MagicConstant
+import org.joda.time.DateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProgressReportDataFragment : Fragment() {
 
     private val mViewModel: ProgressReportDataViewModel by viewModel()
     private var reportType: Long = 1
+    private var startDateMillis: Long = DateTime().millis
 
     companion object {
         const val REPORT_TYPE = "report_type"
+        const val START_DATE = "start_date"
         const val WEEK_DATA = 0L
         const val MONTH_DATA = 1L
 
-        fun newInstance(@MagicConstant(intValues = [WEEK_DATA, MONTH_DATA]) dataType: Long): ProgressReportDataFragment {
-
-            val fragment =
-                ProgressReportDataFragment()
+        fun newInstance(dataType: Long, startDate: DateTime): ProgressReportDataFragment {
+            val fragment = ProgressReportDataFragment()
             val args = Bundle()
             args.putLong(REPORT_TYPE, dataType)
+            args.putLong(START_DATE, startDate.millis)
             fragment.arguments = args
             return fragment
         }
@@ -44,15 +45,18 @@ class ProgressReportDataFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         reportType = arguments?.getLong(REPORT_TYPE)!!
+        startDateMillis = arguments?.getLong(START_DATE)!!
+        val startDate = DateTime(startDateMillis)
 
         val view = inflater.inflate(R.layout.fragment_progress_report_data, container, false)
         view.apply {
             val barChartLiveData =
                 when(reportType) {
-                    WEEK_DATA -> mViewModel.getStepsDataForWeek()
-                    MONTH_DATA -> mViewModel.getStepsDataForMonth()
+                    WEEK_DATA -> mViewModel.getStepsDataForWeek(startDate)
+                    MONTH_DATA -> mViewModel.getStepsDataForMonth(startDate)
                     else -> MutableLiveData()
                 }
+
             barChartLiveData.observe(this@ProgressReportDataFragment, Observer {
                 updateBarChart(barChart, it)
                 totalStepCountTV.text = mViewModel.getAggregateStepCount()
@@ -60,7 +64,7 @@ class ProgressReportDataFragment : Fragment() {
                     mViewModel.getProgressReportDataList())
             })
 
-            progressReportDurationTV.text = mViewModel.getProgressReportDurationText(reportType)
+            progressReportDurationTV.text = mViewModel.getProgressReportDurationText(reportType, startDate)
         }
         return view
     }
@@ -70,6 +74,8 @@ class ProgressReportDataFragment : Fragment() {
             barChart.animateY(durationMillis)
         }
     }
+
+    fun getReportType() = reportType
 
     private fun updateBarChart(barChart: BarChart, barData: BarData) {
         barChart.apply {

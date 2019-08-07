@@ -1,5 +1,7 @@
 import org.joda.time.DateTime
+import org.joda.time.DateTimeConstants
 import org.joda.time.Days
+import org.joda.time.LocalDate
 
 /**
  * Created by Devansh on 03-08-2019
@@ -33,4 +35,16 @@ fun expandDailyGoalMapIfNeeded(dailyGoalMap: MutableMap<String, Int>)
         dailyGoalMap[key] = oldGoal!!
     }
     return dailyGoalMap
+}
+
+fun getStartOfWeek(dateMillis: Long): Long {
+    val startDate = LocalDate(dateMillis)
+    val weekStartDate = startDate.withDayOfWeek(DateTimeConstants.MONDAY)
+    return weekStartDate.toDateTimeAtCurrentTime().withTimeAtStartOfDay().millis
+}
+
+fun getStartOfMonth(dateMillis: Long): Long {
+    val startDate = LocalDate(dateMillis)
+    val monthStartDate = startDate.withDayOfMonth(1)
+    return monthStartDate.toDateTimeAtCurrentTime().withTimeAtStartOfDay().millis
 }

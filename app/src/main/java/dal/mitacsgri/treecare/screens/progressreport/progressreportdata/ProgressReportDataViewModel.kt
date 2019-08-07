@@ -11,6 +11,7 @@ import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.MONTH_DATA
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataFragment.Companion.WEEK_DATA
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph.XAxisDataLabelFormatter
+import getStartOfWeek
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.*
 import org.joda.time.LocalDate
@@ -25,10 +26,10 @@ class ProgressReportDataViewModel(
     private var aggregateStepCount = 0
     private val progressReportDataList = arrayListOf<ProgressReportDataItem>()
 
-    fun getProgressReportDurationText(progressReportType: Long): String {
+    fun getProgressReportDurationText(progressReportType: Long, startTime: DateTime): String {
         return when(progressReportType) {
             WEEK_DATA -> {
-                val weekStartDate = DateTime(getStartOfWeek())
+                val weekStartDate = DateTime(getStartOfWeek(startTime.millis))
                 val weekEndDate = weekStartDate.plusDays(6)
                 val formatter = DateTimeFormat.forPattern("MMMM, d")
 
@@ -37,14 +38,14 @@ class ProgressReportDataViewModel(
 
             MONTH_DATA -> {
                 val formatter = DateTimeFormat.forPattern("MMMM")
-                formatter.print(DateTime())
+                formatter.print(startTime)
             }
 
             else -> ""
         }
     }
 
-    fun getStepsDataForWeek(): MutableLiveData<BarData> {
+    fun getStepsDataForWeek(weekStartDate: DateTime): MutableLiveData<BarData> {
 
         val barLiveData =  MutableLiveData<BarData>()
 
@@ -53,8 +54,13 @@ class ProgressReportDataViewModel(
             entries.add(BarEntry(i.toFloat(), 0f))
         }
 
+        val weekStartDateMillis = weekStartDate.millis
+        val weekEndDateMillis = weekStartDate.plusDays(7).millis
+
+        val endDate = if (weekEndDateMillis < DateTime().millis) weekEndDateMillis else DateTime().millis
+
         stepCountRepository.getStepCountDataOverARange(
-            getStartOfWeek(), DateTime().millis) {
+            weekStartDateMillis, endDate) {
 
             it.forEach { (date, steps) ->
                 val dayOfWeek = DateTime(date).dayOfWeek
@@ -70,14 +76,23 @@ class ProgressReportDataViewModel(
         return barLiveData
     }
 
-    fun getStepsDataForMonth(): MutableLiveData<BarData> {
+    fun getStepsDataForMonth(monthStartDate: DateTime): MutableLiveData<BarData> {
         val barLiveData = MutableLiveData<BarData>()
         val entries = arrayListOf<BarEntry>()
         addBarEntriesBasedOnDaysInMonth(entries)
 
+        val monthStartDateMillis = monthStartDate.millis
+        val monthEndDateMillis = monthStartDate.plusMonths(1).withTimeAtStartOfDay().millis
+
+        val endDateMillis =
+            if (monthEndDateMillis < DateTime().millis) {
+                monthEndDateMillis
+            } else {
+                DateTime().millis
+            }
+
         stepCountRepository.getStepCountDataOverARange(
-            getStartOfMonth(), DateTime().millis
-        ) {map ->
+            monthStartDateMillis, endDateMillis) {map ->
             val keys = map.keys.sorted()
 
             var i = 0
@@ -108,18 +123,6 @@ class ProgressReportDataViewModel(
         if (progressReportType == MONTH_DATA)
             data.setValueFormatter(XAxisDataLabelFormatter())
         return data
-    }
-
-    private fun getStartOfWeek(): Long {
-        val now = LocalDate.now()
-        val weekStartDate = now.withDayOfWeek(MONDAY)
-        return weekStartDate.toDateTimeAtCurrentTime().withTimeAtStartOfDay().millis
-    }
-
-    private fun getStartOfMonth(): Long {
-        val now = LocalDate.now()
-        val monthStartDate = now.withDayOfMonth(1)
-        return monthStartDate.toDateTimeAtCurrentTime().withTimeAtStartOfDay().millis
     }
 
     private fun addBarEntriesBasedOnDaysInMonth(entries: ArrayList<BarEntry>) {

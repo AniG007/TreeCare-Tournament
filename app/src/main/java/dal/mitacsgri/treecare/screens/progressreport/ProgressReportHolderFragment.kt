@@ -49,6 +49,7 @@ class ProgressReportHolderFragment : Fragment() {
             nextDataButton.setOnClickListener {
                 viewPager.currentItem = viewPager.currentItem + 1
             }
+            nextDataButton.visibility = View.GONE
 
             viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
@@ -63,6 +64,8 @@ class ProgressReportHolderFragment : Fragment() {
                 }
 
                 override fun onPageSelected(position: Int) {
+                    if (previousDataButton.visibility == View.VISIBLE
+                        || nextDataButton.visibility == View.VISIBLE)
                     when (position) {
                         0 -> previousDataButton.visibility = View.GONE
                         adapter.count - 1 -> nextDataButton.visibility = View.GONE
@@ -79,10 +82,16 @@ class ProgressReportHolderFragment : Fragment() {
     }
 
     fun hidePreviousDataButton(hide: Boolean) {
-        previousDataButton.visibility = if (hide) View.GONE else View.VISIBLE
+        if (view!!.viewPager.currentItem != 0)
+            previousDataButton.visibility = if (hide) View.GONE else View.VISIBLE
+        else
+            previousDataButton.visibility = View.GONE
     }
 
     fun hideNextDataButton(hide: Boolean) {
-        nextDataButton.visibility = if (hide) View.GONE else View.VISIBLE
+        if (view!!.viewPager.currentItem != view!!.viewPager.adapter!!.count - 1)
+            nextDataButton.visibility = if (hide) View.GONE else View.VISIBLE
+        else
+            nextDataButton.visibility = View.GONE
     }
 }

@@ -71,6 +71,12 @@ class ProgressReportDataFragment : Fragment() {
 
             if (parentFragment is ProgressReportHolderFragment) {
                 val parent = parentFragment as ProgressReportHolderFragment
+
+                if (nestedScrollView.scrollX == 0) {
+                    parent.hidePreviousDataButton(false)
+                    parent.hideNextDataButton(false)
+                }
+
                 nestedScrollView.setOnScrollChangeListener {
                         _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
 

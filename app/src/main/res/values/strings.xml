@@ -123,4 +123,5 @@
     <string name="log_out">Logout</string>
     <string name="logout_message">Do you want to log out or switch accounts?</string>
     <string name="logout_title">Logout/Switch account</string>
+    <string name="challenges">Challenges</string>
 </resources>

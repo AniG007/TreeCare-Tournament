@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -12,6 +13,7 @@ import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.screens.progressreport.ProgressReportHolderFragment
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.bargraph.XAxisWeekDataFormatter
 import kotlinx.android.synthetic.main.fragment_progress_report_data.*
 import kotlinx.android.synthetic.main.fragment_progress_report_data.view.*
@@ -62,9 +64,21 @@ class ProgressReportDataFragment : Fragment() {
                 totalStepCountTV.text = mViewModel.getAggregateStepCount()
                 recyclerView.adapter = ProgressReportRecyclerViewAdapter(
                     mViewModel.getProgressReportDataList())
+                nestedScrollView.smoothScrollTo(nestedScrollView.x.toInt(), 0)
             })
 
             progressReportDurationTV.text = mViewModel.getProgressReportDurationText(reportType, startDate)
+
+            if (parentFragment is ProgressReportHolderFragment) {
+                val parent = parentFragment as ProgressReportHolderFragment
+                nestedScrollView.setOnScrollChangeListener {
+                        _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
+
+                    val hideButton = scrollY != 0
+                    parent.hidePreviousDataButton(hideButton)
+                    parent.hideNextDataButton(hideButton)
+                }
+            }
         }
         return view
     }
@@ -74,8 +88,6 @@ class ProgressReportDataFragment : Fragment() {
             barChart.animateY(durationMillis)
         }
     }
-
-    fun getReportType() = reportType
 
     private fun updateBarChart(barChart: BarChart, barData: BarData) {
         barChart.apply {

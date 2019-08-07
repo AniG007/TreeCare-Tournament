@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_progress_report_holder.*
 import kotlinx.android.synthetic.main.fragment_progress_report_holder.view.*
 
 class ProgressReportHolderFragment : Fragment() {
@@ -34,7 +35,10 @@ class ProgressReportHolderFragment : Fragment() {
 
         view.apply {
 
-            val adapter = ProgressReportHolderPagerAdapter(childFragmentManager, arguments?.getLong(REPORT_TYPE)!!)
+            val adapter = ProgressReportHolderPagerAdapter(
+                childFragmentManager,
+                arguments?.getLong(REPORT_TYPE)!!
+            )
             viewPager.adapter = adapter
             viewPager.currentItem = adapter.count - 1
 
@@ -46,7 +50,7 @@ class ProgressReportHolderFragment : Fragment() {
                 viewPager.currentItem = viewPager.currentItem + 1
             }
 
-            viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
 
                 }
@@ -74,5 +78,11 @@ class ProgressReportHolderFragment : Fragment() {
         return view
     }
 
+    fun hidePreviousDataButton(hide: Boolean) {
+        previousDataButton.visibility = if (hide) View.GONE else View.VISIBLE
+    }
 
+    fun hideNextDataButton(hide: Boolean) {
+        nextDataButton.visibility = if (hide) View.GONE else View.VISIBLE
+    }
 }

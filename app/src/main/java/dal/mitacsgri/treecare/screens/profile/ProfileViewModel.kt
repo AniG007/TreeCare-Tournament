@@ -19,8 +19,8 @@ class ProfileViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
-    val trophiesCountData = MutableLiveData<Triple<String, String, String>>()
-        .default(Triple("0", "0", "0"))
+    val trophiesCountData = MutableLiveData<Triple<Int, Int, Int>>()
+        .default(Triple(0, 0, 0))
 
     fun getUserPhotoUrl() = sharedPrefsRepository.user.photoUrl
 
@@ -60,9 +60,9 @@ class ProfileViewModel(
                 val userTrophies = it.toObject<UserChallengeTrophies>()
                 userTrophies?.let {
                     trophiesCountData.value = Triple(
-                        userTrophies.gold.size.toString(),
-                        userTrophies.silver.size.toString(),
-                        userTrophies.bronze.size.toString())
+                        userTrophies.gold.size,
+                        userTrophies.silver.size,
+                        userTrophies.bronze.size)
                 }
             }
             .addOnFailureListener {

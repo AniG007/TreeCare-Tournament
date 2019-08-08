@@ -66,9 +66,13 @@ class ProfileFragment : Fragment() {
             streakDescriptionTV.text = mViewModel.getDailyGoalStreakText()
 
             mViewModel.trophiesCountData.observe(this@ProfileFragment, Observer {
-                goldAwardCountTV.text = it.first
-                silverAwardCountTV.text = it.second
-                bronzeAwardCount.text = it.third
+                goldAwardCountTV.text = it.first.toString()
+                silverAwardCountTV.text = it.second.toString()
+                bronzeAwardCount.text = it.third.toString()
+
+                if (it.first == 0) awardFirstImage.makeGrayscale()
+                if (it.second == 0) awardSecondImage.makeGrayscale()
+                if (it.third == 0) awardThirdImage.makeGrayscale()
             })
 
             challengerModeButtonHolder.setOnClickListener {

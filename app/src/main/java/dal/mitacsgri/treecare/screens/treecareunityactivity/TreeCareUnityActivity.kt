@@ -1,12 +1,18 @@
 package dal.mitacsgri.treecare.screens.treecareunityactivity
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
@@ -30,7 +36,26 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     private lateinit var audioManager: AudioManager
 
     //Called from Unity
-    fun Launch() {
+    fun OpenSettings() {
+        startActivity(Intent(this, SettingsActivity::class.java))
+    }
+
+    fun OpenHelp() {
+        //startActivity(Intent(this, HelpActivity::class.java))
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getHelpTitle())
+            .setMessage(getHelpText())
+            .setNegativeButton("Close") { dialog: DialogInterface, _: Int ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    fun OpenProgressReport() {
+        startActivity(Intent(this, SettingsActivity::class.java))
+    }
+
+    fun OpenLeaderboard() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
@@ -111,6 +136,25 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         mediaPlayer.setVolume(volume, volume)
         volume += deltaVolume
     }
+
+    private fun getHelpText() =
+        when(sharedPrefsRepository.gameMode) {
+            STARTER_MODE -> getString(R.string.starter_mode_instructions)
+            CHALLENGER_MODE -> getString(R.string.challenger_mode_instructions)
+            else -> ""
+        }
+
+    private fun getHelpTitle() =
+        buildSpannedString {
+            bold {
+                append("Help: ")
+                append(when (sharedPrefsRepository.gameMode) {
+                    STARTER_MODE -> getString(R.string.starter_mode)
+                    CHALLENGER_MODE -> getString(R.string.challenger_mode)
+                    else -> ""
+                })
+            }
+        }
 
     private val audioFocusChangedListener = AudioManager.OnAudioFocusChangeListener {
         when(it) {

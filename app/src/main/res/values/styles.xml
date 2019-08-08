@@ -20,18 +20,6 @@
         <item name="colorPrimaryDark">@color/tournament_mode_accent_color</item>
     </style>
 
-    <style name="AppTheme.Translucent">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/black_transparent</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
     <style name="login_screen_text">
         <item name="android:textSize">@dimen/_20sdp</item>
         <item name="android:textStyle">bold</item>

@@ -15,6 +15,7 @@ import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
+import dal.mitacsgri.treecare.screens.progressreport.ProgressReportActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import org.koin.core.KoinComponent
@@ -41,7 +42,6 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     }
 
     fun OpenHelp() {
-        //startActivity(Intent(this, HelpActivity::class.java))
         MaterialAlertDialogBuilder(this)
             .setTitle(getHelpTitle())
             .setMessage(getHelpText())
@@ -52,7 +52,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     }
 
     fun OpenProgressReport() {
-        startActivity(Intent(this, SettingsActivity::class.java))
+        startActivity(Intent(this, ProgressReportActivity::class.java))
     }
 
     fun OpenLeaderboard() {

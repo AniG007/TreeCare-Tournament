@@ -12,9 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <activity android:name=".screens.gamesettings.SettingsActivity" android:theme="@style/AppTheme.Translucent" />
-
+        <activity android:name=".screens.progressreport.ProgressReportActivity" />
+        <activity android:name=".screens.leaderboard.LeaderboardActivity" />
+        <activity
+            android:name=".screens.gamesettings.SettingsActivity" />
         <activity
             android:name=".screens.MainActivity"
             android:launchMode="singleTop"
@@ -25,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".screens.treecareunityactivity.TreeCareUnityActivity" />
 
         <service

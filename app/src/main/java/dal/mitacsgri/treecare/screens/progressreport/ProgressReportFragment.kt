@@ -21,7 +21,11 @@ class ProgressReportFragment : Fragment() {
             viewPager.adapter = ProgressReportPagerAdapter(childFragmentManager)
             tabLayout.setupWithViewPager(viewPager)
             backButton.setOnClickListener {
-                findNavController().navigateUp()
+                try {
+                    findNavController().navigateUp()
+                } catch (e: IllegalStateException) {
+                    activity?.onBackPressed()
+                }
             }
         }
 

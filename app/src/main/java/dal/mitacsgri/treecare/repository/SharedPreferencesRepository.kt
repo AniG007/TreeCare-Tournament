@@ -195,7 +195,8 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.challenge_streak, value)
         }
 
-    var challengeName = ""
+    var challengeName
+        get() = sharedPref.getString(context.getString(R.string.challenge_name), "")
         set(value) {
             sharedPref.edit {
                 putString(context.getString(R.string.challenge_name), value)
@@ -213,6 +214,12 @@ class SharedPreferencesRepository(val context: Context) {
             sharedPref.edit {
                 putFloat(context.getString(R.string.volume), value)
             }
+        }
+
+    var challengeLeaderboardPosition
+        get() = getInt(R.string.leaderboard_position, 1)
+        set(value) {
+            storeInt(R.string.leaderboard_position, value)
         }
 
     fun storeDailyStepCount(stepCount: Int) {

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
@@ -16,7 +15,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LeaderboardFragment : Fragment() {
 
-    private val args: LeaderboardFragmentArgs by navArgs()
     private val mViewModel: LeaderboardItemViewModel by viewModel()
 
     override fun onCreateView(
@@ -25,11 +23,22 @@ class LeaderboardFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_leaderboard, container, false)
 
+        val args: LeaderboardFragmentArgs = LeaderboardFragmentArgs.fromBundle(arguments ?:
+            Bundle().let {
+                it.putString(view.context.getString(R.string.challenge_name), mViewModel.getChallengeName())
+                it
+            }
+        )
+
         view.apply {
             headingTV.text = args.challengeName
 
             backButton.setOnClickListener {
-                findNavController().navigateUp()
+                try {
+                    findNavController().navigateUp()
+                } catch (e: IllegalStateException) {
+                    activity?.onBackPressed()
+                }
             }
 
             mViewModel.getChallengersList(args.challengeName).observe(this@LeaderboardFragment, Observer {

@@ -18,6 +18,7 @@ import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -262,6 +263,10 @@ class ChallengesViewModel(
         }
 
     fun getJoinChallengeMessageText() = "Are you ready to join now?"
+
+    fun storeChallengeLeaderboardPosition(position: Int) {
+        sharedPrefsRepository.challengeLeaderboardPosition = position
+    }
 
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user

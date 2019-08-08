@@ -86,6 +86,8 @@ class LeaderboardItemViewModel(
         return -1
     }
 
+    fun getChallengeName(): String = sharedPrefsRepository.challengeName
+
     fun getTotalStepsText(challenger: Challenger): SpannedString =
         buildSpannedString {
             bold {

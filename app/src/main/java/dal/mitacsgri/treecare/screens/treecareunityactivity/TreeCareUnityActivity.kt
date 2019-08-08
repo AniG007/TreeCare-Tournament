@@ -10,11 +10,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
+import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.consts.STARTER_MODE
+import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.Challenger
+import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
+import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardActivity
 import dal.mitacsgri.treecare.screens.progressreport.ProgressReportActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
@@ -28,6 +36,7 @@ import java.util.*
 class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
 
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
+    private val firestoreRepository: FirestoreRepository by inject()
 
     private val TAG: String = "SensorAPI"
     private var volume = 0f
@@ -56,7 +65,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     }
 
     fun OpenLeaderboard() {
-        startActivity(Intent(this, SettingsActivity::class.java))
+        startActivity(Intent(this, LeaderboardActivity::class.java))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +81,10 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
             mediaPlayer = MediaPlayer.create(this, R.raw.tree_background_sound)
             mediaPlayer.isLooping = true
             startFadeIn()
+        }
+
+        if (sharedPrefsRepository.gameMode == CHALLENGER_MODE) {
+            getChallengersListAndCurrentPosition(sharedPrefsRepository.challengeName)
         }
     }
 
@@ -168,6 +181,66 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
                     mediaPlayer.setVolume(0.2f, 0.2f)
             }
             AudioManager.AUDIOFOCUS_GAIN -> mediaPlayer.start()
+        }
+    }
+
+    fun getCurrentChallengerPosition(challengers: ArrayList<Challenger>): Int {
+
+        val currentUserUid = sharedPrefsRepository.user.uid
+        for (i in 0 until challengers.size) {
+            if (challengers[i].uid == currentUserUid)
+                return i+1
+        }
+        return -1
+    }
+
+    private fun getChallengersListAndCurrentPosition(challengeName: String) {
+        val challengersList = arrayListOf<Challenger>()
+
+        firestoreRepository.getChallenge(challengeName)
+            .addOnSuccessListener {
+                val challenge = it.toObject<Challenge>() ?: Challenge()
+                val challengers = challenge.players
+                val challengersCount = challengers.size
+                val limit = if (challengersCount > 10) 10 else challengersCount
+
+                for (i in 0 until limit) {
+                    firestoreRepository.getUserData(challengers[i])
+                        .addOnSuccessListener {
+                            val user = it.toObject<User>()
+                            val challenger = user?.let { makeChallengerFromUser(user, challenge) }
+                            challengersList.add(challenger!!)
+
+                            if (challengersList.size == limit) {
+                                challengersList.sortChallengersList(challenge.type)
+
+                                sharedPrefsRepository.challengeLeaderboardPosition =
+                                    getCurrentChallengerPosition(challengersList)
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
+        val userChallengeData = user.currentChallenges[challenge.name]!!
+
+        return Challenger(
+            name = user.name,
+            uid = user.uid,
+            photoUrl = user.photoUrl,
+            challengeGoalStreak = userChallengeData.challengeGoalStreak,
+            totalSteps = userChallengeData.totalSteps,
+            totalLeaves = userChallengeData.leafCount)
+    }
+
+    private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {
+        sortByDescending {
+            when(challengeType) {
+                CHALLENGE_TYPE_DAILY_GOAL_BASED -> it.totalSteps
+                CHALLENGE_TYPE_AGGREGATE_BASED -> it.totalSteps
+                else -> it.totalSteps
+            }
         }
     }
 }

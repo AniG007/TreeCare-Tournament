@@ -8,6 +8,7 @@
     tools:context=".screens.leaderboard.LeaderboardActivity">
 
     <fragment
+        android:name="dal.mitacsgri.treecare.screens.leaderboard.LeaderboardFragment"
         android:id="@+id/fragmentHolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

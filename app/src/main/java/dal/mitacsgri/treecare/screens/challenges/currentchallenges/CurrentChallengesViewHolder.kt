@@ -32,6 +32,7 @@ class CurrentChallengesViewHolder(
                     context.startActivity(Intent(context, TreeCareUnityActivity::class.java))
                 }
             }
+
             buttonLeaderBoard.setOnClickListener {
                 val action = ChallengesFragmentDirections
                     .actionChallengesFragmentToLeaderboardFragment(item.name)

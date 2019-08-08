@@ -55,6 +55,7 @@
     <string name="challenge_streak">challenge_streak</string>
     <string name="challenge_name">challenge_name</string>
     <string name="challenge_total_steps_count">challenge_total_steps_count</string>
+    <string name="leaderboard_position">leaderboard_position</string>
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>

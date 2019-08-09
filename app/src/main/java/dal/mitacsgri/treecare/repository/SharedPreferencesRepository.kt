@@ -137,7 +137,11 @@ class SharedPreferencesRepository(val context: Context) {
         get() = getInt(R.string.daily_goal_streak)
         set(value) { storeInt(R.string.daily_goal_streak, value) }
 
-    var dailyGoalStreakString
+    var dailyGoalAchievedCount
+        get() = getInt(R.string.daily_goal_achieved_count, 0)
+        set(value) { storeInt(R.string.daily_goal_achieved_count, value)}
+
+    var dailyGoalStreakString: String
         get() = sharedPref.getString(context.getString(R.string.daily_goal_streak_string), "0000000")
         set(value) {
             sharedPref.edit {

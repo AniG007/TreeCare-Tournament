@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.firebase.firestore.ktx.toObject
-import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.UserChallengeTrophies
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -20,7 +19,6 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     val trophiesCountData = MutableLiveData<Triple<Int, Int, Int>>()
-        .default(Triple(0, 0, 0))
 
     fun getUserPhotoUrl() = sharedPrefsRepository.user.photoUrl
 
@@ -28,10 +26,12 @@ class ProfileViewModel(
 
     fun getDailyGoalCompletionStreakCount() = sharedPrefsRepository.dailyGoalStreak
 
+    fun getWeeklyDailyGoalAchievedCount() = sharedPrefsRepository.dailyGoalAchievedCount
+
     fun getCurrentWeekDayForStreak() = sharedPrefsRepository.currentDayOfWeek
 
     fun getGoalCompletionStreakData(): Array<Boolean> {
-        val goalCompletionString = sharedPrefsRepository.dailyGoalStreakString ?: ""
+        val goalCompletionString = sharedPrefsRepository.dailyGoalStreakString
         val boolArray = arrayOf(false, false, false, false, false, false, false)
 
         for (i in 0 until goalCompletionString.length) {
@@ -44,8 +44,8 @@ class ProfileViewModel(
     fun getDailyGoalStreakText() = buildSpannedString {
         append("Daily goal achieved ")
         bold {
-            append("for ${getDailyGoalCompletionStreakCount()} " +
-                    if (getDailyGoalCompletionStreakCount() > 1) "days" else "day")
+            append("for ${getWeeklyDailyGoalAchievedCount()} " +
+                    if (getWeeklyDailyGoalAchievedCount() > 1) "days" else "day")
         }
         append(" in ")
         bold {

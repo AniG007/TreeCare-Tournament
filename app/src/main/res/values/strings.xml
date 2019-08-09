@@ -45,6 +45,7 @@
     <string name="current_fruit_count">current_fruit_count</string>
     <string name="current_day_of_week">current_day_of_week</string>
     <string name="daily_goal_streak">daily_goal_streak</string>
+    <string name="daily_goal_achieved_count">daily_goal_achieved_count</string>
     <string name="daily_goal_streak_string">daily_goal_streak_string</string>
     <string name="user">user</string>
     <string name="game_mode">game_mode</string>

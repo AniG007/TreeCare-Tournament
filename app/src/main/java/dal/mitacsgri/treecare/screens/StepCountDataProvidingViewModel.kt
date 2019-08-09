@@ -167,6 +167,7 @@ class StepCountDataProvidingViewModel(
         val mapSize = stepCountMap.size
         val mapKeys = stepCountMap.keys.sorted()
         var streakCount = 0
+        var dailyGoalAchievedCount = 0
         val dailyGoal = sharedPrefsRepository.getDailyStepsGoal()
         val goalStreakStringBuilder = StringBuilder(sharedPrefsRepository.dailyGoalStreakString)
 
@@ -188,11 +189,13 @@ class StepCountDataProvidingViewModel(
             for (i in (mapSize - (currentDay)) until mapSize) {
                 if (stepCountMap[mapKeys[i]] ?: error("No data for key ${mapKeys[i]}") >= dailyGoal) {
                     goalStreakStringBuilder[i - startIndex] = '1'
+                    dailyGoalAchievedCount++
                 }
             }
         }
 
         sharedPrefsRepository.dailyGoalStreak = streakCount
+        sharedPrefsRepository.dailyGoalAchievedCount = dailyGoalAchievedCount
         sharedPrefsRepository.dailyGoalStreakString = goalStreakStringBuilder.toString()
         sharedPrefsRepository.isGoalCompletionSteakChecked = true
     }

@@ -4,10 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -18,7 +15,6 @@ import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.SensorRequest
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.StepCountChangedListener
 import dal.mitacsgri.treecare.consts.STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -53,26 +49,7 @@ class StepDetectorService: Service(), KoinComponent {
 
         startForeground(1, notification)
 
-        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-        val stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-
-        when {
-            stepCounter != null -> {
-                sensorManager.registerListener(StepCountChangedListener(Sensor.TYPE_STEP_DETECTOR),
-                    stepCounter, SensorManager.SENSOR_DELAY_FASTEST)
-                "Step counter".toast(applicationContext)
-            }
-            stepDetector != null -> {
-                sensorManager.registerListener(StepCountChangedListener(Sensor.TYPE_STEP_COUNTER),
-                    stepDetector, SensorManager.SENSOR_DELAY_FASTEST)
-                "Step detector".toast(applicationContext)
-            }
-            else -> {
-                updateStepCountUsingApi()
-                "API".toast(applicationContext)
-            }
-        }
+        updateStepCountUsingApi()
 
         return START_NOT_STICKY
     }
@@ -112,8 +89,10 @@ class StepDetectorService: Service(), KoinComponent {
                     // Let's register a listener to receive Activity data!
                     if (it.dataType == DataType.TYPE_STEP_COUNT_CUMULATIVE) {
                         registerFitnessDataListener()
+                        "Sensor API".toast(applicationContext)
                     } else {
                         useCoroutineToGetStepCount()
+                        "Coroutine".toast(applicationContext)
                     }
                 }
             }

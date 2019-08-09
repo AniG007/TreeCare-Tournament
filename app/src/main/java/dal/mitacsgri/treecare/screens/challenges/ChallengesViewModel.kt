@@ -18,7 +18,6 @@ import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
-import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -100,9 +99,11 @@ class ChallengesViewModel(
 
                 var index = activeChallengesList.value?.indexOf(challenge)!!
                 activeChallengesList.value?.get(index)?.players?.add(uid)
+                activeChallengesList.notifyObserver()
 
                 index = challengesByYouList.value?.indexOf(challenge)!!
                 if (index != -1) challengesByYouList.value?.get(index)?.players?.add(uid)
+                challengesByYouList.notifyObserver()
 
                 //Do this to display the leaf count as soon as the user joins the challenge
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
@@ -270,6 +271,7 @@ class ChallengesViewModel(
 
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user
+        userChallenge.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
         user.currentChallenges[userChallenge.name] = userChallenge
         sharedPrefsRepository.user = user
     }

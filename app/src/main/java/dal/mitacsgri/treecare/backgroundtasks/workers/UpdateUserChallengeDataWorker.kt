@@ -8,7 +8,6 @@ import calculateLeafCountFromStepCount
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.google.firebase.Timestamp
-import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.toDateTime
 import dal.mitacsgri.treecare.model.User
@@ -38,46 +37,18 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             //the dialog has been displayed. The second condition check prevents update of challenge step count
             //in the database even when the dialog has not been displayed
             if (challenge.isActive && endTimeMillis < DateTime().millis) {
-                val goalEndTimeInMillis = challenge.endDate.toDateTime().millis
-                val endTimeLimit =
-                    if (DateTime().millis < goalEndTimeInMillis) DateTime().millis else goalEndTimeInMillis
-
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     stepCountRepository.getTodayStepCountData {
                         challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
                         updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
                     }
-                } //else if (challenge.type == CHALLENGE_TYPE_AGGREGATE_BASED) {
-//                    stepCountRepository.getAggregateStepCountDataOverARange(
-//                        DateTime(challenge.joinDate).withTimeAtStartOfDay().millis, endTimeLimit) {
-//                        challenge.totalSteps = it
-//                        updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
-//                    }
-//                }
+                }
             }
         }
         updateUserChallengeDataInFirestore(future)
 
         return future
     }
-
-    private fun calculateLeavesForChallenge(challenge: UserChallenge) =
-        when(challenge.type) {
-            CHALLENGE_TYPE_AGGREGATE_BASED -> {
-                challenge.totalSteps/1000
-            }
-
-            CHALLENGE_TYPE_DAILY_GOAL_BASED -> {
-                var leafCount = challenge.leafCount
-                val goal = challenge.goal
-                challenge.dailyStepsMap.forEach {(_, steps) ->
-                    leafCount += (steps - (if (steps < goal) goal else 0))/1000
-                }
-                leafCount
-            }
-
-            else -> 0
-        }
 
     private fun getChallengeGoalStreakForUser(challenge: UserChallenge, user: User): Int {
         val userChallengeData = user.currentChallenges[challenge.name]!!
@@ -126,25 +97,6 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
     }
 
     private fun getTotalLeafCountForChallenge(challenge: UserChallenge): Int {
-        //Get aggregate step count up to the last day
-//        stepCountRepository.getStepCountDataOverARange(
-//            challenge.joinDate,
-//            DateTime().withTimeAtStartOfDay().millis
-//        ) {
-//
-//            val user = sharedPrefsRepository.user
-//
-//            it.forEach { (date, stepCount) ->
-//                val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
-//                challenge.leafCount +=
-//                    calculateLeafCountFromStepCount(stepCount, goal!!)
-//            }
-//
-//            //Add today's leaf count to leafCountTillLastDay
-//            stepCountRepository.getTodayStepCountData {
-//                challenge.leafCount += it/1000
-//            }
-//        }
         val stepsMap = challenge.dailyStepsMap
         val goal = challenge.goal
         var leafCount = 0

@@ -14,13 +14,13 @@ import androidx.core.app.NotificationCompat
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.StepCountChangedListener
 import dal.mitacsgri.treecare.consts.STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID
-import dal.mitacsgri.treecare.screens.MainActivity
+import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 
 class StepDetectorService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
-        val notificationIntent = Intent(this, MainActivity::class.java)
+        val notificationIntent = Intent(this, TreeCareUnityActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
         val notification = NotificationCompat.Builder(this, STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID)

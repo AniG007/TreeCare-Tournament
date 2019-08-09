@@ -16,6 +16,13 @@ class StepCountChangedListener(private val sensorType: Int) : SensorEventListene
     private var stepCountDelta = 0
     private var isFirstCall = true
 
+    init {
+        when(sensorType) {
+            Sensor.TYPE_STEP_DETECTOR -> Log.d("Step Sensor", "Step detector")
+            Sensor.TYPE_STEP_COUNTER -> Log.d("Step Sensor", "Step counter")
+        }
+    }
+
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -24,13 +31,11 @@ class StepCountChangedListener(private val sensorType: Int) : SensorEventListene
 
     private fun updateDailyStepCount(sensorValue: Int) {
         if (sensorType == Sensor.TYPE_STEP_DETECTOR) {
-            Log.d("Step Sensor", "Step detector")
             stepCountDelta = sensorValue
             sharedPrefsRepository.storeDailyStepCount(
                 sharedPrefsRepository.getDailyStepCount() + stepCountDelta)
 
         } else if (sensorType == Sensor.TYPE_STEP_COUNTER) {
-            Log.d("Step Sensor", "Step counter")
             if (isFirstCall) {
                 isFirstCall = false
                 lastStepCount = sensorValue

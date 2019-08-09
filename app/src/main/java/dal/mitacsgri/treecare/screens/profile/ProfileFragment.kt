@@ -2,6 +2,7 @@ package dal.mitacsgri.treecare.screens.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.ChangeBounds
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,8 +27,16 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
+        val animationDuration: Long = 200
+        sharedElementEnterTransition = ChangeBounds().apply {
+            duration = animationDuration
+        }
+        sharedElementReturnTransition = ChangeBounds().apply {
+            duration = animationDuration
+        }
+
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
         view.apply {
             Glide.with(this)
                 .load(mViewModel.getUserPhotoUrl())

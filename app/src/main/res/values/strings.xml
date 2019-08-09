@@ -126,4 +126,7 @@
     <string name="logout_message">Do you want to log out or switch accounts?</string>
     <string name="logout_title">Logout/Switch account</string>
     <string name="challenges">Challenges</string>
+
+    <string name="profile_image_start_transition">profile_image_start_transition</string>
+    <string name="profile_image_end_transition">profile_image_end_transition</string>
 </resources>

@@ -7,6 +7,16 @@
         android:height="@dimen/_54sdp" />
 
     <solid
+        android:color="@color/black" />
+
+    <padding
+        android:left="@dimen/_2sdp"
+        android:right="@dimen/_2sdp"
+        android:top="@dimen/_2sdp"
+        android:bottom="@dimen/_2sdp" />
+
+    <stroke
+        android:width="@dimen/_2sdp"
         android:color="#64DD17" />
 
 </shape>

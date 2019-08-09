@@ -74,6 +74,7 @@
         android:id="@+id/profileImageView"
         android:layout_width="@dimen/_60sdp"
         android:layout_height="@dimen/_60sdp"
+        android:transitionName="@string/profile_image_end_transition"
         android:layout_marginTop="@dimen/_20sdp"
         android:contentDescription="@string/profile_picture"
         app:layout_constraintStart_toStartOf="parent"

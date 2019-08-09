@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -13,7 +14,6 @@ import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
-import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
@@ -50,23 +50,16 @@ class ModeSelectionFragment : Fragment() {
                 challengerModeButtonAction()
             }
 
-            tournamentModeButton.setOnClickListener {
-                mainViewModel.setGameMode(TOURNAMENT_MODE)
-                if (mainViewModel.hasInstructionsDisplayed(TOURNAMENT_MODE))
-                    findNavController().navigate(R.id.action_modeSelectionFragment_to_tournamentModeFragment)
-                else {
-                    mainViewModel.setInstructionsDisplayed(TOURNAMENT_MODE, true)
-                    val action = ModeSelectionFragmentDirections
-                        .actionModeSelectionFragmentToInstructionsFragment(TOURNAMENT_MODE)
-                    findNavController().navigate(action)
-                }
-            }
-
             Glide.with(this).load(profileViewModel.getUserPhotoUrl())
+                .placeholder(R.drawable.ic_profile_empty)
                 .apply(RequestOptions.circleCropTransform())
                 .into(buttonProfile)
             buttonProfile.setOnClickListener {
-                findNavController().navigate(R.id.action_modeSelectionFragment_to_profileFragment)
+                val extras = FragmentNavigatorExtras(
+                    buttonProfile to getString(R.string.profile_image_end_transition)
+                )
+                findNavController().navigate(R.id.action_modeSelectionFragment_to_profileFragment,
+                    null, null, extras)
             }
         }
 

@@ -36,7 +36,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             //Two condition checks are applied because the 'isActive' variable is set only after
             //the dialog has been displayed. The second condition check prevents update of challenge step count
             //in the database even when the dialog has not been displayed
-            if (challenge.isActive && endTimeMillis > DateTime().millis) {
+            if (challenge.isActive && endTimeMillis < DateTime().millis) {
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     stepCountRepository.getTodayStepCountData {
                         challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it

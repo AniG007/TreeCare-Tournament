@@ -149,7 +149,6 @@ class StepCountDataProvidingViewModel(
             keysList.add(it.toLong())
         }
         keysList = keysList.sorted().toMutableList()
-
         val lastTime = keysList[keysList.size-1]
         val days = Days.daysBetween(DateTime(lastTime), DateTime()).days
 

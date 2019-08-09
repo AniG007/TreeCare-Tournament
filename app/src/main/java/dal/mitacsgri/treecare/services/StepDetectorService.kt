@@ -33,10 +33,15 @@ class StepDetectorService: Service() {
         startForeground(1, notification)
 
         val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-        if (stepSensor != null) {
+        val stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+        val stepDetector = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+
+        if (stepCounter != null) {
             sensorManager.registerListener(
-                StepCountChangedListener(this), stepSensor, SensorManager.SENSOR_DELAY_FASTEST)
+                StepCountChangedListener(Sensor.TYPE_STEP_DETECTOR), stepCounter, SensorManager.SENSOR_DELAY_FASTEST)
+        } else if (stepDetector != null) {
+            sensorManager.registerListener(
+                StepCountChangedListener(Sensor.TYPE_STEP_COUNTER), stepDetector, SensorManager.SENSOR_DELAY_FASTEST)
         }
 
         return START_NOT_STICKY

@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="dal.mitacsgri.treecare">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".TreeCareApplication"
         android:allowBackup="true"

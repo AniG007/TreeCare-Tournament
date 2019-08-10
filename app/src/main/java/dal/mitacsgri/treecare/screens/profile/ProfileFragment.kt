@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.extensions.makeGrayscale
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_profile.view.*
@@ -69,8 +68,7 @@ class ProfileFragment : Fragment() {
                 findNavController().navigate(R.id.action_profileFragment_to_progressReportFragment)
             }
 
-            grayscaleStreakIcons(this, mViewModel.getWeeklyDailyGoalAchievedCount(),
-                mViewModel.getCurrentWeekDayForStreak())
+            showGoalAchievedIcons(this, mViewModel.getWeeklyDailyGoalAchievedCount())
 
             streakDescriptionTV.text = mViewModel.getDailyGoalStreakText()
 
@@ -78,10 +76,6 @@ class ProfileFragment : Fragment() {
                 goldAwardCountTV.text = it.first.toString()
                 silverAwardCountTV.text = it.second.toString()
                 bronzeAwardCount.text = it.third.toString()
-
-                if (it.first == 0) awardFirstImage.makeGrayscale()
-                if (it.second == 0) awardSecondImage.makeGrayscale()
-                if (it.third == 0) awardThirdImage.makeGrayscale()
             })
 
             challengerModeButtonHolder.setOnClickListener {
@@ -94,20 +88,10 @@ class ProfileFragment : Fragment() {
         return view
     }
 
-    private fun grayscaleStreakIcons(view: View, dailyGoalAchievedCount: Int, currentDayOfWeek: Int) {
+    private fun showGoalAchievedIcons(view: View, dailyGoalAchievedCount: Int) {
         view.apply {
             val streakImages = arrayOf(streakImage1, streakImage2, streakImage3,
                 streakImage4, streakImage5, streakImage6, streakImage7)
-
-//            for(i in 0 until streakArray.size) {
-//                if (!streakArray[i]) {
-//                    streakImageImages[i].makeGrayscale()
-//                }
-//            }
-//
-//            for (i in (currentDayOfWeek+1)..6) {
-//                streakImageImages[i].visibility = View.INVISIBLE
-//            }
 
             streakImages.forEach {
                 it.visibility = View.GONE

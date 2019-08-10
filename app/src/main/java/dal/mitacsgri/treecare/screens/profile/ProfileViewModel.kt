@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.firebase.firestore.ktx.toObject
+import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.UserChallengeTrophies
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -18,7 +19,7 @@ class ProfileViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository
 ) : ViewModel() {
 
-    val trophiesCountData = MutableLiveData<Triple<Int, Int, Int>>()
+    val trophiesCountData = MutableLiveData<Triple<Int, Int, Int>>().default(Triple(0, 0, 0))
 
     fun getUserPhotoUrl() = sharedPrefsRepository.user.photoUrl
 

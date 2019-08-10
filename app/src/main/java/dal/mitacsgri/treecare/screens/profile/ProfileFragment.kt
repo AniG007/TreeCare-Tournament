@@ -69,7 +69,7 @@ class ProfileFragment : Fragment() {
                 findNavController().navigate(R.id.action_profileFragment_to_progressReportFragment)
             }
 
-            grayscaleStreakIcons(this, mViewModel.getGoalCompletionStreakData(),
+            grayscaleStreakIcons(this, mViewModel.getWeeklyDailyGoalAchievedCount(),
                 mViewModel.getCurrentWeekDayForStreak())
 
             streakDescriptionTV.text = mViewModel.getDailyGoalStreakText()
@@ -94,20 +94,29 @@ class ProfileFragment : Fragment() {
         return view
     }
 
-    private fun grayscaleStreakIcons(view: View, streakArray: Array<Boolean>, currentDayOfWeek: Int) {
+    private fun grayscaleStreakIcons(view: View, dailyGoalAchievedCount: Int, currentDayOfWeek: Int) {
         view.apply {
-            val streakAppleImages = arrayOf(streakApple1, streakApple2, streakApple3,
-                streakApple4, streakApple5, streakApple6, streakApple7)
+            val streakImages = arrayOf(streakImage1, streakImage2, streakImage3,
+                streakImage4, streakImage5, streakImage6, streakImage7)
 
-            for(i in 0 until streakArray.size) {
-                if (!streakArray[i]) {
-                    streakAppleImages[i].makeGrayscale()
-                }
+//            for(i in 0 until streakArray.size) {
+//                if (!streakArray[i]) {
+//                    streakImageImages[i].makeGrayscale()
+//                }
+//            }
+//
+//            for (i in (currentDayOfWeek+1)..6) {
+//                streakImageImages[i].visibility = View.INVISIBLE
+//            }
+
+            streakImages.forEach {
+                it.visibility = View.GONE
             }
 
-            for (i in (currentDayOfWeek+1)..6) {
-                streakAppleImages[i].visibility = View.INVISIBLE
+            for (i in 0 until dailyGoalAchievedCount) {
+                streakImages[i].visibility = View.VISIBLE
             }
+            
         }
     }
 

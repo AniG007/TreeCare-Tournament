@@ -156,72 +156,72 @@
         app:layout_constraintTop_toBottomOf="@id/divider1" />
 
     <ImageView
-        android:id="@+id/streakApple1"
+        android:id="@+id/streakImage1"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
-        app:layout_constraintEnd_toStartOf="@+id/streakApple2"
+        app:layout_constraintEnd_toStartOf="@+id/streakImage2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
     <ImageView
-        android:id="@+id/streakApple2"
+        android:id="@+id/streakImage2"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
-        app:layout_constraintEnd_toStartOf="@+id/streakApple3"
+        app:layout_constraintEnd_toStartOf="@+id/streakImage3"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple1"
+        app:layout_constraintStart_toEndOf="@+id/streakImage1"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
     <ImageView
-        android:id="@+id/streakApple3"
+        android:id="@+id/streakImage3"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
-        app:layout_constraintEnd_toStartOf="@+id/streakApple4"
+        app:layout_constraintEnd_toStartOf="@+id/streakImage4"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple2"
+        app:layout_constraintStart_toEndOf="@+id/streakImage2"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
     <ImageView
-        android:id="@+id/streakApple4"
+        android:id="@+id/streakImage4"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
-        app:layout_constraintEnd_toStartOf="@+id/streakApple5"
+        app:layout_constraintEnd_toStartOf="@+id/streakImage5"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple3"
+        app:layout_constraintStart_toEndOf="@+id/streakImage3"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
     <ImageView
-        android:id="@+id/streakApple5"
+        android:id="@+id/streakImage5"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
-        app:layout_constraintEnd_toStartOf="@+id/streakApple6"
+        app:layout_constraintEnd_toStartOf="@+id/streakImage6"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple4"
+        app:layout_constraintStart_toEndOf="@+id/streakImage4"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
     <ImageView
-        android:id="@+id/streakApple6"
+        android:id="@+id/streakImage6"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
-        app:layout_constraintEnd_toStartOf="@+id/streakApple7"
+        app:layout_constraintEnd_toStartOf="@+id/streakImage7"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple5"
+        app:layout_constraintStart_toEndOf="@+id/streakImage5"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
     <ImageView
-        android:id="@+id/streakApple7"
+        android:id="@+id/streakImage7"
         android:layout_width="@dimen/_30sdp"
         android:layout_height="@dimen/_30sdp"
         android:src="@drawable/ic_gold_coin"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple6"
+        app:layout_constraintStart_toEndOf="@+id/streakImage6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/streakTV" />
 
@@ -234,7 +234,7 @@
         android:textColor="@color/black"
         android:gravity="center"
         tools:text="You are on a 4 days streak"
-        app:layout_constraintTop_toBottomOf="@id/streakApple1"/>
+        app:layout_constraintTop_toBottomOf="@id/streakImage1"/>
 
     <TextView
         android:id="@+id/awardsTV"
@@ -244,7 +244,7 @@
         android:text="@string/awards"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/streakApple7"
+        app:layout_constraintStart_toEndOf="@+id/streakImage7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider2" />
 

@@ -20,6 +20,6 @@ class LeaderboardRecyclerViewAdapter(
     override fun getItemCount() = playersList.size
 
     override fun onBindViewHolder(holder: LeaderboardItemViewHolder, position: Int) {
-        holder.bind(playersList[position])
+        holder.bind(playersList[position], position)
     }
 }

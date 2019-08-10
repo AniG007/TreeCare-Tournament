@@ -49,7 +49,7 @@ class LeaderboardFragment : Fragment() {
                     if ((it.size > 0) && !mViewModel.isDialogDisplayed) {
                         mViewModel.isDialogDisplayed = false
 
-                        val pos = mViewModel.getCurrentChallengerPosition(it)
+                        val pos = mViewModel.getCurrentChallengerPosition()
                         val action = LeaderboardFragmentDirections
                             .actionLeaderboardFragmentToChallengeCompleteDialog(pos)
                         findNavController().navigate(action)

@@ -27,6 +27,8 @@ class LeaderboardItemViewModel(
     private lateinit var challenge: Challenge
     private var userChallenge: UserChallenge? = null
 
+    private val mChallengersList = MutableLiveData<ArrayList<Challenger>>()
+
     var isDialogDisplayed: Boolean
         get() = challenge.active.xnor(userChallenge?.isActive ?: challenge.active)
         set(value) {
@@ -74,16 +76,20 @@ class LeaderboardItemViewModel(
                 }
             }
 
+        mChallengersList.value = challengersList.value
         return challengersList
     }
 
-    fun getCurrentChallengerPosition(challengers: ArrayList<Challenger>): Int {
+    fun getCurrentChallengerPositionText(): String = getCurrentChallengerPosition().toString()
+
+    fun getCurrentChallengerPosition(): Int {
         val currentUserUid = sharedPrefsRepository.user.uid
+        val challengers = mChallengersList.value ?: arrayListOf()
         for (i in 0 until challengers.size) {
             if (challengers[i].uid == currentUserUid)
                 return i+1
         }
-        return -1
+        return 0
     }
 
     fun getChallengeName(): String = sharedPrefsRepository.challengeName

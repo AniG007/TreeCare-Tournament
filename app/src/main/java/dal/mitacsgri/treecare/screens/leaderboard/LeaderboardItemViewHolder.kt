@@ -14,11 +14,15 @@ class LeaderboardItemViewHolder(
     private val viewModel: LeaderboardItemViewModel
     ): BaseViewHolder<Challenger>(itemView) {
 
+    private var challengerPosition = 0
+
     override fun bind(item: Challenger) {
         itemView.apply {
             nameTV.text = item.name
+            rankTV.text = challengerPosition.toString()
             stepsCountTV.text = viewModel.getTotalStepsText(item)
             leafCountTV.text = viewModel.getLeafCountText(item)
+
             Glide.with(this).load(item.photoUrl)
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageView)
@@ -28,5 +32,10 @@ class LeaderboardItemViewHolder(
                     R.color.colorPrimaryLight))
             }
         }
+    }
+
+    fun bind(item: Challenger, position: Int) {
+        challengerPosition = position + 1
+        bind(item)
     }
 }

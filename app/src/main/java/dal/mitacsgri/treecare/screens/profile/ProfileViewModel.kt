@@ -42,14 +42,15 @@ class ProfileViewModel(
     }
 
     fun getDailyGoalStreakText() = buildSpannedString {
-        append("Daily goal achieved ")
+        val count = getWeeklyDailyGoalAchievedCount()
+        append("You achieved ")
         bold {
-            append("for ${getWeeklyDailyGoalAchievedCount()} " +
-                    if (getWeeklyDailyGoalAchievedCount() > 1) "days" else "day")
+            append("$count daily " +
+                    if (getWeeklyDailyGoalAchievedCount() > 1) "goals" else "goal")
         }
         append(" in ")
         bold {
-            append("last ${sharedPrefsRepository.currentDayOfWeek + 1} " +
+            append("the last ${sharedPrefsRepository.currentDayOfWeek + 1} " +
                     if ((sharedPrefsRepository.currentDayOfWeek + 1) > 1) "days" else "day")
         }
     }

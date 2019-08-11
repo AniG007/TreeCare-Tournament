@@ -16,7 +16,6 @@ import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.SensorRequest
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID
-import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
@@ -89,10 +88,8 @@ class StepDetectorService: Service(), KoinComponent {
                     // Let's register a listener to receive Activity data!
                     if (it.dataType == DataType.TYPE_STEP_COUNT_CUMULATIVE) {
                         registerFitnessDataListener()
-                        "Sensor API".toast(applicationContext)
                     } else {
                         useCoroutineToGetStepCount()
-                        "Coroutine".toast(applicationContext)
                     }
                 }
             }

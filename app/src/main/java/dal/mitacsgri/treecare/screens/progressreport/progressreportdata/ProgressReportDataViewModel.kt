@@ -146,10 +146,15 @@ class ProgressReportDataViewModel(
                 append("+", foregroundColor(ContextCompat.getColor(context, R.color.colorPrimary)))
             }
             append(" $leavesGained\t\t\t")
-            bold {
-                append("-", foregroundColor(Color.RED))
+
+            if (DateTime(data.date).withTimeAtStartOfDay().millis == DateTime().withTimeAtStartOfDay().millis) {
+                append("")
+            } else {
+                bold {
+                    append("-", foregroundColor(Color.RED))
+                }
+                append(" $leavesLost")
             }
-            append(" $leavesLost")
         }
     }
 

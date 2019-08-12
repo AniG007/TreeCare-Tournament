@@ -1,14 +1,9 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
-// Google Play services Gradle plugin
-apply plugin: 'com.google.gms.google-services'
-
-//SafeArgs
-apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'com.google.gms.google-services'      // Google Play services Gradle plugin
+apply plugin: "androidx.navigation.safeargs.kotlin" //SafeArgs
+apply plugin: 'io.fabric'                           //Crashlytics
 
 android {
     signingConfigs {
@@ -43,7 +38,7 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.1.0-alpha05"
+    def nav_version = "2.2.0-alpha01"
     def lifecycle_version = "2.0.0"
     def koin_version = "2.0.1"
     def work_version = "2.2.0-rc01"
@@ -93,19 +88,19 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
     //Firebase core, keep the version at 16.0.9 otherwise app crashes at runtime
-    implementation 'com.google.firebase:firebase-core:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
 
     //Firebase UI Auth
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
 
     //Firebase Auth
-    implementation 'com.google.firebase:firebase-auth:18.0.0'
+    implementation 'com.google.firebase:firebase-auth:18.1.0'
 
     //JodaTime
     implementation 'joda-time:joda-time:2.9.4'
 
     //Firebase Firestore (with Kotlin extensions)
-    implementation 'com.google.firebase:firebase-firestore-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:20.2.0'
 
     //Gson
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -114,7 +109,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.0.1'
 
     //Material components
-    implementation 'com.google.android.material:material:1.1.0-alpha07'
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
 
     //WorkManager Kotlin + Coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
@@ -123,7 +118,7 @@ dependencies {
     androidTestImplementation "androidx.work:work-testing:$work_version"
 
     //Futures concurrent-future dependency for ListenableWorker
-    implementation "androidx.concurrent:concurrent-futures:1.0.0-beta01"
+    implementation "androidx.concurrent:concurrent-futures:1.0.0-rc01"
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
@@ -140,4 +135,10 @@ dependencies {
 
     //Kotlin coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
+
+    //Firebase Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.0.1'
+
+    //Crashlytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }

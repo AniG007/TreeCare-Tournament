@@ -21,11 +21,13 @@ class ChallengeCompleteDialog: DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val position = args.position
         val view = inflater.inflate(R.layout.dialog_challenge_complete, container, true)
 
         view.apply {
             positionTV.text = mViewModel.getChallengerPositionText(
-                ContextCompat.getColor(context, R.color.challenger_mode_primary_color), args.position)
+                ContextCompat.getColor(context, R.color.challenger_mode_primary_color), position)
+            trophyImage.setImageResource(mViewModel.getTrophyImage(position))
         }
 
         return view

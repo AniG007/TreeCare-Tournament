@@ -5,6 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.lifecycle.ViewModel
+import dal.mitacsgri.treecare.R
 
 class ChallengeCompleteDialogViewModel: ViewModel() {
 
@@ -16,5 +17,13 @@ class ChallengeCompleteDialogViewModel: ViewModel() {
             }
         }
     }
+
+    fun getTrophyImage(position: Int) =
+            when(position) {
+                1 -> R.drawable.ic_trophy_first
+                2 -> R.drawable.ic_trophy_second
+                3 -> R.drawable.ic_trophy_third
+                else -> R.color.transparent
+            }
 
 }

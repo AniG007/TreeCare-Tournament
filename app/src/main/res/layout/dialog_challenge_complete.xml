@@ -18,12 +18,22 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_scale="1.4"
-            tools:src="@drawable/ic_trophy"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:lottie_fileName="trophy_animation.json" />
+            app:lottie_fileName="celebration.json" />
+
+        <ImageView
+            android:id="@+id/trophyImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            tools:src="@drawable/ic_trophy_first"
+            android:padding="@dimen/_60sdp"
+            app:layout_constraintStart_toStartOf="@id/trophyAnimation"
+            app:layout_constraintEnd_toEndOf="@id/trophyAnimation"
+            app:layout_constraintTop_toTopOf="@id/trophyAnimation"
+            app:layout_constraintBottom_toBottomOf="@id/trophyAnimation"/>
 
         <TextView
             android:id="@+id/challengeCompleteTV"

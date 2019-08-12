@@ -189,6 +189,11 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.challenge_last_leaf_count, value)
         }
 
+    var challengeFruitCount: Int = 0
+        set(value) {
+            storeInt(R.string.challenge_fruit_count, value)
+        }
+
     var challengeGoal = 0
         set(value) {
             storeInt(R.string.challenge_goal, value)

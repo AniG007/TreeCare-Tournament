@@ -16,6 +16,7 @@ import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
+import org.joda.time.Days
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -66,6 +67,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 
     private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User) {
         challenge.leafCount = getTotalLeafCountForChallenge(challenge)
+        challenge.fruitCount = getTotalFruitCountForChallenge(challenge)
         challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
         challenge.lastUpdateTime = Timestamp.now()
 
@@ -111,5 +113,50 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         leafCount += stepsMap[keys[keys.size-1]]!! / 1000
 
         return leafCount
+    }
+
+    private fun getTotalFruitCountForChallenge(challenge: UserChallenge): Int {
+        val joinDate = DateTime(challenge.joinDate)
+        val currentDate = DateTime()
+        val days = Days.daysBetween(joinDate, currentDate).days
+        val weeks = Math.ceil(days/7.0).toInt()
+
+        var fruitCount = 0
+
+        var weekStartDate = joinDate
+        var newWeekDate = weekStartDate.plusWeeks(1)
+        var mapPartition: Map<String, Int>
+        for (i in 0 until weeks) {
+            mapPartition = challenge.dailyStepsMap.filter {
+                val keyAsLong = it.key.toLong()
+                keyAsLong >= weekStartDate.millis && keyAsLong < newWeekDate.millis
+            }
+            fruitCount += calculateFruitCountForWeek(challenge, mapPartition)
+            weekStartDate = newWeekDate
+            newWeekDate = weekStartDate.plusWeeks(1)
+        }
+
+        return fruitCount
+    }
+
+    /**
+     * @param challenge UserChallenge
+     * @param stepCountMap Step count map for a week
+     * @return +1, 0 or -1 as fruit count
+     */
+    private fun calculateFruitCountForWeek(challenge: UserChallenge, stepCountMap: Map<String, Int>): Int {
+        var currentDay = 0
+        val goalAchievedStreak = arrayOf(false, false, false, false, false, false, false)
+        val fullStreak = arrayOf(true, true, true, true, true, true, true)
+
+        if (stepCountMap.size < 7) return 0
+
+        stepCountMap.forEach { (_, stepCount) ->
+            goalAchievedStreak[currentDay] =
+                stepCount >= challenge.goal
+            currentDay++
+        }
+
+        return if (goalAchievedStreak.contentEquals(fullStreak)) 1 else -1
     }
 }

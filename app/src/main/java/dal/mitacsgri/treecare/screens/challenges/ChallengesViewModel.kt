@@ -209,6 +209,7 @@ class ChallengesViewModel(
             challengeType = userChallenge.type
             challengeGoal = userChallenge.goal
             challengeLeafCount = userChallenge.leafCount
+            challengeFruitCount = userChallenge.fruitCount
             challengeStreak = userChallenge.challengeGoalStreak
             challengeName = userChallenge.name
             challengeTotalStepsCount = userChallenge.totalSteps

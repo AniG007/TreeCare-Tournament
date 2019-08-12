@@ -12,8 +12,8 @@ import androidx.navigation.fragment.NavHostFragment
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainViewModel
-import dal.mitacsgri.treecare.screens.dialog.logindataloading.LoginDataLoadingDialog
 import dal.mitacsgri.treecare.screens.StepCountDataProvidingViewModel
+import dal.mitacsgri.treecare.screens.dialog.logindataloading.LoginDataLoadingDialog
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -69,6 +69,7 @@ class LoginFragment : Fragment() {
                 .observe(this@LoginFragment, Observer {
                     if (it == 2) {
                         //loadingDialog.dismiss()
+                        mainViewModel.setCrashlyticsUserIdentifiers()
                         NavHostFragment.findNavController(this@LoginFragment)
                             .navigate(R.id.action_loginFragment_to_modeSelectionFragment)
                     }

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -74,6 +75,13 @@ class MainViewModel(
 
     fun setGameMode(mode: Int) {
         sharedPrefsRepository.gameMode = mode
+    }
+
+    fun setCrashlyticsUserIdentifiers() {
+        val user = sharedPrefsRepository.user
+        Crashlytics.setUserEmail(user.email)
+        Crashlytics.setUserName(user.name)
+        Crashlytics.setUserIdentifier(user.uid)
     }
 
     fun startLoginAndConfiguration(activity: FragmentActivity) {

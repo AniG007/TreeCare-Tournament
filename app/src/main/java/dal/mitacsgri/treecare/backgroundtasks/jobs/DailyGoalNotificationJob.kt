@@ -10,6 +10,8 @@ import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import com.evernote.android.job.DailyJob
 import com.evernote.android.job.JobRequest
 import dal.mitacsgri.treecare.R
@@ -60,10 +62,16 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
         return DailyJobResult.SUCCESS
     }
 
-    private fun getMessageBody(): String {
+    private fun getMessageBody(): CharSequence {
         val remainingSteps = getRemainingDailyGoalSteps()
         return if (remainingSteps > 0)
-            context.getString(R.string.daily_goal_remaining_notification).format(remainingSteps)
+            buildSpannedString {
+                append("You are ")
+                bold {
+                    append("$remainingSteps steps ")
+                }
+                append("away from achieving your daily goal")
+            }
         else
             context.getString(R.string.goal_completed_notification)
     }

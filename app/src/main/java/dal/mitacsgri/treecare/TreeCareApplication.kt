@@ -46,7 +46,5 @@ class TreeCareApplication : Application() {
             HOURS.toMillis(18) + MINUTES.toMillis(15))
         DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(21),
             HOURS.toMillis(21) + MINUTES.toMillis(15))
-        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(11) + MINUTES.toMillis(45),
-            HOURS.toMillis(12))
     }
 }

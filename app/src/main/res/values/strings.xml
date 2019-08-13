@@ -131,6 +131,15 @@
     <string name="goal_completed_notification">You achieved your daily goal today. Congratulations!</string>
     <string name="daily_goal_remaining_notification">You are %d steps away from achieving your daily goal</string>
 
+    <string name="daily_goal_notification_title1">Make every step count</string>
+    <string name="daily_goal_notification_title2">Walking is a lifestyle</string>
+    <string name="daily_goal_notification_title3">Walking is a therapy</string>
+    <string name="daily_goal_notification_title4">Good things come to those who sweat</string>
+    <string name="daily_goal_notification_title5">Habituate yourself to walk very far</string>
+    <string name="daily_goal_notification_title6">Sweat is fat crying</string>
+    <string name="daily_goal_notification_title7">It always seems impossible until its done</string>
+    <string name="daily_goal_notification_title8">Wish less, walk more</string>
+
     <string name="profile_image_start_transition">profile_image_start_transition</string>
     <string name="profile_image_end_transition">profile_image_end_transition</string>
 </resources>

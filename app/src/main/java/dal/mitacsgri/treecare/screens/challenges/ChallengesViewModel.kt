@@ -219,12 +219,14 @@ class ChallengesViewModel(
     }
 
     fun getChallengeDurationText(challenge: Challenge): SpannedString {
-        //val createdDateString = challenge.creationTimestamp.toDateTime().getStringRepresentation()
+        val finishDate = challenge.finishTimestamp.toDateTime().millis
         val finishDateString = challenge.finishTimestamp.toDateTime().getStringRepresentation()
+
+        val challengeEnded = finishDate < DateTime().millis
 
         return buildSpannedString {
             bold {
-                append("Ends: ")
+                append(if (challengeEnded) "Ended: " else "Ends: ")
             }
             append(finishDateString)
         }

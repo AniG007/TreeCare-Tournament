@@ -34,7 +34,7 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
         const val TAG = "DailyGoalNotificationJob"
 
         fun scheduleJob(startTime: Long, endTime: Long) {
-            DailyJob.schedule(JobRequest.Builder(TAG), startTime,endTime)
+            schedule(JobRequest.Builder(TAG), startTime,endTime)
         }
     }
 
@@ -44,14 +44,17 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
 
         val notificationIntent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
-
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
+        val title = getNotificationTitle()
+        val body = getNotificationBody()
+
         val notificationBuilder = NotificationCompat.Builder(context, FCM_NOTIFICATION_CHANNEL_ID)
-            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_notification))
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_round))
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(getNotificationTitle())
-            .setContentText(getMessageBody())
+            .setContentText(getNotificationBody())
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)
@@ -62,7 +65,7 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
         return DailyJobResult.SUCCESS
     }
 
-    private fun getMessageBody(): CharSequence {
+    private fun getNotificationBody(): CharSequence {
         val remainingSteps = getRemainingDailyGoalSteps()
         return if (remainingSteps > 0)
             buildSpannedString {

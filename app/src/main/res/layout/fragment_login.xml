@@ -41,7 +41,7 @@
         app:lottie_speed="0.7"
         app:lottie_autoPlay="true"
         android:layout_marginTop="@dimen/_20sdp"
-        tools:src="@drawable/splash_tree"
+        tools:src="@drawable/app_icon_login"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

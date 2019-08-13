@@ -144,4 +144,7 @@ dependencies {
 
     //FCM
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
+
+    //AppIntro
+    implementation 'com.github.AppIntro:AppIntro:5.1.0'
 }

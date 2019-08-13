@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
@@ -16,10 +17,12 @@ import com.google.android.gms.fitness.data.DataType
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.messaging.FirebaseMessaging
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -82,6 +85,13 @@ class MainViewModel(
         Crashlytics.setUserEmail(user.email)
         Crashlytics.setUserName(user.name)
         Crashlytics.setUserIdentifier(user.uid)
+    }
+
+    fun subscribeToFCMDailyGoalNotification(context: Context) {
+        FirebaseMessaging.getInstance().subscribeToTopic("DailyGoal")
+            .addOnSuccessListener {
+                "Subscribed".toast(context)
+            }
     }
 
     fun startLoginAndConfiguration(activity: FragmentActivity) {

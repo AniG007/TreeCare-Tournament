@@ -141,4 +141,7 @@ dependencies {
 
     //Crashlytics
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+    //FCM
+    implementation 'com.google.firebase:firebase-messaging:19.0.1'
 }

@@ -70,6 +70,8 @@ class LoginFragment : Fragment() {
                     if (it == 2) {
                         //loadingDialog.dismiss()
                         mainViewModel.setCrashlyticsUserIdentifiers()
+                        mainViewModel.subscribeToFCMDailyGoalNotification(context)
+
                         NavHostFragment.findNavController(this@LoginFragment)
                             .navigate(R.id.action_loginFragment_to_modeSelectionFragment)
                     }

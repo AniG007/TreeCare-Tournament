@@ -128,6 +128,9 @@
     <string name="logout_title">Logout/Switch account</string>
     <string name="challenges">Challenges</string>
 
+    <string name="goal_completed_notification">You achieved your daily goal today. Congratulations!</string>
+    <string name="daily_goal_remaining_notification">You are %d steps away from achieving your daily goal</string>
+
     <string name="profile_image_start_transition">profile_image_start_transition</string>
     <string name="profile_image_end_transition">profile_image_end_transition</string>
 </resources>

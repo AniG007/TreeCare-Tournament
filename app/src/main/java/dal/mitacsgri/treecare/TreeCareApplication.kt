@@ -6,7 +6,8 @@ import androidx.work.WorkManager
 import com.evernote.android.job.JobApi
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
-import dal.mitacsgri.treecare.backgroundtasks.jobcreator.TrophiesUpdateJobCreator
+import dal.mitacsgri.treecare.backgroundtasks.jobcreator.MainJobCreator
+import dal.mitacsgri.treecare.backgroundtasks.jobs.DailyGoalNotificationJob
 import dal.mitacsgri.treecare.backgroundtasks.jobs.TrophiesUpdateJob
 import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
 import dal.mitacsgri.treecare.di.appModule
@@ -15,7 +16,8 @@ import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.di.stepCountRepositoryModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.HOURS
+import java.util.concurrent.TimeUnit.MINUTES
 
 class TreeCareApplication : Application() {
 
@@ -29,12 +31,22 @@ class TreeCareApplication : Application() {
         }
 
         val updateUserChallengeDataRequest =
-            PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, TimeUnit.MINUTES).build()
+            PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, MINUTES).build()
 
         WorkManager.getInstance(this).enqueue(updateUserChallengeDataRequest)
 
         JobConfig.setApiEnabled(JobApi.WORK_MANAGER, false)
-        JobManager.create(this).addJobCreator(TrophiesUpdateJobCreator())
+        JobManager.create(this).addJobCreator(MainJobCreator())
         TrophiesUpdateJob.scheduleJob()
+        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(6),
+            HOURS.toMillis(6) + MINUTES.toMillis(15))
+        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(13),
+            HOURS.toMillis(13) + MINUTES.toMillis(15))
+        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(18),
+            HOURS.toMillis(18) + MINUTES.toMillis(15))
+        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(21),
+            HOURS.toMillis(21) + MINUTES.toMillis(15))
+        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(11) + MINUTES.toMillis(45),
+            HOURS.toMillis(12))
     }
 }

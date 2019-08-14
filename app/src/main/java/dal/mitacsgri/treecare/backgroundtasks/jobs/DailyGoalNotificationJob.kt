@@ -18,6 +18,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.DAILY_GOAL_NOTIFICATION_CHANNEL_ID
 import dal.mitacsgri.treecare.consts.FCM_NOTIFICATION_CHANNEL_ID
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainActivity
 import expandDailyGoalMapIfNeeded
 import org.joda.time.DateTime
@@ -28,6 +29,7 @@ import kotlin.random.Random
 class DailyGoalNotificationJob: DailyJob(), KoinComponent {
 
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
+    private val stepCountRepository: StepCountRepository by inject()
 
     companion object {
 
@@ -42,18 +44,26 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
 
         createNotificationChannel()
 
+        stepCountRepository.getTodayStepCountData {
+            createNotification(it)
+        }
+
+        return DailyJobResult.SUCCESS
+    }
+
+    private fun createNotification(remainingSteps: Int) {
         val notificationIntent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-        val title = getNotificationTitle()
-        val body = getNotificationBody()
+        val title= getNotificationTitle()
+        val body = getNotificationBody(remainingSteps)
 
         val notificationBuilder = NotificationCompat.Builder(context, FCM_NOTIFICATION_CHANNEL_ID)
             .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher_round))
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(getNotificationTitle())
-            .setContentText(getNotificationBody())
+            .setContentTitle(title)
+            .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
@@ -61,12 +71,9 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
             .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(1, notificationBuilder.build())
-
-        return DailyJobResult.SUCCESS
     }
 
-    private fun getNotificationBody(): CharSequence {
-        val remainingSteps = getRemainingDailyGoalSteps()
+    private fun getNotificationBody(remainingSteps: Int): CharSequence {
         return if (remainingSteps > 0)
             buildSpannedString {
                 append("You are ")

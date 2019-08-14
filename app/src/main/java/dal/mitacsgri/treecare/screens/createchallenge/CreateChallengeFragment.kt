@@ -78,7 +78,9 @@ class CreateChallengeFragment : Fragment() {
                 viewModel.createChallenge(name = inputTeamName.text,
                     description = inputTeamDescription.text,
                     type = CHALLENGE_TYPE_DAILY_GOAL_BASED,
-                    goal = inputChallengeGoal.text)
+                    goal = inputChallengeGoal.text) {
+                    findNavController().navigateUp()
+                }
             }
         }
 

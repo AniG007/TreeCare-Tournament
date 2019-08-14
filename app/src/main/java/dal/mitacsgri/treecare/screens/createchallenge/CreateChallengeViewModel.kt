@@ -44,11 +44,12 @@ class CreateChallengeViewModel(
         return isFullDataValid.value ?: false
     }
 
-    fun createChallenge(name: Editable?, description: Editable?, type: Int, goal: Editable?) {
+    fun createChallenge(name: Editable?, description: Editable?, type: Int, goal: Editable?, action: (Boolean) -> Unit) {
         if (areAllInputFieldsValid()) {
             firestoreRepository.getChallenge(name.toString()).addOnSuccessListener {
                 if (it.exists()) {
                     messageLiveData.value = "Challenge already exists"
+                    action(it.exists())
                     return@addOnSuccessListener
                 } else {
                     firestoreRepository.storeChallenge(
@@ -63,6 +64,7 @@ class CreateChallengeViewModel(
                             creatorUId = sharedPrefsRepository.user.uid,
                             exist = true,
                             active = true)) {
+                        action(it)
                         messageLiveData.value = if (it) "Challenge created successfully"
                                                 else "Challenge creation failed"
                     }

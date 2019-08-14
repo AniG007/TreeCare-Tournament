@@ -45,10 +45,7 @@
         <service
             android:name=".services.StepDetectorService"
             android:enabled="true"
-            android:exported="false" /> <!-- <service -->
-        <!-- android:name="com.evernote.android.job.gcm.PlatformGcmService" -->
-        <!-- android:enabled="true" -->
-        <!-- tools:replace="android:enabled" /> -->
+            android:exported="false" />
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

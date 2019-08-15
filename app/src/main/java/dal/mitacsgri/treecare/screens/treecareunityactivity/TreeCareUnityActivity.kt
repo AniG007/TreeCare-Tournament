@@ -16,6 +16,7 @@ import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.consts.STARTER_MODE
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.User
@@ -26,6 +27,7 @@ import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardActivity
 import dal.mitacsgri.treecare.screens.progressreport.ProgressReportActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
+import org.joda.time.DateTime
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.*
@@ -71,6 +73,9 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startService()
+
+        sharedPrefsRepository.storeDailyStepsGoal(
+            sharedPrefsRepository.user.dailyGoalMap[DateTime().getMapFormattedDate()] ?: 5000)
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 

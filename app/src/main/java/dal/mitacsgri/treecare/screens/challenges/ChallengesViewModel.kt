@@ -210,7 +210,7 @@ class ChallengesViewModel(
             challengeFruitCount = userChallenge.fruitCount
             challengeStreak = userChallenge.challengeGoalStreak
             challengeName = userChallenge.name
-            challengeTotalStepsCount = userChallenge.totalSteps
+            challengeTotalStepsCount = if (challenge.active) getDailyStepCount() else userChallenge.totalSteps
 
             action()
         }

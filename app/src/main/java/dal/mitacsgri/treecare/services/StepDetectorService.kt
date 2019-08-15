@@ -15,6 +15,8 @@ import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.SensorRequest
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
@@ -48,7 +50,8 @@ class StepDetectorService: Service(), KoinComponent {
 
         startForeground(1, notification)
 
-        updateStepCountUsingApi()
+        if (isRealtimeUpdateRequired()) updateStepCountUsingApi()
+        else sharedPrefsRepository.storeDailyStepCount(sharedPrefsRepository.challengeTotalStepsCountk)
 
         return START_NOT_STICKY
     }
@@ -138,4 +141,8 @@ class StepDetectorService: Service(), KoinComponent {
             }
         }
     }
+
+    private fun isRealtimeUpdateRequired() =
+        (sharedPrefsRepository.gameMode == STARTER_MODE) or
+                ((sharedPrefsRepository.gameMode == CHALLENGER_MODE) and sharedPrefsRepository.isChallengeActive)
 }

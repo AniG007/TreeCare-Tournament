@@ -178,6 +178,10 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.challenge_type, value)
         }
 
+    var isChallengeActive
+        get() = getBoolean(R.string.challenge_is_active, false)
+        set(value) { storeBoolean(R.string.challenge_is_active, value) }
+
     var challengeLeafCount: Int = 0
         set(value) {
             challengeLastLeafCount = getInt(R.string.challenge_leaf_count)

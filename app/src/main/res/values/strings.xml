@@ -57,6 +57,7 @@
     <string name="challenge_streak">challenge_streak</string>
     <string name="challenge_name">challenge_name</string>
     <string name="challenge_total_steps_count">challenge_total_steps_count</string>
+    <string name="challenge_is_active">challenge_is_active</string>
     <string name="leaderboard_position">leaderboard_position</string>
 
     <!--App UI text-->

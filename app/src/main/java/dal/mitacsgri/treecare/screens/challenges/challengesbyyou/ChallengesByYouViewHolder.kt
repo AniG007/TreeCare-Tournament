@@ -6,6 +6,7 @@ import android.view.View
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.extensions.disable
+import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
@@ -48,6 +49,7 @@ class ChallengesByYouViewHolder(
             }
 
             if (item.active && !viewModel.hasUserJoinedChallenge(item)) {
+                buttonJoin.enable()
                 buttonJoin.setOnClickListener {
                     MaterialAlertDialogBuilder(context)
                         .setTitle("Join the challenge")

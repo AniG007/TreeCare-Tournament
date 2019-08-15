@@ -231,8 +231,7 @@ class MainViewModel(
                     userExistsAction(user)
                     sharedPrefsRepository.user = user
                     storeDailyGoalInPrefs()
-                }
-                else {
+                } else {
                     val user = userDoesNotExistAction()
                     firestoreRepository.storeUser(user)
                     Log.e("USER", it.toString())

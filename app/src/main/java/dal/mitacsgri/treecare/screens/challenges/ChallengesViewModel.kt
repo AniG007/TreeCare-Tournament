@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import calculateLeafCountFromStepCount
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
@@ -107,8 +106,7 @@ class ChallengesViewModel(
 
                 //Do this to display the leaf count as soon as the user joins the challenge
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
-                    userChallenge.leafCount = calculateLeafCountFromStepCount(
-                        sharedPrefsRepository.getDailyStepCount(), challenge.goal)
+                    userChallenge.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
                 }
                 val user = sharedPrefsRepository.user
                 user.currentChallenges[challenge.name] = userChallenge
@@ -275,6 +273,7 @@ class ChallengesViewModel(
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user
         userChallenge.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
+        userChallenge.totalSteps = sharedPrefsRepository.getDailyStepCount()
         user.currentChallenges[userChallenge.name] = userChallenge
         sharedPrefsRepository.user = user
     }

@@ -4,11 +4,16 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
 import org.joda.time.Days
+import org.joda.time.format.DateTimeFormat
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.util.*
 
 /**
@@ -18,7 +23,9 @@ import java.util.*
 class StepCountDataProvidingViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository)
-    : ViewModel() {
+    : ViewModel(), KoinComponent {
+
+    private val db: FirestoreRepository by inject()
 
     val isLoginDone = sharedPrefsRepository.isLoginDone
 
@@ -51,6 +58,7 @@ class StepCountDataProvidingViewModel(
 
     fun accessStepCountDataUsingApi() {
 
+        fixDailyGoalMap()
         stepCountRepository.apply {
 
             //Get aggregate step count up to the last day
@@ -78,9 +86,9 @@ class StepCountDataProvidingViewModel(
 
                 var totalLeafCountTillLastDay = 0
                 it.forEach { (date, stepCount) ->
-                    val goal = sharedPrefsRepository.user.dailyGoalMap[date.toString()]
+                    val goal = sharedPrefsRepository.user.dailyGoalMap[DateTime(date).getMapFormattedDate()] ?: 5000
                     totalLeafCountTillLastDay +=
-                        calculateLeafCountFromStepCount(stepCount, goal!!)
+                        calculateLeafCountFromStepCount(stepCount, goal)
                     Log.d("Date: $date", "StepCount: $stepCount")
                 }
 
@@ -144,21 +152,24 @@ class StepCountDataProvidingViewModel(
 
     private fun expandDailyGoalMapIfNeeded(user: User) {
         val dailyGoalMap = user.dailyGoalMap
-        var keysList = mutableListOf<Long>()
+        var keysList = mutableListOf<String>()
         dailyGoalMap.keys.forEach {
-            keysList.add(it.toLong())
+            keysList.add(it)
         }
         keysList = keysList.sorted().toMutableList()
-        val lastTime = keysList[keysList.size-1]
-        val days = Days.daysBetween(DateTime(lastTime), DateTime()).days
 
-        val oldGoal = dailyGoalMap[lastTime.toString()]
+        val lastTime = keysList[keysList.size-1]
+        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
+        val days = Days.daysBetween(lastDate, DateTime()).days
+
+        val oldGoal = dailyGoalMap[lastTime]
 
         for (i in 1..days) {
-            val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+            val key = DateTime(lastTime).plusDays(i).getMapFormattedDate()
             user.dailyGoalMap[key] = oldGoal!!
         }
 
+        user.dailyGoalMap = dailyGoalMap.toSortedMap()
         sharedPrefsRepository.user = user
     }
 
@@ -197,5 +208,26 @@ class StepCountDataProvidingViewModel(
         sharedPrefsRepository.dailyGoalAchievedCount = dailyGoalAchievedCount
         sharedPrefsRepository.dailyGoalStreakString = goalStreakStringBuilder.toString()
         sharedPrefsRepository.isGoalCompletionSteakChecked = true
+    }
+
+    private fun fixDailyGoalMap() {
+        if (!sharedPrefsRepository.isDailyGoalMapFixed) {
+            sharedPrefsRepository.isDailyGoalMapFixed = true
+
+            val dailyGoalMap = sharedPrefsRepository.user.dailyGoalMap
+            val fixedMap = mutableMapOf<String, Int>()
+
+            dailyGoalMap.forEach { (key, value) ->
+                val date = DateTime(key.toLong())
+                fixedMap[date.getMapFormattedDate()] = value
+            }
+
+            sharedPrefsRepository.myMap = dailyGoalMap.toString()
+
+            db.updateUserData(sharedPrefsRepository.user.uid,
+                mapOf("dailyGoalMap" to fixedMap.toSortedMap()))
+
+            Log.d("Map", fixedMap.toSortedMap().toString())
+        }
     }
 }

@@ -22,6 +22,7 @@ import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -29,6 +30,7 @@ import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.dialog.logindataloading.LoginDataLoadingDialog
 import org.joda.time.DateTime
 import org.joda.time.Days
+import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 class MainViewModel(
@@ -246,22 +248,24 @@ class MainViewModel(
 
     private fun expandDailyGoalMapIfNeeded(user: User) {
         val dailyGoalMap = user.dailyGoalMap
-        var keysList = mutableListOf<Long>()
+        var keysList = mutableListOf<String>()
         dailyGoalMap.keys.forEach {
-            keysList.add(it.toLong())
+            keysList.add(it)
         }
         keysList = keysList.sorted().toMutableList()
 
         val lastTime = keysList[keysList.size-1]
-        val days = Days.daysBetween(DateTime(lastTime), DateTime()).days
+        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
+        val days = Days.daysBetween(lastDate, DateTime()).days
 
-        val oldGoal = dailyGoalMap[lastTime.toString()]
+        val oldGoal = dailyGoalMap[lastTime]
 
         for (i in 1..days) {
-            val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+            val key = DateTime(lastTime).plusDays(i).getMapFormattedDate()
             user.dailyGoalMap[key] = oldGoal!!
         }
 
+        user.dailyGoalMap = dailyGoalMap.toSortedMap()
         sharedPrefsRepository.user = user
     }
 

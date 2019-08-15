@@ -235,6 +235,18 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.leaderboard_position, value)
         }
 
+    var isDailyGoalMapFixed
+        get() = getBoolean(R.string.daily_goal_map_fixed, false)
+        set(value) { storeBoolean(R.string.daily_goal_map_fixed, value) }
+
+    var myMap
+        get() = sharedPref.getString("myMap", "")
+        set(value) {
+            sharedPref.edit {
+                putString("myMap", value)
+            }
+        }
+
     fun storeDailyStepCount(stepCount: Int) {
         storeInt(R.string.daily_step_count, stepCount)
     }

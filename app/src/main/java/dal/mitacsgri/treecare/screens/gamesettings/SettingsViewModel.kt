@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import org.joda.time.DateTime
 import org.joda.time.Days
+import org.joda.time.format.DateTimeFormat
 
 /**
  * Created by Devansh on 24-06-2019
@@ -31,7 +33,7 @@ class SettingsViewModel(
     fun getCurrentVolume() = (sharedPrefRepository.volume*10).toInt()
 
     fun getCurrentDailyStepsGoal() = sharedPrefRepository.user
-        .dailyGoalMap[DateTime().plusDays(1).millis.toString()] ?: 5000
+        .dailyGoalMap[DateTime().plusDays(1).getMapFormattedDate()] ?: 5000
 
     fun saveSettings(volume: Int, updatedStepGoal: Int, action: () -> Unit) {
         val oldVolume = sharedPrefRepository.volume
@@ -41,7 +43,7 @@ class SettingsViewModel(
         storeUpdatedStepGoalInPrefs(updatedStepGoal)
 
         //Doing this to prevent database update when changing only volume
-        if (oldVolume != newVolume) {
+        if (oldVolume == newVolume) {
             firestoreRepository.storeUser(sharedPrefRepository.user)
                 .addOnSuccessListener {
                     action()
@@ -60,7 +62,7 @@ class SettingsViewModel(
         //Actually, this will be the date from which the new goal will be applicable
         val lastGoalChangeTime = DateTime().plusDays(1).withTimeAtStartOfDay().millis
         //Set the goal as updated daily goal for the next day
-        user.dailyGoalMap[lastGoalChangeTime.toString()] = updatedStepGoal
+        user.dailyGoalMap[DateTime(lastGoalChangeTime).getMapFormattedDate()] = updatedStepGoal
         user.lastGoalChangeTime = lastGoalChangeTime
 
         completeUserDailyGoalMap(user, updatedStepGoal)
@@ -73,25 +75,27 @@ class SettingsViewModel(
     private fun completeUserDailyGoalMap(user: User, updatedStepGoal: Int) {
         val dailyGoalMap = user.dailyGoalMap
 
-        var keysList = mutableListOf<Long>()
+        var keysList = mutableListOf<String>()
         dailyGoalMap.keys.forEach {
-            keysList.add(it.toLong())
+            keysList.add(it)
         }
         keysList = keysList.sorted().toMutableList()
 
         //This needs to be done only for the last element, because the map is done every time,
         //So every time only last element needs to be checked
         val lastTime = keysList[keysList.size-1]
-        val days = Days.daysBetween(DateTime(lastTime), DateTime(user.lastGoalChangeTime)).days
+        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
+        val days = Days.daysBetween(lastDate, DateTime()).days
 
-        val oldGoal = dailyGoalMap[lastTime.toString()]
+        val oldGoal = dailyGoalMap[lastTime]
 
         //The days for which no change in daily goal was made by the user are filled by the last daily goal
         for (i in 1..days) {
-            val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+            val key = DateTime(lastTime).plusDays(i).getMapFormattedDate()
             dailyGoalMap[key] = oldGoal!!
         }
 
-        dailyGoalMap[user.lastGoalChangeTime.toString()] = updatedStepGoal
+        dailyGoalMap[DateTime(user.lastGoalChangeTime).getMapFormattedDate()] = updatedStepGoal
+        user.dailyGoalMap = dailyGoalMap.toSortedMap()
     }
 }

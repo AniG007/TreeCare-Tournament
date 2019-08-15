@@ -17,6 +17,7 @@ import com.evernote.android.job.JobRequest
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.DAILY_GOAL_NOTIFICATION_CHANNEL_ID
 import dal.mitacsgri.treecare.consts.FCM_NOTIFICATION_CHANNEL_ID
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.MainActivity
@@ -102,7 +103,7 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
     private fun getRemainingDailyGoalSteps(): Int {
         expandDailyGoalMapIfNeeded(sharedPrefsRepository.user.dailyGoalMap)
         val dailyGoal = sharedPrefsRepository.user
-            .dailyGoalMap[DateTime().millis.toString()] ?: 5000
+            .dailyGoalMap[DateTime().getMapFormattedDate()] ?: 5000
         val dailyStepCount = sharedPrefsRepository.getDailyStepCount()
 
         return if (dailyGoal > dailyStepCount) dailyGoal - dailyStepCount else 0

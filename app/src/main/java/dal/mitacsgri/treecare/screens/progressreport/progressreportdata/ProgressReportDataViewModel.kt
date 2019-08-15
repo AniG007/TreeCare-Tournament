@@ -12,6 +12,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.extensions.i
 import dal.mitacsgri.treecare.model.ProgressReportDataItem
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -193,6 +194,6 @@ class ProgressReportDataViewModel(
     private fun getProgressReportDataItem(date: Long, stepCount: Int)
             : ProgressReportDataItem {
         return ProgressReportDataItem(date, stepCount,
-            sharedPreferencesRepository.user.dailyGoalMap[date.toString()] ?: 5000)
+            sharedPreferencesRepository.user.dailyGoalMap[DateTime(date).getMapFormattedDate()] ?: 5000)
     }
 }

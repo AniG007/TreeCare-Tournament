@@ -59,6 +59,7 @@
     <string name="challenge_total_steps_count">challenge_total_steps_count</string>
     <string name="challenge_is_active">challenge_is_active</string>
     <string name="leaderboard_position">leaderboard_position</string>
+    <string name="daily_goal_map_fixed">daily_goal_map_fixed</string>
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>

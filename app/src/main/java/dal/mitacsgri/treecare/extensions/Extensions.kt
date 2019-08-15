@@ -122,3 +122,6 @@ fun ImageView.makeGrayscale() {
 fun TextView.getTextAsInt() = text.toString().toIntOrNull() ?: 0
 
 fun TextView.getTextAsFloat() = text.toString().toFloatOrNull() ?: 0.0f
+
+//Gives formatted date used as key for daily goal map
+fun DateTime.getMapFormattedDate(): String = toString("yyyy/MM/dd")

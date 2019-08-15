@@ -1,5 +1,6 @@
 package dal.mitacsgri.treecare.model
 
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import org.joda.time.DateTime
 
 /**
@@ -12,9 +13,9 @@ data class User (
     val firstLoginTime: Long = 0,
     val name: String = "",
     val email: String = "",
-    val dailyGoalMap: MutableMap<String, Int> = mutableMapOf(
-        DateTime(firstLoginTime).withTimeAtStartOfDay().millis.toString() to 5000,
-        DateTime(firstLoginTime).plusDays(1).withTimeAtStartOfDay().millis.toString() to 5000
+    var dailyGoalMap: MutableMap<String, Int> = mutableMapOf(
+        DateTime(firstLoginTime).getMapFormattedDate() to 5000,
+        DateTime(firstLoginTime).plusDays(1).getMapFormattedDate() to 5000
     ),
     var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis,
     val currentChallenges: MutableMap<String, UserChallenge> = mutableMapOf(),

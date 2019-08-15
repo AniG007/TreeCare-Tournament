@@ -1,7 +1,9 @@
+import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import org.joda.time.Days
 import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 
 /**
  * Created by Devansh on 03-08-2019
@@ -19,22 +21,23 @@ fun calculateLeafCountFromStepCount(stepCount: Int, dailyGoal: Int): Int {
 fun expandDailyGoalMapIfNeeded(dailyGoalMap: MutableMap<String, Int>)
         : Map<String, Int> {
 
-    var keysList = mutableListOf<Long>()
+    var keysList = mutableListOf<String>()
     dailyGoalMap.keys.forEach {
-        keysList.add(it.toLong())
+        keysList.add(it)
     }
     keysList = keysList.sorted().toMutableList()
 
     val lastTime = keysList[keysList.size-1]
-    val days = Days.daysBetween(DateTime(lastTime), DateTime()).days
+    val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
+    val days = Days.daysBetween(lastDate, DateTime()).days
 
-    val oldGoal = dailyGoalMap[lastTime.toString()]
+    val oldGoal = dailyGoalMap[lastTime]
 
     for (i in 1..days) {
-        val key = DateTime(lastTime).plusDays(i).withTimeAtStartOfDay().millis.toString()
+        val key = DateTime(lastTime).plusDays(i).getMapFormattedDate()
         dailyGoalMap[key] = oldGoal!!
     }
-    return dailyGoalMap
+    return dailyGoalMap.toSortedMap()
 }
 
 fun getStartOfWeek(dateMillis: Long): Long {

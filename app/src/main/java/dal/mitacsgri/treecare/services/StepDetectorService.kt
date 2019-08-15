@@ -50,9 +50,11 @@ class StepDetectorService: Service(), KoinComponent {
 
         startForeground(1, notification)
 
-        if (isRealtimeUpdateRequired()) updateStepCountUsingApi()
-        else sharedPrefsRepository.storeDailyStepCount(sharedPrefsRepository.challengeTotalStepsCount)
-
+        stepCountRepository.getTodayStepCountData {
+            sharedPrefsRepository.storeDailyStepCount(it)
+            if (isRealtimeUpdateRequired()) updateStepCountUsingApi()
+            else sharedPrefsRepository.storeDailyStepCount(sharedPrefsRepository.challengeTotalStepsCount)
+        }
         return START_NOT_STICKY
     }
 

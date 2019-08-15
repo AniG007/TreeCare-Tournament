@@ -142,4 +142,5 @@
 
     <string name="profile_image_start_transition">profile_image_start_transition</string>
     <string name="profile_image_end_transition">profile_image_end_transition</string>
+    <string name="create_challenge">Create challenge</string>
 </resources>

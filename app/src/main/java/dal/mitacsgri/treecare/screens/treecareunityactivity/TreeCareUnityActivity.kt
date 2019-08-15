@@ -20,6 +20,7 @@ import dal.mitacsgri.treecare.extensions.getMapFormattedDate
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Challenger
 import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
@@ -74,8 +75,12 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         super.onCreate(savedInstanceState)
         startService()
 
-        sharedPrefsRepository.storeDailyStepsGoal(
-            sharedPrefsRepository.user.dailyGoalMap[DateTime().getMapFormattedDate()] ?: 5000)
+        sharedPrefsRepository.apply {
+            if (gameMode == STARTER_MODE) {
+                sharedPrefsRepository.storeDailyStepsGoal(
+                    sharedPrefsRepository.user.dailyGoalMap[DateTime().getMapFormattedDate()] ?: 5000)
+            }
+        }
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -228,7 +233,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     }
 
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
-        val userChallengeData = user.currentChallenges[challenge.name]!!
+        val userChallengeData = user.currentChallenges[challenge.name] ?: UserChallenge()
 
         return Challenger(
             name = user.name,

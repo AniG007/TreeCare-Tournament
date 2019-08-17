@@ -210,6 +210,7 @@ class StepCountDataProvidingViewModel(
         sharedPrefsRepository.isGoalCompletionSteakChecked = true
     }
 
+    //Remove this function if all the users have moved to a version greater than the first version
     private fun fixDailyGoalMap() {
         if (!sharedPrefsRepository.isDailyGoalMapFixed) {
             sharedPrefsRepository.isDailyGoalMapFixed = true
@@ -224,10 +225,14 @@ class StepCountDataProvidingViewModel(
 
             sharedPrefsRepository.myMap = dailyGoalMap.toString()
 
-            db.updateUserData(sharedPrefsRepository.user.uid,
-                mapOf("dailyGoalMap" to fixedMap.toSortedMap()))
+            val newSortedMap = fixedMap.toSortedMap()
 
-            Log.d("Map", fixedMap.toSortedMap().toString())
+            db.updateUserData(sharedPrefsRepository.user.uid,
+                mapOf("dailyGoalMap" to newSortedMap))
+
+            val user = sharedPrefsRepository.user
+            user.dailyGoalMap = newSortedMap
+            sharedPrefsRepository.user = user
         }
     }
 }

@@ -38,13 +38,16 @@ class TreeCareApplication : Application() {
         JobConfig.setApiEnabled(JobApi.WORK_MANAGER, false)
         JobManager.create(this).addJobCreator(MainJobCreator())
         TrophiesUpdateJob.scheduleJob()
+
+        val tag ="DailyGoalNotificationJob"
+
         DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(6),
-            HOURS.toMillis(6) + MINUTES.toMillis(15))
+            HOURS.toMillis(6) + MINUTES.toMillis(15), tag + 1)
         DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(13),
-            HOURS.toMillis(13) + MINUTES.toMillis(15))
+            HOURS.toMillis(13) + MINUTES.toMillis(15), tag + 2)
         DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(18),
-            HOURS.toMillis(18) + MINUTES.toMillis(15))
+            HOURS.toMillis(18) + MINUTES.toMillis(15), tag + 3)
         DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(21),
-            HOURS.toMillis(21) + MINUTES.toMillis(15))
+            HOURS.toMillis(21) + MINUTES.toMillis(15), tag + 4)
     }
 }

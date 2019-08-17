@@ -36,8 +36,8 @@ class DailyGoalNotificationJob: DailyJob(), KoinComponent {
 
         const val TAG = "DailyGoalNotificationJob"
 
-        fun scheduleJob(startTime: Long, endTime: Long) {
-            schedule(JobRequest.Builder(TAG), startTime,endTime)
+        fun scheduleJob(startTime: Long, endTime: Long, tag: String) {
+            schedule(JobRequest.Builder(tag), startTime,endTime)
         }
     }
 

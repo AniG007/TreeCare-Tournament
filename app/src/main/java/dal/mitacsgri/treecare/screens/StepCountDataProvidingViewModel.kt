@@ -165,7 +165,7 @@ class StepCountDataProvidingViewModel(
         val oldGoal = dailyGoalMap[lastTime]
 
         for (i in 1..days) {
-            val key = DateTime(lastTime).plusDays(i).getMapFormattedDate()
+            val key = lastDate.plusDays(i).getMapFormattedDate()
             user.dailyGoalMap[key] = oldGoal!!
         }
 

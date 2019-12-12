@@ -39,6 +39,8 @@ class CurrentChallengesViewHolder(
                 findNavController().navigate(action)
             }
 
+            buttonExit.visibility = if (item.active) View.VISIBLE else View.INVISIBLE
+
             buttonExit.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
                     .setTitle("Delete challenge")

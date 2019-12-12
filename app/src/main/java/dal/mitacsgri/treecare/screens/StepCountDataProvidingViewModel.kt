@@ -58,13 +58,13 @@ class StepCountDataProvidingViewModel(
 
     fun accessStepCountDataUsingApi() {
 
-        fixDailyGoalMap()
+        //fixDailyGoalMap()
         stepCountRepository.apply {
 
             //Get aggregate step count up to the last day
             getStepCountDataOverARange(
                 DateTime(sharedPrefsRepository.user.firstLoginTime).withTimeAtStartOfDay().millis,
-                DateTime().withTimeAtStartOfDay().millis
+                DateTime().minusMonths(1).withTimeAtStartOfDay().millis
             ) {
 
                 if (!sharedPrefsRepository.isGoalCompletionSteakChecked) {

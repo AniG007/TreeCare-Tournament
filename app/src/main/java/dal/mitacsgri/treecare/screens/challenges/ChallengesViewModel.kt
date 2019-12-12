@@ -89,10 +89,12 @@ class ChallengesViewModel(
         val userChallenge = getUserChallenge(challenge)
         val uid = sharedPrefsRepository.user.uid
 
+        updateUserSharedPrefsData(userChallenge)
+
         firestoreRepository.updateUserData(uid,
             mapOf("currentChallenges.${challenge.name}" to userChallenge))
             .addOnSuccessListener {
-                updateUserSharedPrefsData(userChallenge)
+                //updateUserSharedPrefsData(userChallenge)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
 

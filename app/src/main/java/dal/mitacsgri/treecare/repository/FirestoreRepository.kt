@@ -98,4 +98,8 @@ class FirestoreRepository {
 
     fun storeTrophiesData(userId: String, trophies: UserChallengeTrophies) =
             db.collection(COLLECTION_TROPHIES).document(userId).set(trophies)
+
+    fun changeUserName(userId: String, newName: String) =
+            db.collection(COLLECTION_USERS).document(userId)
+                .update(mapOf("name" to newName))
 }

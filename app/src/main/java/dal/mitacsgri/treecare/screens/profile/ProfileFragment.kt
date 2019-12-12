@@ -19,6 +19,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainActivity
+import kotlinx.android.synthetic.main.dialog_edit_name.view.*
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -113,19 +115,25 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    fun createEditNameDialog() {
+    private fun createEditNameDialog() {
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_name, null)
+        val usernameEditText = dialogView.usernameInput.editText
+
+        usernameEditText?.setText(nameTV.text)
 
         val alertDialog = AlertDialog.Builder(context)
             .setView(dialogView)
             .setCancelable(false)
-            .setPositiveButton("Save", { dialogInterface: DialogInterface, i: Int ->
-
-            })
-            .setNegativeButton("Back", { dialogInterface: DialogInterface, i: Int ->
-
-            }).create()
+            .setPositiveButton("Save") { dialogInterface: DialogInterface, i: Int ->
+                val newName = usernameEditText?.text.toString()
+                mViewModel.updateUserName(newName) {
+                    nameTV.text = newName
+                }
+            }
+            .setNegativeButton("Back") { dialogInterface: DialogInterface, i: Int ->
+                dialogInterface.dismiss()
+            }.create()
 
         alertDialog.setOnShowListener {
             val negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)

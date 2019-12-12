@@ -11,7 +11,7 @@ data class User (
     val uid: String = "",
     val isFirstRun: Boolean = false,
     val firstLoginTime: Long = 0,
-    val name: String = "",
+    var name: String = "",
     val email: String = "",
     var dailyGoalMap: MutableMap<String, Int> = mutableMapOf(
         DateTime(firstLoginTime).getMapFormattedDate() to 5000,

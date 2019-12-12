@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/userEmailInput"
+        android:id="@+id/usernameInput"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginStart="@dimen/_10sdp"
         app:endIconMode="clear_text"
-        android:hint="Enter an email"
+        android:hint="Enter new name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title">
@@ -39,43 +39,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
-
-<!--    <EditText-->
-<!--        android:id="@+id/userEmailInput"-->
-<!--        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:backgroundTint="@color/transparent"-->
-<!--        android:layout_marginEnd="@dimen/_10sdp"-->
-<!--        android:layout_marginTop="@dimen/_10sdp"-->
-<!--        android:layout_marginStart="@dimen/_10sdp"-->
-<!--        app:endIconMode="clear_text"-->
-<!--        android:hint="Enter an email"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/title">-->
-<!--    </EditText>-->
-
-<!--    <com.google.android.material.button.MaterialButton-->
-<!--        android:id="@+id/buttonBack"-->
-<!--        style="@style/Widget.MaterialComponents.Button.TextButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/back"-->
-<!--        android:textAllCaps="false"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/buttonSave"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/userEmailInput" />-->
-
-<!--    <com.google.android.material.button.MaterialButton-->
-<!--        android:id="@+id/buttonSave"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="@string/save"-->
-<!--        android:textAllCaps="false"-->
-<!--        style="@style/Widget.MaterialComponents.Button.TextButton"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/userEmailInput" />-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -75,6 +75,18 @@ class ProfileViewModel(
             }
     }
 
+    fun updateUserName(newName: String, successAction: () -> Unit) {
+        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("name" to newName))
+            .addOnSuccessListener {
+                updateUserNameInSharedPrefs(newName)
+                successAction()
+                Log.d("UserName", "Name changed to $newName")
+            }
+            .addOnFailureListener {
+                Log.d("UserName", "Name change failed")
+            }
+    }
+
     fun logout(context: Context) {
         sharedPrefsRepository.clearSharedPrefs()
         Fitness.getConfigClient(context, GoogleSignIn.getLastSignedInAccount(context)!!).disableFit()
@@ -82,5 +94,11 @@ class ProfileViewModel(
         Crashlytics.setUserName("")
         Crashlytics.setUserEmail("")
         //TODO: Maybe cancellation of jobs is needed
+    }
+
+    private fun updateUserNameInSharedPrefs(newName: String) {
+        val user = sharedPrefsRepository.user
+        user.name = newName
+        sharedPrefsRepository.user = user
     }
 }

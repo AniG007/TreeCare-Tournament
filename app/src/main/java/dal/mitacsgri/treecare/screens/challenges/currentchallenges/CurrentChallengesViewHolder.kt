@@ -43,8 +43,8 @@ class CurrentChallengesViewHolder(
 
             buttonExit.setOnClickListener {
                 MaterialAlertDialogBuilder(context)
-                    .setTitle("Delete challenge")
-                    .setMessage("Do you really want to delete the challenge '${item.name}' ?")
+                    .setTitle("Leave challenge")
+                    .setMessage("Do you really want to leave the challenge '${item.name}' ?")
                     .setPositiveButton("No") { dialogInterface: DialogInterface, i: Int ->
                         dialogInterface.dismiss()
                     }

@@ -1,11 +1,15 @@
 package dal.mitacsgri.treecare.screens.profile
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -42,7 +46,7 @@ class ProfileFragment : Fragment() {
                 .apply(RequestOptions.circleCropTransform())
                 .into(profileImageView)
 
-            nameTV.text = mViewModel.getUserFullName()
+            nameTV.text = mViewModel.getUserFirstName()
 
             backButton.setOnClickListener {
                 findNavController().navigateUp()
@@ -62,6 +66,11 @@ class ProfileFragment : Fragment() {
                         "Logged out".toast(context)
                     }
                     .show()
+            }
+
+            buttonEdit.setOnClickListener {
+                //findNavController().navigate(R.id.action_profileFragment_to_editNameDialog)
+                createEditNameDialog()
             }
 
             buttonProgressReport.setOnClickListener {
@@ -102,6 +111,39 @@ class ProfileFragment : Fragment() {
             }
             
         }
+    }
+
+    fun createEditNameDialog() {
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_name, null)
+
+        val alertDialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(false)
+            .setPositiveButton("Save", { dialogInterface: DialogInterface, i: Int ->
+
+            })
+            .setNegativeButton("Back", { dialogInterface: DialogInterface, i: Int ->
+
+            }).create()
+
+        alertDialog.setOnShowListener {
+            val negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            negativeButton.apply {
+                setBackgroundColor(Color.TRANSPARENT)
+                setTextColor(ContextCompat.getColor(alertDialog.context, R.color.colorPrimary))
+            }
+
+            val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton.apply {
+                setBackgroundColor(Color.TRANSPARENT)
+                setTextColor(ContextCompat.getColor(alertDialog.context, R.color.colorPrimary))
+            }
+        }
+
+        alertDialog.show()
+
+
     }
 
 }

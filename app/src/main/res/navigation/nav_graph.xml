@@ -245,7 +245,15 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"
             app:popUpTo="@id/profileFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_profileFragment_to_editNameDialog"
+            app:destination="@id/editNameDialog" />
     </fragment>
+    <dialog
+        android:id="@+id/editNameDialog"
+        android:name="dal.mitacsgri.treecare.screens.dialog.editname.EditNameDialog"
+        android:label="EditNameDialog" >
+    </dialog>
     <fragment
         android:id="@+id/progressReportFragment"
         android:name="dal.mitacsgri.treecare.screens.progressreport.ProgressReportFragment"

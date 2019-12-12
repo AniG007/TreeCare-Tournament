@@ -26,6 +26,8 @@ class ProfileViewModel(
 
     fun getUserFullName() = sharedPrefsRepository.user.name
 
+    fun getUserFirstName() = sharedPrefsRepository.user.name.split(' ')[0]
+
     fun getDailyGoalCompletionStreakCount() = sharedPrefsRepository.dailyGoalStreak
 
     fun getWeeklyDailyGoalAchievedCount() = sharedPrefsRepository.dailyGoalAchievedCount

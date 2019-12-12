@@ -92,12 +92,23 @@
         android:textStyle="bold"
         android:paddingEnd="@dimen/_4sdp"
         app:layout_constraintBottom_toTopOf="@+id/email"
-        app:layout_constraintEnd_toStartOf="@id/buttonProgressReport"
+        app:layout_constraintEnd_toStartOf="@id/buttonEdit"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/profileImageView"
         app:layout_constraintTop_toTopOf="@id/profileImageView"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Devansh Maurya" />
+
+    <ImageView
+        android:id="@+id/buttonEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_edit"
+        android:layout_marginEnd="@dimen/_6sdp"
+        app:layout_constraintStart_toEndOf="@id/nameTV"
+        app:layout_constraintTop_toTopOf="@id/nameTV"
+        app:layout_constraintBottom_toBottomOf="@id/nameTV"
+        app:layout_constraintEnd_toStartOf="@id/buttonProgressReport"/>
 
     <TextView
         android:id="@+id/email"

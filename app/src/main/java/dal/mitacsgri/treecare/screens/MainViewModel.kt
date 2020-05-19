@@ -108,7 +108,6 @@ class MainViewModel(
     }
 
     fun onSignInResult(requestCode: Int, resultCode: Int, data: Intent?, activity: Activity) {
-        Log.d("Test","Inside onSignInResult")
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 RC_SIGN_IN -> {
@@ -130,7 +129,6 @@ class MainViewModel(
                                 if (!GoogleSignIn.hasPermissions(
                                         GoogleSignIn.getLastSignedInAccount(mActivity), fitnessOptions)
                                 ) {
-                                    Log.d("FitAPI","User has not granted permission")
                                     GoogleSignIn.requestPermissions(
                                         mActivity,
                                         RC_GOOGLE_FIT_PERMISSIONS,

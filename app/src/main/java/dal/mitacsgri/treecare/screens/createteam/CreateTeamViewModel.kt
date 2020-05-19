@@ -1,10 +1,8 @@
 package dal.mitacsgri.treecare.screens.createteam
 
 import android.text.Editable
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FieldValue
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.repository.FirestoreRepository
@@ -42,23 +40,11 @@ class CreateTeamViewModel(
                             captain = sharedPrefsRepository.user.uid,
                             captainName = sharedPrefsRepository.user.name,
                             members = arrayListOf(sharedPrefsRepository.user.uid)
-                            ))
-
-                    {
-                        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("captainedTeams" to FieldValue.arrayUnion(name.toString())))
-                            .addOnSuccessListener {
-                                Log.d("TAG", "Team Name has been added")
-
-                            }
-                            .addOnFailureListener{
-                                Log.d("TAG","Team Name could not be added for Captain")
-                            }
+                            )) {
                         messageLiveData.value = if (it) "Team created successfully"
                                                 else "Team creation failed"
-
                         action()
                     }
-
                 }
             }
         }

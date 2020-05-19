@@ -6,16 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.viewpager.widget.ViewPager
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
-import kotlinx.android.synthetic.main.fragment_challenges.view.*
 import kotlinx.android.synthetic.main.fragment_tournaments.view.*
-import kotlinx.android.synthetic.main.fragment_tournaments.view.tabLayout
-import kotlinx.android.synthetic.main.fragment_tournaments.view.toolbar
-import kotlinx.android.synthetic.main.fragment_tournaments.view.viewPager
-import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class TournamentsFragment : Fragment() {
 
@@ -29,27 +22,9 @@ class TournamentsFragment : Fragment() {
         view.apply {
             viewPager.adapter = TournamentsPagerAdapter(childFragmentManager)
 
-            viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener{
-                override fun onPageScrollStateChanged(state: Int) {
-                }
-
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                }
-
-                override fun onPageSelected(position: Int) {
-                    when(position) {
-                        0 -> fabCreateTournament.show()
-                        1 -> fabCreateTournament.show()
-                    }
-                }
-            })
-
             tabLayout.setupWithViewPager(viewPager)
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
-            }
-            fabCreateTournament.setOnClickListener{
-                findNavController().navigate(R.id.action_tournamentsFragment_to_createTournamentFragment)
             }
         }
 

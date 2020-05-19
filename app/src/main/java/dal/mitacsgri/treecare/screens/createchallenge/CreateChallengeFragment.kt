@@ -68,7 +68,7 @@ class CreateChallengeFragment : Fragment() {
                 viewModel.areAllInputFieldsValid()
                 viewModel.isGoalValid
             }
-            inputChallengeEndDate.validate("Please provide a challenge end date") {
+            inputChallengeEndDate.validate("Please provide a chalenge end date") {
                 viewModel.isEndDateValid = it.isNotEmpty()
                 viewModel.areAllInputFieldsValid()
                 viewModel.isEndDateValid

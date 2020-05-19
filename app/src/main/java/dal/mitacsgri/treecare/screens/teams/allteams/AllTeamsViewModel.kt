@@ -5,11 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.extensions.getCardItemDescriptorText
 import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.extensions.toArrayList
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -24,8 +22,7 @@ class AllTeamsViewModel(
 
         firestoreRepository.getAllTeams()
             .addOnSuccessListener {
-                //teamsLiveData.value = it.toObjects()
-                teamsLiveData.value = it.toObjects<Team>().filter { it.exist }.toArrayList()
+                teamsLiveData.value = it.toObjects()
                 teamsLiveData.notifyObserver()
             }
             .addOnFailureListener {
@@ -44,25 +41,6 @@ class AllTeamsViewModel(
 
     fun sendJoinRequest(teamName: String, action: (status: Boolean) -> Unit) {
         val uid = sharedPrefsRepository.user.uid
-
-        //commented this part since user may send request to more than one team and same uid cannot be added to
-        // db twice. MutableMap or Map can be an alternative
-        /*firestoreRepository.getTeam(teamName)
-            .addOnSuccessListener {
-            val team = it.toObject<Team>()
-                val captainId = team?.captain
-                firestoreRepository.updateUserData(captainId.toString(), mapOf("userJoinRequests" to FieldValue.arrayUnion(uid)))
-                //firestoreRepository.updateUserJoinRequestInUser(captainId.toString(), team?.name.toString(), uid)
-                    .addOnSuccessListener {
-                        Log.d("sendRequest","userreq sent to captain")
-                        action(true)
-                    }
-                    .addOnFailureListener{
-                        action(false)
-                    }
-
-        }*/
-
 
         firestoreRepository.updateTeamData(teamName,
             mapOf("joinRequests" to FieldValue.arrayUnion(uid)))
@@ -84,8 +62,6 @@ class AllTeamsViewModel(
                 action(false)
             }
     }
-
-
 
     fun cancelJoinRequest(teamName: String, action: (status: Boolean) -> Unit) {
         val uid = sharedPrefsRepository.user.uid

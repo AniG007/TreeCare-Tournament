@@ -14,7 +14,6 @@ class ActiveTournamentsRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ActiveTournamentsViewHolder(viewModel,
             LayoutInflater.from(parent.context).inflate(R.layout.item_active_tournament, parent, false))
-            //LayoutInflater.from(parent.context).inflate(R.layout.item_current_tournament, parent, false))
 
     override fun getItemCount() = tournaments.size
 

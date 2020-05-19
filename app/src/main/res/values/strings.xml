@@ -60,17 +60,6 @@
     <string name="challenge_is_active">challenge_is_active</string>
     <string name="leaderboard_position">leaderboard_position</string>
     <string name="daily_goal_map_fixed">daily_goal_map_fixed</string>
-    <string name="tournament_type">tournament_type</string>
-    <string name="tournament_goal">tournament_goal</string>
-    <string name="tournament_leaf_count">tournament_leaf_count</string>
-    <string name="tournament_last_leaf_count">tournament_last_leaf_count</string>
-    <string name="tournament_fruit_count">tournament_fruit_count</string>
-    <string name="tournament_streak">tournament_streak</string>
-    <string name="tournament_name">tournament_name</string>
-    <string name="tournament_is_active">tournament_is_active</string>
-    <string name="tournament_total_steps_count">tournament_total_steps_count</string>
-
-
 
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
@@ -111,7 +100,6 @@
     <string name="challenge_finished">Challenge finished</string>
     <string name="tournament_mode">Tournament Mode</string>
     <string name="tournaments">Tournaments</string>
-    <string name="team">Team</string>
     <string name="teams">Teams</string>
     <string name="send_join_request">Send Join Request</string>
     <string name="team_name_hint">Team name</string>
@@ -159,12 +147,4 @@
     <string name="create_challenge">Create challenge</string>
     <string name="back">Back</string>
     <string name="enter_a_new_name">Enter a new name</string>
-    <string name="create_tournament">Create Tournament</string>
-    <string name="invite_players">Invite Team Members</string>
-    <string name="tournament_description">Tournament Description</string>
-    <string name="add_teams">Add Teams</string>
-    <string name="InvReq">Invites/Request</string>
-    <string name="team_name">Team Name</string>
-    <string name="invite_players1">Invite</string>
-    <string name="view_team">View Team</string>
 </resources>

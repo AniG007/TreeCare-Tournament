@@ -14,7 +14,6 @@ import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
-import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
@@ -51,10 +50,6 @@ class ModeSelectionFragment : Fragment() {
                 challengerModeButtonAction()
             }
 
-            tournamentModeButton.setOnClickListener(){
-                tournamentModeButtonAction()
-            }
-
             Glide.with(this).load(profileViewModel.getUserPhotoUrl())
                 .placeholder(R.drawable.ic_profile_empty)
                 .apply(RequestOptions.circleCropTransform())
@@ -89,13 +84,6 @@ class ModeSelectionFragment : Fragment() {
                 .actionModeSelectionFragmentToInstructionsFragment(CHALLENGER_MODE)
             findNavController().navigate(action)
         }
-    }
-    private fun tournamentModeButtonAction(){
-        mainViewModel.setGameMode(TOURNAMENT_MODE)
-        val action = ModeSelectionFragmentDirections
-            .actionModeSelectionFragmentToInstructionsFragment(TOURNAMENT_MODE)
-        findNavController().navigate(R.id.action_modeSelectionFragment_to_tournamentModeFragment)
-        //findNavController().navigate(action)
     }
 
     private fun changeBackgroundSolidAndStrokeColor(

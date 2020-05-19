@@ -14,7 +14,6 @@ import org.joda.time.Days
 import org.joda.time.format.DateTimeFormat
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.time.Month
 import java.util.*
 
 /**
@@ -39,7 +38,7 @@ class StepCountDataProvidingViewModel(
     }
 
     fun resetDailyGoalCheckedFlag() {
-        //Will execute only once in each day, when the app is opened for the first time in the day
+        //Will execute only once in each day, when the app is opened for thr first time in the day
         if (sharedPrefsRepository.lastOpenedDayPlus1 < Date().time) {
             sharedPrefsRepository.isDailyGoalChecked = 0
             sharedPrefsRepository.isGoalCompletionSteakChecked = false
@@ -58,11 +57,10 @@ class StepCountDataProvidingViewModel(
     }
 
     fun accessStepCountDataUsingApi() {
-        //Log.d("Test","Inside accessStepCountDataUsingApi")
-        //TODO:fixDailyGoalMap() //See if this is necessary/needed
+
+        //fixDailyGoalMap()
         stepCountRepository.apply {
-            Log.d("Test",DateTime(sharedPrefsRepository.user.firstLoginTime).withTimeAtStartOfDay().millis.toString())
-            Log.d("Test",DateTime().minusMonths(1).withTimeAtStartOfDay().millis.toString())
+
             //Get aggregate step count up to the last day
             getStepCountDataOverARange(
                 DateTime(sharedPrefsRepository.user.firstLoginTime).withTimeAtStartOfDay().millis,
@@ -99,11 +97,10 @@ class StepCountDataProvidingViewModel(
                 var currentLeafCount = totalLeafCountTillLastDay
                 //Add today's leaf count to leafCountTillLastDay
                 //Call needs to be made here because it uses dal.mitacsgri.treecare.data from previous call
-
                 getTodayStepCountData {
                     currentLeafCount += it/1000
                     sharedPrefsRepository.currentLeafCount = currentLeafCount
-                    //TODO: Data Points for Step data that is being fetched is empty
+
                     sharedPrefsRepository.storeDailyStepCount(it)
                     Log.d("DailyStepCount", it.toString())
                     increaseStepCountDataFetchedCounter()

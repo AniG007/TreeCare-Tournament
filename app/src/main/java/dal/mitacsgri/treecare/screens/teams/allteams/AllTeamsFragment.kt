@@ -10,13 +10,11 @@ import androidx.lifecycle.Observer
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_all_teams.view.*
-import kotlinx.android.synthetic.main.item_all_teams_team.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AllTeamsFragment : Fragment() {
 
     private val mViewModel: AllTeamsViewModel by viewModel()
-   // public var teamName = nameTV.text
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -1,14 +1,11 @@
 package dal.mitacsgri.treecare.screens.teams.allteams
 
-import android.util.Log
 import android.view.View
 import androidx.navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Team
-import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.screens.BaseViewHolder
-import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.item_all_teams_team.view.*
 import org.jetbrains.anko.toast
 
@@ -29,11 +26,7 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
             if (viewModel.isUserCaptain(item.captain)) {
                 button.text = context.getString(R.string.invite_member)
                 button.setOnClickListener {
-                    val tName = nameTV.text.toString()
-                    Log.d("TAG","TeamNameinAll"+tName)
-                    val action = TeamsFragmentDirections.actionTeamsFragmentToJoinTeamFragment(tName)
-                    //findNavController().navigate(R.id.action_teamsFragment_to_joinTeamFragment)
-                    findNavController().navigate(action)
+                    findNavController().navigate(R.id.action_teamsFragment_to_inviteMembersDialog)
                 }
             } else {
                 button.text =
@@ -67,29 +60,6 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
             if (viewModel.isJoinRequestSent(team)) cancelJoinRequestListener
             else sendJoinRequestListener)
     }
-   /* private fun invitePlayerAction(button: MaterialButton, user: User) {
-
-        var sendInviteListener = View.OnClickListener {  }
-        var cancelInviteListener = View.OnClickListener {  }
-
-        sendInviteListener = View.OnClickListener {
-            viewModel.sendInvite(user.uid) {
-                changeButtonStateAndBehaviour(
-                    it, button, sendInviteListener, cancelInviteListener)
-            }
-        }
-
-        cancelInviteListener = View.OnClickListener {
-            viewModel.cancelInvite(user.uid) {
-                changeButtonStateAndBehaviour(
-                    !it, button, sendInviteListener, cancelInviteListener)
-            }
-        }
-
-        button.setOnClickListener(
-            if (viewModel.isInviteSent(user)) cancelInviteListener
-            else sendInviteListener)
-    }*/
 
     private fun changeButtonStateAndBehaviour(
         status: Boolean, button: MaterialButton,

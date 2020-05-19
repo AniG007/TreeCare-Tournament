@@ -2,7 +2,10 @@ package dal.mitacsgri.treecare.repository
 
 import android.util.Log
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.consts.*
@@ -20,25 +23,11 @@ class FirestoreRepository {
         return docRef.get()
     }
 
-    fun getAllUserEmail(user: String):Task<QuerySnapshot>{
-        return db.collection(COLLECTION_USERS).whereEqualTo("email",user).get()
-        //val emails = ArrayList<String>()
-        //emails.add(mails.toString())
-        //return users.toString()
-    }
-    fun countUsers(): Int {
-        val users = db.collection(COLLECTION_USERS).toString()
-        return users.count()
-    }
-
     fun storeUser(user: User) = db.collection(COLLECTION_USERS).document(user.uid)
             .set(user, SetOptions.merge())
 
     fun updateUserData(userId: String, values: Map<String, Any>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)
-
-    fun updateUserJoinRequestInUser(captainId:String, userId: String, teamName: String)=
-        db.collection(COLLECTION_USERS).document(captainId).update(teamName,userId)
 
     fun getChallenge(id: String) = db.collection(COLLECTION_CHALLENGES).document(id).get()
 
@@ -78,42 +67,6 @@ class FirestoreRepository {
 
     fun getAllActiveTournaments() = db.collection(COLLECTION_TOURNAMENTS).get()
 
-    fun getTournament(id: String) = db.collection(COLLECTION_TOURNAMENTS).document(id).get()
-
-    fun updateTournamentData(tournamentName: String, values: Map<String, Any>) =
-        db.collection(COLLECTION_TOURNAMENTS).document(tournamentName).update(values)
-
-
-    fun storeTournament(tournament: Tournament, action: (status: Boolean) -> Unit) {
-        db.collection(COLLECTION_TOURNAMENTS).document(tournament.name)
-            .set(tournament)
-            .addOnSuccessListener {
-                action(true)
-                Log.d("Tournament stored", tournament.toString())
-            }
-            .addOnFailureListener {
-                action(false)
-                Log.d("Tournament storefailed ", it.toString() + "Tournament: $tournament")
-            }
-    }
-
-    fun deleteUserFromTournamentDB(tournament: Tournament, userId: String) =
-        db.collection(COLLECTION_TOURNAMENTS).document(tournament.name)
-            .update("players", FieldValue.arrayRemove(userId))
-
-
-    fun deleteTournamentFromUserDB(userId: String, userTournament: UserTournament, userTournamentJson: String) =
-        db.collection(COLLECTION_USERS).document(userId)
-            .update(mapOf("currentTournament.${userTournament.name}" to userTournamentJson))
-
-    fun getAllTournamentsCreatedByUser(userId: String) =
-        db.collection(COLLECTION_TOURNAMENTS)
-            .whereEqualTo("creatorUId", userId).get()
-
-    fun setTournamentAsNonExist(tournamentName: String) =
-        db.collection(COLLECTION_TOURNAMENTS).document(tournamentName)
-            .update("exist", false)
-
     fun getAllTeams() = db.collection(COLLECTION_TEAMS).get()
 
     fun getAllCaptainedTeams(userId: String) = db.collection(COLLECTION_TEAMS)
@@ -123,7 +76,6 @@ class FirestoreRepository {
         .whereArrayContains("members", userId).get()
 
     fun getTeam(teamName: String)  = db.collection(COLLECTION_TEAMS).document(teamName).get()
-
 
     fun storeTeam(team: Team, action: (status: Boolean) -> Unit) {
         db.collection(COLLECTION_TEAMS).document(team.name)
@@ -140,41 +92,6 @@ class FirestoreRepository {
 
     fun updateTeamData(teamName: String, values: Map<String, Any>) =
         db.collection(COLLECTION_TEAMS).document(teamName).update(values)
-
-    fun deleteTeamInvitesFromUser(userId:String, teamName :String) =
-        db.collection(COLLECTION_USERS).document(userId)
-            .update("teamInvites", FieldValue.arrayRemove(teamName))
-
-    fun deleteTeamJoinRequestFromUser(userId:String, teamName :String) =
-        db.collection(COLLECTION_USERS).document(userId)
-            .update("teamJoinRequests", FieldValue.arrayRemove(teamName))
-
-    fun deleteJoinRequestFromTeam (userId:String, teamName :String) =
-        db.collection(COLLECTION_TEAMS).document(teamName)
-            .update("joinRequests", FieldValue.arrayRemove(userId))
-
-    fun deleteInvitedMemberFromTeam (userId:String, teamName :String) =
-        db.collection(COLLECTION_TEAMS).document(teamName)
-            .update("invitedMembers", FieldValue.arrayRemove(userId))
-
-  /*  fun deleteUserJoinRequestFromTeam (userId:String, teamName :String) =
-        db.collection(COLLECTION_TEAMS).document(teamName)
-            .update("joinRequests", FieldValue.arrayRemove(userId))*/
-
-    fun addTeamMember (userId:String, teamName :String) =
-        db.collection(COLLECTION_TEAMS).document(teamName)
-            .update("members", FieldValue.arrayUnion(userId))
-
-    fun addCurrentTeams (userId: String, teamName: String) =
-        db.collection(COLLECTION_USERS).document(userId)
-            .update("currentTeams", FieldValue.arrayUnion(teamName))
-
-    fun deleteTeam (teamName : String) =
-        db.collection(COLLECTION_TEAMS).document(teamName)
-            .update("exist", false)
-    // TODO: Teams/ Challenges/ Tournaments are never deleted.
-
-
 
     fun getTrophiesData(userId: String) =
             db.collection(COLLECTION_TROPHIES).document(userId).get()

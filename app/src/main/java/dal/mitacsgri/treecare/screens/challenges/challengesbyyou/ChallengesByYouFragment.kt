@@ -39,7 +39,6 @@ class ChallengesByYouFragment : Fragment() {
 
         mViewModel.challengesByYouList.observe(this, Observer {
             //TODO: There should be a better approach to this
-            //TODO: Active Listeners have to be implemented in the future for dynamic page updates
             view.recyclerView.adapter = ChallengesByYouRecyclerViewAdapter(it, mViewModel)
         })
 

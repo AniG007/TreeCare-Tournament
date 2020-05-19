@@ -58,7 +58,7 @@ fun <T> MutableLiveData<T>.notifyObserver() {
 fun LayoutInflater.createFragmentViewWithStyle(
     activity: Activity?, layout: Int, style: Int,
     root: ViewGroup? = null, attachToRoot: Boolean = false): View =
-    cloneInContext(ContextThemeWrapper(activity, style)).inflate(layout, root, attachToRoot)
+        cloneInContext(ContextThemeWrapper(activity, style)).inflate(layout, root, attachToRoot)
 
 fun TextInputEditText.validate(message: String, action: (String) -> Boolean = { it.isNotEmpty() }) {
     addTextChangedListener(object: TextWatcher {
@@ -104,12 +104,12 @@ fun ImageButton.enable() {
 }
 
 fun getCardItemDescriptorText(property: String, value: String) =
-    buildSpannedString {
-        bold {
-            append("$property: ")
+        buildSpannedString {
+            bold {
+                append("$property: ")
+            }
+            append(value)
         }
-        append(value)
-    }
 
 infix fun Boolean.xnor(other: Boolean): Boolean = !(this.xor(other))
 

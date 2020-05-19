@@ -1,1 +1,1 @@
-include ':app', ':TreeCareUnityModule', ':TreeCarePrototype'
+include ':app', ':TreeCareUnityModule'

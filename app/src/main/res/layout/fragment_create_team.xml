@@ -95,7 +95,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:layout_marginTop="@dimen/_40sdp"
-                android:backgroundTint="@color/tournament_mode_primary_color"
                 android:text="@string/create"
                 android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"

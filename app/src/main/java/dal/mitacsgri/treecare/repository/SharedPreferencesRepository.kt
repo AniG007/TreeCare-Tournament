@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.core.content.edit
 import com.google.gson.Gson
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.User
 import org.json.JSONException
 
@@ -167,24 +166,6 @@ class SharedPreferencesRepository(val context: Context) {
                 putString(context.getString(R.string.user), Gson().toJson(value))
             }
         }
-//Added by Anirudh
-    var team: Team
-        get(){
-            try{
-                return Gson().fromJson(
-                    sharedPref.getString(context.getString(R.string.team), ""),
-                    Team::class.java
-                )
-            } catch(e: JSONException){
-                Log.e("Exception", e.toString())
-            }
-            return Team()
-        }
-    set(value){
-        sharedPref.edit{
-            putString(context.getString(R.string.team), Gson().toJson(value))
-        }
-    }
 
     var gameMode
         get() = getInt(R.string.game_mode)
@@ -196,18 +177,10 @@ class SharedPreferencesRepository(val context: Context) {
         set(value) {
             storeInt(R.string.challenge_type, value)
         }
-    var tournamentType = 0
-        set(value) {
-            storeInt(R.string.tournament_type, value)
-        }
 
     var isChallengeActive
         get() = getBoolean(R.string.challenge_is_active, false)
         set(value) { storeBoolean(R.string.challenge_is_active, value) }
-
-    var isTournamentActive
-        get() = getBoolean(R.string.tournament_is_active, false)
-        set(value) { storeBoolean(R.string.tournament_is_active, value) }
 
     var challengeLeafCount: Int = 0
         set(value) {
@@ -215,46 +188,24 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.challenge_leaf_count, value)
         }
 
-    var tournamentLeafCount: Int = 0
-        set(value) {
-            tournamentLastLeafCount = getInt(R.string.tournament_leaf_count)
-            storeInt(R.string.tournament_leaf_count, value)
-        }
-
     private var challengeLastLeafCount = 0
         set(value) {
             storeInt(R.string.challenge_last_leaf_count, value)
-        }
-    private var tournamentLastLeafCount = 0
-        set(value) {
-            storeInt(R.string.tournament_last_leaf_count, value)
         }
 
     var challengeFruitCount: Int = 0
         set(value) {
             storeInt(R.string.challenge_fruit_count, value)
         }
-    var tournamentFruitCount: Int = 0
-        set(value) {
-            storeInt(R.string.tournament_fruit_count, value)
-        }
 
     var challengeGoal = 0
         set(value) {
             storeInt(R.string.challenge_goal, value)
         }
-    var tournamentGoal = 0
-        set(value) {
-            storeInt(R.string.tournament_goal, value)
-        }
 
     var challengeStreak = 0
         set(value) {
             storeInt(R.string.challenge_streak, value)
-        }
-    var tournamentStreak = 0
-        set(value) {
-            storeInt(R.string.tournament_streak, value)
         }
 
     var challengeName
@@ -264,24 +215,11 @@ class SharedPreferencesRepository(val context: Context) {
                 putString(context.getString(R.string.challenge_name), value)
             }
         }
-    var tournamentName
-        get() = sharedPref.getString(context.getString(R.string.tournament_name), "")
-        set(value) {
-            sharedPref.edit {
-                putString(context.getString(R.string.tournament_name), value)
-            }
-        }
 
     var challengeTotalStepsCount = 0
         set(value) {
             storeInt(R.string.challenge_total_steps_count, value)
         }
-
-    var tournamentTotalStepsCount = 0
-        set(value) {
-            storeInt(R.string.tournament_total_steps_count, value)
-        }
-
 
     var volume
         get() = sharedPref.getFloat(context.getString(R.string.volume), .5f)
@@ -292,11 +230,6 @@ class SharedPreferencesRepository(val context: Context) {
         }
 
     var challengeLeaderboardPosition
-        get() = getInt(R.string.leaderboard_position, 1)
-        set(value) {
-            storeInt(R.string.leaderboard_position, value)
-        }
-    var tournamentLeaderboardPosition
         get() = getInt(R.string.leaderboard_position, 1)
         set(value) {
             storeInt(R.string.leaderboard_position, value)

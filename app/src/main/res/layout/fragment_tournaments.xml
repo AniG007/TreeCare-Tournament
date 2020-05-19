@@ -41,16 +41,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabCreateTournament"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/_16sdp"
-        android:backgroundTint="@color/black"
-        app:icon="@drawable/ic_add"
-        app:iconTint="@color/white"
-        android:text="@string/create"
-        android:textColor="@color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

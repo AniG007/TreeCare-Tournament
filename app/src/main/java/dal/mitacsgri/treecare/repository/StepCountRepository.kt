@@ -3,25 +3,48 @@ package dal.mitacsgri.treecare.repository
 import android.content.Context
 import android.util.Log
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataSet
 import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
+import com.google.android.gms.fitness.result.DataReadResponse
+import com.google.android.gms.fitness.result.DataReadResult
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 class StepCountRepository(private val context: Context) {
 
     fun getTodayStepCountData(onDataObtained: (stepCount: Int) -> Unit) {
-
+        //Intrinsics.checkParameterIsNotNull(onDataObtained, "onDataObtained")
+        //TODO: Data Points for Step data that is being fetched is empty
         var total = 0
+        //total.element = 0
 
-        val response = Fitness.getHistoryClient(context,
-            GoogleSignIn.getLastSignedInAccount(context)!!)
+        val currentTime = Calendar.getInstance()
+        val midNight = Calendar.getInstance()
+        val now = Date()
+        midNight.apply {
+            time = now
+            set(Calendar.MILLISECOND, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.HOUR, 0)
+        }
+        val response = Fitness.getHistoryClient(
+            context,
+            GoogleSignIn.getLastSignedInAccount(context)!!
+        )
             .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
 
         response.addOnSuccessListener {
@@ -34,6 +57,79 @@ class StepCountRepository(private val context: Context) {
             onDataObtained(total)
         }
     }
+        /*val response: Task<DataReadResponse> =
+            Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
+                .readData(
+                    DataReadRequest.Builder()
+                        .read(TYPE_STEP_COUNT_DELTA)
+                        .setTimeRange(
+                            midNight.timeInMillis,
+                            currentTime.timeInMillis,
+                            TimeUnit.MILLISECONDS
+                        )
+                        .bucketByTime(1, TimeUnit.DAYS)
+                        .build()
+                )
+                .addOnSuccessListener {
+                    Log.d("Test", "Buckets "+it.buckets.toString())
+
+                    for (bucket in it.buckets) {
+                        Log.d("Test","Bucket "+bucket)
+                        val dataSets = bucket.dataSets
+                        for (dataSet in dataSets) {
+                            Log.d("Test","dp's"+dataSet.dataPoints.toString())
+                            for (dataPoint in dataSet.dataPoints) {
+                                Log.d("Datapoint", dataPoint.toString())
+                            }
+                        }
+                    }
+                }
+                .addOnFailureListener{
+                    Log.d("Test","Failed "+it.toString())
+                }*/
+
+
+//        val readDataResult: DataReadResponse? = Tasks.await(response)
+                        /* response.addOnSuccessListener {
+            //val dataSet: DataSet = response.result!!.getDataSet(TYPE_STEP_COUNT_DELTA)
+            val dataSet: DataSet = it.getDataSet(TYPE_STEP_COUNT_DELTA)
+            Log.d("Test", dataSet.dataPoints.toString())
+        }
+        response.addOnFailureListener{
+            Log.d("Test","Unable to fetch today's step data $it")
+        }*/
+
+        // val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(context)
+//        val fitnessOptions: GoogleSignInOptionsExtension = FitnessOptions.builder()
+//            .addDataType(
+//                TYPE_STEP_COUNT_DELTA,
+//                FitnessOptions.ACCESS_READ
+//            )
+//            .build()
+        // val googleSignInAccount = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
+
+        //Log.d("Test","name ${googleSignInAccount.displayName}")
+
+
+
+
+        /*response.addOnSuccessListener {
+            total = it.getDataPoints().size
+            //total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
+            // total = it.getDataPoints().get(0).getValue(FIELD_STEPS).asInt();
+
+            Log.d("DailyStepCount","This "+total.toString())
+
+            Log.d("DailyStepCount", total.toString())
+            onDataObtained(total)
+        }.addOnFailureListener {
+            Log.e("DailyStepCount", "error: $it")
+            onDataObtained(total)
+        }*/
+
+
+
+
 
     fun getLastDayStepCountData(mClient: GoogleApiClient, onDataObtained: (stepCount: Int) -> Unit) {
         val cal = Calendar.getInstance()
@@ -79,7 +175,7 @@ class StepCountRepository(private val context: Context) {
     }
 
     fun getStepCountDataOverARange(startTime: Long, endTime: Long, onDataObtained: (stepCount: Map<Long, Int>) -> Unit) {
-
+        //Log.d("Test","Inside getStepCountDataOverARange")
         //This statement prevents running the following code when the app is being used for the first day
         //Otherwise the app will crash
         if (endTime <= startTime) {

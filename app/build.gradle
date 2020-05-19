@@ -43,11 +43,13 @@ android {
 }
 
 dependencies {
-    def nav_version = "2.2.0-alpha01"
+    //def nav_version = "2.2.0-alpha01"
+    def nav_version = "2.3.0-alpha06"
     def lifecycle_version = "2.0.0"
     def koin_version = "2.0.1"
     def work_version = "2.2.0-rc01"
 
+    apply plugin: "androidx.navigation.safeargs.kotlin"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -55,6 +57,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -106,7 +109,7 @@ dependencies {
 
     //Firebase Firestore (with Kotlin extensions)
     implementation 'com.google.firebase:firebase-firestore-ktx:20.2.0'
-
+    implementation 'com.google.firebase:firebase-firestore-ktx:$VERSION'
     //Gson
     implementation 'com.google.code.gson:gson:2.8.5'
 

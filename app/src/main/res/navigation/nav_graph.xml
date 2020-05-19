@@ -115,6 +115,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_instructionsFragment_to_tournamentModeFragment2"
+            app:destination="@id/tournamentModeFragment" />
     </fragment>
     <fragment android:id="@+id/unityPlayerActivity"/>
     <fragment
@@ -190,7 +193,14 @@
         android:id="@+id/tournamentsFragment"
         android:name="dal.mitacsgri.treecare.screens.tournaments.TournamentsFragment"
         android:label="fragment_tournaments"
-        tools:layout="@layout/fragment_tournaments" />
+        tools:layout="@layout/fragment_tournaments" >
+        <action
+            android:id="@+id/action_tournamentsFragment_to_createTournamentFragment"
+            app:destination="@id/createTournamentFragment" />
+        <action
+            android:id="@+id/action_tournamentsFragment_to_leaderboardFragment"
+            app:destination="@id/leaderboardFragment" />
+    </fragment>
     <fragment
         android:id="@+id/teamsFragment"
         android:name="dal.mitacsgri.treecare.screens.teams.TeamsFragment"
@@ -205,7 +215,35 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_teamsFragment_to_inviteMembersDialog"
-            app:destination="@id/inviteMembersDialog" />
+            app:destination="@id/inviteMembersDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_teamsFragment_to_joinTeamFragment"
+            app:destination="@id/joinTeamFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_teamsFragment_to_RequestFragment"
+            app:destination="@id/RequestFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_teamsFragment_to_invitesRequestFragment"
+            app:destination="@id/invitesRequestFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_teamsFragment_to_teamInfoFragment"
+            app:destination="@id/teamInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/createTeamFragment"
@@ -259,4 +297,38 @@
         android:name="dal.mitacsgri.treecare.screens.progressreport.ProgressReportFragment"
         android:label="fragment_progress_report"
         tools:layout="@layout/fragment_progress_report"/>
+    <fragment
+        android:id="@+id/createTournamentFragment"
+        android:name="dal.mitacsgri.treecare.screens.createtournament.CreateTournamentFragment"
+        android:label="fragment_create_tournament"
+        tools:layout="@layout/fragment_create_tournament" />
+    <fragment
+        android:id="@+id/joinTeamFragment"
+        android:name="dal.mitacsgri.treecare.screens.jointeam.JoinTeamFragment"
+        android:label="JoinTeamFragment" >
+        <argument
+            android:name="teamName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/RequestFragment"
+        android:name="dal.mitacsgri.treecare.screens.invitesrequests.request.RequestFragment"
+        android:label="RequestFragment">
+        <argument
+            android:name="teamName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/invitesRequestFragment"
+        android:name="dal.mitacsgri.treecare.screens.invitesrequests.InvitesRequestFragment"
+        android:label="InvitesRequestFragment" />
+    <fragment
+        android:id="@+id/teamInfoFragment"
+        android:name="dal.mitacsgri.treecare.screens.teaminfo.TeamInfoFragment"
+        android:label="fragment_team_info"
+        tools:layout="@layout/fragment_team_info" >
+        <argument
+            android:name="teamName"
+            app:argType="string" />
+    </fragment>
 </navigation>

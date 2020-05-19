@@ -25,7 +25,7 @@ class ActiveTournamentsViewModel(
     fun getActiveTournaments() {
         firestoreRepository.getAllActiveTournaments()
             .addOnSuccessListener {
-                tournaments.value = it.toObjects()
+                tournaments.value = it.toObjects<Tournament>().filter { it.active }
                 tournaments.notifyObserver()
             }
             .addOnFailureListener {
@@ -51,7 +51,7 @@ class ActiveTournamentsViewModel(
         }
     }
 
-    fun getTeamsCountText(tournament: Tournament) = tournament.teams.size.toString()
+    fun getTeam1CountText(tournament: Tournament) = tournament.team1.size.toString()
 
-
-}
+    fun getTeam2CountText(tournament: Tournament)= tournament.team2.size.toString()
+    }

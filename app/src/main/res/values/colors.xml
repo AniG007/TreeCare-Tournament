@@ -22,4 +22,7 @@
 
     <color name="tournament_mode_primary_color">#9C27B0</color>
     <color name="tournament_mode_accent_color">#650D74</color>
+
+    <color name="captain_primary_color">#e68a00</color>
+
 </resources>

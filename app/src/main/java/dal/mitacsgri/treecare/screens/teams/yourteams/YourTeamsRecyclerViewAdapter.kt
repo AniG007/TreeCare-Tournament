@@ -7,12 +7,13 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Team
 
 class YourTeamsRecyclerViewAdapter(
-    private val teams: List<Team>
+    private val teams: List<Team>,
+    private val viewModel: YourTeamsViewModel
 ): RecyclerView.Adapter<YourTeamViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         YourTeamViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_your_captained_team, parent, false))
+            .inflate(R.layout.item_your_captained_team, parent, false), viewModel)
 
     override fun getItemCount() = teams.size
 

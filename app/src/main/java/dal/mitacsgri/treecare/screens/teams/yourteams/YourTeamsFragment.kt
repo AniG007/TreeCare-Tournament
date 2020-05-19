@@ -1,15 +1,17 @@
 package dal.mitacsgri.treecare.screens.teams.yourteams
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.fragment_your_teams.view.*
+import kotlinx.android.synthetic.main.item_your_captained_team.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class YourTeamsFragment : Fragment() {
@@ -25,8 +27,15 @@ class YourTeamsFragment : Fragment() {
 
         view.apply {
             mViewModel.getAllMyTeams().observe(this@YourTeamsFragment, Observer {
-                recyclerView.adapter = YourTeamsRecyclerViewAdapter(it)
+                recyclerView.adapter = YourTeamsRecyclerViewAdapter(it,mViewModel)
             })
+
+            //mViewModel.delBtnVis()
+
+            /*mViewModel.status.observe(this@YourTeamsFragment, Observer {
+                if(it) buttonDelete.visibility = View.VISIBLE
+                else buttonDelete.visibility = View.INVISIBLE
+            })*/
         }
 
         return view

@@ -37,6 +37,10 @@ class TeamsFragment : Fragment() {
                 memberRequestsBadge.visibility = if (it) View.VISIBLE else View.GONE
             })
 
+            memberRequestsIcon.setOnClickListener{
+                findNavController().navigate(R.id.action_teamsFragment_to_invitesRequestFragment)
+            }
+
             fabCreateTeam.setOnClickListener {
                 findNavController().navigate(R.id.action_teamsFragment_to_createTeamFragment)
             }

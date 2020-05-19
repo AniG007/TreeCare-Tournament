@@ -10,6 +10,7 @@ data class Team (
     val joinRequests: ArrayList<String> = arrayListOf(),
     val currentTournaments: ArrayList<String> = arrayListOf(),
     val captain: String = "",
+    val exist :Boolean = true,
     val captainName: String = "",
     val creationTimestamp: Timestamp = Timestamp.now(),
     val newCaptain: String = ""

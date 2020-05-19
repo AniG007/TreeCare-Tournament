@@ -97,7 +97,6 @@ class ChallengesViewModel(
                 //updateUserSharedPrefsData(userChallenge)
                 messageDisplayed = false
                 statusMessage.value = "You are now a part of ${challenge.name}"
-
                 var index = activeChallengesList.value?.indexOf(challenge)!!
                 activeChallengesList.value?.get(index)?.players?.add(uid)
                 activeChallengesList.notifyObserver()
@@ -272,6 +271,7 @@ class ChallengesViewModel(
     fun storeChallengeLeaderboardPosition(position: Int) {
         sharedPrefsRepository.challengeLeaderboardPosition = position
     }
+
 
     private fun updateUserSharedPrefsData(userChallenge: UserChallenge) {
         val user = sharedPrefsRepository.user

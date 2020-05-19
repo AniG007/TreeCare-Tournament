@@ -13,13 +13,19 @@ data class User (
     val firstLoginTime: Long = 0,
     var name: String = "",
     val email: String = "",
+    val captainedTeams : ArrayList<String> = arrayListOf(),
     var dailyGoalMap: MutableMap<String, Int> = mutableMapOf(
         DateTime(firstLoginTime).getMapFormattedDate() to 5000,
         DateTime(firstLoginTime).plusDays(1).getMapFormattedDate() to 5000
     ),
     var lastGoalChangeTime: Long = DateTime(firstLoginTime).withTimeAtStartOfDay().millis,
     val currentChallenges: MutableMap<String, UserChallenge> = mutableMapOf(),
+    val currentTournaments: MutableMap<String, UserTournament> = mutableMapOf(),
     val currentTeams: ArrayList<String> = arrayListOf(),
+   // val teamJoinRequests: ArrayList<TeamRequest> = arrayListOf(), //Created by Devansh
+    val teamInvites: ArrayList<String> = arrayListOf(),
+    //val userJoinRequests: MutableMap<String,String> = mutableMapOf(),
+    val userJoinRequests: ArrayList<String> = arrayListOf(),
     val teamJoinRequests: ArrayList<String> = arrayListOf(),
     val photoUrl: String = "",
     val dailyGoalStreakCount: Int = 0

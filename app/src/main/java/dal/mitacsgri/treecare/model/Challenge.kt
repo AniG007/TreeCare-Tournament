@@ -19,7 +19,6 @@ data class Challenge(
     val creatorName: String = "",
     val creatorUId: String = ""
 ) {
-
     override fun equals(other: Any?): Boolean {
         other as Challenge
         return (name == other.name)

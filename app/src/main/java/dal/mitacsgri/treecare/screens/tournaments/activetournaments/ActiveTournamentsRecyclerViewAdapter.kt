@@ -5,10 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Tournament
+import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 
 class ActiveTournamentsRecyclerViewAdapter(
     private val tournaments: List<Tournament>,
-    private val viewModel: ActiveTournamentsViewModel
+    private val viewModel: TournamentsViewModel
 ): RecyclerView.Adapter<ActiveTournamentsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

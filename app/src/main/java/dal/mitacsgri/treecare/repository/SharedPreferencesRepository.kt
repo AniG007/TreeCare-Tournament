@@ -171,6 +171,8 @@ class SharedPreferencesRepository(val context: Context) {
     var team: Team
         get(){
             try{
+                Log.d("PrefTest","Inside Try Method")
+                Log.d("PrefTest",sharedPref.getString(context.getString(R.string.team), ""))
                 return Gson().fromJson(
                     sharedPref.getString(context.getString(R.string.team), ""),
                     Team::class.java

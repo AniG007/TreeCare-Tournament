@@ -15,6 +15,9 @@
         android:paddingStart="@dimen/_12sdp"
         android:paddingTop="@dimen/_10sdp"
         android:paddingEnd="@dimen/_12sdp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         android:paddingBottom="@dimen/_10sdp">
 
         <TextView
@@ -24,6 +27,11 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_18sdp"
             android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

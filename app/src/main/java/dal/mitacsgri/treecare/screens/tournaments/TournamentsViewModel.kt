@@ -234,8 +234,8 @@ class TournamentsViewModel(
         }
     }
 
-    fun hasUserJoinedTournament(tournament: Tournament): Boolean {
-        return sharedPrefsRepository.user.currentTournaments[tournament.name] != null
+    fun hasTeamJoinedTournament(tournament: Tournament): Boolean {
+        return sharedPrefsRepository.team.currentTournaments.contains(tournament.name) != null
     }
 
  /*   fun getTournamentTypeText(tournament: Tournament) =
@@ -258,8 +258,9 @@ class TournamentsViewModel(
         }
 
     //fun getPlayersCountText(tournament: Tournament) = tournament.players.size.toString()
-    fun getTeam1CountText(tournament: Tournament) = tournament.team1.size.toString()
-    fun getTeam2CountText(tournament: Tournament) = tournament.team2.size.toString()
+    //fun getTeam1CountText(tournament: Tournament) = tournament.team1.size.toString()
+    //fun getTeam2CountText(tournament: Tournament) = tournament.team2.size.toString()
+    fun getTeamsCountText(tournament: Tournament) = tournament.teams.size.toString()
 
     fun getCurrentUserId() = sharedPrefsRepository.user.uid
 
@@ -271,7 +272,7 @@ class TournamentsViewModel(
             }
         }
 
-    fun getJoinTournamemtMessageText() = "Are you ready to join now?"
+    fun getJoinTournamentMessageText() = "Are you ready to join now?"
 
     fun storeTournamentLeaderboardPosition(position: Int) {
         sharedPrefsRepository.tournamentLeaderboardPosition = position

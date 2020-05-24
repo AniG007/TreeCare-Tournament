@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.createtournament
 
 import android.text.Editable
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
@@ -46,7 +47,8 @@ class CreateTournamentViewModel (
         return "$dayOfMonth / ${monthOfYear+1} / $year"
     }
 
-    fun getRegexToMatchStepsGoal() = Regex("([5-9][0-9]*(000)+)|([1-9]+0*0000)")
+    //fun getRegexToMatchStepsGoal() = Regex("([5-9][0-9]*(000)+)|([1-9]+0*0000)")
+    fun getRegexToMatchStepsGoal() = Regex("([1-9]+0*000)") //For checking if goalsteps > = 10,000 and not more than 90,000
 
     fun areAllInputFieldsValid(): Boolean {
         isFullDataValid.value = isNameValid and isGoalValid and isEndDateValid
@@ -119,6 +121,9 @@ class CreateTournamentViewModel (
                 .addOnFailureListener {
                     messageLiveData.value = "Failure"
                 }
+        }
+        else{
+            Log.d("Test","Tournament creation failed")
         }
     }
 

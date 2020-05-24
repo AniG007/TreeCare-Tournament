@@ -200,6 +200,9 @@
         <action
             android:id="@+id/action_tournamentsFragment_to_leaderboardFragment"
             app:destination="@id/leaderboardFragment" />
+        <action
+            android:id="@+id/action_tournamentsFragment_to_enrollTeamsFragment"
+            app:destination="@id/enrollTeamsFragment" />
     </fragment>
     <fragment
         android:id="@+id/teamsFragment"
@@ -329,6 +332,15 @@
         tools:layout="@layout/fragment_team_info" >
         <argument
             android:name="teamName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/enrollTeamsFragment"
+        android:name="dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsFragment"
+        android:label="fragment_enroll_teams"
+        tools:layout="@layout/fragment_enroll_teams" >
+        <argument
+            android:name="tournamentName"
             app:argType="string" />
     </fragment>
 </navigation>

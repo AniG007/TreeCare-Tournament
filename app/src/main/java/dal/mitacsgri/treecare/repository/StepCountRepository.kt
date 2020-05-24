@@ -9,6 +9,7 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataSet
 import com.google.android.gms.fitness.data.DataType
+import com.google.android.gms.fitness.data.DataType.AGGREGATE_STEP_COUNT_DELTA
 import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
@@ -39,13 +40,13 @@ class StepCountRepository(private val context: Context) {
             set(Calendar.MILLISECOND, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MINUTE, 0)
-            set(Calendar.HOUR, 0)
+            set(Calendar.HOUR, -12) //Setting time to current day's midnight. setting it to 0 was putting the clock at noon
         }
         val response = Fitness.getHistoryClient(
             context,
             GoogleSignIn.getLastSignedInAccount(context)!!
         )
-            .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA)
+            .readDailyTotal(TYPE_STEP_COUNT_DELTA)
 
         response.addOnSuccessListener {
             if (it.dataPoints.size > 0)
@@ -56,12 +57,16 @@ class StepCountRepository(private val context: Context) {
             Log.e("DailyStepCount", "error: $it")
             onDataObtained(total)
         }
-    }
+        //Log.d("Test",currentTime.toString())
+
+        Log.d("Test","Midnight"+midNight.timeInMillis)
+        Log.d("Test","CurrentTime"+currentTime.timeInMillis)
+
         /*val response: Task<DataReadResponse> =
             Fitness.getHistoryClient(context, GoogleSignIn.getLastSignedInAccount(context)!!)
                 .readData(
                     DataReadRequest.Builder()
-                        .read(TYPE_STEP_COUNT_DELTA)
+                        .aggregate(TYPE_STEP_COUNT_DELTA, AGGREGATE_STEP_COUNT_DELTA)
                         .setTimeRange(
                             midNight.timeInMillis,
                             currentTime.timeInMillis,
@@ -71,15 +76,21 @@ class StepCountRepository(private val context: Context) {
                         .build()
                 )
                 .addOnSuccessListener {
+                    Log.d("Test","dataset "+it.dataSets.toString())
+                    Log.d("Test","Millis"+System.currentTimeMillis().toString())
                     Log.d("Test", "Buckets "+it.buckets.toString())
+                    Log.d("Test","Millis"+System.currentTimeMillis().toString())
 
                     for (bucket in it.buckets) {
                         Log.d("Test","Bucket "+bucket)
-                        val dataSets = bucket.dataSets
+                        //val dataSets = bucket.dataSets
+                        val dataSets: List<DataSet>  = bucket.dataSets
                         for (dataSet in dataSets) {
+                            Log.d("Test","dataset "+dataSet.toString())
                             Log.d("Test","dp's"+dataSet.dataPoints.toString())
                             for (dataPoint in dataSet.dataPoints) {
                                 Log.d("Datapoint", dataPoint.toString())
+                                onDataObtained(dataPoint)
                             }
                         }
                     }
@@ -87,6 +98,8 @@ class StepCountRepository(private val context: Context) {
                 .addOnFailureListener{
                     Log.d("Test","Failed "+it.toString())
                 }*/
+    }
+
 
 
 //        val readDataResult: DataReadResponse? = Tasks.await(response)
@@ -147,7 +160,7 @@ class StepCountRepository(private val context: Context) {
         val startTime = cal.timeInMillis
 
         val readRequest = DataReadRequest.Builder()
-            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .aggregate(TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
             .bucketByTime(1, TimeUnit.DAYS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
@@ -186,7 +199,7 @@ class StepCountRepository(private val context: Context) {
         val stepCountMap = mutableMapOf<Long, Int>()
 
         val readRequest = DataReadRequest.Builder()
-            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .aggregate(TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
             .bucketByTime(1, TimeUnit.DAYS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()
@@ -222,7 +235,7 @@ class StepCountRepository(private val context: Context) {
         }
 
         val readRequest = DataReadRequest.Builder()
-            .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .aggregate(TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
             .bucketByTime(1, TimeUnit.HOURS)
             .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
             .build()

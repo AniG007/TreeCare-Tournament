@@ -53,11 +53,7 @@ class TeamInfoFragment : Fragment() {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = TeamInfoRecyclerViewAdapter(it, mViewModel)
                 }
-
             })
-
-
-
         }
         return view
 

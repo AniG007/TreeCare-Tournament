@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.fragment_active_tournaments.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActiveTournamentsFragment : Fragment() {
 
-    private val mViewModel: ActiveTournamentsViewModel by viewModel()
+    private val mViewModel: TournamentsViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,15 +28,15 @@ class ActiveTournamentsFragment : Fragment() {
         view.apply {
             recyclerView.apply {
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                adapter = ActiveTournamentsRecyclerViewAdapter(mViewModel.tournaments.value!!, mViewModel)
+                adapter = ActiveTournamentsRecyclerViewAdapter(mViewModel.activeTournamentsList.value!!, mViewModel)
             }
 
-            mViewModel.tournaments.observe(this@ActiveTournamentsFragment, Observer {
+            mViewModel.activeTournamentsList.observe(this@ActiveTournamentsFragment, Observer {
                 recyclerView.adapter = ActiveTournamentsRecyclerViewAdapter(it, mViewModel)
             })
         }
 
-        mViewModel.getActiveTournaments()
+        mViewModel.getAllActiveTournaments()
 
         return view
     }

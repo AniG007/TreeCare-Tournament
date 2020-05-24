@@ -27,8 +27,8 @@ class CurrentTournamentsViewHolder(
             nameTV.text = item.name
             goalTV.text = viewModel.getGoalText(item)
             durationTV.text = viewModel.getTournamentDurationText(item)
-            team1CountTV.text = viewModel.getTeam1CountText(item)
-            team2CountTV.text = viewModel.getTeam2CountText(item)
+            team1CountTV.text = viewModel.getTeamsCountText(item)
+            team2CountTV.text = viewModel.getTeamsCountText(item)
 
             buttonTree.setOnClickListener {
                 viewModel.startUnityActivityForTournament(item) {

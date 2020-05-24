@@ -10,6 +10,7 @@ import dal.mitacsgri.treecare.screens.createchallenge.CreateChallengeViewModel
 import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.createtournament.CreateTournamentViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
+import dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
 import dal.mitacsgri.treecare.screens.instructions.InstructionsViewModel
 import dal.mitacsgri.treecare.screens.invitesrequests.InvitesRequestViewModel
@@ -63,4 +64,5 @@ val appModule = module {
     viewModel {InvitesRequestViewModel(get(),get())}
     viewModel { JoinTeamViewModel(get()) }
     viewModel { TeamInfoViewModel(get(),get(),get())}
+    viewModel { EnrollTeamsViewModel(get(),get())}
 }

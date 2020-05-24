@@ -167,4 +167,6 @@
     <string name="team_name">Team Name</string>
     <string name="invite_players1">Invite</string>
     <string name="view_team">View Team</string>
+    <string name="enrollteams">Enroll Teams</string>
+    <string name="enroll">Enroll</string>
 </resources>

@@ -14,6 +14,7 @@ import dal.mitacsgri.treecare.extensions.toDateTime
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import org.joda.time.DateTime
 
 class ActiveTournamentsViewModel(
     private val firestoreRepository: FirestoreRepository,
@@ -41,17 +42,16 @@ class ActiveTournamentsViewModel(
     }
 
     fun getTournamentDurationText(tournament: Tournament): SpannedString {
+
+        val finishDate = tournament.finishTimestamp.toDateTime().millis
         val finishDateString = tournament.finishTimestamp.toDateTime().getStringRepresentation()
+        val tournamentEnded = finishDate < DateTime().millis
 
         return buildSpannedString {
             bold {
-                append("Ends: ")
+                append(if (tournamentEnded) "Ended: " else "Ends: ")
             }
             append(finishDateString)
         }
     }
-
-    fun getTeam1CountText(tournament: Tournament) = tournament.team1.size.toString()
-
-    fun getTeam2CountText(tournament: Tournament)= tournament.team2.size.toString()
-    }
+}

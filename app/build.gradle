@@ -70,8 +70,10 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.0.2'
 
     //Google Fitness API
-    implementation 'com.google.android.gms:play-services-fitness:17.0.0'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+//    implementation 'com.google.android.gms:play-services-fitness:17.0.0'
+//    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-fitness:18.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
 
     //Intuit
     implementation 'com.intuit.sdp:sdp-android:1.0.6'

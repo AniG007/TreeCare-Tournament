@@ -102,6 +102,7 @@ class ChallengesViewModel(
                 activeChallengesList.notifyObserver()
 
                 index = challengesByYouList.value?.indexOf(challenge)!!
+                Log.d("Test","Index "+index)
                 if (index != -1) challengesByYouList.value?.get(index)?.players?.add(uid)
                 challengesByYouList.notifyObserver()
 
@@ -109,10 +110,10 @@ class ChallengesViewModel(
                 if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                     userChallenge.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
                 }
+
                 val user = sharedPrefsRepository.user
                 user.currentChallenges[challenge.name] = userChallenge
                 sharedPrefsRepository.user = user
-
                 successAction()
             }
             .addOnFailureListener {

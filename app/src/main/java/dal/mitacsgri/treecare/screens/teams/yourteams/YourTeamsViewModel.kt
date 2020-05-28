@@ -14,6 +14,7 @@ import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import kotlin.system.exitProcess
 
 class YourTeamsViewModel(
     private val firestoreRepository: FirestoreRepository,
@@ -40,11 +41,42 @@ class YourTeamsViewModel(
     }
 
     fun deleteTeam(team : Team){
+
+        val teamMembers = team.members
+        val tournaments = team.currentTournaments
+        var count = 0
+        for (member in teamMembers){
+            firestoreRepository.updateUserData(member,mapOf("currentTeams" to FieldValue.arrayRemove(team.name)))
+                .addOnSuccessListener {
+                    for(tournament in tournaments){
+                        firestoreRepository.updateTournamentData(tournament, mapOf("teams" to FieldValue.arrayRemove(team.name)))
+                        firestoreRepository.deleteTournamentFromUserDB(member, tournament)
+                    }
+                }
+            count++
+            if(count.equals(teamMembers.size)){
+                firestoreRepository.deleteTeam(team.name)
+                    .addOnSuccessListener {
+                        firestoreRepository.updateUserData(team.captain,mapOf("captainedTeams" to FieldValue.arrayRemove(team.name)))
+                            .addOnSuccessListener {
+                                Log.d("Test", "Deletion of Team is successful")
+                                teamsLiveData.value?.remove(team)
+                                teamsLiveData.notifyObserver()
+                            }
+                    }
+            }
+        }
+
+
+
+
+
         firestoreRepository.deleteTeam(team.name)
             .addOnSuccessListener {
                 teamsLiveData.value?.remove(team)
                 teamsLiveData.notifyObserver()
             }
+
     }
 
     fun isUserCaptain(captainUid: String) = captainUid == sharedPrefsRepository.user.uid

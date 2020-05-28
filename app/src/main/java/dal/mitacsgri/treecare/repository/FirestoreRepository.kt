@@ -37,6 +37,9 @@ class FirestoreRepository {
     fun updateUserData(userId: String, values: Map<String, Any>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)
 
+    fun updateUserTournamentData(userId: String, values: Map<String, UserTournament?>) =
+        db.collection(COLLECTION_USERS).document(userId).update(values)
+
     fun updateUserJoinRequestInUser(captainId:String, userId: String, teamName: String)=
         db.collection(COLLECTION_USERS).document(captainId).update(teamName,userId)
 
@@ -102,9 +105,12 @@ class FirestoreRepository {
             .update("players", FieldValue.arrayRemove(userId))
 
 
-    fun deleteTournamentFromUserDB(userId: String, userTournament: UserTournament, userTournamentJson: String) =
-        db.collection(COLLECTION_USERS).document(userId)
-            .update(mapOf("currentTournament.${userTournament.name}" to userTournamentJson))
+
+
+
+//    fun deleteTournamentFromUserDB(userId: String, userTournament: UserTournament, userTournamentJson: String) =
+//        db.collection(COLLECTION_USERS).document(userId)
+//            .update(mapOf("currentTournament.${userTournament.name}" to userTournamentJson))
 
     fun getAllTournamentsCreatedByUser(userId: String) =
         db.collection(COLLECTION_TOURNAMENTS)
@@ -174,7 +180,8 @@ class FirestoreRepository {
             .update("exist", false)
     // TODO: Teams/ Challenges/ Tournaments are never deleted.
 
-
+    fun deleteTournamentFromUserDB (uid: String, tournamentname: String) =
+        db.collection(COLLECTION_USERS).document(uid).update( mapOf("currentTournaments.${tournamentname}" to FieldValue.delete()))
 
     fun getTrophiesData(userId: String) =
             db.collection(COLLECTION_TROPHIES).document(userId).get()

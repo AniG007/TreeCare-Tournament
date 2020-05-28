@@ -58,8 +58,9 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
 
         cancelJoinRequestListener = View.OnClickListener {
             viewModel.cancelJoinRequest(team.name) {
-                changeButtonStateAndBehaviour(
-                    !it, button, sendJoinRequestListener, cancelJoinRequestListener)
+                changeButtonStateAndBehaviourTwo(
+                    //!it, button, sendJoinRequestListener, cancelJoinRequestListener)
+                    it, button, sendJoinRequestListener, cancelJoinRequestListener)
             }
         }
 
@@ -92,20 +93,44 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
     }*/
 
     private fun changeButtonStateAndBehaviour(
-        status: Boolean, button: MaterialButton,
+        status: String, button: MaterialButton,
         sendJoinRequestListener: View.OnClickListener, cancelJoinRequestListener: View.OnClickListener) {
 
         val context = button.context
 
         context.apply {
-            if (status) {
+            if (status.equals("true")) {
                 toast(R.string.join_request_sent)
                 button.text = context.getString(R.string.cancel_request)
                 button.setOnClickListener(cancelJoinRequestListener)
-            } else {
+            }
+            else if(status.equals("teamexists")){
+                toast(R.string.join_request_exceed)
+            }
+            else {
                 toast(R.string.join_request_cancelled)
                 button.text = context.getString(R.string.send_join_request)
                 button.setOnClickListener(sendJoinRequestListener)
+            }
+        }
+    }
+
+    private fun changeButtonStateAndBehaviourTwo(
+        status: String, button: MaterialButton,
+        sendJoinRequestListener: View.OnClickListener, cancelJoinRequestListener: View.OnClickListener) {
+
+        val context = button.context
+
+        context.apply {
+            if (status.equals("true")) {
+                toast(R.string.join_request_cancelled)
+                button.text = context.getString(R.string.send_join_request)
+                button.setOnClickListener(sendJoinRequestListener)
+            }
+            else {
+                toast(R.string.join_request_sent)
+                button.text = context.getString(R.string.cancel_request)
+                button.setOnClickListener(cancelJoinRequestListener)
             }
         }
     }

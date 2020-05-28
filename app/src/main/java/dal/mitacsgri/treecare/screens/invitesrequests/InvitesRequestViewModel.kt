@@ -268,105 +268,113 @@ class InvitesRequestViewModel(
         var count = 0
         //Log.d("Del","tn"+item.teamName+" "+item.photoUrl+" "+item.userName+" "+userid)
 
-        firestoreRepository.deleteTeamInvitesFromUser(userid, item.teamName)
-            .addOnSuccessListener {
+        if(sharedPrefsRepository.user.currentTeams.isEmpty()){
+        //TODO: These functions can be simplified using the updateTeam function instead of having so many functions
+            firestoreRepository.deleteTeamInvitesFromUser(userid, item.teamName)
+                .addOnSuccessListener {
 
-                count++
+                    count++
 
-                Log.d("del", "Deleted the invite Successfully")
-                status.value = true
-                status.notifyObserver()
-                /*invitesList.value?.remove(item)
-                invitesList.notifyObserver()*/
-            }
-            .addOnFailureListener {
-                Log.e("del", "Deletion of Invite Failed")
-            }
-        firestoreRepository.deleteTeamJoinRequestFromUser(userid, item.teamName)
-            .addOnSuccessListener {
-
-                count++
-
-                Log.d("del", "Deleted the Request Successfully")
-                status.value = true
-                status.notifyObserver()
-                /*requestList.value?.remove(item)
-                requestList.notifyObserver()*/
-            }
-            .addOnFailureListener {
-                Log.e("del", "Deletion of Request Failed")
-            }
-        firestoreRepository.deleteJoinRequestFromTeam(userid, item.teamName)
-            .addOnSuccessListener {
-
-                count++
-
-                Log.d("del", "Deletion of Join Req from team was successful")
-                status.value = true
-                status.notifyObserver()
-            }
-
-        firestoreRepository.deleteInvitedMemberFromTeam(userid, item.teamName)
-            .addOnSuccessListener {
-
-                count++
-
-                Log.d("del", "Deletion of Invite from team was successful")
-                status.notifyObserver()
-
-            }
-
-        /*firestoreRepository.getTeam(item.teamName)
-            .addOnSuccessListener {
-                val team = it.toObject<Team>()
-                val capId = team?.captain
-                firestoreRepository.deleteJoinRequestFromTeam(capId.toString(), item.teamName)
-                    .addOnSuccessListener {
-                        count++
-
-                        Log.d("del", "Deletion of Invite from team was successful")
-                        status.notifyObserver()
-                    }
-            }*/
-
-        firestoreRepository.addCurrentTeams(userid, item.teamName)
-            .addOnSuccessListener {
-
-                count++
-
-                Log.d("Add", "User was added to the team successfully")
-                status.value = true
-                status.notifyObserver()
-            }
-
-        firestoreRepository.addTeamMember(userid, item.teamName)
-            .addOnSuccessListener {
-
-                count++
-                Log.d("count", "c1 " + count)
-
-                status.value = true
-                status.notifyObserver()
-                Log.d("Add", "User was added to the team successfully")
-
-                if (count == 6) {
-
-                    invitesList.value?.remove(item)
-                    invitesList.notifyObserver()
-
-                    requestList.value?.remove(item)
-                    requestList.notifyObserver()
-
-                    messageLiveData.value = "You have been added to the team"
-                    messageLiveData.notifyObserver()
-
-                } else {
-                    messageLiveData.value = "Unable to process request. Please try again later"
-                    messageLiveData.notifyObserver()
+                    Log.d("del", "Deleted the invite Successfully")
+                    status.value = true
+                    status.notifyObserver()
+                    /*invitesList.value?.remove(item)
+                    invitesList.notifyObserver()*/
                 }
-            }
-        //Log.d("count","c2 "+count)
-        return messageLiveData
+                .addOnFailureListener {
+                    Log.e("del", "Deletion of Invite Failed")
+                }
+            firestoreRepository.deleteTeamJoinRequestFromUser(userid, item.teamName)
+                .addOnSuccessListener {
+
+                    count++
+
+                    Log.d("del", "Deleted the Request Successfully")
+                    status.value = true
+                    status.notifyObserver()
+                    /*requestList.value?.remove(item)
+                    requestList.notifyObserver()*/
+                }
+                .addOnFailureListener {
+                    Log.e("del", "Deletion of Request Failed")
+                }
+            firestoreRepository.deleteJoinRequestFromTeam(userid, item.teamName)
+                .addOnSuccessListener {
+
+                    count++
+
+                    Log.d("del", "Deletion of Join Req from team was successful")
+                    status.value = true
+                    status.notifyObserver()
+                }
+
+            firestoreRepository.deleteInvitedMemberFromTeam(userid, item.teamName)
+                .addOnSuccessListener {
+
+                    count++
+
+                    Log.d("del", "Deletion of Invite from team was successful")
+                    status.notifyObserver()
+
+                }
+
+            /*firestoreRepository.getTeam(item.teamName)
+                .addOnSuccessListener {
+                    val team = it.toObject<Team>()
+                    val capId = team?.captain
+                    firestoreRepository.deleteJoinRequestFromTeam(capId.toString(), item.teamName)
+                        .addOnSuccessListener {
+                            count++
+
+                            Log.d("del", "Deletion of Invite from team was successful")
+                            status.notifyObserver()
+                        }
+                }*/
+
+            firestoreRepository.addCurrentTeams(userid, item.teamName)
+                .addOnSuccessListener {
+
+                    count++
+
+                    Log.d("Add", "User was added to the team successfully")
+                    status.value = true
+                    status.notifyObserver()
+                }
+
+            firestoreRepository.addTeamMember(userid, item.teamName)
+                .addOnSuccessListener {
+
+                    count++
+                    Log.d("count", "c1 " + count)
+
+                    status.value = true
+                    status.notifyObserver()
+                    Log.d("Add", "User was added to the team successfully")
+
+                    if (count == 6) {
+
+                        invitesList.value?.remove(item)
+                        invitesList.notifyObserver()
+
+                        requestList.value?.remove(item)
+                        requestList.notifyObserver()
+
+                        messageLiveData.value = "You have been added to the team"
+                        messageLiveData.notifyObserver()
+
+                    } else {
+                        messageLiveData.value = "Unable to process request. Please try again later"
+                        messageLiveData.notifyObserver()
+                    }
+                }
+            //Log.d("count","c2 "+count)
+            return messageLiveData
+        }
+        else{
+                messageLiveData.value = "You can only be a part of one team"
+                messageLiveData.notifyObserver()
+                return messageLiveData
+        }
     }
 
     fun acceptUser(item: InvitesRequest): MutableLiveData<String> {
@@ -377,92 +385,102 @@ class InvitesRequestViewModel(
         Log.d("Test", "UserId "+userid2)
         var count2 = 0
 
-        firestoreRepository.getTeam(tName)
+        firestoreRepository.getUserData(userid2)
             .addOnSuccessListener {
-                Log.d("Test","Inside getTeam")
-                val team = it.toObject<Team>()
-                val capId = team?.captain
-                Log.d("Test","CaptainId"+capId)
-                firestoreRepository.deleteJoinRequestFromTeam(capId.toString(), tName)
-                    .addOnSuccessListener {
-                        Log.d("Test","Inside deleteUserJoinReq")
+                val user = it.toObject<User>()
+                // checking if the user is already in a team before accepting
+                if(user?.currentTeams?.isEmpty()!!) {
 
+                    firestoreRepository.getTeam(tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside getTeam")
+                            val team = it.toObject<Team>()
+                            val capId = team?.captain
+                            Log.d("Test", "CaptainId" + capId)
 
+                            firestoreRepository.deleteJoinRequestFromTeam(capId.toString(), tName)
+                                .addOnSuccessListener {
+                                    Log.d("Test", "Inside deleteUserJoinReq")
 
-                        Log.d("del2", "Deletion of Invite from team was successful")
-                        status.notifyObserver()
-                    }
-                count2++
-                Log.d("Count","Count1"+count2)
-            }
+                                    Log.d("del2", "Deletion of Invite from team was successful")
+                                    status.notifyObserver()
+                                }
+                            count2++
+                            Log.d("Count", "Count1" + count2)
+                        }
 
-        firestoreRepository.deleteTeamJoinRequestFromUser(userid2, tName)
-            .addOnSuccessListener {
-                Log.d("Test","Inside deleteTeamJoinReqFromUser")
-                count2++
-                Log.d("Count","Count2"+count2)
+                    firestoreRepository.deleteTeamJoinRequestFromUser(userid2, tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside deleteTeamJoinReqFromUser")
+                            count2++
+                            Log.d("Count", "Count2" + count2)
 
-                Log.d("del2", "Deleted the Request Successfully")
-                status.value = true
-                status.notifyObserver()
-            }
+                            Log.d("del2", "Deleted the Request Successfully")
+                            status.value = true
+                            status.notifyObserver()
+                        }
 
-        firestoreRepository.deleteJoinRequestFromTeam(userid2, tName)
-            .addOnSuccessListener {
+                    firestoreRepository.deleteJoinRequestFromTeam(userid2, tName)
+                        .addOnSuccessListener {
 
-                Log.d("Test","Inside deleteJoinReqFromTeam")
+                            Log.d("Test", "Inside deleteJoinReqFromTeam")
 
-                count2++
-                Log.d("Count","Count3"+count2)
+                            count2++
+                            Log.d("Count", "Count3" + count2)
 
-                Log.d("del2", "Deletion of Join Req from team was successful")
-                status.value = true
-                status.notifyObserver()
-            }
+                            Log.d("del2", "Deletion of Join Req from team was successful")
+                            status.value = true
+                            status.notifyObserver()
+                        }
 
-        firestoreRepository.addCurrentTeams(userid2, tName)
-            .addOnSuccessListener {
-                Log.d("Test","Inside addCurrentTeams")
-                count2++
-                Log.d("Count","Count4"+count2)
+                    firestoreRepository.addCurrentTeams(userid2, tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside addCurrentTeams")
+                            count2++
+                            Log.d("Count", "Count4" + count2)
 
-                Log.d("Add", "User was added to the team successfully")
-                status.value = true
-                status.notifyObserver()
-            }
+                            Log.d("Add", "User was added to the team successfully")
+                            status.value = true
+                            status.notifyObserver()
+                        }
 
-        firestoreRepository.addTeamMember(userid2, tName)
-            .addOnSuccessListener {
-                Log.d("Test","Inside addTeamMember")
-                count2++
-                Log.d("Count","Count5"+count2)
+                    firestoreRepository.addTeamMember(userid2, tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside addTeamMember")
+                            count2++
+                            Log.d("Count", "Count5" + count2)
 
-                Log.d("count", "c1 " + count2)
+                            Log.d("count", "c1 " + count2)
 
-                status.value = true
-                status.notifyObserver()
-                Log.d("Add", "User was added to the team successfully")
+                            status.value = true
+                            status.notifyObserver()
+                            Log.d("Add", "User was added to the team successfully")
 
-                if (count2 == 5) {
+                            if (count2 == 5) {
 
-                    invitesList.value?.remove(item)
-                    invitesList.notifyObserver()
+                                invitesList.value?.remove(item)
+                                invitesList.notifyObserver()
 
-                    requestList.value?.remove(item)
-                    requestList.notifyObserver()
+                                requestList.value?.remove(item)
+                                requestList.notifyObserver()
 
-                    messageLiveData2.value = "Player has been added to the team"
-                    messageLiveData2.notifyObserver()
+                                messageLiveData2.value = "Player has been added to the team"
+                                messageLiveData2.notifyObserver()
 
-                } else {
-                    messageLiveData2.value = "Unable to process request. Please try again later"
-                    messageLiveData2.notifyObserver()
+                            } else {
+                                messageLiveData2.value =
+                                    "Unable to process request. Please try again later"
+                                messageLiveData2.notifyObserver()
+                            }
+                        }
                 }
 
-
+                else{
+                    messageLiveData2.value = "User is already part of a team"
+                    messageLiveData2.notifyObserver()
+                }
             }
         return messageLiveData2
-
     }
 
     fun declineUser(item: InvitesRequest) {

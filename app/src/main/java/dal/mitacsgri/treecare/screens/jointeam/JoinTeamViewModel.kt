@@ -16,113 +16,72 @@ class JoinTeamViewModel(
     private val firestoreRepository: FirestoreRepository
 ): ViewModel() {
 
-    var userEmail = ""
     val mailData = MutableLiveData<String>()
     val userID = MutableLiveData<String>()
     val valid = MutableLiveData<Boolean>()
     val list:ArrayList<Int> = ArrayList<Int>()
-    //var valid = false
     val messageLiveData = MutableLiveData<String>()
-    val valid1:MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    //var isValid = true
-    var limit = firestoreRepository.countUsers()
-
-    fun getUserEmail(email:String): MutableLiveData<Boolean> {
-        valid1.value = false
-        //val userData = MutableLiveData<String>().default(String())
-        //Log.d("TAG","Inside getUserEmail"+email)
+    val messageLiveData2 = MutableLiveData<String>()
+    fun getUserEmail(email:String, teamName:String) {
         firestoreRepository.getAllUserEmail(email)
             .addOnSuccessListener {
-           //     Log.d("TAG","UserCount"+limit.toString())
                 val user = it.toObjects<User>()
-             //   Log.d("TAG","DBD "+user)
                 try {
                     mailData.value = user.get(0).email
                 }
                 catch (e:Exception){
-                    Log.d("Tag","Testing try catch")
+                    Log.d("Exception",e.toString())
                     mailData.value=""
                 }
-                if(mailData.value==""){
-                    mailData.value=""
-                    valid1.value = true
-                    valid1.notifyObserver()
+                if(mailData.value=="" ){
+                    messageLiveData.value = "PlayerID does not exist"
+                    messageLiveData.notifyObserver()
                 }
                 else{
-                    userID.value = user.get(0).uid
+                    getUserId(email,teamName)
                 }
-
-                userID.notifyObserver()
-                userEmail=mailData.value.toString()
-             //   Log.d("TAG","DBID "+mailData.value)
-                //Log.d("TAG","DBB "+userEmail)
-                }
-       // Log.d("TAG","DBID2 "+userEmail)
-        return valid1
+            }
     }
 
-    fun getUserId(email:String, teamName:String):MutableLiveData<Boolean> {
-        //Log.d("TAG","Inside getUserId"+email)
+    fun getUserId(email:String, teamName:String) {
         firestoreRepository.getAllUserEmail(email)
             .addOnSuccessListener {
                 Log.d("Test", "mailId1" + it.toString())
                 val user = it.toObjects<User>()
-                // Log.d("TAG","UID"+user)
                 try {
                     userID.value = user.get(0).email
-                    Log.d("Test", "mailId2" + user.get(0).email)
+
+                    //Log.d("Test", "mailId2" + user.get(0).email)
 
                     if (userID.value == email) {
-                        firestoreRepository.updateUserData(
-                            user.get(0).uid,
-                            mapOf("teamInvites" to FieldValue.arrayUnion(teamName))
-                        )
+                        firestoreRepository.updateUserData(user.get(0).uid, mapOf("teamInvites" to FieldValue.arrayUnion(teamName)))
                             .addOnSuccessListener {
                                 Log.d("Invite", "sent")
 
-                                firestoreRepository.updateTeamData(
-                                    teamName,
-                                    mapOf("invitedMembers" to FieldValue.arrayUnion(user.get(0).uid))
-                                )
+                                firestoreRepository.updateTeamData(teamName, mapOf("invitedMembers" to FieldValue.arrayUnion(user.get(0).uid)))
                                     .addOnSuccessListener {
-                                        //action(true)
                                         Log.d("UserId", "User Added to team invites")
-                                        valid.value = true
-                                        valid.notifyObserver()
-                                        //valid.value = false
-                                        Log.d("Valid", "Value1" + valid.value)
+                                        messageLiveData2.value = "An Invite has been sent to the Player"
+                                        messageLiveData2.notifyObserver()
                                     }
-
                                     .addOnFailureListener {
-                                        //action(false)
                                         Log.d("Invite", "Failed to add to team")
                                         firestoreRepository.updateTeamData(user[0].uid, mapOf("invitedMembers" to FieldValue.arrayRemove(teamName)))
                                     }
-
-                                //valid.notifyObserver()
-                                Log.d("Valid", "Value2" + valid.value)
                             }
                             .addOnFailureListener {
                                 Log.e("Invite", "failed")
-                                //action(false)
                             }
                     }
                     else{
-                        valid.value = false
-                        valid.notifyObserver()
+                        messageLiveData.value = "PlayerID does not exist"
+                        messageLiveData.notifyObserver()
                     }
-                } catch (e: Exception) {
-                    if (userID.value == null) {
-                        userID.value = ""
-                    }
-
                 }
-                userID.notifyObserver()
-
+                catch (e: Exception) {
+                        Log.d("Exception", e.toString())
+                    }
             }
-        Log.d("Test","value"+valid.value)
-        Log.d("Test","list "+list)
-        return valid
     }
 }
 

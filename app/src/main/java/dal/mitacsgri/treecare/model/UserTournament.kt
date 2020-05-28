@@ -10,6 +10,7 @@ data class UserTournament(
         val joinDate: Long = 0,
         var isCurrentTournament: Boolean = true,
         val type: Int = 0,
+        val teamName: String = "",
         var leafCount: Int = 0,
         var fruitCount: Int = 0,
         var currentDayOfWeek: Int = 0,

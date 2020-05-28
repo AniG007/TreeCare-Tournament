@@ -42,7 +42,7 @@ class AllTeamsViewModel(
 
     fun isUserCaptain(captainUid: String) = captainUid == sharedPrefsRepository.user.uid
 
-    fun sendJoinRequest(teamName: String, action: (status: Boolean) -> Unit) {
+    fun sendJoinRequest(teamName: String, action: (status: String) -> Unit) {
         val uid = sharedPrefsRepository.user.uid
 
         //commented this part since user may send request to more than one team and same uid cannot be added to
@@ -63,31 +63,41 @@ class AllTeamsViewModel(
 
         }*/
 
-
-        firestoreRepository.updateTeamData(teamName,
-            mapOf("joinRequests" to FieldValue.arrayUnion(uid)))
-            .addOnSuccessListener {
-                Log.d("Join request", "sent")
-                firestoreRepository.updateUserData(uid,
-                    mapOf("teamJoinRequests" to FieldValue.arrayUnion(teamName)))
-                    .addOnSuccessListener {
-                        action(true)
-                    }
-                    .addOnFailureListener {
-                        action(false)
-                        firestoreRepository.updateTeamData(teamName,
-                            mapOf("joinRequests" to FieldValue.arrayRemove(uid)))
-                    }
-            }
-            .addOnFailureListener {
-                Log.d("Join request", "failed")
-                action(false)
-            }
+        if(sharedPrefsRepository.user.currentTeams.isEmpty()) {
+            firestoreRepository.updateTeamData(
+                teamName,
+                mapOf("joinRequests" to FieldValue.arrayUnion(uid))
+            )
+                .addOnSuccessListener {
+                    Log.d("Join request", "sent")
+                    firestoreRepository.updateUserData(
+                        uid,
+                        mapOf("teamJoinRequests" to FieldValue.arrayUnion(teamName))
+                    )
+                        .addOnSuccessListener {
+                            action("true")
+                        }
+                        .addOnFailureListener {
+                            action("false")
+                            firestoreRepository.updateTeamData(
+                                teamName,
+                                mapOf("joinRequests" to FieldValue.arrayRemove(uid))
+                            )
+                        }
+                }
+                .addOnFailureListener {
+                    Log.d("Join request", "failed")
+                    action("false")
+                }
+        }
+        else{
+            action("teamexists")
+        }
     }
 
 
 
-    fun cancelJoinRequest(teamName: String, action: (status: Boolean) -> Unit) {
+    fun cancelJoinRequest(teamName: String, action: (status: String) -> Unit) {
         val uid = sharedPrefsRepository.user.uid
 
         firestoreRepository.updateTeamData(teamName,
@@ -97,17 +107,17 @@ class AllTeamsViewModel(
                 firestoreRepository.updateUserData(uid,
                     mapOf("teamJoinRequests" to FieldValue.arrayRemove(teamName)))
                     .addOnSuccessListener {
-                        action(true)
+                        action("true")
                     }
                     .addOnFailureListener {
-                        action(false)
+                        action("false")
                         firestoreRepository.updateTeamData(teamName,
                             mapOf("joinRequests" to FieldValue.arrayUnion(uid)))
                     }
             }
             .addOnFailureListener {
                 Log.d("Join request cancel", "failed")
-                action(false)
+                action("false")
             }
     }
 

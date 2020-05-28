@@ -22,6 +22,7 @@ class CurrentChallengesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
 //        val view = inflater.createFragmentViewWithStyle(
 //            activity, R.layout.fragment_current_challenges, R.style.challenger_mode_theme)
         val view = inflater.inflate(R.layout.fragment_current_challenges, container, false)

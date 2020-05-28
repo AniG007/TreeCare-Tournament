@@ -17,7 +17,9 @@ import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserTournamentDataWo
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
+import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.Tournament
+import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserTournament
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -53,26 +55,63 @@ class TournamentsViewModel(
             }
     }
 
-    fun getCurrentTournamentsForUser() {
-        val tournamentReferences = sharedPrefsRepository.user.currentTournaments
+//    fun getCurrentTournamentsForUser() {
+//        val tournamentReferences = sharedPrefsRepository.user.currentTournaments
+//
+//        tournamentReferences.forEach { (_, userTournament) ->
+//            //Getting challenges from the Challenges DB after getting reference
+//            // from the challenges list obtained from the user
+//            firestoreRepository.getTournament(userTournament.name)
+//                .addOnSuccessListener {
+//                    val tournament = it.toObject<Tournament>() ?: Tournament(exist = false)
+//                    synchronized(currentTournamentsList.value!!) {
+//                        if (tournament.exist) {
+//                            currentTournamentsList.value?.sortAndAddToList(tournament)
+//                            currentTournamentsList.notifyObserver()
+//                        }
+//                    }
+//                }
+//                .addOnFailureListener {
+//                    Log.d("Tournament not found", it.toString())
+//                }
+//        }
+//    }
 
-        tournamentReferences.forEach { (_, userTournament) ->
-            //Getting challenges from the Challenges DB after getting reference
-            // from the challenges list obtained from the user
-            firestoreRepository.getTournament(userTournament.name)
-                .addOnSuccessListener {
-                    val tournament = it.toObject<Tournament>() ?: Tournament(exist = false)
-                    synchronized(currentTournamentsList.value!!) {
-                        if (tournament.exist) {
-                            currentTournamentsList.value?.sortAndAddToList(tournament)
-                            currentTournamentsList.notifyObserver()
+    fun getCurrentTournamentsForUser() {
+// directly fetching current tournaments from db.
+        val uid = sharedPrefsRepository.user.uid
+        Log.d("Test","SharedPref"+sharedPrefsRepository.user.currentTournaments)
+        firestoreRepository.getUserData(uid)
+            .addOnSuccessListener {
+
+                val user = it.toObject<User>()
+                val tournaments = user?.currentTournaments
+
+                for (tournament in tournaments!!){
+                    Log.d("Test","tournament"+ tournament.key)
+                    firestoreRepository.getTournament(tournament.key)
+                        .addOnSuccessListener {
+
+                            val tourney = it.toObject<Tournament>() ?: Tournament(exist = false)
+                            synchronized(currentTournamentsList.value!!){
+
+                                Log.d("Test","inside synchronised")
+                                Log.d("Test","Tourney ${tourney}")
+                                if(tourney.exist){
+                                    Log.d("Test","tournament exists")
+                                    currentTournamentsList.value?.sortAndAddToList(tourney)
+                                    currentTournamentsList.notifyObserver()
+                                    Log.d("Test", "currentTourney List"+ currentTournamentsList.value)
+                                }
+                            }
+                            //Log.d("Test","tourneyname ${tourneyName}")
                         }
-                    }
+                        .addOnFailureListener {
+                            Log.d("Tournament not Found", it.toString())
+                        }
+
                 }
-                .addOnFailureListener {
-                    Log.d("Tournament not found", it.toString())
-                }
-        }
+            }
     }
 
     fun getAllCreatedTournamentsTournaments(userId: String) {
@@ -138,52 +177,103 @@ class TournamentsViewModel(
             }, MoreExecutors.directExecutor())
     }
 
-    fun leaveTournament(tournament: Tournament) {
-        val userId = sharedPrefsRepository.user.uid
-        var counter = 0
+//    fun leaveTournament(tournament: Tournament) {
+//        val userId = sharedPrefsRepository.user.uid
+//        var counter = 0
+//
+//        firestoreRepository.deleteUserFromTournamentDB(tournament, userId)
+//            .addOnSuccessListener {
+//                synchronized(counter) {
+//                    counter++
+//                    if (counter == 2) {
+//                        removeTournamentFromCurrentTournamentsLists(tournament)
+//                    }
+//                }
+//                Log.d("Tournament deleted", "from DB")
+//            }
+//            .addOnFailureListener {
+//                Log.e("Tournament deletefailed", it.toString())
+//            }
+//
+//        val userTournament = getUserTournament(tournament).let {
+//            it.isCurrentTournament = false
+//            it
+//        }
+//
+//        //TODO: Maybe later on we can think of only disabling the Tournament instead of actually deleting from the database
+//        firestoreRepository.deleteTournamentFromUserDB(userId, userTournament, userTournament.toJson<UserTournament>())
+//            .addOnSuccessListener {
+//                synchronized(counter) {
+//                    counter++
+//                    if (counter == 2) {
+//                        removeTournamentFromCurrentTournamentsLists(tournament)
+//                    }
+//                }
+//                statusMessage.value = "Success"
+//            }
+//            .addOnFailureListener {
+//                statusMessage.value = "Failed"
+//            }
+//
+//        var index = activeTournamentsList.value?.indexOf(tournament)!!
+//        activeTournamentsList.value?.get(index)?.players?.remove(sharedPrefsRepository.user.uid)
+//        activeTournamentsList.notifyObserver()
+//
+//        index = currentTournamentsList.value?.indexOf(tournament)!!
+//        currentTournamentsList.value?.get(index)?.players?.remove(sharedPrefsRepository.user.uid)
+//        currentTournamentsList.notifyObserver()
+//    }
 
-        firestoreRepository.deleteUserFromTournamentDB(tournament, userId)
-            .addOnSuccessListener {
-                synchronized(counter) {
-                    counter++
-                    if (counter == 2) {
-                        removeTournamentFromCurrentTournamentsLists(tournament)
+
+    fun leaveTournament(tournament: Tournament) {
+
+        val user = sharedPrefsRepository.user
+        val userTournament = sharedPrefsRepository.user.currentTournaments.get(tournament.name)
+        Log.d("Test","SharedPref"+sharedPrefsRepository.user.currentTournaments)
+        Log.d("Test","userTourney"+userTournament)
+        if(user.captainedTeams.contains(userTournament?.teamName)){
+
+            Log.d("Test","Teams "+userTournament?.teamName)
+
+            firestoreRepository.getTeam(userTournament?.teamName!!)
+                .addOnSuccessListener {
+                    val team = it.toObject<Team>()
+                    val members = team?.members
+                    for(member in members!!){
+//                        val userTournament = getUserTournament(tournament).let {
+//                            it.isCurrentTournament = false
+//                            it
+//                        }
+
+                          firestoreRepository.deleteTournamentFromUserDB(member,tournament.name)
+                        //firestoreRepository.updateUserData(member, mapOf("currentTournaments.${tournament.name}" to FieldValue.arrayRemove(userTournament)))
+                        //firestoreRepository.updateUserData(member, mapOf("currentTournaments" to FieldValue.arrayRemove(tournament.name)))
+                            .addOnSuccessListener {
+//                                firestoreRepository.updateUserData(member, mapOf("currentTournaments" to FieldValue.arrayRemove(tournament.name)))
+//                                    .addOnSuccessListener {
+                                        firestoreRepository.updateTeamData(team.name, mapOf("currentTournaments" to FieldValue.arrayRemove(tournament.name)))
+                                            .addOnSuccessListener {
+                                                firestoreRepository.updateTournamentData(tournament.name, mapOf("teams" to FieldValue.arrayRemove(team.name)))
+                                                    .addOnSuccessListener {
+                                                        //Log.d("Test", "Removed from tournament successfully")
+                                                        currentTournamentsList.value?.remove(tournament)
+                                                        currentTournamentsList.notifyObserver()
+                                                    }
+                                         //       Log.d("Test", "Removed from team successfully")
+                                            }
+                                       // Log.d("Test", "Removed from User successfully")
+                            }
                     }
                 }
-                Log.d("Tournament deleted", "from DB")
-            }
-            .addOnFailureListener {
-                Log.e("Tournament deletefailed", it.toString())
-            }
-
-        val userTournament = getUserTournament(tournament).let {
-            it.isCurrentTournament = false
-            it
         }
 
-        //TODO: Maybe later on we can think of only disabling the Tournament instead of actually deleting from the database
-        firestoreRepository.deleteTournamentFromUserDB(userId, userTournament, userTournament.toJson<UserTournament>())
-            .addOnSuccessListener {
-                synchronized(counter) {
-                    counter++
-                    if (counter == 2) {
-                        removeTournamentFromCurrentTournamentsLists(tournament)
-                    }
-                }
-                statusMessage.value = "Success"
-            }
-            .addOnFailureListener {
-                statusMessage.value = "Failed"
-            }
+        else{
+                Log.d("Test","Only the captain can leave a tournament.")
+        }
 
-        var index = activeTournamentsList.value?.indexOf(tournament)!!
-        activeTournamentsList.value?.get(index)?.players?.remove(sharedPrefsRepository.user.uid)
-        activeTournamentsList.notifyObserver()
-
-        index = currentTournamentsList.value?.indexOf(tournament)!!
-        currentTournamentsList.value?.get(index)?.players?.remove(sharedPrefsRepository.user.uid)
-        currentTournamentsList.notifyObserver()
     }
+
+
 
     fun deleteTournament(tournament: Tournament) {
         firestoreRepository.setTournamentAsNonExist(tournament.name)
@@ -266,7 +356,7 @@ class TournamentsViewModel(
 
     fun getJoinTournamentDialogTitleText(tournament: Tournament) =
         buildSpannedString {
-            append("Join tournament")
+            append("Join tournament ")
             bold {
                 append("'${tournament.name}'")
             }

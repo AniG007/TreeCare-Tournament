@@ -56,7 +56,7 @@
                 android:id="@+id/tournamentNameLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="64dp"
                 android:hint="Tournament name"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +83,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputTournamentDescription"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="95dp"
                     android:gravity="top|start"
                     android:minLines="4"
                     android:scrollbars="vertical"
@@ -144,8 +144,26 @@
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/createTournamentButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/tournament_mode_primary_color"
+                android:text="@string/create"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tournamentEndDateLayout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</LinearLayout>
+
+<!-- <com.google.android.material.button.MaterialButton
                 android:id="@+id/AddTeamsButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -155,25 +173,4 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tournamentEndDateLayout" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/createTournamentButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                app:layout_constraintHorizontal_bias="1.0"
-                android:backgroundTint="@color/tournament_mode_primary_color"
-                android:text="@string/create"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tournamentEndDateLayout" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
-
-</LinearLayout>
-
-<!--    -->
+                app:layout_constraintTop_toBottomOf="@+id/tournamentEndDateLayout" /> -->

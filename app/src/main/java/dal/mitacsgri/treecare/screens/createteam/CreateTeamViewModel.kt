@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.repository.FirestoreRepository
@@ -30,12 +31,22 @@ class CreateTeamViewModel(
     }
 
     fun createTeam(name: Editable?, description: Editable?, action: () -> Unit) {
+
         if (checkAllInputFieldsValid()) {
+            //checking if the team already exists or the user is already in a team
             firestoreRepository.getTeam(name.toString()).addOnSuccessListener {
                 if (it.exists()) {
                     messageLiveData.value = "Team name already in use"
                     return@addOnSuccessListener
-                } else {
+                }
+
+                else if(sharedPrefsRepository.user.currentTeams.isNotEmpty()){
+
+                    messageLiveData.value = "You can only be a part of one team"
+                    return@addOnSuccessListener
+                }
+
+                else {
                     firestoreRepository.storeTeam(
                         Team(name = name.toString(),
                             description = description.toString(),
@@ -47,8 +58,10 @@ class CreateTeamViewModel(
                     {
                         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("captainedTeams" to FieldValue.arrayUnion(name.toString())))
                             .addOnSuccessListener {
-                                Log.d("TAG", "Team Name has been added")
-
+                                firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("currentTeams" to FieldValue.arrayUnion(name.toString())))
+                                    .addOnSuccessListener {
+                                        Log.d("TAG", "Team Name has been added")
+                                    }
                             }
                             .addOnFailureListener{
                                 Log.d("TAG","Team Name could not be added for Captain")

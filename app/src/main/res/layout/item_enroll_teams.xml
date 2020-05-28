@@ -18,36 +18,46 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/_8sdp">
 
-        <TextView
-            android:id="@+id/teamNameTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="Team"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_16sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="244dp"
+            android:layout_height="77dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
 
-        <TextView
-            android:id="@+id/membersCountTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:drawableStart="@drawable/ic_user"
-            android:drawablePadding="@dimen/_4sdp"
-            android:text="Players: 4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/teamNameTV" />
+
+            <TextView
+                android:id="@+id/teamNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="20dp"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="Team"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.016"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/membersCountTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:drawableStart="@drawable/ic_user"
+                android:drawablePadding="@dimen/_4sdp"
+                android:text="Players: 4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/teamNameTV" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <CheckBox
             android:id="@+id/checkbox_team"
@@ -55,8 +65,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
             android:onClick="onCheckboxClicked"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/teamNameTV" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

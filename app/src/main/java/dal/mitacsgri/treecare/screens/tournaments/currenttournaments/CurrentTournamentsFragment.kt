@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.fragment_current_tournaments.view.*
@@ -37,11 +39,12 @@ class CurrentTournamentsFragment : Fragment() {
             adapter = CurrentTournamentsRecyclerViewAdapter(mViewModel.currentTournamentsList.value!!, mViewModel)
         }
 
-        mViewModel.currentTournamentsList.observe(this, Observer {
+        mViewModel.currentTournamentsList.observe(viewLifecycleOwner, Observer {
             view.recyclerView.adapter?.notifyDataSetChanged()
         })
 
         mViewModel.getCurrentTournamentsForUser()
+
         return view
     }
 

@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -24,6 +27,9 @@ class EnrollTeamsFragment : Fragment() {
     private val viewModel: EnrollTeamsViewModel by viewModel()
 
     val args: EnrollTeamsFragmentArgs by navArgs()
+   lateinit var adapter: EnrollTeamsRecyclerViewAdapter
+    lateinit var membersrv: RecyclerView
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val tournamentName = args.tournamentName
@@ -40,6 +46,7 @@ class EnrollTeamsFragment : Fragment() {
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
+
             viewModel.getExistingTeams(args.tournamentName)
             enrollButton.setOnClickListener {
                 viewModel.enrollTeams(args.tournamentName)
@@ -54,9 +61,30 @@ class EnrollTeamsFragment : Fragment() {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context,RecyclerView.VERTICAL, false)
                     adapter = EnrollTeamsRecyclerViewAdapter(it, viewModel)
+                    membersrv.adapter = adapter
                 }
+                adapter = recyclerView.adapter as EnrollTeamsRecyclerViewAdapter
+            })
+
+            //adapter = EnrollTeamsRecyclerViewAdapter(it,viewModel)
+
+            membersrv = findViewById(R.id.recyclerView)
+            membersrv.layoutManager = LinearLayoutManager(membersrv.context)
+            //membersrv.setHasFixedSize(true)
+            team_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.filter.filter(newText)
+                    return false
+                }
+
             })
         }
         return view
     }
+
+
+
 }

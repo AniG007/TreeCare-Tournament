@@ -66,16 +66,28 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/team_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textCursorDrawable="@null"
+            app:queryHint="@string/team"
+            android:elevation="@dimen/_8sdp"
+            app:iconifiedByDefault="false"
+            app:queryBackground="@null"
+            app:layout_constraintTop_toBottomOf="@+id/appbar"
+            app:layout_constraintStart_toStartOf="parent"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="108dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/team_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

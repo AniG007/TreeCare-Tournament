@@ -4,8 +4,10 @@ package dal.mitacsgri.treecare.screens.tournaments.currenttournaments
 import android.content.DialogInterface
 import android.content.Intent
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.screens.BaseViewHolder
@@ -53,6 +55,7 @@ class CurrentTournamentsViewHolder(
                     }
                     .setNegativeButton("Yes") { _: DialogInterface, _: Int ->
                         viewModel.leaveTournament(item)
+                        findNavController().navigateUp()
                     }
                     .show()
             }

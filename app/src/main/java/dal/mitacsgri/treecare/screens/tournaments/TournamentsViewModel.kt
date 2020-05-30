@@ -125,7 +125,7 @@ class TournamentsViewModel(
             }
     }
 
-    fun joinTournament(tournament: Tournament, successAction: () -> Unit) {
+    /*fun joinTournament(tournament: Tournament, successAction: () -> Unit) {
         val userTournament = getUserTournament(tournament)
         val uid = sharedPrefsRepository.user.uid
 
@@ -147,7 +147,7 @@ class TournamentsViewModel(
                 tournamentsByYouList.notifyObserver()
 
                 //Do this to display the leaf count as soon as the user joins the challenge
-                /*if (tournament.type == TOURNAMENT_TYPE_DAILY_GOAL_BASED) {*/
+                *//*if (tournament.type == TOURNAMENT_TYPE_DAILY_GOAL_BASED) {*//*
                     userTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
              //   }
                 val user = sharedPrefsRepository.user
@@ -175,7 +175,7 @@ class TournamentsViewModel(
             Runnable {
                 Log.d("Tournament data", "updated by work manager")
             }, MoreExecutors.directExecutor())
-    }
+    }*/
 
 //    fun leaveTournament(tournament: Tournament) {
 //        val userId = sharedPrefsRepository.user.uid
@@ -258,16 +258,18 @@ class TournamentsViewModel(
                                                         //Log.d("Test", "Removed from tournament successfully")
                                                         currentTournamentsList.value?.remove(tournament)
                                                         currentTournamentsList.notifyObserver()
+                                                        statusMessage.value = "Your team is no long part of the tournament ${tournament.name}"
                                                     }
                                          //       Log.d("Test", "Removed from team successfully")
                                             }
                                        // Log.d("Test", "Removed from User successfully")
-                            }
+                                }
                     }
                 }
         }
 
         else{
+                statusMessage.value = "Only the team captain can remove the team from the tournament"
                 Log.d("Test","Only the captain can leave a tournament.")
         }
 

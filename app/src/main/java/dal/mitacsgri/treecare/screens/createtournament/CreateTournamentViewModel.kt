@@ -20,10 +20,12 @@ class CreateTournamentViewModel (
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val firestoreRepository: FirestoreRepository
 ): ViewModel() {
+
     var isNameValid = false
     var isGoalValid = false
     var isStartDateValid = false
     var isEndDateValid = false
+    var isTeamSizeValid = false
 
     val messageLiveData = MutableLiveData<String>()
     val isFullDataValid = MutableLiveData<Boolean>()
@@ -50,21 +52,27 @@ class CreateTournamentViewModel (
     //fun getRegexToMatchStepsGoal() = Regex("([5-9][0-9]*(000)+)|([1-9]+0*0000)")
     fun getRegexToMatchStepsGoal() = Regex("([1-9]+0*000)") //For checking if goalsteps > = 10,000 and not more than 90,000
 
+    fun getRegexToMatchTeamSize() = Regex("[2-9]|10")
+
+    fun isTeamLimitValid(size: Int):Boolean{ return size<=10 }
+
     fun areAllInputFieldsValid(): Boolean {
-        isFullDataValid.value = isNameValid and isGoalValid and isEndDateValid
+        isFullDataValid.value = isNameValid and isGoalValid and isEndDateValid and isTeamSizeValid
         return isFullDataValid.value ?: false
     }
 
 
 
-    fun createTournament (name: Editable?, description: Editable?,type: Int,goal: Editable?, action: (Boolean) -> Unit) {
+    fun createTournament (name: Editable?, description: Editable?,type: Int,goal: Editable?, teamLimit:Editable?, action: (Boolean) -> Unit) {
         if (areAllInputFieldsValid()) {
-            firestoreRepository.getTournament(name.toString()).addOnSuccessListener {
-                if (it.exists()) {
+            firestoreRepository.getTournament(name.toString())
+                .addOnSuccessListener {
+                    if (it.exists()) {
                     messageLiveData.value = "Tournament already exists"
                     action(it.exists())
                     return@addOnSuccessListener
-                }
+                    }
+
 
 //                else if(Timestamp.now() == Timestamp(startdate.timeInMillis / 1000, 0)){
 //                    //Setting the tournament as active if the tourney starts on the same date as the creation day
@@ -108,7 +116,8 @@ class CreateTournamentViewModel (
                             creatorUId = sharedPrefsRepository.user.uid,
                             //isActive = false,
                             active = true,
-                            exist = true
+                            exist = true,
+                            teamLimit = teamLimit.toString().toInt()
                             //active = true
                         )
                     ) {

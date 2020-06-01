@@ -4,10 +4,12 @@ import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsFragmentDirections
@@ -32,8 +34,8 @@ class ActiveTournamentsViewHolder(
             descriptionTV.text = item.description
             durationTV.text = viewModel.getTournamentDurationText(item)
             //membersCountTV.text = viewModel.getTeamsCountText(item)
-            team1CountTV.text = viewModel.getTeamsCountText(item).toString()
-            team2CountTV.text = viewModel.getTeamsCountText(item).toString()
+            teamCountTV.text = viewModel.getTeamsCountText(item).toString()
+            //team2CountTV.text = viewModel.getTeamsCountText(item).toString()
 
 
             //if (item.active && !viewModel.hasTeamJoinedTournament(item)) {
@@ -44,8 +46,11 @@ class ActiveTournamentsViewHolder(
                         .setTitle(viewModel.getJoinTournamentDialogTitleText(item))
                         .setMessage(viewModel.getJoinTournamentMessageText())
                         .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
-                            val action = TournamentsFragmentDirections.actionTournamentsFragmentToEnrollTeamsFragment(item.name)
-                            findNavController().navigate(action)
+                           // val action = TournamentsFragmentDirections.actionTournamentsFragmentToEnrollTeamsFragment(item.name)
+                            viewModel.getExistingTeams(item.name)
+                            viewModel.enrollTeams(item.name)
+
+                            //findNavController().navigateUp()
                             /*viewModel.joinTournament(item) {
                                 viewModel.startUnityActivityForTournament(item) {
                                     context.startActivity(Intent(context, TreeCareUnityActivity::class.java))

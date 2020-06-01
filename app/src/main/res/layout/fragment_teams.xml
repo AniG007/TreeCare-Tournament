@@ -99,7 +99,6 @@
         android:backgroundTint="@color/tournament_mode_primary_color"
         app:icon="@drawable/ic_add"
         app:iconTint="@color/white"
-        android:text="@string/create"
         android:textColor="@color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

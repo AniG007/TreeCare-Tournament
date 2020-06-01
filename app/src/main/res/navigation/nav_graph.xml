@@ -195,14 +195,11 @@
         android:label="fragment_tournaments"
         tools:layout="@layout/fragment_tournaments" >
         <action
-            android:id="@+id/action_tournamentsFragment_to_createTournamentFragment"
-            app:destination="@id/createTournamentFragment" />
-        <action
             android:id="@+id/action_tournamentsFragment_to_leaderboardFragment"
             app:destination="@id/leaderboardFragment" />
         <action
-            android:id="@+id/action_tournamentsFragment_to_enrollTeamsFragment"
-            app:destination="@id/enrollTeamsFragment" />
+            android:id="@+id/action_tournamentsFragment_to_createTournamentFragment"
+            app:destination="@id/createTournamentFragment" />
     </fragment>
     <fragment
         android:id="@+id/teamsFragment"
@@ -301,11 +298,6 @@
         android:label="fragment_progress_report"
         tools:layout="@layout/fragment_progress_report"/>
     <fragment
-        android:id="@+id/createTournamentFragment"
-        android:name="dal.mitacsgri.treecare.screens.createtournament.CreateTournamentFragment"
-        android:label="fragment_create_tournament"
-        tools:layout="@layout/fragment_create_tournament" />
-    <fragment
         android:id="@+id/joinTeamFragment"
         android:name="dal.mitacsgri.treecare.screens.jointeam.JoinTeamFragment"
         android:label="JoinTeamFragment" >
@@ -338,9 +330,14 @@
         android:id="@+id/enrollTeamsFragment"
         android:name="dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsFragment"
         android:label="fragment_enroll_teams"
-        tools:layout="@layout/fragment_enroll_teams" >
-        <argument
-            android:name="tournamentName"
-            app:argType="string" />
+        tools:layout="@layout/fragment_enroll_teams" />
+    <fragment
+        android:id="@+id/createTournamentFragment"
+        android:name="dal.mitacsgri.treecare.screens.createtournament.CreateTournamentFragment"
+        android:label="fragment_create_tournament"
+        tools:layout="@layout/fragment_create_tournament" >
+        <action
+            android:id="@+id/action_createTournamentFragment_to_enrollTeamsFragment"
+            app:destination="@id/enrollTeamsFragment" />
     </fragment>
 </navigation>

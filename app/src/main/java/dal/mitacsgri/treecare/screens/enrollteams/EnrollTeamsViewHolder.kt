@@ -2,6 +2,7 @@ package dal.mitacsgri.treecare.screens.enrollteams
 
 import android.view.View
 import android.widget.CheckBox
+import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.screens.BaseViewHolder
@@ -31,6 +32,12 @@ class EnrollTeamsViewHolder(
                     }
                 }
             }
+
+            enrollteamCard.setOnClickListener {
+//                val action = EnrollTeamsFragmentDirections.actionEnrollTeamsFragmentToTeamInfoFragment2(item.name)
+//                findNavController().navigate(action)
+            }
+
         }
 
     }

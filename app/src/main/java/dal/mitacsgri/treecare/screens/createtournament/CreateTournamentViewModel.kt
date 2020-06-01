@@ -34,7 +34,7 @@ class CreateTournamentViewModel (
     private lateinit var endDate: Calendar
 
     fun getCurrentDateDestructured(): Triple<Int, Int, Int> {
-       // startdate = Calendar.getInstance()
+        // startdate = Calendar.getInstance()
         endDate = Calendar.getInstance()
         return Triple(endDate.get(Calendar.DAY_OF_MONTH), endDate.get(Calendar.MONTH), endDate.get(Calendar.YEAR))
     }
@@ -68,9 +68,9 @@ class CreateTournamentViewModel (
             firestoreRepository.getTournament(name.toString())
                 .addOnSuccessListener {
                     if (it.exists()) {
-                    messageLiveData.value = "Tournament already exists"
-                    action(it.exists())
-                    return@addOnSuccessListener
+                        messageLiveData.value = "Tournament already exists"
+                        action(it.exists())
+                        return@addOnSuccessListener
                     }
 
 
@@ -101,32 +101,32 @@ class CreateTournamentViewModel (
 //                    }
 //                }
 
-                else {
-                    firestoreRepository.storeTournament(
-                        Tournament(
-                            name = name.toString(),
-                            description = description.toString(),
-                            //type = type,
-                            dailyGoal = goal.toString().toInt(),
-                            //startTimestamp = Timestamp(startdate.timeInMillis / 1000, 0),
-                            finishTimestamp = Timestamp(endDate.timeInMillis / 1000, 0),
-                            creationTimestamp = Timestamp.now(),
-                            creatorName = sharedPrefsRepository.user.name
-                                    + " (${sharedPrefsRepository.user.email.split("@")[0]})",
-                            creatorUId = sharedPrefsRepository.user.uid,
-                            //isActive = false,
-                            active = true,
-                            exist = true,
-                            teamLimit = teamLimit.toString().toInt()
-                            //active = true
-                        )
-                    ) {
-                        action(it)
-                        messageLiveData.value = if (it) "Tournament created successfully"
-                        else "Tournament creation failed"
+                    else {
+                        firestoreRepository.storeTournament(
+                            Tournament(
+                                name = name.toString(),
+                                description = description.toString(),
+                                //type = type,
+                                dailyGoal = goal.toString().toInt(),
+                                //startTimestamp = Timestamp(startdate.timeInMillis / 1000, 0),
+                                finishTimestamp = Timestamp(endDate.timeInMillis / 1000, 0),
+                                creationTimestamp = Timestamp.now(),
+                                creatorName = sharedPrefsRepository.user.name
+                                        + " (${sharedPrefsRepository.user.email.split("@")[0]})",
+                                creatorUId = sharedPrefsRepository.user.uid,
+                                //isActive = false,
+                                active = true,
+                                exist = true,
+                                teamLimit = teamLimit.toString().toInt()
+                                //active = true
+                            )
+                        ) {
+                            action(it)
+                            messageLiveData.value = if (it) "Tournament created successfully"
+                            else "Tournament creation failed"
+                        }
                     }
                 }
-            }
                 .addOnFailureListener {
                     messageLiveData.value = "Failure"
                 }

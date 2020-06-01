@@ -3,14 +3,17 @@ package dal.mitacsgri.treecare.screens.teams.yourteams
 import android.content.DialogInterface
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.item_your_captained_team.view.*
+import kotlinx.coroutines.delay
 
 class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewModel): BaseViewHolder<Team>(itemView) {
 
@@ -31,6 +34,7 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
                         }
                         .setNegativeButton("Yes") { _: DialogInterface, _: Int ->
                             viewModel.deleteTeam(item)
+                           // findNavController().navigateUp()
                         }
                         .show()
 

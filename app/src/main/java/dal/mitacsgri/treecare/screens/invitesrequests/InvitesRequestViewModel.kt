@@ -8,11 +8,10 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.model.InvitesRequest
-import dal.mitacsgri.treecare.model.Team
-import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import org.joda.time.DateTime
 
 class InvitesRequestViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
@@ -267,7 +266,7 @@ class InvitesRequestViewModel(
         val userid = sharedPrefsRepository.user.uid
         var count = 0
         //Log.d("Del","tn"+item.teamName+" "+item.photoUrl+" "+item.userName+" "+userid)
-
+        //TODO:add tourney to user if the team has a tourney
         if(sharedPrefsRepository.user.currentTeams.isEmpty()){
         //TODO: These functions can be simplified using the updateTeam function instead of having so many functions
             firestoreRepository.deleteTeamInvitesFromUser(userid, item.teamName)
@@ -353,6 +352,15 @@ class InvitesRequestViewModel(
 
                     if (count == 6) {
 
+                        firestoreRepository.getTeam(item.teamName)
+                            .addOnSuccessListener {
+                                val team = it.toObject<Team>()
+                                val tourneys = team?.currentTournaments
+                                for(tourney in tourneys!!){
+                                    addTournament(item.teamName,tourney, "Invite", sharedPrefsRepository.user.uid)
+                                }
+                            }
+
                         invitesList.value?.remove(item)
                         invitesList.notifyObserver()
 
@@ -360,11 +368,11 @@ class InvitesRequestViewModel(
                         requestList.notifyObserver()
 
                         messageLiveData.value = "You have been added to the team"
-                        messageLiveData.notifyObserver()
+                        //messageLiveData.notifyObserver()
 
                     } else {
                         messageLiveData.value = "Unable to process request. Please try again later"
-                        messageLiveData.notifyObserver()
+                        //messageLiveData.notifyObserver()
                     }
                 }
             //Log.d("count","c2 "+count)
@@ -372,7 +380,7 @@ class InvitesRequestViewModel(
         }
         else{
                 messageLiveData.value = "You can only be a part of one team"
-                messageLiveData.notifyObserver()
+                //messageLiveData.notifyObserver()
                 return messageLiveData
         }
     }
@@ -458,6 +466,15 @@ class InvitesRequestViewModel(
 
                             if (count2 == 5) {
 
+                                firestoreRepository.getTeam(tName)
+                                    .addOnSuccessListener {
+                                        val team = it.toObject<Team>()
+                                        val tourneys = team?.currentTournaments
+                                        for(tourney in tourneys!!){
+                                            addTournament(tName,tourney, "Request",item.uId)
+                                        }
+                                    }
+
                                 invitesList.value?.remove(item)
                                 invitesList.notifyObserver()
 
@@ -465,19 +482,18 @@ class InvitesRequestViewModel(
                                 requestList.notifyObserver()
 
                                 messageLiveData2.value = "Player has been added to the team"
-                                messageLiveData2.notifyObserver()
+                                //messageLiveData2.notifyObserver()
 
                             } else {
-                                messageLiveData2.value =
-                                    "Unable to process request. Please try again later"
-                                messageLiveData2.notifyObserver()
+                                messageLiveData2.value = "Unable to process request. Please try again later"
+                                //messageLiveData2.notifyObserver()
                             }
                         }
                 }
 
                 else{
                     messageLiveData2.value = "User is already part of a team"
-                    messageLiveData2.notifyObserver()
+                    //messageLiveData2.notifyObserver()
                 }
             }
         return messageLiveData2
@@ -519,5 +535,60 @@ class InvitesRequestViewModel(
 
     }
 
+    fun addTournament(team: String, tournamentName : String, type:String, uid:String) {
+        //Adding tournament to currentTournaments in Users Collection
+        firestoreRepository.getTournament(tournamentName)
+            .addOnSuccessListener {
+                val tournament = it.toObject<Tournament>()
+                val userTournament =
+                    tournament?.let { it1 -> getUserTournament(it1, team) }
 
+                //Log.d("Test", "tourneyName2 ${tournament?.name}")
+
+                            //val uid = sharedPrefsRepository.user.uid
+                            //Log.d("Test","UID ${uid}")
+                            userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
+                            Log.d("Test", "tourneyName2 ${tournament?.name}")
+                            mapOf("currentTournaments.${tournament?.name}" to userTournament)?.let { it1 ->
+                                firestoreRepository.updateUserTournamentData(uid, it1)
+                            }
+                                .addOnSuccessListener {
+
+                                    //TODO: These 3 lines which are below have
+                                    // to be executed everytime for a user when captain accepts them into the team
+
+                                    if (type == "Invite") {
+                                        val user = sharedPrefsRepository.user
+                                        user.currentTournaments[tournament!!.name] =
+                                            userTournament!!
+                                        sharedPrefsRepository.user = user
+
+                                        Log.d("Test", "Being added to user")
+                                    }
+                                }
+                                .addOnFailureListener {
+                                    Log.d("Test", "Unable to add user")
+                                }
+
+                    }
+            }
+
+    private fun getUserTournament(tournament: Tournament, team:String) =
+        UserTournament(
+            name = tournament.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = sharedPrefsRepository.getDailyStepCount(),
+            joinDate = DateTime().millis,
+            goal = tournament.goal,
+            endDate = tournament.finishTimestamp,
+            teamName = team
+        )
+
+    private fun updateUserSharedPrefsData(userTournament: UserTournament){
+        val user = sharedPrefsRepository.user
+        userTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
+        userTournament.totalSteps = sharedPrefsRepository.getDailyStepCount()
+        user.currentTournaments[userTournament.name] = userTournament
+        sharedPrefsRepository.user = user
+    }
 }

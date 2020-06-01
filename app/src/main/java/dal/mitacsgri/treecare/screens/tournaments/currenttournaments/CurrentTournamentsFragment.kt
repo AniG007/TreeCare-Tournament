@@ -43,6 +43,10 @@ class CurrentTournamentsFragment : Fragment() {
             view.recyclerView.adapter?.notifyDataSetChanged()
         })
 
+        mViewModel.statusMessage.observe(viewLifecycleOwner, Observer {
+            it.toast(requireContext())
+        })
+
         mViewModel.getCurrentTournamentsForUser()
 
         return view

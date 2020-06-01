@@ -25,40 +25,41 @@ class EnrollTeamsViewModel(
     val teamsList = MutableLiveData<ArrayList<Team>>().default(arrayListOf())
     val teamsHolder = MutableLiveData<ArrayList<String>>().default(arrayListOf())
     val existingTeams = MutableLiveData<ArrayList<String>>().default(arrayListOf())
+    //val teamsToAdd:ArrayList<String> = ArrayList<String>()
 
     val MessageStatus = MutableLiveData<String>()
 
     fun getTeams(): MutableLiveData<ArrayList<Team>> {
-
-        firestoreRepository.getAllCaptainedTeams(sharedPrefsRepository.user.uid)
+        //Log.d("Test",teamsHolder.value.toString())
+        firestoreRepository.getAllTeams()
             .addOnSuccessListener {
-                val docs = it.toObjects<Team>().filter {it.exist}
-                //getting the teams owned by the player
-                /*for (i in docs){
-                    Log.d("Test","In Loop "+i.data?.get("name"))
-                    teamsList.value?.add(i.data?.get("name").toString())
-                }*/
-                //Log.d("Test","QSnap " + docs.toString())
-                //val team = it.toObjects<Team>()
-                for (team in docs) {
-                   // Log.d("Test", "QSnap " + team.toString())
-
-                    //Doing this inorder to remove the team which have already enrolled in the tournament
-                    if(existingTeams.value?.contains(team.name)!!){
-                        //Log.d("Test","Team exists")
-                        //Log.d("Test","If "+existingTeams.value.toString()+" "+team.name)
-                        teamsList.value?.remove(team)
-                    }
-                    else {
-                        //Log.d("Test","Team does not exists")
-                        //Log.d("Test","Else "+existingTeams.value.toString()+" "+team.name)
-                        teamsList.value?.add(team)
-                    }
+                val teams = it.toObjects<Team>()
+                for (team in teams){
+                    teamsList.value?.add(team)
                 }
                 teamsList.notifyObserver()
             }
         return teamsList
     }
+
+//        firestoreRepository.getAllCaptainedTeams(sharedPrefsRepository.user.uid)
+//            .addOnSuccessListener {
+//                val docs = it.toObjects<Team>().filter {it.exist}
+//                //getting the teams owned by the player
+//
+//                for (team in docs) {
+//                   // Log.d("Test", "QSnap " + team.toString())
+//
+//                    //Doing this inorder to remove the team which have already enrolled in the tournament
+//                    if(existingTeams.value?.contains(team.name)!!){
+//                        teamsList.value?.remove(team)
+//                    }
+//                    else {
+//                        teamsList.value?.add(team)
+//                    }
+//                }
+//                teamsList.notifyObserver()
+//            }
 
     fun getExistingTeams (tournamentName: String){
         firestoreRepository.getTournament(tournamentName)
@@ -89,7 +90,6 @@ class EnrollTeamsViewModel(
                     }
 
                     else if (tournament?.teams?.count() == tournament?.teamLimit) {
-
                         MessageStatus.value = "Tournament is full"
                     }
 
@@ -110,47 +110,47 @@ class EnrollTeamsViewModel(
     }
 
     fun addTournament(team: String, tournamentName : String) {
-                //Adding tournament to currentTournaments in Users Collection
-                firestoreRepository.getTournament(tournamentName)
+        //Adding tournament to currentTournaments in Users Collection
+        firestoreRepository.getTournament(tournamentName)
+            .addOnSuccessListener {
+                val tournament = it.toObject<Tournament>()
+                firestoreRepository.getTeam(team)
                     .addOnSuccessListener {
-                        val tournament = it.toObject<Tournament>()
-                        firestoreRepository.getTeam(team)
-                            .addOnSuccessListener {
-                                val teamData = it.toObject<Team>()
-                                val members = teamData?.members
-                                val userTournament =
-                                    tournament?.let { it1 -> getUserTournament(it1, team) }
+                        val teamData = it.toObject<Team>()
+                        val members = teamData?.members
+                        val userTournament =
+                            tournament?.let { it1 -> getUserTournament(it1, team) }
 
-                                Log.d("Test", "tourneyName2 ${tournament?.name}")
+                        Log.d("Test", "tourneyName2 ${tournament?.name}")
 
-                                for (uid in members!!) {
-                                    //val uid = sharedPrefsRepository.user.uid
-                                    //Log.d("Test","UID ${uid}")
-                                    userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
-                                    Log.d("Test", "tourneyName2 ${tournament?.name}")
-                                    mapOf("currentTournaments.${tournament?.name}" to userTournament)?.let { it1 ->
-                                        firestoreRepository.updateUserTournamentData(uid, it1)
-                                    }
-                                        .addOnSuccessListener {
-                                            MessageStatus.value = "Enrolled Successfully"
+                        for (uid in members!!) {
+                            //val uid = sharedPrefsRepository.user.uid
+                            //Log.d("Test","UID ${uid}")
+                            userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
+                            Log.d("Test", "tourneyName2 ${tournament?.name}")
+                            mapOf("currentTournaments.${tournament?.name}" to userTournament)?.let { it1 ->
+                                firestoreRepository.updateUserTournamentData(uid, it1)
+                            }
+                                .addOnSuccessListener {
+                                    MessageStatus.value = "Enrolled Successfully"
 //                                        userTournament?.leafCount =
 //                                            sharedPrefsRepository.getDailyStepCount() / 1000
-                                            //TODO: These 3 lines which are below have
-                                            // to be executed everytime when a user navigates to tournament fragment
-                                            val user = sharedPrefsRepository.user
-                                            user.currentTournaments[tournament!!.name] =
-                                                userTournament!!
-                                            sharedPrefsRepository.user = user
+                                    //TODO: These 3 lines which are below have
+                                    // to be executed everytime when a user navigates to tournament fragment
+                                    val user = sharedPrefsRepository.user
+                                    user.currentTournaments[tournament!!.name] =
+                                        userTournament!!
+                                    sharedPrefsRepository.user = user
 
-                                            Log.d("Test", "Being added to user")
-                                        }
-                                        .addOnFailureListener {
-                                            Log.d("Test", "Unable to add user")
-                                        }
+                                    Log.d("Test", "Being added to user")
                                 }
-                            }
+                                .addOnFailureListener {
+                                    Log.d("Test", "Unable to add user")
+                                }
+                        }
                     }
             }
+    }
 
 
 

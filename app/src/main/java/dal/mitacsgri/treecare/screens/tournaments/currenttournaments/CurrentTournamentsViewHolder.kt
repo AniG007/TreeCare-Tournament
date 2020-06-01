@@ -29,8 +29,8 @@ class CurrentTournamentsViewHolder(
             nameTV.text = item.name
             goalTV.text = viewModel.getGoalText(item)
             durationTV.text = viewModel.getTournamentDurationText(item)
-            team1CountTV.text = viewModel.getTeamsCountText(item)
-            team2CountTV.text = viewModel.getTeamsCountText(item)
+            //team1CountTV.text = viewModel.getTeamsCountText(item)
+            teamCountTV.text = viewModel.getTeamsCountText(item)
 
             buttonTree.setOnClickListener {
                 viewModel.startUnityActivityForTournament(item) {
@@ -55,7 +55,7 @@ class CurrentTournamentsViewHolder(
                     }
                     .setNegativeButton("Yes") { _: DialogInterface, _: Int ->
                         viewModel.leaveTournament(item)
-                        findNavController().navigateUp()
+                        //findNavController().navigateUp()
                     }
                     .show()
             }

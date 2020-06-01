@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_your_teams.view.*
@@ -28,12 +29,14 @@ class YourTeamsFragment : Fragment() {
         val view = inflater.createFragmentViewWithStyle(activity,
             R.layout.fragment_your_teams, R.style.tournament_mode_theme)
         view.apply {
-            mViewModel.getAllMyTeams().observe(this@YourTeamsFragment, Observer {
+            mViewModel.getAllMyTeams().observe(viewLifecycleOwner, Observer {
                 recyclerView.adapter = YourTeamsRecyclerViewAdapter(it,mViewModel)
             })
 
             //mViewModel.delBtnVis()
-
+            mViewModel.status.observe(viewLifecycleOwner, Observer {
+                it.toast(context)
+            })
             /*mViewModel.status.observe(this@YourTeamsFragment, Observer {
                 if(it) buttonDelete.visibility = View.VISIBLE
                 else buttonDelete.visibility = View.INVISIBLE

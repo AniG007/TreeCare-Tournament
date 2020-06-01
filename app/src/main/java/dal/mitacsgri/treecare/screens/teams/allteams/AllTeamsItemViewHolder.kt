@@ -27,15 +27,24 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
             captainNameTV.text = viewModel.getCaptainNameText(item)
 
             if (viewModel.isUserCaptain(item.captain)) {
+
                 button.text = context.getString(R.string.invite_member)
                 button.setOnClickListener {
-                    val tName = nameTV.text.toString()
-                    Log.d("TAG","TeamNameinAll"+tName)
-                    val action = TeamsFragmentDirections.actionTeamsFragmentToJoinTeamFragment(tName)
-                    //findNavController().navigate(R.id.action_teamsFragment_to_joinTeamFragment)
-                    findNavController().navigate(action)
+                    if (viewModel.teamExist()) {
+                        val tName = nameTV.text.toString()
+                        Log.d("TAG", "TeamNameinAll" + tName)
+                        val action =
+                            TeamsFragmentDirections.actionTeamsFragmentToJoinTeamFragment(tName)
+                        //findNavController().navigate(R.id.action_teamsFragment_to_joinTeamFragment)
+                        findNavController().navigate(action)
+                    } else {
+                        findNavController().navigateUp()
+                    }
                 }
-            } else {
+            }
+
+
+            else {
                 button.text =
                     if (viewModel.isJoinRequestSent(item)) context.getString(R.string.cancel_request)
                     else context.getString(R.string.send_join_request)

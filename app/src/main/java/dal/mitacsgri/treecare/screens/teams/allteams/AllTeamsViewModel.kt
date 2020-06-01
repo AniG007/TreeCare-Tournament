@@ -45,6 +45,34 @@ class AllTeamsViewModel(
     fun sendJoinRequest(teamName: String, action: (status: String) -> Unit) {
         val uid = sharedPrefsRepository.user.uid
 
+
+        if(sharedPrefsRepository.user.currentTeams.isEmpty()) {
+            firestoreRepository.updateTeamData(teamName, mapOf("joinRequests" to FieldValue.arrayUnion(uid)))
+                .addOnSuccessListener {
+                    Log.d("Join request", "sent")
+                    firestoreRepository.updateUserData(uid, mapOf("teamJoinRequests" to FieldValue.arrayUnion(teamName)))
+                        .addOnSuccessListener {
+                            action("true")
+                        }
+                        .addOnFailureListener {
+                            action("false")
+                            firestoreRepository.updateTeamData(
+                                teamName,
+                                mapOf("joinRequests" to FieldValue.arrayRemove(uid))
+                            )
+                        }
+                }
+                .addOnFailureListener {
+                    Log.d("Join request", "failed")
+                    action("false")
+                }
+        }
+
+        else{
+            action("teamexists")
+        }
+    }
+
         //commented this part since user may send request to more than one team and same uid cannot be added to
         // db twice. MutableMap or Map can be an alternative
         /*firestoreRepository.getTeam(teamName)
@@ -63,37 +91,8 @@ class AllTeamsViewModel(
 
         }*/
 
-        if(sharedPrefsRepository.user.currentTeams.isEmpty()) {
-            firestoreRepository.updateTeamData(
-                teamName,
-                mapOf("joinRequests" to FieldValue.arrayUnion(uid))
-            )
-                .addOnSuccessListener {
-                    Log.d("Join request", "sent")
-                    firestoreRepository.updateUserData(
-                        uid,
-                        mapOf("teamJoinRequests" to FieldValue.arrayUnion(teamName))
-                    )
-                        .addOnSuccessListener {
-                            action("true")
-                        }
-                        .addOnFailureListener {
-                            action("false")
-                            firestoreRepository.updateTeamData(
-                                teamName,
-                                mapOf("joinRequests" to FieldValue.arrayRemove(uid))
-                            )
-                        }
-                }
-                .addOnFailureListener {
-                    Log.d("Join request", "failed")
-                    action("false")
-                }
-        }
-        else{
-            action("teamexists")
-        }
-    }
+
+
 
 
 
@@ -122,4 +121,8 @@ class AllTeamsViewModel(
     }
 
     fun isJoinRequestSent(team: Team) = team.joinRequests.contains(sharedPrefsRepository.user.uid)
+
+    fun teamExist(): Boolean {
+        return sharedPrefsRepository.user.currentTeams.isNotEmpty()
+    }
 }

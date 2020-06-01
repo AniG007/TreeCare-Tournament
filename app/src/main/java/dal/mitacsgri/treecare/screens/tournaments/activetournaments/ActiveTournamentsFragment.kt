@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.fragment_active_tournaments.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,9 +33,15 @@ class ActiveTournamentsFragment : Fragment() {
                 adapter = ActiveTournamentsRecyclerViewAdapter(mViewModel.activeTournamentsList.value!!, mViewModel)
             }
 
-            mViewModel.activeTournamentsList.observe(this@ActiveTournamentsFragment, Observer {
+            mViewModel.activeTournamentsList.observe(viewLifecycleOwner, Observer {
                 recyclerView.adapter = ActiveTournamentsRecyclerViewAdapter(it, mViewModel)
             })
+
+            mViewModel.MessageStatus.observe(viewLifecycleOwner, Observer {
+                it.toast(context)
+                //findNavController().navigateUp()
+            })
+
         }
 
         mViewModel.getAllActiveTournaments()

@@ -18,11 +18,13 @@ import kotlin.system.exitProcess
 
 class YourTeamsViewModel(
     private val firestoreRepository: FirestoreRepository,
-    private val sharedPrefsRepository: SharedPreferencesRepository,
-    val status: MutableLiveData<Boolean> = MutableLiveData<Boolean>().default(false)
+    private val sharedPrefsRepository: SharedPreferencesRepository
+    //val status: MutableLiveData<Boolean> = MutableLiveData<Boolean>().default(false)
 ): ViewModel() {
 
     val teamsLiveData = MutableLiveData<ArrayList<Team>>().default(arrayListOf())
+    val status = MutableLiveData<String>()
+
     fun getAllMyTeams(): MutableLiveData<ArrayList<Team>> {
 
         //Log.d("Test","name "+sharedPrefsRepository.team.name)
@@ -62,6 +64,10 @@ class YourTeamsViewModel(
                                 Log.d("Test", "Deletion of Team is successful")
                                 teamsLiveData.value?.remove(team)
                                 teamsLiveData.notifyObserver()
+                                sharedPrefsRepository.user.currentTeams.clear()
+                                sharedPrefsRepository.user.captainedTeams.clear()
+                                status.value="Team has been deleted"
+
                             }
                     }
             }
@@ -82,12 +88,22 @@ class YourTeamsViewModel(
     fun isUserCaptain(captainUid: String) = captainUid == sharedPrefsRepository.user.uid
 
     fun exitTeam(team : Team){
+        val tourneys = team.currentTournaments
         firestoreRepository.updateTeamData(team.name, mapOf("members" to FieldValue.arrayRemove(sharedPrefsRepository.user.uid)))
             .addOnSuccessListener {
                 firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("currentTeams" to FieldValue.arrayRemove(team.name)))
                     .addOnSuccessListener {
                         teamsLiveData.value?.remove(team)
-                        teamsLiveData.notifyObserver()
+                        for(tourney in tourneys) {
+                            firestoreRepository.deleteTournamentFromUserDB(sharedPrefsRepository.user.uid, tourney)
+                                .addOnSuccessListener {
+                                    sharedPrefsRepository.user.currentTeams.clear()
+                                    teamsLiveData.notifyObserver()
+                                }
+                                .addOnFailureListener {
+                                    Log.d("Exception", it.toString())
+                                }
+                        }
                     }
             }
     }

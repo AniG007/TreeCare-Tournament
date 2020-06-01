@@ -31,6 +31,7 @@ class EnrollTeamsRecyclerViewAdapter(
         holder.bind(membersFilterList[position])
     }
 
+    //For Search functionality
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -55,6 +56,7 @@ class EnrollTeamsRecyclerViewAdapter(
                 Log.d("Filter",filterResults.values.toString())
                 return filterResults
             }
+
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {

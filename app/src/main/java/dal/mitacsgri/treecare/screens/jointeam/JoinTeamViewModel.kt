@@ -35,7 +35,7 @@ class JoinTeamViewModel(
                 }
                 if(mailData.value=="" ){
                     messageLiveData.value = "PlayerID does not exist"
-                    messageLiveData.notifyObserver()
+                    //messageLiveData.notifyObserver()
                 }
                 else{
                     getUserId(email,teamName)
@@ -62,7 +62,7 @@ class JoinTeamViewModel(
                                     .addOnSuccessListener {
                                         Log.d("UserId", "User Added to team invites")
                                         messageLiveData2.value = "An Invite has been sent to the Player"
-                                        messageLiveData2.notifyObserver()
+                                        //messageLiveData2.notifyObserver()
                                     }
                                     .addOnFailureListener {
                                         Log.d("Invite", "Failed to add to team")

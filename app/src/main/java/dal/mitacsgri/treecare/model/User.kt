@@ -28,5 +28,6 @@ data class User (
     val userJoinRequests: ArrayList<String> = arrayListOf(),
     val teamJoinRequests: ArrayList<String> = arrayListOf(),
     val photoUrl: String = "",
-    val dailyGoalStreakCount: Int = 0
+    val dailyGoalStreakCount: Int = 0,
+    val dailySteps : Int = 0
 )

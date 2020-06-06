@@ -26,6 +26,7 @@ class InvitesRequestViewModel(
     val invitesList = MutableLiveData<ArrayList<InvitesRequest>>().default(arrayListOf())
     val requestList = MutableLiveData<ArrayList<InvitesRequest>>().default(arrayListOf())
 
+    var messageDisplayed = false
 
     // val statusMessage = MutableLiveData<String>()
     val uId = ArrayList<String>()

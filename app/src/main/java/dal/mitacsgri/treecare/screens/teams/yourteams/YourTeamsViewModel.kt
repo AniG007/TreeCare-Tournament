@@ -24,6 +24,7 @@ class YourTeamsViewModel(
 
     val teamsLiveData = MutableLiveData<ArrayList<Team>>().default(arrayListOf())
     val status = MutableLiveData<String>()
+    var messageDisplayed = false
 
     fun getAllMyTeams(): MutableLiveData<ArrayList<Team>> {
 
@@ -33,8 +34,15 @@ class YourTeamsViewModel(
         val userId = sharedPrefsRepository.user.uid
         firestoreRepository.getAllTeamsForUserAsMember(userId)
             .addOnSuccessListener {
+                //Log.d("Teststep",sharedPrefsRepository.getDailyStepCount().toString())
+
+                //TODO: can use listenable worker to update steps in db at midnight so that its uniform but this is also
+                // needed to keep steps updated
+                //Update daily step of each user
+                firestoreRepository.updateUserData(userId, mapOf("dailySteps" to sharedPrefsRepository.getDailyStepCount()))
                 teamsLiveData.value = it.toObjects<Team>().filter { it.exist }.toArrayList()
                 teamsLiveData.notifyObserver()
+
             }
             .addOnFailureListener {
             }

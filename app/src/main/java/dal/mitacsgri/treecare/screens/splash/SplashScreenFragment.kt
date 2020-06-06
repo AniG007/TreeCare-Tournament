@@ -26,7 +26,7 @@ class SplashScreenFragment : Fragment() {
         stepCountDataProvidingViewModel.apply {
             //testGameByManipulatingSharedPrefsData(this)
             resetDailyGoalCheckedFlag()
-            stepCountDataFetchedCounter.observe(this@SplashScreenFragment, Observer {
+            stepCountDataFetchedCounter.observe(viewLifecycleOwner, Observer {
                 //This value will be 2 only when login has been done
                 if (it == 2) {
                     navigateWithDelay(R.id.action_splashScreenFragment_to_modeSelectionFragment)

@@ -3,19 +3,14 @@ package dal.mitacsgri.treecare.screens.teaminfo
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.model.Challenger
-import dal.mitacsgri.treecare.model.Team
-import dal.mitacsgri.treecare.model.TeamInfo
-import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
-import org.joda.time.DateTime
 
 class TeamInfoViewModel(
     private val firestoreRepository: FirestoreRepository,
@@ -26,6 +21,7 @@ class TeamInfoViewModel(
 
     val membersList = MutableLiveData<ArrayList<TeamInfo>>().default(arrayListOf())
     val status :MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val tempList = MutableLiveData<ArrayList<TeamInfo>>().default(arrayListOf())
 
     fun getTeamMembers (teamName : String): MutableLiveData<ArrayList<TeamInfo>> {
         firestoreRepository.getTeam(teamName)
@@ -37,24 +33,23 @@ class TeamInfoViewModel(
                     firestoreRepository.getUserData(m.toString())
                         .addOnSuccessListener {
                             val user = it.toObject<User>()
-                            membersList.value?.add(TeamInfo(
+                            membersList.value?.sortAndAddToList(TeamInfo(
                                 user?.uid.toString(),
                                 teamName,
                                 team.captain,
                                 user?.name.toString(),
 //                                getDailyStepCount(),
-                                sharedPrefsRepository.getDailyStepCount(),
+                                user?.dailySteps!!,
                                 user?.photoUrl.toString(),
                                 sharedPrefsRepository.getDailyStepCount()/1000
                             ))
+                            Log.d("Test","memsInTeam "+membersList.value.toString())
                             membersList.notifyObserver()
                         }
-
                 }
             }
         return membersList
     }
-
     fun isCurrentUser (tInfo: TeamInfo) = tInfo.uId == sharedPrefsRepository.user.uid
 
     fun isUserCaptain(captainUid: String) = captainUid == sharedPrefsRepository.user.uid
@@ -105,5 +100,17 @@ class TeamInfoViewModel(
                         membersList.notifyObserver()
                     }
             }
+    }
+
+    private fun ArrayList<TeamInfo>.sortAndAddToList(teamInfo: TeamInfo) {
+
+        if(teamInfo.captainId.equals(teamInfo.uId)) {
+            add(0,teamInfo)
+            return
+        }
+        else{
+            add(teamInfo)
+            return
+        }
     }
 }

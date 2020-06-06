@@ -34,8 +34,11 @@ class YourTeamsFragment : Fragment() {
             })
 
             //mViewModel.delBtnVis()
+
             mViewModel.status.observe(viewLifecycleOwner, Observer {
-                it.toast(context)
+                if(!mViewModel.messageDisplayed)
+                    it.toast(context)
+                mViewModel.messageDisplayed = true
             })
             /*mViewModel.status.observe(this@YourTeamsFragment, Observer {
                 if(it) buttonDelete.visibility = View.VISIBLE

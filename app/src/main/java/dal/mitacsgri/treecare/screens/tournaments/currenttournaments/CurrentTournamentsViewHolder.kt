@@ -14,7 +14,13 @@ import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsFragmentDirections
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
+import kotlinx.android.synthetic.main.item_active_tournament.view.*
 import kotlinx.android.synthetic.main.item_current_tournament.view.*
+import kotlinx.android.synthetic.main.item_current_tournament.view.buttonLeaderBoard
+import kotlinx.android.synthetic.main.item_current_tournament.view.durationTV
+import kotlinx.android.synthetic.main.item_current_tournament.view.goalTV
+import kotlinx.android.synthetic.main.item_current_tournament.view.nameTV
+import kotlinx.android.synthetic.main.item_current_tournament.view.teamCountTV
 
 /**
  * Created by Anirudh on 25-04-2020

@@ -2,23 +2,21 @@ package dal.mitacsgri.treecare.screens.tournaments.activetournaments
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.content.Intent
 import android.view.View
-import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
-import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.screens.BaseViewHolder
-import dal.mitacsgri.treecare.screens.tournaments.TournamentsFragmentDirections
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
-import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.item_active_tournament.view.*
 import kotlinx.android.synthetic.main.item_active_tournament.view.durationTV
 import kotlinx.android.synthetic.main.item_active_tournament.view.goalTV
 import kotlinx.android.synthetic.main.item_active_tournament.view.nameTV
+import kotlinx.android.synthetic.main.item_active_tournament.view.teamCountTV
+import kotlinx.android.synthetic.main.item_current_challenge.*
+import kotlinx.android.synthetic.main.item_current_tournament.view.*
+
 //import kotlinx.android.synthetic.main.item_current_tournament.view.*
 
 class ActiveTournamentsViewHolder(
@@ -34,12 +32,15 @@ class ActiveTournamentsViewHolder(
             descriptionTV.text = item.description
             durationTV.text = viewModel.getTournamentDurationText(item)
             //membersCountTV.text = viewModel.getTeamsCountText(item)
-            teamCountTV.text = viewModel.getTeamsCountText(item).toString()
+            teamCountTV.text = viewModel.getTeamsCountText(item)
             //team2CountTV.text = viewModel.getTeamsCountText(item).toString()
 
-
             //if (item.active && !viewModel.hasTeamJoinedTournament(item)) {
-            if (item.active ) {
+
+
+
+
+            if (item.active) {
                 buttonJoin.enable()
                 buttonJoin.setOnClickListener {
                     MaterialAlertDialogBuilder(context)
@@ -49,6 +50,7 @@ class ActiveTournamentsViewHolder(
                            // val action = TournamentsFragmentDirections.actionTournamentsFragmentToEnrollTeamsFragment(item.name)
                             viewModel.getExistingTeams(item.name)
                             viewModel.enrollTeams(item.name)
+                            //buttonJoin.setEnabled(false)
 
                             //findNavController().navigateUp()
                             /*viewModel.joinTournament(item) {

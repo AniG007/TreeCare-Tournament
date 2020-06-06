@@ -34,8 +34,8 @@ class EnrollTeamsViewHolder(
             }
 
             enrollteamCard.setOnClickListener {
-//                val action = EnrollTeamsFragmentDirections.actionEnrollTeamsFragmentToTeamInfoFragment2(item.name)
-//                findNavController().navigate(action)
+                val action = EnrollTeamsFragmentDirections.actionEnrollTeamsFragmentToTeamInfoFragment(item.name)
+                findNavController().navigate(action)
             }
 
         }

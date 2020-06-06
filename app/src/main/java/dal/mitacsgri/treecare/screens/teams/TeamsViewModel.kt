@@ -29,7 +29,8 @@ class TeamsViewModel(
                 val user = it.toObject<User>()
                 //Log.d("teamName","tnames"+ user?.captainedTeams)
                 if(user?.captainedTeams!!.isNotEmpty()) {
-                    for (i in user?.captainedTeams!!) {
+                    //for loop not needed since user can be only in 1 team. But may be useful when that restriction is lifted during creation
+                    for (i in user.captainedTeams) {
                         //Log.d("teamName", "TNAME" + i)
                         firestoreRepository.getTeam(i)
                             .addOnSuccessListener {
@@ -37,10 +38,10 @@ class TeamsViewModel(
                                 //Log.d("Count", "jrcount" + team?.joinRequests?.count())
                                 if (team?.joinRequests?.count()!! > 0) {
                                     count.value = 1
-                                    count.notifyObserver()
+                                    //count.notifyObserver()
                                     //Log.d("Count", "count1 " + count.value)
                                 }
-                                user?.let {
+                                user.let {
                                     sharedPrefsRepository.user = user
                                     //Log.d("Count", "count4" + count.value)
                                     //status.value = user.userJoinRequests.isNotEmpty() || user.teamInvites.isNotEmpty()
@@ -53,8 +54,8 @@ class TeamsViewModel(
                     }
                 }
                 else{
-                    //When a user doesn't have any team, this code check if the user just has invites
-                    user?.let {
+                    //When a user doesn't have any team, this code is to check if the user just has invites
+                    user.let {
                         sharedPrefsRepository.user = user
                         //Log.d("Count", "count4" + count.value)
                         //status.value = user.userJoinRequests.isNotEmpty() || user.teamInvites.isNotEmpty()

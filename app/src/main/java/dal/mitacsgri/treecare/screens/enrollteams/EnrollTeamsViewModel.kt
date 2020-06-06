@@ -3,7 +3,6 @@ package dal.mitacsgri.treecare.screens.enrollteams
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.extensions.default
@@ -31,9 +30,10 @@ class EnrollTeamsViewModel(
 
     fun getTeams(): MutableLiveData<ArrayList<Team>> {
         //Log.d("Test",teamsHolder.value.toString())
+        teamsList.value?.clear() //to Avoid duplicate entries while navigating up
         firestoreRepository.getAllTeams()
             .addOnSuccessListener {
-                val teams = it.toObjects<Team>()
+                val teams = it.toObjects<Team>().filter { it.exist }
                 for (team in teams){
                     teamsList.value?.add(team)
                 }
@@ -76,9 +76,18 @@ class EnrollTeamsViewModel(
             }
     }
 
-    fun enrollTeams(tournamentName: String) {
+    fun enrollTeams(teamsLimit: String):Boolean {
         //TO check if a team has already been enrolled in the tournament
-        for (team in teamsHolder.value!!) {
+        if(teamsHolder.value?.count()!! > teamsLimit.toInt()){
+            MessageStatus.value = "You cannot select more than ${teamsLimit.toInt()} teams"
+            return false
+        }
+        else {
+            Log.d("Test", "Teams in teamsHolder " + teamsHolder.value)
+            MessageStatus.value = "Teams will be added when you create a tournament"
+            return true
+        }
+        /*for (team in teamsHolder.value!!) {
 
             Log.d("Test", "insideEnrollTeams" + team)
             firestoreRepository.getTournament(tournamentName)
@@ -106,7 +115,7 @@ class EnrollTeamsViewModel(
                             }
                     }
                 }
-        }
+        }*/
     }
 
     fun addTournament(team: String, tournamentName : String) {

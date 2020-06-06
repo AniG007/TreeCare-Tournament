@@ -330,7 +330,32 @@
         android:id="@+id/enrollTeamsFragment"
         android:name="dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsFragment"
         android:label="fragment_enroll_teams"
-        tools:layout="@layout/fragment_enroll_teams" />
+        tools:layout="@layout/fragment_enroll_teams" >
+        <action
+            android:id="@+id/action_enrollTeamsFragment_to_createTournamentFragment"
+            app:destination="@id/createTournamentFragment" />
+        <argument
+            android:name="tournamentName"
+            app:argType="string" />
+        <argument
+            android:name="tournamentDescription"
+            app:argType="string" />
+        <argument
+            android:name="goal"
+            app:argType="string" />
+        <argument
+            android:name="endDate"
+            app:argType="string" />
+        <argument
+            android:name="teamsLimit"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_enrollTeamsFragment_to_teamInfoFragment"
+            app:destination="@id/teamInfoFragment" />
+        <argument
+            android:name="startDate"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/createTournamentFragment"
         android:name="dal.mitacsgri.treecare.screens.createtournament.CreateTournamentFragment"
@@ -339,5 +364,38 @@
         <action
             android:id="@+id/action_createTournamentFragment_to_enrollTeamsFragment"
             app:destination="@id/enrollTeamsFragment" />
+        <argument
+            android:name="status"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="tournamentName"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="tournamentDescription"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="goal"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="endDate"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="teamsLimit"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="teamsToAdd"
+            app:argType="string[]"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="startDate"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
 </navigation>

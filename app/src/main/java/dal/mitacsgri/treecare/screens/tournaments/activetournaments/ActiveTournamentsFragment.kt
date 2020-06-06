@@ -37,11 +37,13 @@ class ActiveTournamentsFragment : Fragment() {
                 recyclerView.adapter = ActiveTournamentsRecyclerViewAdapter(it, mViewModel)
             })
 
-            mViewModel.MessageStatus.observe(viewLifecycleOwner, Observer {
-                it.toast(context)
-                //findNavController().navigateUp()
-            })
-
+            if(!mViewModel.messageDisplayed2) {
+                mViewModel.MessageStatus.observe(viewLifecycleOwner, Observer {
+                    it.toast(context)
+                    mViewModel.messageDisplayed2 = true
+                    //findNavController().navigateUp()
+                })
+            }
         }
 
         mViewModel.getAllActiveTournaments()

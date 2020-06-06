@@ -14,7 +14,7 @@ data class Tournament (
     val teams: ArrayList<String> = arrayListOf(),
     val creationTimestamp: Timestamp = Timestamp.now(),
     //var players: ArrayList<String> = arrayListOf(),
-    //val startTimestamp: Timestamp = Timestamp.now(),
+    val startTimestamp: Timestamp = Timestamp.now(),
     val finishTimestamp: Timestamp = Timestamp.now(),
     //val isActive: Boolean = true,
     val exist: Boolean = true,

@@ -294,6 +294,7 @@ class ChallengesViewModel(
         )
 
     private fun removeChallengeFromCurrentChallengesLists(challenge: Challenge) {
+
         currentChallengesList.value?.remove(challenge)
         currentChallengesList.notifyObserver()
 

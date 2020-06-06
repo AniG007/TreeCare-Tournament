@@ -14,6 +14,8 @@ import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.fragment_current_tournaments.view.*
+import kotlinx.android.synthetic.main.item_current_challenge.*
+import kotlinx.android.synthetic.main.item_current_tournament.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class CurrentTournamentsFragment : Fragment() {
@@ -39,24 +41,30 @@ class CurrentTournamentsFragment : Fragment() {
             adapter = CurrentTournamentsRecyclerViewAdapter(mViewModel.currentTournamentsList.value!!, mViewModel)
         }
 
+
         mViewModel.currentTournamentsList.observe(viewLifecycleOwner, Observer {
-            view.recyclerView.adapter?.notifyDataSetChanged()
+            //view.recyclerView.adapter?.notifyDataSetChanged()
+            view.recyclerView.adapter = CurrentTournamentsRecyclerViewAdapter(it, mViewModel)
         })
 
-        mViewModel.statusMessage.observe(viewLifecycleOwner, Observer {
-            it.toast(requireContext())
-        })
+        if(!mViewModel.messageDisplayed) {
+
+            mViewModel.statusMessage.observe(viewLifecycleOwner, Observer {
+                it.toast(requireContext())
+                mViewModel.messageDisplayed = true
+
+            })
+        }
 
         mViewModel.getCurrentTournamentsForUser()
-
         return view
     }
 
-    private fun setUpRecyclerView(recyclerView: RecyclerView, tournamentsList: List<Tournament>) {
-        recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = CurrentTournamentsRecyclerViewAdapter(tournamentsList, mViewModel)
-        }
-    }
+//    private fun setUpRecyclerView(recyclerView: RecyclerView, tournamentsList: List<Tournament>) {
+//        recyclerView.apply {
+//            setHasFixedSize(true)
+//            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+//            adapter = CurrentTournamentsRecyclerViewAdapter(tournamentsList, mViewModel)
+//        }
+//    }
 }

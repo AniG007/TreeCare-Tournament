@@ -45,7 +45,7 @@ android {
 dependencies {
     //def nav_version = "2.2.0-alpha01"
     def nav_version = "2.3.0-alpha06"
-    def lifecycle_version = "2.0.0"
+    def lifecycle_version = "2.2.0"
     def koin_version = "2.0.1"
     def work_version = "2.2.0-rc01"
 
@@ -63,6 +63,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
 
     implementation project(":TreeCareUnityModule")
 
@@ -90,6 +91,8 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
     //Koin
     implementation "org.koin:koin-android:$koin_version"
@@ -145,6 +148,12 @@ dependencies {
 
     //Kotlin coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
+
+    //Kotlin coroutines for Firebase operations
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
+
+    //ViewModel KTX
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
 
     //Firebase Analytics
     implementation 'com.google.firebase:firebase-analytics:17.0.1'

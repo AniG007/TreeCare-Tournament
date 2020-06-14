@@ -17,7 +17,7 @@ class SharedPreferencesRepository(val context: Context) {
         Context.MODE_PRIVATE
     )
 
-    //This value neeeds to be obtained from the database to check if the user is using the app for the first time or not
+    //This value needs to be obtained from the database to check if the user is using the app for the first time or not
     var isFirstRun
         get() = getBoolean(R.string.is_first_run, true)
         set(value) {

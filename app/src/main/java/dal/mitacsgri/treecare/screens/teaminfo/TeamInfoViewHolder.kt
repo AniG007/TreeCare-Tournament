@@ -75,6 +75,10 @@ class TeamInfoViewHolder(
             else{
                 removePlayer.visibility = View.INVISIBLE
             }
+
+            cardView.setOnClickListener {
+                viewModel.display()
+            }
         }
     }
 

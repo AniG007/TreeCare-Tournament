@@ -40,8 +40,8 @@ class TeamInfoViewModel(
                                 user?.name.toString(),
 //                                getDailyStepCount(),
                                 user?.dailySteps!!,
-                                user?.photoUrl.toString(),
-                                sharedPrefsRepository.getDailyStepCount()/1000
+                                user.photoUrl.toString(),
+                                user.dailySteps/1000
                             ))
                             Log.d("Test","memsInTeam "+membersList.value.toString())
                             membersList.notifyObserver()
@@ -112,5 +112,11 @@ class TeamInfoViewModel(
             add(teamInfo)
             return
         }
+    }
+
+    fun display(){
+
+        Log.d("Test","team printing "+sharedPrefsRepository.team.captainName)
+
     }
 }

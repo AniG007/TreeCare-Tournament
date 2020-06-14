@@ -31,18 +31,18 @@ class UpdateUserTournamentDataWorker(appContext: Context, workerParams: WorkerPa
         val future = SettableFuture.create<Result>()
         val user = sharedPrefsRepository.user
 
-        user.currentTournaments.forEach { (_, tournament) ->
+        user.currentTournaments.forEach { (_, tourney) ->
 
-            val endTimeMillis = tournament.endDate.toDateTime().millis
+            val endTimeMillis = tourney.endDate.toDateTime().millis
             //Two condition checks are applied because the 'isActive' variable is set only after
             //the dialog has been displayed. The second condition check prevents update of Tournament step count
             //in the database even when the dialog has not been displayed
-            if (tournament.isActive && endTimeMillis > DateTime().millis) {
-                if (tournament.type == TOURNAMENT_TYPE_DAILY_GOAL_BASED) {
-                    stepCountRepository.getTodayStepCountData {
-                        tournament.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-                        updateAndStoreUserTournamentDataInSharedPrefs(tournament, user)
-                    }
+            if (tourney.isActive && endTimeMillis > DateTime().millis) {
+                //if (tournament.type == TOURNAMENT_TYPE_DAILY_GOAL_BASED) {
+                stepCountRepository.getTodayStepCountData {
+                    tourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
+                    updateAndStoreUserTournamentDataInSharedPrefs(tourney, user)
+                    //}
                 }
             }
         }

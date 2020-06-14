@@ -16,6 +16,7 @@ data class UserTournament(
         var currentDayOfWeek: Int = 0,
         val goal: Int = 0,
         var isActive: Boolean = true,
+        val startDate:Timestamp = Timestamp.now(),
         val endDate: Timestamp = Timestamp.now(),
         var lastUpdateTime: Timestamp = Timestamp.now()
     )

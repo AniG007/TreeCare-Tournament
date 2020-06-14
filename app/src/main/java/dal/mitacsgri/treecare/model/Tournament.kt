@@ -8,7 +8,7 @@ data class Tournament (
     val description: String = "",
    // val type: Int = 0,
     val active: Boolean = true,
-    val goal: Int = 5000,
+    //val goal: Int = 5000,
 //    val team1: ArrayList<Team> = arrayListOf(),
 //    val team2: ArrayList<Team> = arrayListOf(),
     val teams: ArrayList<String> = arrayListOf(),

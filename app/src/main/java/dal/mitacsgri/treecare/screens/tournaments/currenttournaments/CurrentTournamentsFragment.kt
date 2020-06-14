@@ -52,7 +52,7 @@ class CurrentTournamentsFragment : Fragment() {
             mViewModel.statusMessage.observe(viewLifecycleOwner, Observer {
                 it.toast(requireContext())
                 mViewModel.messageDisplayed = true
-
+                findNavController().navigateUp()
             })
         }
 

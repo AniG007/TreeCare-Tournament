@@ -24,6 +24,7 @@ class ActiveTournamentsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var c = 0
         val view = inflater.createFragmentViewWithStyle(
             activity, R.layout.fragment_active_challenges, R.style.tournament_mode_theme)
 
@@ -37,8 +38,14 @@ class ActiveTournamentsFragment : Fragment() {
                 recyclerView.adapter = ActiveTournamentsRecyclerViewAdapter(it, mViewModel)
             })
 
+//            mViewModel.totalList.observe(viewLifecycleOwner, Observer {
+//                mViewModel.addSteps(it)
+//            })
+
+
             if(!mViewModel.messageDisplayed2) {
                 mViewModel.MessageStatus.observe(viewLifecycleOwner, Observer {
+
                     it.toast(context)
                     mViewModel.messageDisplayed2 = true
                     //findNavController().navigateUp()

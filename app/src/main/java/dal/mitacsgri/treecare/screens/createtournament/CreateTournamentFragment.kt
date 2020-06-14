@@ -72,7 +72,10 @@ class CreateTournamentFragment : Fragment() {
             createTournamentButton.disable()
 
             viewModel.messageLiveData.observe(viewLifecycleOwner, Observer {
-                it.toast(context)
+                if(!viewModel.messageDisplayed) {
+                    it.toast(context)
+                    viewModel.messageDisplayed = true
+                }
             })
 
             viewModel.isFullDataValid.observe(viewLifecycleOwner, Observer {
@@ -86,9 +89,9 @@ class CreateTournamentFragment : Fragment() {
                 inputTournamentStartDate.setText(args.startDate)
                 Log.d("Test","start Date"+ args.startDate)
                 Log.d("Test","end Date"+ args.endDate)
-                viewModel.getStartDateText(args.startDate.split("/").get(2).trim().toInt(),args.startDate.split("/").get(1).trim().toInt(),args.startDate.split("/").get(0).trim().toInt())
-                inputTournamentEndDate.setText(args.endDate)
-                viewModel.getEndDateText(args.endDate.split("/").get(2).trim().toInt(),args.endDate.split("/").get(1).trim().toInt(),args.endDate.split("/").get(0).trim().toInt())
+                viewModel.getStartDateText(args.startDate.split("/").get(2).trim().toInt(),args.startDate.split("/").get(1).trim().toInt()-1 ,args.startDate.split("/").get(0).trim().toInt())
+                inputTournamentEndDate.setText(args.endDate)                                                                                                         //Subtracting 1 from month since we're reinitialising start and end date variable after navigating from enroll fragment. Else month would be set set as next month
+                viewModel.getEndDateText(args.endDate.split("/").get(2).trim().toInt(),args.endDate.split("/").get(1).trim().toInt()-1 ,args.endDate.split("/").get(0).trim().toInt())
                 inputTeamLimit.setText(args.teamsLimit)
                 viewModel.isFullDataValid.value = true
                 createTournamentButton.enable()
@@ -169,7 +172,7 @@ class CreateTournamentFragment : Fragment() {
             createTournamentButton.setOnClickListener {
                 Log.d("Test","FD"+ viewModel.isFullDataValid.value)
                 if (viewModel.isFullDataValid.value!!) {
-                    //TODO: Add teams if any is returned from enroll frag
+
                     Log.d("BTest", "CFrag " + args.teamsToAdd?.toList().toString())
                     viewModel.createTournament(
                         name = inputTournamentName.text,

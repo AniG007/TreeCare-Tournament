@@ -13,6 +13,7 @@ import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
 /**
  * Created by Devansh on 16-07-2019
+ * Changes made by Anirudh
  */
 
 class CreateTeamViewModel(
@@ -37,13 +38,15 @@ class CreateTeamViewModel(
             firestoreRepository.getTeam(name.toString()).addOnSuccessListener {
                 if (it.exists()) {
                     messageLiveData.value = "Team name already in use"
-                    return@addOnSuccessListener
+                    Log.d("Test","printing team"+ sharedPrefsRepository.team)
+                    Log.d("Test","printing team"+ sharedPrefsRepository.user.currentTeams)
+                    //return@addOnSuccessListener
                 }
 
-                else if(sharedPrefsRepository.user.currentTeams.isNotEmpty()){
+                else if(sharedPrefsRepository.team.name.isNotEmpty()){
 
                     messageLiveData.value = "You can only be a part of one team"
-                    return@addOnSuccessListener
+                    //return@addOnSuccessListener
                 }
 
                 else {
@@ -60,6 +63,10 @@ class CreateTeamViewModel(
                             .addOnSuccessListener {
                                 firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("currentTeams" to FieldValue.arrayUnion(name.toString())))
                                     .addOnSuccessListener {
+                                        firestoreRepository.getTeam(name.toString())
+                                            .addOnSuccessListener {
+                                                sharedPrefsRepository.team = it.toObject<Team>()!!
+                                            }
                                         Log.d("TAG", "Team Name has been added")
                                     }
                             }

@@ -2,11 +2,15 @@ package dal.mitacsgri.treecare.screens.tournaments.activetournaments
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.util.Log
 import android.view.View
+import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.model.Tournament
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.item_active_tournament.view.*
@@ -25,6 +29,7 @@ class ActiveTournamentsViewHolder(
 
     @SuppressLint("SetTextI18n")
     override fun bind(item: Tournament) {
+        val sharedPref:SharedPreferencesRepository
         itemView.apply {
 
             nameTV.text = item.name
@@ -36,8 +41,6 @@ class ActiveTournamentsViewHolder(
             //team2CountTV.text = viewModel.getTeamsCountText(item).toString()
 
             //if (item.active && !viewModel.hasTeamJoinedTournament(item)) {
-
-
 
 
             if (item.active) {
@@ -67,6 +70,10 @@ class ActiveTournamentsViewHolder(
             } else {
                 buttonJoin.disable()
             }
+            buttonActiveLeaderBoard.setOnClickListener {
+                viewModel.display()
+            }
+
         }
     }
 }

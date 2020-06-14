@@ -50,6 +50,26 @@ class JoinTeamFragment : Fragment() {
                // Log.d("Test","OnButtonClick "+teamName)
 
                 joinTeamViewModel.getUserEmail(emailId.toString(),args.teamName)
+            }
+
+            joinTeamViewModel.messageLiveData.observe(viewLifecycleOwner, Observer {
+                it.toast(context)
+                playerEmailId.setText("")
+                //  findNavController().navigateUp()
+            })
+
+            joinTeamViewModel.messageLiveData2.observe(viewLifecycleOwner, Observer {
+                it.toast(context)
+                playerEmailId.setText("")
+                //  findNavController().navigateUp()
+            })
+
+        }
+
+        return view
+    }
+
+}
 //                joinTeamViewModel.messageLiveData.observe(this@JoinTeamFragment, Observer {
 //                    it.toast(context)
 //                    playerEmailId.setText("")
@@ -167,23 +187,4 @@ class JoinTeamFragment : Fragment() {
                     Log.d("TAG", "dataStorage "+ it.toString())
                 })*/
 
-            }
 
-            joinTeamViewModel.messageLiveData.observe(this@JoinTeamFragment, Observer {
-                it.toast(context)
-                playerEmailId.setText("")
-                //  findNavController().navigateUp()
-            })
-
-            joinTeamViewModel.messageLiveData2.observe(this@JoinTeamFragment, Observer {
-                it.toast(context)
-                playerEmailId.setText("")
-                //  findNavController().navigateUp()
-            })
-
-        }
-
-        return view
-    }
-
-}

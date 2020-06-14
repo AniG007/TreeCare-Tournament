@@ -22,23 +22,29 @@ const db = admin.firestore()
 
 exports.updateTournamentDaily = functions.https.onRequest((req, res) => {
 
-	db.collection('tournaments').where('active', '==', true).get().then((querySnapshot) => {
+	db.collection('tournaments').get().then((querySnapshot) => {
 			querySnapshot.forEach((doc) => {
 				console.log(`${doc.id} => ${doc.data()}`);
 
 				const tournament = doc.data();
 
-				const startTime = tournament.startTimestamp.toDate().getTime();
+				const startDate = tournament.startTimestamp.toDate().getDate();
+				const startMonth = tournament.startTimestamp.toDate().getMonth();
+				const startYear = tournament.startTimestamp.toDate().getFullYear();
 				const endTime = tournament.finishTimestamp.toDate().getTime();
-				const currentTime = new Date().getTime()
-			
-				if ((startTime > currentTime)) {
+
+				const currentTime = new Date().getTime();
+				const currentDate = new Date().getDate();
+				const currentMonth = new Date().getMonth();
+				const currentYear = new Date().getFullYear();
+
+				if ((startDate === currentDate) && (startMonth === currentMonth) && (startYear === currentYear)) {
 					db.collection('tournaments').doc(tournament.name)
 						.set({
 							active: true
 						}, {merge: true})
+						console.log(`Updated tournament: ${tournament.name}`);
 					}
-					console.log(`Updated tournament: ${tournament.name}`);
 
 				if ((endTime < currentTime)) {
 					db.collection('tournaments').doc(tournament.name)
@@ -47,7 +53,6 @@ exports.updateTournamentDaily = functions.https.onRequest((req, res) => {
 						}, {merge: true})
 					console.log(`Updated tournament: ${tournament.name}`);
 				}
-				
 			})
 			return true
 		})

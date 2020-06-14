@@ -28,18 +28,13 @@ class InvitesRequestViewModel(
 
     var messageDisplayed = false
 
-    // val statusMessage = MutableLiveData<String>()
     val uId = ArrayList<String>()
 
-    // val uIdc = MutableLiveData<ArrayList<String>>().default(arrayListOf())
-    // val uUrl = ArrayList<String>()
     val teams = ArrayList<String>()
     val tInvites = ArrayList<String>()
 
-    // var tCount = 0
-    // var uc :Int=0
-    // val uCount = MutableLiveData<Int>().default(0)
     val cTeam = MutableLiveData<ArrayList<String>>().default(arrayListOf())
+
     fun getAllRequests(): MutableLiveData<ArrayList<InvitesRequest>> {
         val uid = sharedPrefsRepository.user.uid
         firestoreRepository.getAllCaptainedTeams(uid)
@@ -47,16 +42,11 @@ class InvitesRequestViewModel(
                 val ct = it.toObjects<Team>()
                 for (i in 0 until ct.count()) {
                     if (ct.get(i).joinRequests.isNotEmpty()) {
-                        //  Log.d("TAG","TEST"+ct.get(i).joinRequests)
                         val v = ct.get(i).joinRequests.toString()
                         cTeam.value?.add(v)
                     }
-                    //Log.d("Value","Cteam "+cTeam.value)
                     teams.add(ct.get(i).name)
-                    //Log.d("Value","Teamnames "+teams)
-                    //Log.d("TAG", "teamz" + ct.get(i).joinRequests)
                 }
-                // val count = cTeam.value?.count()
                 var count = 0
                 var c = 0 //used for counting the iteration while fetching user photos
                 for (t in teams) {
@@ -70,24 +60,16 @@ class InvitesRequestViewModel(
                             for (i in 0 until uId.count()) {
                                 //  Log.d("TAG","indi"+uId.get(i))
                                 //This loop is for counting all the elements in the array list
-                                // since the DB returns an array list, which we add to another list
-                                //So one whole list of user id's is counter as one. To avoid that we use this loop
+                                // since the DB returns an array list, which is added to another list
+                                //So one whole list of user id's is counted as one. To avoid that we use this loop
                                 count++
                             }
-                            //uId.add(team?.joinRequests.toString())
-                            //Log.d("Requests","uids "+uId)
-                            //val uCount = uId.count()
-                            //  Log.d("TAG","Counter "+count)
+
                             for (u in 0 until uId.count()) {
                                 c += 1
-                                //Log.d("Counter","c "+c)
-                                //Log.d("Names","names"+u)
                                 firestoreRepository.getUserData(uId.get(u))
                                     .addOnSuccessListener {
-                                        //  Log.d("Requests","userid "+u)
                                         val user2 = it.toObject<User>()
-                                        //uUrl.add(user2?.photoUrl.toString())
-                                        // Log.d("Requests","unames "+ user2?.name)
                                         requestList.value?.add(
                                             InvitesRequest(
                                                 user2?.name.toString(),
@@ -98,61 +80,59 @@ class InvitesRequestViewModel(
                                         )
                                         if (c == count) {
                                             requestList.notifyObserver()
-                                            //Log.d("TAG","values1 "+requestList.value)
                                         }
-                                        // Log.d("TAG","values2 "+requestList.value)
                                     }
-                                //Log.d("TAG","values3 "+requestList.value)
                             }
                             uId.clear() // clearing the Uid so that the next set from the next team can be loaded
-
-                            //cTeam.notifyObserver()
-                            //Log.d("TAG","ids"+cTeam.value?.count())
-
                         }
                 }
-                /*
-        firestoreRepository.getUserData(uid)
+
+            }
+        return requestList
+    }
+
+    /*
+firestoreRepository.getUserData(uid)
+.addOnSuccessListener {
+    val user = it.toObject<User>()
+    val teams: ArrayList<String> = user!!.captainedTeams
+    val count = getCount(uid)
+    Log.d ("count", "user Count "+ count.value?.count())
+    for (t in teams) {
+        Log.d("TAG", "TeamName In loop " + t)
+        firestoreRepository.getTeam(t)
             .addOnSuccessListener {
-                val user = it.toObject<User>()
-                val teams: ArrayList<String> = user!!.captainedTeams
-                val count = getCount(uid)
-                Log.d ("count", "user Count "+ count.value?.count())
-                for (t in teams) {
-                    Log.d("TAG", "TeamName In loop " + t)
-                    firestoreRepository.getTeam(t)
+                val team = it.toObject<Team>()
+                val capname = team?.captainName
+                val tName = team?.name.toString()
+                uId.add(team?.joinRequests.toString())
+                //val uCount = uId.count()
+                for (u in uId) {
+                    val user1 = sharedPrefsRepository.user.uid
+                    firestoreRepository.getUserData(user1)
                         .addOnSuccessListener {
-                            val team = it.toObject<Team>()
-                            val capname = team?.captainName
-                            val tName = team?.name.toString()
-                            uId.add(team?.joinRequests.toString())
-                            //val uCount = uId.count()
-                            for (u in uId) {
-                                val user1 = sharedPrefsRepository.user.uid
-                                firestoreRepository.getUserData(user1)
-                                    .addOnSuccessListener {
-                                        val user2 = it.toObject<User>()
-                                        //uUrl.add(user2?.photoUrl.toString())
-                                        requestList.value?.add(
-                                            InvitesRequest(
-                                                user2?.name.toString(),
-                                                tName,
-                                                user2?.photoUrl.toString()
-                                            )
-                                        )
-                                    }
-
-                            }
-                            //arr.add(team?.captain to InvitesRequest)
-
-                            //InvitesRequest(, tName,
-
-                            Log.d("TAG", "JoinRequest " + requestList.value)
+                            val user2 = it.toObject<User>()
+                            //uUrl.add(user2?.photoUrl.toString())
+                            requestList.value?.add(
+                                InvitesRequest(
+                                    user2?.name.toString(),
+                                    tName,
+                                    user2?.photoUrl.toString()
+                                )
+                            )
                         }
+
                 }
+                //arr.add(team?.captain to InvitesRequest)
+
+                //InvitesRequest(, tName,
+
+                Log.d("TAG", "JoinRequest " + requestList.value)
+            }
+    }
 
 
-            }*/
+}*/
 
 
                 //To retrieve all invites that the user has received from captains
@@ -209,10 +189,6 @@ class InvitesRequestViewModel(
 
     }*/
 
-            }
-        return requestList
-    }
-
     fun getAllInvites(): MutableLiveData<ArrayList<InvitesRequest>> {
 
         val uid = sharedPrefsRepository.user.uid
@@ -221,26 +197,17 @@ class InvitesRequestViewModel(
             .addOnSuccessListener {
                 val user = it.toObject<User>()
                 tInvites.add(user?.teamInvites.toString())
-                //Log.d("Inv","tnames"+tInvites[0])
                 Log.d("Inv", "tCount" + user?.teamInvites?.count())
-                //Log.d("Inv","tnames"+tInvites[1])
                 for (t in user?.teamInvites!!) {
                     count2++ //Increments when each team is fetched
-                    /*Log.d("Inv","TN"+t[0])
-                    Log.d("Inv","TN"+t[1])*/
+
                     firestoreRepository.getTeam(t)
                         .addOnSuccessListener {
                             val team = it.toObject<Team>()
-                            //val cap = team?.captainName
                             val cId = team?.captain
-                            // Log.d("Inv","capId"+team?.captain)
                             firestoreRepository.getUserData(cId.toString())
                                 .addOnSuccessListener {
                                     val captain = it.toObject<User>()
-                                    //val pUrl = user?.photoUrl
-                                    // Log.d("Inv","capname "+team?.captainName.toString())
-                                    // Log.d("Inv","teamName "+team?.name)
-                                    // Log.d("Inv","purl "+captain?.photoUrl)
                                     invitesList.value?.add(
                                         InvitesRequest(
                                             team?.captainName.toString(),
@@ -249,17 +216,12 @@ class InvitesRequestViewModel(
                                             team?.captain.toString()
                                         )
                                     )
-                                    if (count2 == user?.teamInvites?.count())
+                                    if (count2 == user.teamInvites.count())
                                         invitesList.notifyObserver()
                                 }
-                            //Log.d("Inv","Inside"+invitesList.value)
-
                         }
                 }
-                // invitesList.notifyObserver()
-                //Log.d("Inv","Outside"+invitesList.value)
             }
-
         return invitesList
     }
 
@@ -267,7 +229,7 @@ class InvitesRequestViewModel(
         val userid = sharedPrefsRepository.user.uid
         var count = 0
         //Log.d("Del","tn"+item.teamName+" "+item.photoUrl+" "+item.userName+" "+userid)
-        //TODO:add tourney to user if the team has a tourney
+
         if(sharedPrefsRepository.user.currentTeams.isEmpty()){
         //TODO: These functions can be simplified using the updateTeam function instead of having so many functions
             firestoreRepository.deleteTeamInvitesFromUser(userid, item.teamName)
@@ -277,7 +239,7 @@ class InvitesRequestViewModel(
 
                     Log.d("del", "Deleted the invite Successfully")
                     status.value = true
-                    status.notifyObserver()
+                    //status.notifyObserver()
                     /*invitesList.value?.remove(item)
                     invitesList.notifyObserver()*/
                 }
@@ -291,9 +253,7 @@ class InvitesRequestViewModel(
 
                     Log.d("del", "Deleted the Request Successfully")
                     status.value = true
-                    status.notifyObserver()
-                    /*requestList.value?.remove(item)
-                    requestList.notifyObserver()*/
+                    //status.notifyObserver()
                 }
                 .addOnFailureListener {
                     Log.e("del", "Deletion of Request Failed")
@@ -305,7 +265,7 @@ class InvitesRequestViewModel(
 
                     Log.d("del", "Deletion of Join Req from team was successful")
                     status.value = true
-                    status.notifyObserver()
+                    //status.notifyObserver()
                 }
 
             firestoreRepository.deleteInvitedMemberFromTeam(userid, item.teamName)
@@ -314,22 +274,9 @@ class InvitesRequestViewModel(
                     count++
 
                     Log.d("del", "Deletion of Invite from team was successful")
-                    status.notifyObserver()
+                    //status.notifyObserver()
 
                 }
-
-            /*firestoreRepository.getTeam(item.teamName)
-                .addOnSuccessListener {
-                    val team = it.toObject<Team>()
-                    val capId = team?.captain
-                    firestoreRepository.deleteJoinRequestFromTeam(capId.toString(), item.teamName)
-                        .addOnSuccessListener {
-                            count++
-
-                            Log.d("del", "Deletion of Invite from team was successful")
-                            status.notifyObserver()
-                        }
-                }*/
 
             firestoreRepository.addCurrentTeams(userid, item.teamName)
                 .addOnSuccessListener {
@@ -338,7 +285,7 @@ class InvitesRequestViewModel(
 
                     Log.d("Add", "User was added to the team successfully")
                     status.value = true
-                    status.notifyObserver()
+                    //status.notifyObserver()
                 }
 
             firestoreRepository.addTeamMember(userid, item.teamName)
@@ -348,7 +295,7 @@ class InvitesRequestViewModel(
                     Log.d("count", "c1 " + count)
 
                     status.value = true
-                    status.notifyObserver()
+                    //status.notifyObserver()
                     Log.d("Add", "User was added to the team successfully")
 
                     if (count == 6) {
@@ -356,7 +303,8 @@ class InvitesRequestViewModel(
                         firestoreRepository.getTeam(item.teamName)
                             .addOnSuccessListener {
                                 val team = it.toObject<Team>()
-                                val tourneys = team?.currentTournaments
+                                val tourneys = team?.currentTournaments?.keys
+                                sharedPrefsRepository.team = team!!
                                 for(tourney in tourneys!!){
                                     addTournament(item.teamName,tourney, "Invite", sharedPrefsRepository.user.uid)
                                 }
@@ -376,7 +324,6 @@ class InvitesRequestViewModel(
                         //messageLiveData.notifyObserver()
                     }
                 }
-            //Log.d("count","c2 "+count)
             return messageLiveData
         }
         else{
@@ -412,7 +359,7 @@ class InvitesRequestViewModel(
                                     Log.d("Test", "Inside deleteUserJoinReq")
 
                                     Log.d("del2", "Deletion of Invite from team was successful")
-                                    status.notifyObserver()
+                                    //status.notifyObserver()
                                 }
                             count2++
                             Log.d("Count", "Count1" + count2)
@@ -426,7 +373,7 @@ class InvitesRequestViewModel(
 
                             Log.d("del2", "Deleted the Request Successfully")
                             status.value = true
-                            status.notifyObserver()
+                            //status.notifyObserver()
                         }
 
                     firestoreRepository.deleteJoinRequestFromTeam(userid2, tName)
@@ -439,7 +386,7 @@ class InvitesRequestViewModel(
 
                             Log.d("del2", "Deletion of Join Req from team was successful")
                             status.value = true
-                            status.notifyObserver()
+                            //status.notifyObserver()
                         }
 
                     firestoreRepository.addCurrentTeams(userid2, tName)
@@ -450,7 +397,7 @@ class InvitesRequestViewModel(
 
                             Log.d("Add", "User was added to the team successfully")
                             status.value = true
-                            status.notifyObserver()
+                            //status.notifyObserver()
                         }
 
                     firestoreRepository.addTeamMember(userid2, tName)
@@ -470,7 +417,7 @@ class InvitesRequestViewModel(
                                 firestoreRepository.getTeam(tName)
                                     .addOnSuccessListener {
                                         val team = it.toObject<Team>()
-                                        val tourneys = team?.currentTournaments
+                                        val tourneys = team?.currentTournaments?.keys
                                         for(tourney in tourneys!!){
                                             addTournament(tName,tourney, "Request",item.uId)
                                         }
@@ -544,33 +491,24 @@ class InvitesRequestViewModel(
                 val userTournament =
                     tournament?.let { it1 -> getUserTournament(it1, team) }
 
-                //Log.d("Test", "tourneyName2 ${tournament?.name}")
-
-                            //val uid = sharedPrefsRepository.user.uid
-                            //Log.d("Test","UID ${uid}")
                             userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
                             Log.d("Test", "tourneyName2 ${tournament?.name}")
-                            mapOf("currentTournaments.${tournament?.name}" to userTournament)?.let { it1 ->
+                            mapOf("currentTournaments.${tournament?.name}" to userTournament).let { it1 ->
                                 firestoreRepository.updateUserTournamentData(uid, it1)
                             }
                                 .addOnSuccessListener {
-
                                     //TODO: These 3 lines which are below have
                                     // to be executed everytime for a user when captain accepts them into the team
-
                                     if (type == "Invite") {
                                         val user = sharedPrefsRepository.user
-                                        user.currentTournaments[tournament!!.name] =
-                                            userTournament!!
+                                        user.currentTournaments[tournament!!.name] = userTournament!!
                                         sharedPrefsRepository.user = user
-
                                         Log.d("Test", "Being added to user")
                                     }
                                 }
                                 .addOnFailureListener {
                                     Log.d("Test", "Unable to add user")
                                 }
-
                     }
             }
 
@@ -580,7 +518,7 @@ class InvitesRequestViewModel(
             dailyStepsMap = mutableMapOf(),
             totalSteps = sharedPrefsRepository.getDailyStepCount(),
             joinDate = DateTime().millis,
-            goal = tournament.goal,
+            goal = tournament.dailyGoal,
             endDate = tournament.finishTimestamp,
             teamName = team
         )

@@ -50,6 +50,13 @@ class ChallengesViewModel(
             .addOnFailureListener {
                 Log.e("Active challenges", "Fetch failed: $it")
             }
+
+//        val updateUserChallengeDataRequest =
+//            OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>().build()
+//        WorkManager.getInstance().enqueue(updateUserChallengeDataRequest).result.addListener(
+//            Runnable {
+//                Log.d("Challenge data", "updated by work manager")
+//            }, MoreExecutors.directExecutor())
     }
 
     fun getCurrentChallengesForUser() {
@@ -160,7 +167,7 @@ class ChallengesViewModel(
             it
         }
 
-        //TODO: Maybe later on we can think of only disabling the challenge instead of actually deleting from the database
+        //TODO: Maybe later on we can think of only disabling the challenge instead of actually deleting from the database - done
         firestoreRepository.deleteChallengeFromUserDB(userId, userChallenge, userChallenge.toJson<UserChallenge>())
             .addOnSuccessListener {
                 synchronized(counter) {
@@ -319,4 +326,6 @@ class ChallengesViewModel(
         }
         this.add(challenge)
     }
+
+
 }

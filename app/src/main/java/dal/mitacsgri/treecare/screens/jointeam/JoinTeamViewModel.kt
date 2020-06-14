@@ -22,6 +22,8 @@ class JoinTeamViewModel(
     val list:ArrayList<Int> = ArrayList<Int>()
     val messageLiveData = MutableLiveData<String>()
     val messageLiveData2 = MutableLiveData<String>()
+
+
     fun getUserEmail(email:String, teamName:String) {
         firestoreRepository.getAllUserEmail(email)
             .addOnSuccessListener {
@@ -52,7 +54,6 @@ class JoinTeamViewModel(
                     userID.value = user.get(0).email
 
                     //Log.d("Test", "mailId2" + user.get(0).email)
-
                     if (userID.value == email) {
                         firestoreRepository.updateUserData(user.get(0).uid, mapOf("teamInvites" to FieldValue.arrayUnion(teamName)))
                             .addOnSuccessListener {

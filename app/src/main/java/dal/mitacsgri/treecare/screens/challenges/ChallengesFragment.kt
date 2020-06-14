@@ -34,6 +34,7 @@ class ChallengesFragment : Fragment() {
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 }
 
+
                 override fun onPageSelected(position: Int) {
                     when(position) {
                         0 -> fabCreateChallenge.hide()
@@ -42,6 +43,7 @@ class ChallengesFragment : Fragment() {
                     }
                 }
             })
+
             if (viewPager.currentItem == 0) {
                 fabCreateChallenge.hide()
             }

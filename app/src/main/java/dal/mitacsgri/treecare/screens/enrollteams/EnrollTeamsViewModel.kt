@@ -184,13 +184,13 @@ class EnrollTeamsViewModel(
             dailyStepsMap = mutableMapOf(),
             totalSteps = sharedPrefsRepository.getDailyStepCount(),
             joinDate = DateTime().millis,
-            goal = tournament.goal,
+            goal = tournament.dailyGoal,
             endDate = tournament.finishTimestamp,
             teamName = team
         )
 
     //TODO: to call this method everytime a user visits the tournament fragment
-    //TODO: so that the prefs are updated for unity before opening the tree
+    // so that the prefs are updated for unity before opening the tree
     private fun updateUserSharedPrefsData(userTournament: UserTournament){
         val user = sharedPrefsRepository.user
         userTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000

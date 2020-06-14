@@ -23,6 +23,7 @@ class YourTeamsViewModel(
 ): ViewModel() {
 
     val teamsLiveData = MutableLiveData<ArrayList<Team>>().default(arrayListOf())
+    val teamData = MutableLiveData<Team>()
     val status = MutableLiveData<String>()
     var messageDisplayed = false
 
@@ -36,54 +37,58 @@ class YourTeamsViewModel(
             .addOnSuccessListener {
                 //Log.d("Teststep",sharedPrefsRepository.getDailyStepCount().toString())
 
-                //TODO: can use listenable worker to update steps in db at midnight so that its uniform but this is also
+                //TODO: can use background task to update steps in db at midnight so that its uniform but this is also
                 // needed to keep steps updated
                 //Update daily step of each user
                 firestoreRepository.updateUserData(userId, mapOf("dailySteps" to sharedPrefsRepository.getDailyStepCount()))
                 teamsLiveData.value = it.toObjects<Team>().filter { it.exist }.toArrayList()
                 teamsLiveData.notifyObserver()
-
+                for(team in teamsLiveData.value!!){
+                    sharedPrefsRepository.team = team
+                }
             }
-            .addOnFailureListener {
-            }
-
         return teamsLiveData
     }
 
-    fun deleteTeam(team : Team){
+    fun deleteTeam(team: Team) {
 
         val teamMembers = team.members
-        val tournaments = team.currentTournaments
+        val tournaments = team.currentTournaments.keys
         var count = 0
-        for (member in teamMembers){
-            firestoreRepository.updateUserData(member,mapOf("currentTeams" to FieldValue.arrayRemove(team.name)))
+        for (member in teamMembers) {
+            firestoreRepository.updateUserData(
+                member,
+                mapOf("currentTeams" to FieldValue.arrayRemove(team.name))
+            )
                 .addOnSuccessListener {
-                    for(tournament in tournaments){
+                    for (tournament in tournaments) {
                         firestoreRepository.updateTournamentData(tournament, mapOf("teams" to FieldValue.arrayRemove(team.name)))
                         firestoreRepository.deleteTournamentFromUserDB(member, tournament)
                     }
                 }
             count++
-            if(count.equals(teamMembers.size)){
+            if (count.equals(teamMembers.size)) {
                 firestoreRepository.deleteTeam(team.name)
                     .addOnSuccessListener {
-                        firestoreRepository.updateUserData(team.captain,mapOf("captainedTeams" to FieldValue.arrayRemove(team.name)))
+                        firestoreRepository.updateUserData(
+                            team.captain,
+                            mapOf("captainedTeams" to FieldValue.arrayRemove(team.name))
+                        )
                             .addOnSuccessListener {
                                 Log.d("Test", "Deletion of Team is successful")
                                 teamsLiveData.value?.remove(team)
                                 teamsLiveData.notifyObserver()
-                                sharedPrefsRepository.user.currentTeams.clear()
-                                sharedPrefsRepository.user.captainedTeams.clear()
-                                status.value="Team has been deleted"
+                                sharedPrefsRepository.user.currentTeams.remove(team.name)
+                                if(sharedPrefsRepository.user.uid.equals(team.captain)) {
+                                    sharedPrefsRepository.user.captainedTeams.remove(team.name)
+                                }
+                                sharedPrefsRepository.team = Team()
+                                status.value = "Team has been deleted"
 
                             }
                     }
             }
         }
-
-
-
-
 
         firestoreRepository.deleteTeam(team.name)
             .addOnSuccessListener {
@@ -95,17 +100,25 @@ class YourTeamsViewModel(
 
     fun isUserCaptain(captainUid: String) = captainUid == sharedPrefsRepository.user.uid
 
-    fun exitTeam(team : Team){
-        val tourneys = team.currentTournaments
-        firestoreRepository.updateTeamData(team.name, mapOf("members" to FieldValue.arrayRemove(sharedPrefsRepository.user.uid)))
+    fun exitTeam(team: Team) {
+        val tourneys = team.currentTournaments.keys
+        firestoreRepository.updateTeamData(
+            team.name,
+            mapOf("members" to FieldValue.arrayRemove(sharedPrefsRepository.user.uid))
+        )
             .addOnSuccessListener {
-                firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("currentTeams" to FieldValue.arrayRemove(team.name)))
+                firestoreRepository.updateUserData(
+                    sharedPrefsRepository.user.uid,
+                    mapOf("currentTeams" to FieldValue.arrayRemove(team.name))
+                )
                     .addOnSuccessListener {
                         teamsLiveData.value?.remove(team)
-                        for(tourney in tourneys) {
+                        for (tourney in tourneys) {
                             firestoreRepository.deleteTournamentFromUserDB(sharedPrefsRepository.user.uid, tourney)
                                 .addOnSuccessListener {
-                                    sharedPrefsRepository.user.currentTeams.clear()
+                                    sharedPrefsRepository.user.currentTeams.removeAt(0)
+                                    sharedPrefsRepository.team = Team()
+                                    status.value = "You have left ${team.name}"
                                     teamsLiveData.notifyObserver()
                                 }
                                 .addOnFailureListener {
@@ -115,6 +128,7 @@ class YourTeamsViewModel(
                     }
             }
     }
+}
 
     /*fun delBtnVis(): MutableLiveData<Boolean> {
         val userId = sharedPrefsRepository.user.uid
@@ -138,5 +152,3 @@ class YourTeamsViewModel(
 
         return status
     }*/
-
-}

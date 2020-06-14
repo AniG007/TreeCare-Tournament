@@ -30,7 +30,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
     override fun startWork(): ListenableFuture<Result> {
         val future = SettableFuture.create<Result>()
         val user = sharedPrefsRepository.user
-
+        val team = sharedPrefsRepository.team
         user.currentChallenges.forEach { (_, challenge) ->
 
             val endTimeMillis = challenge.endDate.toDateTime().millis
@@ -51,20 +51,6 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         return future
     }
 
-    private fun getChallengeGoalStreakForUser(challenge: UserChallenge, user: User): Int {
-        val userChallengeData = user.currentChallenges[challenge.name]!!
-        var streakCount = 0
-
-        userChallengeData.dailyStepsMap.forEach { (date, stepCount) ->
-            //This check prevents resetting streak count if goal is yet to be met today
-            if (date.toLong() < DateTime().withTimeAtStartOfDay().millis) {
-                if (stepCount >= challenge.goal) streakCount++
-                else streakCount = 0
-            }
-        }
-        return streakCount
-    }
-
     private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User) {
         challenge.leafCount = getTotalLeafCountForChallenge(challenge)
         challenge.fruitCount = getTotalFruitCountForChallenge(challenge)
@@ -82,6 +68,20 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             user.currentChallenges[challenge.name] = challenge
             sharedPrefsRepository.user = user
         }
+    }
+
+    private fun getChallengeGoalStreakForUser(challenge: UserChallenge, user: User): Int {
+        val userChallengeData = user.currentChallenges[challenge.name]!!
+        var streakCount = 0
+
+        userChallengeData.dailyStepsMap.forEach { (date, stepCount) ->
+            //This check prevents resetting streak count if goal is yet to be met today
+            if (date.toLong() < DateTime().withTimeAtStartOfDay().millis) {
+                if (stepCount >= challenge.goal) streakCount++
+                else streakCount = 0
+            }
+        }
+        return streakCount
     }
 
     private fun updateUserChallengeDataInFirestore(future: SettableFuture<Result>) {

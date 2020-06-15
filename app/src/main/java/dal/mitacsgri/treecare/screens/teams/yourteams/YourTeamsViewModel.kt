@@ -43,6 +43,18 @@ class YourTeamsViewModel(
                 firestoreRepository.updateUserData(userId, mapOf("dailySteps" to sharedPrefsRepository.getDailyStepCount()))
                 teamsLiveData.value = it.toObjects<Team>().filter { it.exist }.toArrayList()
                 teamsLiveData.notifyObserver()
+
+                if(teamsLiveData.value!!.contains(sharedPrefsRepository.team)){
+                    //do nothing
+                }
+                else{
+                    sharedPrefsRepository.team = Team()
+                    val t = sharedPrefsRepository.user
+                    t.currentTeams.remove(teamsLiveData.value.toString())
+                    sharedPrefsRepository.user = t
+                }
+
+
                 for(team in teamsLiveData.value!!){
                     sharedPrefsRepository.team = team
                 }
@@ -79,6 +91,8 @@ class YourTeamsViewModel(
                                 teamsLiveData.value?.remove(team)
                                 teamsLiveData.notifyObserver()
                                 sharedPrefsRepository.user.currentTeams.remove(team.name)
+                                sharedPrefsRepository.user.currentTeams.remove(team.name)
+                                sharedPrefsRepository.team = Team()
                                 if(sharedPrefsRepository.user.uid.equals(team.captain)) {
                                     sharedPrefsRepository.user.captainedTeams.remove(team.name)
                                 }
@@ -116,7 +130,7 @@ class YourTeamsViewModel(
                         for (tourney in tourneys) {
                             firestoreRepository.deleteTournamentFromUserDB(sharedPrefsRepository.user.uid, tourney)
                                 .addOnSuccessListener {
-                                    sharedPrefsRepository.user.currentTeams.removeAt(0)
+                                    sharedPrefsRepository.user.currentTeams.remove(team.name)
                                     sharedPrefsRepository.team = Team()
                                     status.value = "You have left ${team.name}"
                                     teamsLiveData.notifyObserver()

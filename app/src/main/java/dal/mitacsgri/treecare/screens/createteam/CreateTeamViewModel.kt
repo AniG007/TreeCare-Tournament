@@ -66,6 +66,9 @@ class CreateTeamViewModel(
                                         firestoreRepository.getTeam(name.toString())
                                             .addOnSuccessListener {
                                                 sharedPrefsRepository.team = it.toObject<Team>()!!
+                                                val user = sharedPrefsRepository.user
+                                                user.currentTeams.add(name.toString())
+                                                sharedPrefsRepository.user = user
                                             }
                                         Log.d("TAG", "Team Name has been added")
                                     }

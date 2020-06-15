@@ -29,7 +29,7 @@ class TeamsViewModel(
                 val user = it.toObject<User>()
                 //Log.d("teamName","tnames"+ user?.captainedTeams)
                 if(user?.captainedTeams!!.isNotEmpty()) {
-                    //for loop not needed since user can be only in 1 team. But may be useful when that restriction is lifted during creation
+                    //for loop not needed since user can be only in 1 team. But may be useful when that restriction is lifted off
                     for (i in user.captainedTeams) {
                         //Log.d("teamName", "TNAME" + i)
                         firestoreRepository.getTeam(i)

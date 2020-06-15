@@ -230,7 +230,7 @@ firestoreRepository.getUserData(uid)
         var count = 0
         //Log.d("Del","tn"+item.teamName+" "+item.photoUrl+" "+item.userName+" "+userid)
 
-        if(sharedPrefsRepository.user.currentTeams.isEmpty()){
+        if(sharedPrefsRepository.team.name.isEmpty()){
         //TODO: These functions can be simplified using the updateTeam function instead of having so many functions
             firestoreRepository.deleteTeamInvitesFromUser(userid, item.teamName)
                 .addOnSuccessListener {
@@ -305,6 +305,9 @@ firestoreRepository.getUserData(uid)
                                 val team = it.toObject<Team>()
                                 val tourneys = team?.currentTournaments?.keys
                                 sharedPrefsRepository.team = team!!
+                                val user = sharedPrefsRepository.user
+                                user.currentTeams.add(team.name)
+                                sharedPrefsRepository.user = user
                                 for(tourney in tourneys!!){
                                     addTournament(item.teamName,tourney, "Invite", sharedPrefsRepository.user.uid)
                                 }

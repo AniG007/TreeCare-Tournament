@@ -172,4 +172,8 @@
     <string name="enroll">Enroll</string>
     <string name="user_invited_successfully">User was invited Successfully</string>
     <string name="user_does_not_exist">PlayerId does not exist</string>
+    <string name="leaderboard_tournament_name">TOURNAMENT NAME</string>
+    <string name="tournament_ended">Tournament Ended</string>
+    <string name="team_awards">Your Team Awards</string>
+    <string name="tournament_leaderboard_position">tournament_leaderboard_position</string>
 </resources>

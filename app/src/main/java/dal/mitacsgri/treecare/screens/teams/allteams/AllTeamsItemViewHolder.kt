@@ -5,8 +5,10 @@ import android.view.View
 import androidx.navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.item_all_teams_team.view.*
@@ -25,9 +27,8 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
             descriptionTV.text = item.description
             membersCountTV.text = viewModel.getMembersCountText(item)
             captainNameTV.text = viewModel.getCaptainNameText(item)
-
+            val sharedPrefsRepository: SharedPreferencesRepository
             if (viewModel.isUserCaptain(item.captain)) {
-
                 button.text = context.getString(R.string.invite_member)
                 button.setOnClickListener {
                     if (viewModel.teamExist()) {

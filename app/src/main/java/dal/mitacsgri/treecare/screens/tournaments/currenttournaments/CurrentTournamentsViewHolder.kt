@@ -36,7 +36,7 @@ class CurrentTournamentsViewHolder(
             goalTV.text = viewModel.getGoalText(item)
             durationTV.text = viewModel.getTournamentDurationText(item)
             //team1CountTV.text = viewModel.getTeamsCountText(item)
-            teamCountTV.text = viewModel.getTeamsCountText(item)
+            teamCountTV.text = viewModel.getTeamsCountText(item).toString()
 
             buttonTree.setOnClickListener {
                 viewModel.startUnityActivityForTournament(item) {
@@ -45,8 +45,7 @@ class CurrentTournamentsViewHolder(
             }
 
             buttonLeaderBoard.setOnClickListener {
-                val action = TournamentsFragmentDirections
-                    .actionTournamentsFragmentToLeaderboardFragment(item.name) //connect from tournaments to leaderboard
+                val action = TournamentsFragmentDirections.actionTournamentsFragmentToTournamentLeaderBoardFragment(item.name)
                 findNavController().navigate(action)
             }
 

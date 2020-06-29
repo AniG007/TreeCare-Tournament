@@ -299,9 +299,9 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.leaderboard_position, value)
         }
     var tournamentLeaderboardPosition
-        get() = getInt(R.string.leaderboard_position, 1)
+        get() = getInt(R.string.tournament_leaderboard_position, 1)
         set(value) {
-            storeInt(R.string.leaderboard_position, value)
+            storeInt(R.string.tournament_leaderboard_position, value)
         }
 
     var isDailyGoalMapFixed
@@ -326,7 +326,7 @@ class SharedPreferencesRepository(val context: Context) {
         storeInt(R.string.last_day_step_count, stepCount)
     }
 
-    fun getLastDayStepCount() = getInt(R.string.last_day_step_count)
+    fun getLastDayStepCount() = getInt(R.string.last_day_step_count, 0)
 
     fun storeDailyStepsGoal(goal: Int) {
         storeInt(R.string.daily_steps_goal, goal)

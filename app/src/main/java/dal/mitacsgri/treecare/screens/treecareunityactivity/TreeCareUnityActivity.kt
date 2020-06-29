@@ -12,15 +12,9 @@ import androidx.core.text.buildSpannedString
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
-import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_AGGREGATE_BASED
-import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
-import dal.mitacsgri.treecare.consts.STARTER_MODE
+import dal.mitacsgri.treecare.consts.*
 import dal.mitacsgri.treecare.extensions.getMapFormattedDate
-import dal.mitacsgri.treecare.model.Challenge
-import dal.mitacsgri.treecare.model.Challenger
-import dal.mitacsgri.treecare.model.User
-import dal.mitacsgri.treecare.model.UserChallenge
+import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
@@ -96,6 +90,11 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         if (sharedPrefsRepository.gameMode == CHALLENGER_MODE) {
             getChallengersListAndCurrentPosition(sharedPrefsRepository.challengeName)
         }
+
+        if(sharedPrefsRepository.gameMode == TOURNAMENT_MODE){
+            getTeamsListAndCurrentPosition(sharedPrefsRepository.tournamentName)
+        }
+
     }
 
     override fun onStart() {
@@ -204,6 +203,16 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         return -1
     }
 
+    fun getCurrentTeamPosition(teams: ArrayList<TeamTournament>): Int {
+
+        val currentTeam = sharedPrefsRepository.team.name
+        for (i in 0 until teams.size) {
+            if (teams[i].teamName == currentTeam)
+                return i+1
+        }
+        return -1
+    }
+
     private fun getChallengersListAndCurrentPosition(challengeName: String) {
         val challengersList = arrayListOf<Challenger>()
 
@@ -244,13 +253,59 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
             totalLeaves = userChallengeData.leafCount)
     }
 
+    private fun getTeamsListAndCurrentPosition(tournamentName: String) {
+        val teamsList = arrayListOf<TeamTournament>()
+
+        firestoreRepository.getTournament(tournamentName)
+            .addOnSuccessListener {
+                val tournament = it.toObject<Tournament>() ?: Tournament()
+                val teams = tournament.teams
+                val teamsCount = teams.size
+                val limit = teamsCount
+
+                for (i in 0 until teamsCount) {
+                    firestoreRepository.getTeam(teams[i])
+                        .addOnSuccessListener {
+                            val team = it.toObject<Team>()
+                            val totalSteps = team?.currentTournaments!![tournamentName]?.totalSteps
+                            val teamTournament = team.let { getTeamTournament(tournament, team.name, totalSteps) }
+                            teamsList.add(teamTournament)
+
+                            if (teamsList.size == limit) {
+                                teamsList.sortTeamsList()
+                                sharedPrefsRepository.tournamentLeaderboardPosition =
+                                    getCurrentTeamPosition(teamsList)
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun getTeamTournament(tournament: Tournament, team: String, steps: Int?) =
+        TeamTournament(
+            name = tournament.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = steps ?: 0,
+            joinDate = DateTime().millis,
+            goal = tournament.dailyGoal,
+            startDate = tournament.startTimestamp,
+            endDate = tournament.finishTimestamp,
+            teamName = team
+        )
+
     private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {
         sortByDescending {
-            when(challengeType) {
+            when (challengeType) {
                 CHALLENGE_TYPE_DAILY_GOAL_BASED -> it.totalSteps
                 CHALLENGE_TYPE_AGGREGATE_BASED -> it.totalSteps
                 else -> it.totalSteps
             }
+        }
+    }
+
+    private fun ArrayList<TeamTournament>.sortTeamsList() {
+        sortByDescending {
+            it.totalSteps
         }
     }
 }

@@ -34,12 +34,12 @@ class ActiveChallengesFragment : Fragment() {
                     mViewModel.activeChallengesList.value!!, mViewModel)
             }
 
-            mViewModel.activeChallengesList.observe(this@ActiveChallengesFragment, Observer {
+            mViewModel.activeChallengesList.observe(viewLifecycleOwner, Observer {
                 //There should be a better approach to this
                 view.recyclerView.adapter = ActiveChallengesRecyclerViewAdapter(it, mViewModel)
             })
 
-            mViewModel.statusMessage.observe(this@ActiveChallengesFragment, Observer {
+            mViewModel.statusMessage.observe(viewLifecycleOwner, Observer {
                 if (!mViewModel.messageDisplayed) {
                     it.toast(view.context)
                     mViewModel.messageDisplayed = true

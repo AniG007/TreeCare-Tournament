@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 
 data class TeamTournament(
     val name: String = "",
-    val dailyStepsMap: MutableMap<String, Int> = mutableMapOf(),
+    var dailyStepsMap: MutableMap<String, Int> = mutableMapOf(),
     var totalSteps: Int = 0,
     var tournamentGoalStreak: Int = 0,
     val joinDate: Long = 0,
@@ -16,7 +16,8 @@ data class TeamTournament(
     val goal: Int = 0,
     var isActive: Boolean = true,
     val startDate: Timestamp = Timestamp.now(),
-    val endDate: Timestamp = Timestamp.now(),
+    var endDate: Timestamp = Timestamp.now(),
     var lastUpdateTime: Timestamp = Timestamp.now(),
-    var steps: Int = 0
+    var steps: Int = 0,
+    val teamName: String = ""
 )

@@ -111,6 +111,7 @@ class CreateTournamentViewModel (
         firestoreRepository.getTournament(name.toString())
             .addOnSuccessListener {
                 if (it.exists()) {
+                    messageDisplayed = false
                     messageLiveData.value = "Tournament already exists"
                     action(it.exists())
                     return@addOnSuccessListener
@@ -120,8 +121,12 @@ class CreateTournamentViewModel (
                     (currentDate.get(Calendar.MONTH).equals(startDate.get(Calendar.MONTH)))) {
                     //Setting the tournament as active if the tourney starts on the same date as the creation day
                     Log.d("TestElseIf", "Inside ElseIf")
-
-                        firestoreRepository.storeTournament(
+                    if (endDate < startDate) {
+                        messageDisplayed = false
+                        messageLiveData.value = "Please check the dates that you've entered and try again"
+                    }
+                    else {
+                    firestoreRepository.storeTournament(
                         Tournament(
                             name = name.toString(),
                             description = description.toString(),
@@ -140,8 +145,14 @@ class CreateTournamentViewModel (
                         )
                     ) {
                         action(it)
-                        messageLiveData.value = if (it) "Tournament created successfully"
-                        else "Tournament creation failed"
+                        if (it){
+                            messageDisplayed = false
+                            messageLiveData.value = "Tournament created successfully"
+                        }
+                        else {
+                            messageDisplayed = false
+                            messageLiveData.value = "Tournament creation failed"
+                        }
 
 //                        Log.d("DateTest", currentDate.get(Calendar.YEAR).toString()+" "+ startDate.get(Calendar.YEAR))
 //                        Log.d("DateTest", currentDate.get(Calendar.MONTH).toString()+" "+ startDate.get(Calendar.MONTH))
@@ -154,17 +165,36 @@ class CreateTournamentViewModel (
 
                                     if (!teams.isNullOrEmpty()) {
                                         for (team in teams) {
-                                            val teamTournament = tournament?.let { it1 -> getTeamTournament(it1,0) }  // sending 0 for steps. Steps are added at 190 after TODO steps
-                                            firestoreRepository.updateTournamentData(name.toString(), mapOf("teams" to FieldValue.arrayUnion(team)))
+                                            val teamTournament = tournament?.let { it1 ->
+                                                getTeamTournament(
+                                                    it1,
+                                                    0,
+                                                    team
+                                                )
+                                            }  // sending 0 for steps. Steps are added at 190 after TODO steps
+                                            firestoreRepository.updateTournamentData(
+                                                name.toString(),
+                                                mapOf("teams" to FieldValue.arrayUnion(team))
+                                            )
                                                 .addOnFailureListener {
-                                                    messageLiveData.value = "Failed to created tournament. Please try again later"
+                                                    messageDisplayed = false
+                                                    messageLiveData.value =
+                                                        "Failed to created tournament. Please try again later"
 
-                                                    firestoreRepository.updateTournamentData(name.toString(), mapOf("teams" to FieldValue.arrayRemove(team)))
+                                                    firestoreRepository.updateTournamentData(
+                                                        name.toString(),
+                                                        mapOf("teams" to FieldValue.arrayRemove(team))
+                                                    )
                                                     Log.d("TourneyCreation Failure", it.toString())
                                                 }
                                             /*firestoreRepository.updateTeamData(team, mapOf("currentTournaments" to FieldValue.arrayUnion(name.toString())))
                                                 .addOnSuccessListener {*/
-                                            mapOf("currentTournaments.${tournament?.name}" to teamTournament).let { it1 -> firestoreRepository.updateTeamTournamentData(team, it1)}
+                                            mapOf("currentTournaments.${tournament?.name}" to teamTournament).let { it1 ->
+                                                firestoreRepository.updateTeamTournamentData(
+                                                    team,
+                                                    it1
+                                                )
+                                            }
                                                 .addOnSuccessListener {
                                                     // adding total steps (aggregate of user steps) to the team
                                                     Log.d("Test", "Core")
@@ -178,27 +208,50 @@ class CreateTournamentViewModel (
                                                                 firestoreRepository.getUserData(member)
                                                                     .addOnSuccessListener {
 
-                                                                        val user = it.toObject<User>()
-                                                                        val steps = user?.dailySteps!!
-                                                                        Log.d("StepTest", "dailySteps ${user.uid} " + steps.toString())
-                                                                        totalSteps.value = totalSteps.value?.plus(steps)
+                                                                        val user =
+                                                                            it.toObject<User>()
+                                                                        val steps =
+                                                                            user?.dailySteps!!
+                                                                        Log.d(
+                                                                            "StepTest",
+                                                                            "dailySteps ${user.uid} " + steps.toString()
+                                                                        )
+                                                                        totalSteps.value =
+                                                                            totalSteps.value?.plus(
+                                                                                steps
+                                                                            )
                                                                         totalSteps.notifyObserver()
 
-                                                                        if(c == size){
+                                                                        if (c == size) {
 
                                                                             //TODO: steps
-                                                                            val updateTotalSteps =  tournament?.let { it1 -> getTeamTournament(it1, totalSteps.value?.toInt()!!) }
+                                                                            val updateTotalSteps =
+                                                                                tournament?.let { it1 ->
+                                                                                    getTeamTournament(
+                                                                                        it1,
+                                                                                        totalSteps.value?.toInt()!!,
+                                                                                        team
+                                                                                    )
+                                                                                }
                                                                             mapOf("currentTournaments.${tournament?.name}" to updateTotalSteps).let { it1 ->
-                                                                                firestoreRepository.updateTeamTournamentData(team, it1)}
+                                                                                firestoreRepository.updateTeamTournamentData(
+                                                                                    team,
+                                                                                    it1
+                                                                                )
+                                                                            }
 
                                                                                 .addOnSuccessListener {
-                                                                                    addTournament(team, tournament?.name!!)
+                                                                                    addTournament(
+                                                                                        team,
+                                                                                        tournament?.name!!
+                                                                                    )
                                                                                 }
 
                                                                                 .addOnFailureListener {
 
                                                                                     mapOf("currentTournaments.${tournament?.name}" to updateTotalSteps).let { it1 ->
-                                                                                        firestoreRepository.deleteTournamentFromTeamDB(team, tournament?.name!!)}
+                                                                                        firestoreRepository.deleteTournamentFromTeamDB(team, tournament?.name!!)
+                                                                                    }
 
                                                                                 }
                                                                         }
@@ -206,17 +259,25 @@ class CreateTournamentViewModel (
                                                                     }
                                                             }
                                                         }
-                                                    }
                                                 }
+                                        }
                                     }
                                 }
                         }
                         else {
+                            messageDisplayed = false
                             messageLiveData.value = "Tournament Creation Failed"
                         }
-                        }
+                    }
+                    }
                 }
                 else {
+                    if (endDate < startDate) {
+                        messageDisplayed = false
+                        messageLiveData.value = "Please check the dates that you've entered and try again"
+                    }
+
+                    else {
                     Log.d("TestElse", "Inside Else")
                     firestoreRepository.storeTournament(
                         Tournament(
@@ -248,16 +309,32 @@ class CreateTournamentViewModel (
                                     val tournament = it.toObject<Tournament>()
                                     if (!teams.isNullOrEmpty()) {
                                         for (team in teams) {
-                                            val teamTournament = tournament?.let { it1 -> getTeamTournament(it1, 0) // sending 0 for steps since no team is being added. Steps are added at 284 at TODO steps
+                                            val teamTournament = tournament?.let { it1 ->
+                                                getTeamTournament(
+                                                    it1,
+                                                    0,
+                                                    team
+                                                ) // sending 0 for steps since no team is being added. Steps are added at 284 at TODO steps
                                             }
-                                            firestoreRepository.updateTournamentData(name.toString(), mapOf("teams" to FieldValue.arrayUnion(team)))
+                                            firestoreRepository.updateTournamentData(
+                                                name.toString(),
+                                                mapOf("teams" to FieldValue.arrayUnion(team))
+                                            )
                                                 .addOnFailureListener {
-                                                    messageLiveData.value = "Failed to created tournament. Please try again later"
-                                                    firestoreRepository.updateTournamentData(name.toString(), mapOf("teams" to FieldValue.arrayRemove(team)))
+                                                    messageDisplayed = false
+                                                    messageLiveData.value =
+                                                        "Failed to created tournament. Please try again later"
+                                                    firestoreRepository.updateTournamentData(
+                                                        name.toString(),
+                                                        mapOf("teams" to FieldValue.arrayRemove(team))
+                                                    )
                                                     Log.d("TourneyCreation Failure", it.toString())
                                                 }
 
-                                            firestoreRepository.updateTeamTournamentData(team, mapOf("currentTournaments.${tournament?.name}" to teamTournament))
+                                            firestoreRepository.updateTeamTournamentData(
+                                                team,
+                                                mapOf("currentTournaments.${tournament?.name}" to teamTournament)
+                                            )
                                                 .addOnSuccessListener {
                                                     // adding total steps (aggregate of user steps) to the team
                                                     Log.d("Test", "Core")
@@ -268,48 +345,82 @@ class CreateTournamentViewModel (
                                                             val size = members?.count()
                                                             for (member in members!!) {
                                                                 c++
-                                                                firestoreRepository.getUserData(member)
+                                                                firestoreRepository.getUserData(
+                                                                    member
+                                                                )
                                                                     .addOnSuccessListener {
 
-                                                                        val user = it.toObject<User>()
-                                                                        val steps = user?.dailySteps!!
-                                                                        Log.d("StepTest", "dailySteps ${user.uid} " + steps.toString())
-                                                                        totalSteps.value = totalSteps.value?.plus(steps)
+                                                                        val user =
+                                                                            it.toObject<User>()
+                                                                        val steps =
+                                                                            user?.dailySteps!!
+                                                                        Log.d(
+                                                                            "StepTest",
+                                                                            "dailySteps ${user.uid} " + steps.toString()
+                                                                        )
+                                                                        totalSteps.value =
+                                                                            totalSteps.value?.plus(
+                                                                                steps
+                                                                            )
                                                                         totalSteps.notifyObserver()
 
-                                                                        if(c == size){
+                                                                        if (c == size) {
                                                                             //TODO: steps
-                                                                            val updateTotalSteps =  tournament?.let { it1 -> getTeamTournament(it1, totalSteps.value?.toInt()!!) }
+                                                                            val updateTotalSteps =
+                                                                                tournament?.let { it1 ->
+                                                                                    getTeamTournament(
+                                                                                        it1,
+                                                                                        totalSteps.value?.toInt()!!,
+                                                                                        team
+                                                                                    )
+                                                                                }
                                                                             mapOf("currentTournaments.${tournament?.name}" to updateTotalSteps).let { it1 ->
-                                                                                firestoreRepository.updateTeamTournamentData(team, it1)}
+                                                                                firestoreRepository.updateTeamTournamentData(
+                                                                                    team,
+                                                                                    it1
+                                                                                )
+                                                                            }
 
                                                                                 .addOnSuccessListener {
-                                                                                    addTournament(team, tournament?.name!!)
+                                                                                    addTournament(
+                                                                                        team,
+                                                                                        tournament?.name!!
+                                                                                    )
                                                                                 }
 
                                                                                 .addOnFailureListener {
                                                                                     mapOf("currentTournaments.${tournament?.name}" to updateTotalSteps).let { it1 ->
-                                                                                        firestoreRepository.deleteTournamentFromTeamDB(team, tournament?.name!!)}
+                                                                                        firestoreRepository.deleteTournamentFromTeamDB(
+                                                                                            team,
+                                                                                            tournament?.name!!
+                                                                                        )
+                                                                                    }
                                                                                 }
                                                                         }
-                                                                        Log.d("StepTest", "totalsteps " + totalSteps.value?.toInt().toString())
+                                                                        Log.d(
+                                                                            "StepTest",
+                                                                            "totalsteps " + totalSteps.value?.toInt()
+                                                                                .toString())
                                                                     }
                                                             }
-
                                                         }
                                                 }
                                                 .addOnFailureListener {
                                                     Log.d("Test", "Unable to add user")
-                                                    firestoreRepository.deleteTournamentFromTeamDB(team, tournament?.name!!)
+                                                    firestoreRepository.deleteTournamentFromTeamDB(
+                                                        team,
+                                                        tournament?.name!!
+                                                    )
                                                 }
                                         }
                                     }
-                                    else{
+                                    else {
                                         messageLiveData.value = "Tournament has been created"
                                     }
                                 }
                         }
                     }
+                }
                 }
             }
     }
@@ -336,6 +447,7 @@ class CreateTournamentViewModel (
 
 //                                                                      userTournament?.leafCount =
 //                                                                      sharedPrefsRepository.getDailyStepCount() / 1000
+                                    messageDisplayed = false
                                     messageLiveData.value = "Tournament has been created and teams were added successfully"
 
                                     //TODO: These 3 lines which are below have
@@ -400,7 +512,7 @@ class CreateTournamentViewModel (
         sharedPrefsRepository.user = user
     }
 
-    private fun getTeamTournament(tournament: Tournament, steps: Int) =
+    private fun getTeamTournament(tournament: Tournament, steps: Int, team: String) =
         TeamTournament(
             name = tournament.name,
             dailyStepsMap = mutableMapOf(),
@@ -408,8 +520,8 @@ class CreateTournamentViewModel (
             joinDate = DateTime().millis,
             goal = tournament.dailyGoal,
             startDate = tournament.startTimestamp,
-            endDate = tournament.finishTimestamp
-
+            endDate = tournament.finishTimestamp,
+            teamName = team
         )
 
 //    private fun getTeamTotalSteps(team:String): Int {

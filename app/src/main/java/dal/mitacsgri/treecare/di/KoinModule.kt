@@ -11,6 +11,7 @@ import dal.mitacsgri.treecare.screens.createteam.CreateTeamViewModel
 import dal.mitacsgri.treecare.screens.createtournament.CreateTournamentViewModel
 //import dal.mitacsgri.treecare.screens.createtournament.CreateTournamentViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
+import dal.mitacsgri.treecare.screens.dialog.tournamentended.TournamentEndedDialogViewModel
 import dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsViewModel
 //import dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
@@ -24,6 +25,7 @@ import dal.mitacsgri.treecare.screens.teaminfo.TeamInfoViewModel
 import dal.mitacsgri.treecare.screens.teams.TeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.allteams.AllTeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.yourteams.YourTeamsViewModel
+import dal.mitacsgri.treecare.screens.tournamentleaderboard.TournamentLeaderBoardViewModel
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import dal.mitacsgri.treecare.screens.tournaments.activetournaments.ActiveTournamentsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -54,17 +56,19 @@ val appModule = module {
     viewModel { LeaderboardItemViewModel(get(), get()) }
     viewModel { ChallengeCompleteDialogViewModel() }
     viewModel { ActiveTournamentsViewModel(get(), get()) }
-    viewModel { YourTeamsViewModel(get(), get()) }
+    viewModel { YourTeamsViewModel(get(), get(), get()) }
     viewModel { AllTeamsViewModel(get(), get()) }
     viewModel { CreateTeamViewModel(get(), get()) }
     viewModel { TeamsViewModel(get(), get()) }
-    viewModel { TournamentsViewModel(get(), get()) }
+    viewModel { TournamentsViewModel(get(), get(), get()) }
     viewModel { ChallengesViewModel(get(), get())}
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { ProgressReportDataViewModel(get(), get()) }
     viewModel { InstructionsViewModel() }
-    viewModel {InvitesRequestViewModel(get(),get())}
+    viewModel { InvitesRequestViewModel(get(),get()) }
     viewModel { JoinTeamViewModel(get()) }
-    viewModel { TeamInfoViewModel(get(),get(),get())}
+    viewModel { TeamInfoViewModel(get(),get(),get()) }
     viewModel { EnrollTeamsViewModel(get(),get()) }
+    viewModel { TournamentLeaderBoardViewModel(get(),get()) }
+    viewModel { TournamentEndedDialogViewModel() }
 }

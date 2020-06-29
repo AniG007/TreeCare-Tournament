@@ -10,6 +10,8 @@ import dal.mitacsgri.treecare.model.*
 
 /**
  * Created by Devansh on 22-06-2019
+ *
+ * Modified by Anirudh (Tournament and Teams) :)
  */
 class FirestoreRepository {
 
@@ -196,6 +198,13 @@ class FirestoreRepository {
 
     fun storeTrophiesData(userId: String, trophies: UserChallengeTrophies) =
             db.collection(COLLECTION_TROPHIES).document(userId).set(trophies)
+
+    fun getTeamTrophiesData(teamName: String) =
+        db.collection(COLLECTION_TOURNAMENT_TROPHIES).document(teamName).get()
+
+    fun storeTeamTrophiesData(teamName: String, trophies: UserTournamentTrophies) =
+        db.collection(COLLECTION_TOURNAMENT_TROPHIES).document(teamName).set(trophies)
+
 
     fun changeUserName(userId: String, newName: String) =
             db.collection(COLLECTION_USERS).document(userId)

@@ -208,14 +208,13 @@ firestoreRepository.getUserData(uid)
                             firestoreRepository.getUserData(cId.toString())
                                 .addOnSuccessListener {
                                     val captain = it.toObject<User>()
-                                    invitesList.value?.add(
-                                        InvitesRequest(
+                                    invitesList.value?.add(InvitesRequest(
                                             team?.captainName.toString(),
                                             team?.name.toString(),
                                             captain?.photoUrl.toString(),
                                             team?.captain.toString()
-                                        )
-                                    )
+                                        ))
+
                                     if (count2 == user.teamInvites.count())
                                         invitesList.notifyObserver()
                                 }
@@ -306,10 +305,11 @@ firestoreRepository.getUserData(uid)
                                 val tourneys = team?.currentTournaments?.keys
                                 sharedPrefsRepository.team = team!!
                                 val user = sharedPrefsRepository.user
+                                //user.currentTeams.add(team.name)
                                 user.currentTeams.add(team.name)
                                 sharedPrefsRepository.user = user
                                 for(tourney in tourneys!!){
-                                    addTournament(item.teamName,tourney, "Invite", sharedPrefsRepository.user.uid)
+                                    addTournament(team.name,tourney, "Invite", sharedPrefsRepository.user.uid)
                                 }
                             }
 
@@ -349,7 +349,6 @@ firestoreRepository.getUserData(uid)
                 val user = it.toObject<User>()
                 // checking if the user is already in a team before accepting
                 if(user?.currentTeams?.isEmpty()!!) {
-
                     firestoreRepository.getTeam(tName)
                         .addOnSuccessListener {
                             Log.d("Test", "Inside getTeam")
@@ -494,26 +493,31 @@ firestoreRepository.getUserData(uid)
                 val userTournament =
                     tournament?.let { it1 -> getUserTournament(it1, team) }
 
-                            userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
-                            Log.d("Test", "tourneyName2 ${tournament?.name}")
-                            mapOf("currentTournaments.${tournament?.name}" to userTournament).let { it1 ->
-                                firestoreRepository.updateUserTournamentData(uid, it1)
-                            }
-                                .addOnSuccessListener {
-                                    //TODO: These 3 lines which are below have
-                                    // to be executed everytime for a user when captain accepts them into the team
-                                    if (type == "Invite") {
-                                        val user = sharedPrefsRepository.user
-                                        user.currentTournaments[tournament!!.name] = userTournament!!
-                                        sharedPrefsRepository.user = user
-                                        Log.d("Test", "Being added to user")
-                                    }
-                                }
-                                .addOnFailureListener {
-                                    Log.d("Test", "Unable to add user")
-                                }
+                userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
+                Log.d("Test", "tourneyName2 ${tournament?.name}")
+                if (tournament?.active!!){
+                    mapOf("currentTournaments.${tournament.name}" to userTournament).let { it1 ->
+                        firestoreRepository.updateUserTournamentData(uid, it1)
                     }
+                        .addOnSuccessListener {
+                            //If it's an invite, share  d preferences are updated when the user accepts the invite, else,
+                            //if it's a request, shared preferences are updated when user visits the tournaments page
+                            // (check tournaments view model code, under current tournaments function
+                            if (type == "Invite") {
+                                val user = sharedPrefsRepository.user
+                                user.currentTournaments[tournament.name] =
+                                    userTournament!!
+                                sharedPrefsRepository.user = user
+
+                                Log.d("Test", "Being added to user")
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.d("Test", "Unable to add user")
+                        }
+                }
             }
+    }
 
     private fun getUserTournament(tournament: Tournament, team:String) =
         UserTournament(

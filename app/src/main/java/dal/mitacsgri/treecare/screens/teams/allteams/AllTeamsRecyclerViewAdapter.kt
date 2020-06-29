@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.model.Team
 
 class AllTeamsRecyclerViewAdapter(

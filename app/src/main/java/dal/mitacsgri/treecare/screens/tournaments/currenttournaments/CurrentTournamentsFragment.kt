@@ -28,7 +28,9 @@ class CurrentTournamentsFragment : Fragment() {
     ): View? {
 //        val view = inflater.createFragmentViewWithStyle(
 //            activity, R.layout.fragment_current_tournaments, R.style.tournament_mode_theme)
+
         val view = inflater.inflate(R.layout.fragment_current_tournaments, container, false)
+
 
         //This clear needs to be done here otherwise whenever this fragment is created as a result of coming
         //back from a fragment up in the navigation stack, the elements are added to the list, as a result of which,
@@ -52,7 +54,7 @@ class CurrentTournamentsFragment : Fragment() {
             mViewModel.statusMessage.observe(viewLifecycleOwner, Observer {
                 it.toast(requireContext())
                 mViewModel.messageDisplayed = true
-                findNavController().navigateUp()
+                //findNavController().navigateUp()
             })
         }
 

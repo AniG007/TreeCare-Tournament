@@ -52,7 +52,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <TextView
+        <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
             android:id="@+id/captainName"
             android:layout_width="261dp"
             android:layout_height="68dp"

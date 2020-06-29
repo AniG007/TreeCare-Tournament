@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:icon,android:theme"> <!--inserted newly /-->>
         <activity android:name=".screens.intro.IntroActivity"></activity>
 
         <meta-data
@@ -27,6 +28,7 @@
 
         <activity android:name=".screens.progressreport.ProgressReportActivity" />
         <activity android:name=".screens.leaderboard.LeaderboardActivity" />
+        <activity android:name=".screens.tournamentleaderboard.TournamentLeaderBoardActivity" />
         <activity android:name=".screens.gamesettings.SettingsActivity" />
         <activity
             android:name=".screens.MainActivity"

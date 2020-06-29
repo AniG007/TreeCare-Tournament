@@ -22,6 +22,7 @@ data class User (
     val currentChallenges: MutableMap<String, UserChallenge> = mutableMapOf(),
     val currentTournaments: MutableMap<String, UserTournament> = mutableMapOf(),
     val currentTeams: ArrayList<String> = arrayListOf(),
+    //var currentTeams: String ="",
    // val teamJoinRequests: ArrayList<TeamRequest> = arrayListOf(), //Created by Devansh
     val teamInvites: ArrayList<String> = arrayListOf(),
     //val userJoinRequests: MutableMap<String,String> = mutableMapOf(),

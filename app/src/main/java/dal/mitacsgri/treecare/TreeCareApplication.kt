@@ -1,15 +1,17 @@
 package dal.mitacsgri.treecare
 
 import android.app.Application
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.evernote.android.job.JobApi
 import com.evernote.android.job.JobConfig
 import com.evernote.android.job.JobManager
 import dal.mitacsgri.treecare.backgroundtasks.jobcreator.MainJobCreator
 import dal.mitacsgri.treecare.backgroundtasks.jobs.DailyGoalNotificationJob
 import dal.mitacsgri.treecare.backgroundtasks.jobs.TrophiesUpdateJob
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateTeamDataWorker
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateTournamentSteps
 import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserTournamentDataWorker
 import dal.mitacsgri.treecare.di.appModule
 import dal.mitacsgri.treecare.di.firestoreRepositoryModule
 import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
@@ -30,10 +32,22 @@ class TreeCareApplication : Application() {
                 firestoreRepositoryModule))
         }
 
-        val updateUserChallengeDataRequest =
-            PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, MINUTES).build()
+        /*val updateUserTournamentDataRequest =
+            PeriodicWorkRequestBuilder<UpdateUserTournamentDataWorker>(15 , MINUTES).build()*/
 
-        WorkManager.getInstance(this).enqueue(updateUserChallengeDataRequest)
+        val mConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+
+        val updateUserChallengeDataRequest: WorkRequest =
+            PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, MINUTES).setConstraints(mConstraints).build()
+
+        val updateUserTournamentDataRequest: WorkRequest =
+            PeriodicWorkRequestBuilder<UpdateUserTournamentDataWorker>(15, MINUTES).setConstraints(mConstraints).build()
+
+        val updateTeamDataRequest: WorkRequest =
+            PeriodicWorkRequestBuilder<UpdateTeamDataWorker>(15, MINUTES).setConstraints(mConstraints).build()
+
+        //WorkManager.getInstance(this).enqueue(updateTeamDataRequest)
+        WorkManager.getInstance(this).enqueue(listOf( updateUserChallengeDataRequest, updateUserTournamentDataRequest, updateTeamDataRequest ))
 
         JobConfig.setApiEnabled(JobApi.WORK_MANAGER, false)
         JobManager.create(this).addJobCreator(MainJobCreator())

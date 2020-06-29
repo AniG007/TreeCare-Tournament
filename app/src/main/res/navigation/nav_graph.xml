@@ -195,11 +195,13 @@
         android:label="fragment_tournaments"
         tools:layout="@layout/fragment_tournaments" >
         <action
-            android:id="@+id/action_tournamentsFragment_to_leaderboardFragment"
-            app:destination="@id/leaderboardFragment" />
-        <action
             android:id="@+id/action_tournamentsFragment_to_createTournamentFragment"
-            app:destination="@id/createTournamentFragment" />
+            app:destination="@id/createTournamentFragment"
+            app:launchSingleTop="false"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_tournamentsFragment_to_tournamentLeaderBoardFragment"
+            app:destination="@id/tournamentLeaderBoardFragment" />
     </fragment>
     <fragment
         android:id="@+id/teamsFragment"
@@ -333,7 +335,9 @@
         tools:layout="@layout/fragment_enroll_teams" >
         <action
             android:id="@+id/action_enrollTeamsFragment_to_createTournamentFragment"
-            app:destination="@id/createTournamentFragment" />
+            app:destination="@id/createTournamentFragment"
+            app:popUpTo="@id/enrollTeamsFragment"
+            app:popUpToInclusive="true" />
         <argument
             android:name="tournamentName"
             app:argType="string" />
@@ -363,7 +367,9 @@
         tools:layout="@layout/fragment_create_tournament" >
         <action
             android:id="@+id/action_createTournamentFragment_to_enrollTeamsFragment"
-            app:destination="@id/enrollTeamsFragment" />
+            app:destination="@id/enrollTeamsFragment"
+            app:popUpTo="@id/createTournamentFragment"
+            app:popUpToInclusive="true" />
         <argument
             android:name="status"
             app:argType="boolean"
@@ -398,4 +404,30 @@
             app:argType="string"
             android:defaultValue='""' />
     </fragment>
+    <fragment
+        android:id="@+id/tournamentLeaderBoardFragment"
+        android:name="dal.mitacsgri.treecare.screens.tournamentleaderboard.TournamentLeaderBoardFragment"
+        android:label="TournamentLeaderBoardFragment"
+        tools:layout="@layout/fragment_tournament_leaderboard">
+        <action
+            android:id="@+id/action_tournamentLeaderBoardFragment_to_tournamentEndedDialog"
+            app:destination="@id/tournamentEndedDialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <argument
+            android:name="tournament_name"
+            app:argType="string" />
+    </fragment>
+    <dialog
+        android:id="@+id/tournamentEndedDialog"
+        android:name="dal.mitacsgri.treecare.screens.dialog.tournamentended.TournamentEndedDialog"
+        android:label="TournamentEndedDialog" >
+        <argument
+            android:name="position"
+            app:argType="integer" />
+    </dialog>
+
+
 </navigation>

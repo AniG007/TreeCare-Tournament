@@ -41,7 +41,7 @@ class TeamInfoViewModel(
 //                                getDailyStepCount(),
                                 user?.dailySteps!!,
                                 user.photoUrl.toString(),
-                                user.dailySteps/1000
+                                user.dailySteps/3000
                             ))
                             Log.d("Test","memsInTeam "+membersList.value.toString())
                             membersList.notifyObserver()
@@ -56,8 +56,8 @@ class TeamInfoViewModel(
 
     fun getDailyLeafCount(): String {
 
-        Log.d ("Test","Leaf "+(sharedPrefsRepository.getDailyStepCount() /1000).toString())
-        return (sharedPrefsRepository.getDailyStepCount() /1000).toString()
+        Log.d ("Test","Leaf "+(sharedPrefsRepository.getDailyStepCount() /3000).toString())
+        return (sharedPrefsRepository.getDailyStepCount() /3000).toString()
 
     }
 

@@ -20,7 +20,7 @@
         android:paddingEnd="@dimen/_12sdp"
         android:paddingBottom="@dimen/_10sdp">
 
-        <TextView
+        <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
             android:id="@+id/nameTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

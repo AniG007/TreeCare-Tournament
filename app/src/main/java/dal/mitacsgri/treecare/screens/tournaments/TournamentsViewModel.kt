@@ -6,19 +6,29 @@ import android.util.Log
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.google.common.util.concurrent.MoreExecutors
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateTeamDataWorker
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateTournamentSteps
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserTournamentDataWorker
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
+import kotlin.collections.ArrayList
 
 class TournamentsViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
-    private val firestoreRepository: FirestoreRepository
+    private val firestoreRepository: FirestoreRepository,
+    private val stepCountRepository: StepCountRepository
 ): ViewModel() {
 
     companion object Types {
@@ -28,9 +38,6 @@ class TournamentsViewModel(
 
     val activeTournamentsList = MutableLiveData<ArrayList<Tournament>>().default(arrayListOf())
     val currentTournamentsList = MutableLiveData<ArrayList<Tournament>>().default(arrayListOf())
-    val tournamentsByYouList = MutableLiveData<ArrayList<Tournament>>().default(arrayListOf())
-
-    val teamsList = MutableLiveData<ArrayList<Team>>().default(arrayListOf())
     val teamsHolder = MutableLiveData<ArrayList<String>>().default(arrayListOf())
     val existingTeams = MutableLiveData<ArrayList<String>>().default(arrayListOf())
 
@@ -40,6 +47,7 @@ class TournamentsViewModel(
 
     val totalSteps = MutableLiveData<Int>().default(0)
     var c = 0 // for counting teams in forloop
+    var currentStepCount = 0
 
     //The error status message must contain 'error' in string because it is used to check whether to
     //disable or enable join button
@@ -48,6 +56,7 @@ class TournamentsViewModel(
     fun getAllActiveTournaments() {
         firestoreRepository.getAllActiveTournaments()
             .addOnSuccessListener {
+                activeTournamentsList.value?.clear()
                 activeTournamentsList.value = it.toObjects<Tournament>().filter { it.exist }.toArrayList()
                 activeTournamentsList.notifyObserver()
             }
@@ -59,7 +68,16 @@ class TournamentsViewModel(
 
     fun getCurrentTournamentsForUser() {
 // directly fetching current tournaments from db.
+
         val uid = sharedPrefsRepository.user.uid
+        sharedPrefsRepository.team = Team()
+
+        //updating steps for user in the db
+        stepCountRepository.getTodayStepCountData {
+            firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("dailySteps" to it))
+            currentStepCount = it
+        }
+
 
 //        Log.d("Test", "SharedPref" + sharedPrefsRepository.user.currentTournaments)
         firestoreRepository.getUserData(uid)
@@ -67,6 +85,17 @@ class TournamentsViewModel(
 
                 val user = it.toObject<User>()
                 val tournaments = user?.currentTournaments
+                Log.d("Test", "TeamDB "+ user?.currentTeams.toString())
+                val team = user?.currentTeams.toString().removeSurrounding("[","]")
+                if(team.isNotEmpty()) {
+                    Log.d("Test", "Team is not empty")
+                    firestoreRepository.getTeam(team)
+                        .addOnSuccessListener {
+                            val teamDB = it.toObject<Team>()
+                            sharedPrefsRepository.team = teamDB!!
+                        }
+                }
+                else Log.d("Test","Team is empty")
 
                 for (tournament in tournaments!!) {
                     Log.d("Test", "tournament" + tournament.key)
@@ -74,33 +103,91 @@ class TournamentsViewModel(
                         .addOnSuccessListener {
 
                             val tourney = it.toObject<Tournament>() ?: Tournament(exist = false)
-                            synchronized(currentTournamentsList.value!!) {
-                                if (tourney.exist) {
-                                    Log.d("Test", "tournament exists")
-                                    currentTournamentsList.value?.sortAndAddToList(tourney)
-                                    currentTournamentsList.notifyObserver()
+//                            synchronized(currentTournamentsList.value!!) {
+                            if (tourney.exist && tourney.active) {
+                                Log.d("Test", "tournament exists")
+                                //currentTournamentsList.value?.sortAndAddToList(tourney)
+                                //currentTournamentsList.notifyObserver()
+                                if (sharedPrefsRepository.user.currentTournaments.isNullOrEmpty()) {
                                     val userPref = sharedPrefsRepository.user
-                                    userPref.currentTournaments[tourney.name] = getUserTournament(tourney, user.currentTeams.toString())
+
+                                    userPref.currentTournaments[tourney.name] =
+                                        tournaments[tourney.name]!!
                                     sharedPrefsRepository.user = userPref
-                                    for(prefTourney in sharedPrefsRepository.user.currentTournaments.keys) {
-                                        if (tournaments.containsKey(prefTourney)) {
+
+//                                        userPref.currentTournaments[tourney.name] =
+//                                        getUserTournament(tourney, user.currentTeams.toString())
+
+                                    for (prefTourney in sharedPrefsRepository.user.currentTournaments.keys) {
+                                        // for removing tournaments from user and team prefs if the user is not a part of the tournament
+                                        if (tournaments.containsKey(prefTourney))
                                             continue
-                                        }
                                         else {
                                             userPref.currentTournaments.remove(prefTourney)
                                             sharedPrefsRepository.user = userPref
                                         }
                                     }
-
-                                    //fetch current tourney for users and check with shared prefs
-                                    Log.d("Test", "currentTourney List" + currentTournamentsList.value)
                                 }
+
+                                if (sharedPrefsRepository.team.currentTournaments.isEmpty()) {
+                                    val userTeam = sharedPrefsRepository.team
+                                    userTeam.currentTournaments[tourney.name] = getTeamTournament(
+                                        tourney,
+                                        sharedPrefsRepository.getDailyStepCount(),
+                                        userTeam.name
+                                    )
+                                    sharedPrefsRepository.team = userTeam
+                                    //sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
+
+                                    for (prefTourney in sharedPrefsRepository.team.currentTournaments.keys) {
+                                        if (tournaments.containsKey(prefTourney)) {
+                                            continue
+                                        } else {
+                                            //if the captain quits the tournament, prefs are cleared when user visits the tournament page.
+                                            userTeam.currentTournaments.remove(prefTourney)
+                                            sharedPrefsRepository.team = userTeam
+                                        }
+                                    }
+                                }
+                                //fetch current tourney for users and check with shared prefs
+                                Log.d("Test", "currentTourney List" + currentTournamentsList.value)
                             }
+                                //}
+                                synchronized(currentTournamentsList.value!!) {
+                                    currentTournamentsList.value?.sortAndAddToList(tourney)
+                                    currentTournamentsList.notifyObserver()
+                                }
+
+//                            val updateUserTournamentDataRequest =
+//                                OneTimeWorkRequestBuilder<UpdateUserTournamentDataWorker>().build()
+//                            WorkManager.getInstance()
+//                                .enqueue(updateUserTournamentDataRequest).result.addListener(
+//                                Runnable {
+//                                    Log.d("User Tournament data", "updated by work manager")
+//                                }, MoreExecutors.directExecutor()
+//                            )
+//                            if (sharedPrefsRepository.getLastDayStepCount() > 0){
+//                            val updateTeamDataRequest =
+//                                OneTimeWorkRequestBuilder<UpdateTeamDataWorker>().build()
+//                            WorkManager.getInstance()
+//                                .enqueue(updateTeamDataRequest).result.addListener(
+//                                Runnable {
+//                                    Log.d("Team data", "updated by work manager")
+//                                }, MoreExecutors.directExecutor()
+//                            )
+                        //}
                         }
                         .addOnFailureListener {
                             Log.d("Tournament not Found", it.toString())
                         }
                 }
+
+//                val updateUserTournamentDataRequest = OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>().build()
+//
+//                WorkManager.getInstance().enqueue(updateUserTournamentDataRequest).result.addListener(
+//                    Runnable {
+//                        Log.d("Tournament data", "updated by work manager")
+//                    }, MoreExecutors.directExecutor())
             }
     }
 
@@ -121,7 +208,7 @@ class TournamentsViewModel(
         val userTournament = sharedPrefsRepository.user.currentTournaments.get(tournament.name)
         Log.d("Test", "DB" + user.captainedTeams)
         Log.d("Test", "sharedPref" + userTournament?.teamName)
-        if (userTournament?.teamName?.contains(user.captainedTeams.toString())!!) {
+        if (userTournament?.teamName?.contains(user.captainedTeams.toString().removeSurrounding("[","]"))!!) {
 
             Log.d("Test", "Teams " + userTournament.teamName)
 
@@ -142,9 +229,10 @@ class TournamentsViewModel(
                                                 messageDisplayed = false
                                                 statusMessage.value = "Your team is no longer a part of the tournament ${tournament.name}"
 
-                                                var index = currentTournamentsList.value?.indexOf(tournament)
-                                                currentTournamentsList.value?.get(index!!)?.teams?.remove(team.name)
-                                                currentTournamentsList.notifyObserver()
+//                                                var index = currentTournamentsList.value?.indexOf(tournament)
+//                                                Log.d("Test","Tname "+ team.name)
+//                                                currentTournamentsList.value?.get(index!!)?.teams?.remove(team.name)
+//                                                currentTournamentsList.notifyObserver()
 
                                                 removeTournamentFromCurrentTournamentsLists(tournament)
 
@@ -159,7 +247,7 @@ class TournamentsViewModel(
                                             }
                                     }
                                     .addOnFailureListener {
-                                        Log.d("Excetion", it.toString())
+                                        Log.d("Exception", it.toString())
                                     }
                             }
                             .addOnFailureListener {
@@ -240,7 +328,7 @@ class TournamentsViewModel(
             append(tournament.dailyGoal.toString())
         }
 
-    fun getTeamsCountText(tournament: Tournament) = tournament.teams.size.toString()
+    fun getTeamsCountText(tournament: Tournament) = tournament.teams.count()
 
 //    fun getCurrentUserId() = sharedPrefsRepository.user.uid
 
@@ -294,7 +382,7 @@ class TournamentsViewModel(
     }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     fun getExistingTeams(tournamentName: String) {
@@ -330,7 +418,7 @@ class TournamentsViewModel(
 
                         //getTeamTotalSteps(team)
 
-                        val teamTournament = tournament?.let { it1 -> getTeamTournament(it1, 0) }  // sending 0 for steps and setting it again at line 358 after TODO steps
+                        val teamTournament = tournament?.let { it1 -> getTeamTournament(it1, 0, team) }  // sending 0 for steps and setting it again at line 358 after TODO steps
 
                         if (existingTeams.value?.contains(team)!!) {
                             Log.d("Test", existingTeams.value.toString())
@@ -365,14 +453,15 @@ class TournamentsViewModel(
                                                                     totalSteps.notifyObserver()
                                                                     if(c == size){
                                                                         //TODO: steps
-                                                                        val updateTotalSteps =  tournament?.let { it1 -> getTeamTournament(it1, totalSteps.value?.toInt()!!) }
-                                                                        mapOf("currentTournaments.${tournament?.name}" to updateTotalSteps).let { it1 ->
+                                                                        val updateTotalSteps =  tournament?.let { it1 -> getTeamTournament(it1, totalSteps.value?.toInt()!!, team) }
+                                                                        updateTeamSharedPrefsData(updateTotalSteps!!)
+                                                                        mapOf("currentTournaments.${tournament.name}" to updateTotalSteps).let { it1 ->
                                                                             firestoreRepository.updateTeamTournamentData(team, it1)}
                                                                             .addOnSuccessListener {
-                                                                                addTournament(team, tournamentName)
+                                                                                addTournament(team, tournamentName, updateTotalSteps)
                                                                             }
                                                                             .addOnFailureListener {
-                                                                                mapOf("currentTournaments.${tournament?.name}" to updateTotalSteps).let { it1 ->
+                                                                                mapOf("currentTournaments.${tournament.name}" to updateTotalSteps).let { it1 ->
                                                                                     firestoreRepository.deleteTournamentFromTeamDB(team, tournamentName)}
                                                                             }
                                                                     }
@@ -400,7 +489,7 @@ class TournamentsViewModel(
         }
     }
 
-    fun addTournament(team: String, tournamentName: String) {
+    fun addTournament(team: String, tournamentName: String, teamTournament: TeamTournament) {
 
         Log.d("Test", "Inside Add tourney")
         //Adding tournament to currentTournaments in Users Collection
@@ -424,15 +513,20 @@ class TournamentsViewModel(
                                 firestoreRepository.updateUserTournamentData(uid, it1)
                             }
                                 .addOnSuccessListener {
+
                                     messageDisplayed2 = false
                                     MessageStatus.value = "Enrolled Successfully"
 
-                                    var index = activeTournamentsList.value?.indexOf(tournament)!!
-                                    activeTournamentsList.value?.get(index)?.teams?.add(team)
+//                                    var index = activeTournamentsList.value?.indexOf(tournament)!!
+//                                    activeTournamentsList.value?.get(index)?.teams?.add(team)
+//                                    activeTournamentsList.notifyObserver()
+                                    activeTournamentsList.value?.add(tournament!!)
                                     activeTournamentsList.notifyObserver()
-
-                                    currentTournamentsList.value?.add(tournament!!)
-                                    currentTournamentsList.notifyObserver()
+                                    getAllActiveTournaments()
+                                    synchronized(currentTournamentsList) {
+                                        currentTournamentsList.value?.sortAndAddToList(tournament!!)
+                                        currentTournamentsList.notifyObserver()
+                                    }
 //                                    currentTournamentsList.value?.add(tournament!!)
 //                                    currentTournamentsList.notifyObserver()
 //                                    getCurrentTournamentsForUser()
@@ -440,11 +534,15 @@ class TournamentsViewModel(
                                     //getAllActiveTournaments()
 //                                        userTournament?.leafCount =
 //                                            sharedPrefsRepository.getDailyStepCount() / 1000
-                                    //TODO: These 3 lines which are below have
-                                    // to be executed everytime when a user navigates to tournament fragment
+
                                     val user = sharedPrefsRepository.user
-                                    user.currentTournaments[tournament!!.name] = userTournament!!
+                                    userTournament?.endDate!!
+                                    user.currentTournaments[tournament.name] = userTournament
                                     sharedPrefsRepository.user = user
+
+                                    val teamPref = sharedPrefsRepository.team
+                                    teamPref.currentTournaments[tournament.name] = teamTournament
+                                    sharedPrefsRepository.team = teamPref
                                     Log.d("Test", "Being added to user")
                                 }
                                 .addOnFailureListener {
@@ -452,6 +550,12 @@ class TournamentsViewModel(
                                 }
                         }
                     }
+                val updateUserChallengeDataRequest =
+                    OneTimeWorkRequestBuilder<UpdateUserTournamentDataWorker>().build()
+                WorkManager.getInstance().enqueue(updateUserChallengeDataRequest).result.addListener(
+                    Runnable {
+                        Log.d("Challenge data", "updated by work manager")
+                    }, MoreExecutors.directExecutor())
             }
     }
 
@@ -464,10 +568,10 @@ class TournamentsViewModel(
             goal = tournament.dailyGoal,
             startDate = tournament.startTimestamp,
             endDate = tournament.finishTimestamp,
-            teamName = team
+            teamName = team.removeSurrounding("[","]")
         )
 
-    private fun getTeamTournament(tournament: Tournament, steps: Int) =
+    private fun getTeamTournament(tournament: Tournament, steps: Int, team: String) =
         TeamTournament(
             name = tournament.name,
             dailyStepsMap = mutableMapOf(),
@@ -475,7 +579,8 @@ class TournamentsViewModel(
             joinDate = DateTime().millis,
             goal = tournament.dailyGoal,
             startDate = tournament.startTimestamp,
-            endDate = tournament.finishTimestamp
+            endDate = tournament.finishTimestamp,
+            teamName = team
         )
 
 
@@ -484,14 +589,48 @@ class TournamentsViewModel(
 
     private fun updateUserSharedPrefsData(userTournament: UserTournament) {
         val user = sharedPrefsRepository.user
-        userTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
+        userTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 3000
         userTournament.totalSteps = sharedPrefsRepository.getDailyStepCount()
         user.currentTournaments[userTournament.name] = userTournament
         sharedPrefsRepository.user = user
     }
 
-    fun display(){
-        Log.d("Test","currentTourney "+ sharedPrefsRepository.user.currentTournaments)
+    fun updateTeamSharedPrefsData(teamTournament: TeamTournament){
+        val team = sharedPrefsRepository.team
+        teamTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 3000
+        teamTournament.totalSteps = sharedPrefsRepository.getDailyStepCount()
+        team.currentTournaments[teamTournament.name] = teamTournament
+        sharedPrefsRepository.team = team
+    }
+
+    fun display() {
+
+//        var tour = sharedPrefsRepository.team
+//        val tourey = sharedPrefsRepository.user
+
+//        tourey.currentTournaments.forEach { (_, tourneys) ->
+//            if(tourneys.name == "Workling"){
+//                tourneys.isActive = false
+//            }
+//        }
+
+//        tour.currentTournaments.forEach { (_, tourney) ->
+//            if(tourney.name == "NewTourney"){
+//                tourney.dailyStepsMap.remove("1593313200000")
+//            }
+////             tourney.dailyStepsMap = tourney.dailyStepsMap.toSortedMap()
+////             Log.d("Test", " Sorted ${tourney.name}" +tourney.dailyStepsMap.toSortedMap())
+//        }
+//        sharedPrefsRepository.storeLastDayStepCount(654)
+//
+//        sharedPrefsRepository.team = tour
+//        sharedPrefsRepository.user = tourey
+
+//        Log.d("Test","Time $Timestamp(Date(1592535600000).toString()")
+
+        Log.d("Test", "Team " + sharedPrefsRepository.team)
+        Log.d("Test", "currentTourney " + sharedPrefsRepository.user.currentTournaments)
+        Log.d("Test", "LAst "+ sharedPrefsRepository.getLastDayStepCount())
     }
 
     private fun removeTournamentFromCurrentTournamentsLists(tournament: Tournament) {
@@ -500,6 +639,10 @@ class TournamentsViewModel(
         currentTournamentsList.notifyObserver()
 
         sharedPrefsRepository.user = sharedPrefsRepository.user.let {
+            it.currentTournaments.remove(tournament.name)
+            it
+        }
+        sharedPrefsRepository.team = sharedPrefsRepository.team.let {
             it.currentTournaments.remove(tournament.name)
             it
         }

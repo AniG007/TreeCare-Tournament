@@ -12,6 +12,7 @@ import com.google.android.gms.fitness.Fitness
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.model.UserChallengeTrophies
+import dal.mitacsgri.treecare.model.UserTournamentTrophies
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 
@@ -21,6 +22,7 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     val trophiesCountData = MutableLiveData<Triple<Int, Int, Int>>().default(Triple(0, 0, 0))
+    val teamTrophiesCountData = MutableLiveData<Triple<Int, Int, Int>>().default(Triple(0, 0, 0))
 
     fun getUserPhotoUrl() = sharedPrefsRepository.user.photoUrl
 
@@ -73,6 +75,24 @@ class ProfileViewModel(
             .addOnFailureListener {
                 Log.d("Profile", "Failed to obtain trophies data")
             }
+    }
+
+    fun getTeamTrophiesCount() {
+
+            firestoreRepository.getTeamTrophiesData(sharedPrefsRepository.team.name)
+                .addOnSuccessListener {
+                    val teamTrophies = it.toObject<UserTournamentTrophies>()
+                    teamTrophies?.let {
+                        teamTrophiesCountData.value = Triple(
+                            teamTrophies.gold.size,
+                            teamTrophies.silver.size,
+                            teamTrophies.bronze.size
+                        )
+                    }
+                }
+                .addOnFailureListener {
+                    Log.d("Profile", "Failed to obtain team trophies data "+ it)
+                }
     }
 
     fun updateUserName(newName: String, successAction: () -> Unit) {

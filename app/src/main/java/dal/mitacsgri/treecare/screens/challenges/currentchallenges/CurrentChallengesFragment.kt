@@ -38,7 +38,7 @@ class CurrentChallengesFragment : Fragment() {
             adapter = CurrentChallengesRecyclerViewAdapter(mViewModel.currentChallengesList.value!!, mViewModel)
         }
 
-        mViewModel.currentChallengesList.observe(this, Observer {
+        mViewModel.currentChallengesList.observe(viewLifecycleOwner, Observer {
             view.recyclerView.adapter?.notifyDataSetChanged()
         })
 

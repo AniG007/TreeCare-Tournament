@@ -18,9 +18,9 @@ class AllTeamsViewModel(
     private val firestoreRepository: FirestoreRepository,
     private val sharedPrefsRepository: SharedPreferencesRepository
 ): ViewModel() {
-
+    val teamsLiveData = MutableLiveData<List<Team>>()
     fun getAllTeams(): LiveData<List<Team>> {
-        val teamsLiveData = MutableLiveData<List<Team>>()
+
 
         firestoreRepository.getAllTeams()
             .addOnSuccessListener {
@@ -123,6 +123,6 @@ class AllTeamsViewModel(
     fun isJoinRequestSent(team: Team) = team.joinRequests.contains(sharedPrefsRepository.user.uid)
 
     fun teamExist(): Boolean {
-        return sharedPrefsRepository.user.currentTeams.isNotEmpty()
+        return sharedPrefsRepository.team.name.isNotEmpty()
     }
 }

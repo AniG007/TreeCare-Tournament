@@ -37,7 +37,7 @@ class ActiveTournamentsViewHolder(
             descriptionTV.text = item.description
             durationTV.text = viewModel.getTournamentDurationText(item)
             //membersCountTV.text = viewModel.getTeamsCountText(item)
-            teamCountTV.text = viewModel.getTeamsCountText(item)
+            teamCountTV.text = viewModel.getTeamsCountText(item).toString()
             //team2CountTV.text = viewModel.getTeamsCountText(item).toString()
 
             //if (item.active && !viewModel.hasTeamJoinedTournament(item)) {

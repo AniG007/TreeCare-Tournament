@@ -41,7 +41,7 @@ class LeaderboardFragment : Fragment() {
                 }
             }
 
-            mViewModel.getChallengersList(args.challengeName).observe(this@LeaderboardFragment, Observer {
+            mViewModel.getChallengersList(args.challengeName).observe(viewLifecycleOwner, Observer {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = LeaderboardRecyclerViewAdapter(it, mViewModel)
@@ -58,9 +58,6 @@ class LeaderboardFragment : Fragment() {
             })
 
         }
-
         return view
     }
-
-
 }

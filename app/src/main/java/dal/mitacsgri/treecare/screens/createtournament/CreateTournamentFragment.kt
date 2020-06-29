@@ -139,7 +139,7 @@ class CreateTournamentFragment : Fragment() {
                 }
 
                 inputTournamentGoal.validate("Goal should be a multiple of 1000 greater than 9000") {
-                    viewModel.isGoalValid = it.matches(viewModel.getRegexToMatchStepsGoal())
+                    viewModel.isGoalValid = true //it.matches(viewModel.getRegexToMatchStepsGoal())
                     viewModel.areAllInputFieldsValid()
                     viewModel.isGoalValid
                 }

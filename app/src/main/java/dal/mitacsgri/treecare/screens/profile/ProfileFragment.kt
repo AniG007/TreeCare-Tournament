@@ -83,17 +83,23 @@ class ProfileFragment : Fragment() {
 
             streakDescriptionTV.text = mViewModel.getDailyGoalStreakText()
 
-            mViewModel.trophiesCountData.observe(this@ProfileFragment, Observer {
+            mViewModel.trophiesCountData.observe(viewLifecycleOwner, Observer {
                 goldAwardCountTV.text = it.first.toString()
                 silverAwardCountTV.text = it.second.toString()
                 bronzeAwardCount.text = it.third.toString()
             })
+//            challengerModeButtonHolder.setOnClickListener {
+//                findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
+//            }
 
-            challengerModeButtonHolder.setOnClickListener {
-                findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
-            }
+            mViewModel.teamTrophiesCountData.observe(viewLifecycleOwner, Observer {
+                goldTeamAwardCountTV.text = it.first.toString()
+                silverTeamAwardCountTV.text = it.second.toString()
+                bronzeTeamAwardCount.text = it.third.toString()
+            })
 
             mViewModel.getTrophiesCount()
+            mViewModel.getTeamTrophiesCount()
         }
 
         return view

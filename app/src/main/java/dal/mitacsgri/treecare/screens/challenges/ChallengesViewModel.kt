@@ -79,6 +79,9 @@ class ChallengesViewModel(
                     Log.d("Challenge not found", it.toString())
                 }
         }
+
+        Log.d("Test","ChallengePref "+sharedPrefsRepository.user.currentChallenges["Walkathon"]?.endDate?.toDateTime()?.millis)
+
     }
 
     fun getAllCreatedChallengesChallenges(userId: String) {

@@ -67,7 +67,8 @@ class CreateTeamViewModel(
                                             .addOnSuccessListener {
                                                 sharedPrefsRepository.team = it.toObject<Team>()!!
                                                 val user = sharedPrefsRepository.user
-                                                user.currentTeams.add(name.toString())
+                                                Log.d("Test","Tname "+ sharedPrefsRepository.team.name)
+                                                user.currentTeams.add(sharedPrefsRepository.team.name)
                                                 sharedPrefsRepository.user = user
                                             }
                                         Log.d("TAG", "Team Name has been added")

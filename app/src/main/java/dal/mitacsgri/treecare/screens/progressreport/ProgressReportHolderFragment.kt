@@ -82,14 +82,14 @@ class ProgressReportHolderFragment : Fragment() {
     }
 
     fun hidePreviousDataButton(hide: Boolean) {
-        if (view!!.viewPager.currentItem != 0)
+        if (requireView().viewPager.currentItem != 0)
             previousDataButton.visibility = if (hide) View.GONE else View.VISIBLE
         else
             previousDataButton.visibility = View.GONE
     }
 
     fun hideNextDataButton(hide: Boolean) {
-        if (view!!.viewPager.currentItem != view!!.viewPager.adapter!!.count - 1)
+        if (requireView().viewPager.currentItem != requireView().viewPager.adapter!!.count - 1)
             nextDataButton.visibility = if (hide) View.GONE else View.VISIBLE
         else
             nextDataButton.visibility = View.GONE

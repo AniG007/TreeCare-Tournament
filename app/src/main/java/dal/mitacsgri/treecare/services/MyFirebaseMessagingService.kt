@@ -20,14 +20,19 @@ import org.koin.core.KoinComponent
 
 class MyFirebaseMessagingService: FirebaseMessagingService(), KoinComponent {
 
+    override fun onNewToken(p0: String) {
+        super.onNewToken(p0)
+        Log.d("Test", "Doken"+ p0)
+    }
+
     //Called only when the app is in foreground
-    override fun onMessageReceived(remoteMessage: RemoteMessage?) {
+    override fun onMessageReceived(p0: RemoteMessage) {
 
         createNotificationChannel()
-        Log.d("Received", remoteMessage?.data.toString())
+        Log.d("Received", p0.data.toString())
 
-        val title = remoteMessage?.notification?.title ?: ""
-        val body = remoteMessage?.notification?.body ?: ""
+        val title = p0.notification?.title ?: ""
+        val body = p0.notification?.body ?: ""
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)

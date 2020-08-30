@@ -37,8 +37,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-             />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -48,31 +47,50 @@
             android:padding="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/nameTV"
+            app:layout_constraintEnd_toStartOf="@+id/LLayout"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/rankTV"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <TextView
-            android:id="@+id/nameTV"
+        <LinearLayout
+            android:id="@+id/LLayout"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread">
+
+            <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
+                android:id="@+id/nameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                tools:text="Player Name" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/removePlayer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_18sdp"
-            android:textStyle="bold"
-            android:singleLine="true"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            app:layout_constraintBottom_toTopOf="@+id/stepsCountTV"
+            android:layout_marginEnd="5dp"
+            android:backgroundTint="#4db8ff"
+            android:src="@drawable/ic_exit"
+            android:tint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/leafCountTV"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/LLayout"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread"
-            tools:text="Player Name" />
+            app:layout_constraintVertical_bias="0.208" />
 
         <ImageView
             android:id="@+id/stepsImage"
@@ -91,50 +109,44 @@
             android:id="@+id/stepsCountTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
             android:layout_marginStart="@dimen/_4sdp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/stepsImage"
-            app:layout_constraintTop_toBottomOf="@+id/nameTV"
+            app:layout_constraintTop_toBottomOf="@+id/LLayout"
             tools:text="Total steps: 5000" />
 
         <ImageView
             android:id="@+id/leafImage"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_4sdp"
             android:src="@drawable/ic_leaf"
             android:tint="@color/colorPrimary"
-            android:layout_marginStart="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="@id/leafCountTV"
             app:layout_constraintEnd_toStartOf="@id/leafCountTV"
-            app:layout_constraintTop_toTopOf="@id/leafCountTV"
-            app:layout_constraintStart_toEndOf="@id/stepsCountTV"/>
+            app:layout_constraintStart_toEndOf="@id/stepsCountTV"
+            app:layout_constraintTop_toTopOf="@id/leafCountTV" />
 
         <TextView
             android:id="@+id/leafCountTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/stepsCountTV"
             app:layout_constraintStart_toEndOf="@id/leafImage"
             app:layout_constraintTop_toTopOf="@id/stepsCountTV"
             tools:text="Leaves" />
-
-        <ImageButton
-            android:id="@+id/removePlayer"
-            android:layout_width="44dp"
-            android:layout_height="43dp"
-            android:layout_marginEnd="36dp"
-            android:backgroundTint="#4db8ff"
-            android:src="@drawable/ic_exit"
-            android:tint="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
+
+<!--    app:layout_constraintBottom_toTopOf="@+id/stepsCountTV"-->
+<!--    app:layout_constraintEnd_toEndOf="parent"-->
+<!--    app:layout_constraintHorizontal_bias="0.5"-->
+<!--    app:layout_constraintStart_toEndOf="@+id/imageView"-->
+<!--    app:layout_constraintTop_toTopOf="parent"-->
+<!--    app:layout_constraintVertical_chainStyle="spread"-->

@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.leaderboard
 
 import android.text.SpannedString
+import android.util.Log
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.LiveData
@@ -32,6 +33,7 @@ class LeaderboardItemViewModel(
     var isDialogDisplayed: Boolean
         get() = challenge.active.xnor(userChallenge?.isActive ?: challenge.active)
         set(value) {
+            Log.d("Test", "Inside Set")
             userChallenge?.let {
                 it.isActive = value
 
@@ -70,6 +72,7 @@ class LeaderboardItemViewModel(
 
                             if (challengersList.value?.size == limit) {
                                 challengersList.value?.sortChallengersList(challenge.type)
+                                sortPlayerForChallenge(challengersList.value!!, challenge.name)
                                 challengersList.notifyObserver()
                             }
                         }
@@ -92,7 +95,7 @@ class LeaderboardItemViewModel(
         return 0
     }
 
-    fun getChallengeName(): String = sharedPrefsRepository.challengeName
+    fun getChallengeName(): String = sharedPrefsRepository.challengeName!!
 
     fun getTotalStepsText(challenger: Challenger): SpannedString =
         buildSpannedString {
@@ -124,5 +127,21 @@ class LeaderboardItemViewModel(
                 else -> it.totalSteps
             }
         }
+    }
+
+    fun sortPlayerForChallenge(challengers: ArrayList<Challenger>, challengeName: String) {
+
+        val players = ArrayList<String>()
+        for(challenger in challengers) {
+            players.add(challenger.uid)
+        }
+        //Log.d("Test", "Players "+ players)
+        firestoreRepository.updateChallengeData(challengeName, mapOf("players" to players))
+            .addOnSuccessListener {
+                Log.d("Test", "Players have been sorted and added to DB")
+            }
+            .addOnFailureListener {
+                Log.d("Test", "Failed to add players to the DB: "+it)
+            }
     }
 }

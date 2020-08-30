@@ -13,6 +13,7 @@ import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_create_challenge.view.*
 import org.joda.time.DateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -75,6 +76,7 @@ class CreateChallengeFragment : Fragment() {
             }
 
             createChallengeButton.setOnClickListener {
+                MainActivity.playClickSound()
                 viewModel.createChallenge(name = inputTeamName.text,
                     description = inputTeamDescription.text,
                     type = CHALLENGE_TYPE_DAILY_GOAL_BASED,

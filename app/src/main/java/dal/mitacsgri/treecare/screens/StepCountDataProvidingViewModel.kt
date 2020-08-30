@@ -103,7 +103,6 @@ class StepCountDataProvidingViewModel(
                 getTodayStepCountData {
                     currentLeafCount += it/1000
                     sharedPrefsRepository.currentLeafCount = currentLeafCount
-                    //TODO: Data Points for Step data that is being fetched is empty
                     sharedPrefsRepository.storeDailyStepCount(it)
                     Log.d("DailyStepCount", it.toString())
                     increaseStepCountDataFetchedCounter()
@@ -161,16 +160,16 @@ class StepCountDataProvidingViewModel(
         }
         keysList = keysList.sorted().toMutableList()
 
-        val lastTime = keysList[keysList.size-1]
-        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
-        val days = Days.daysBetween(lastDate, DateTime()).days
-
-        val oldGoal = dailyGoalMap[lastTime]
-
-        for (i in 1..days) {
-            val key = lastDate.plusDays(i).getMapFormattedDate()
-            user.dailyGoalMap[key] = oldGoal!!
-        }
+//        val lastTime = keysList[keysList.size-1]
+//        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
+//        val days = Days.daysBetween(lastDate, DateTime()).days
+//
+//        val oldGoal = dailyGoalMap[lastTime]
+//
+//        for (i in 1..days) {
+//            val key = lastDate.plusDays(i).getMapFormattedDate()
+//            user.dailyGoalMap[key] = oldGoal!!
+//        }
 
         user.dailyGoalMap = dailyGoalMap.toSortedMap()
         sharedPrefsRepository.user = user

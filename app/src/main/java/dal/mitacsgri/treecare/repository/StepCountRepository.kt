@@ -9,8 +9,7 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataSet
 import com.google.android.gms.fitness.data.DataType
-import com.google.android.gms.fitness.data.DataType.AGGREGATE_STEP_COUNT_DELTA
-import com.google.android.gms.fitness.data.DataType.TYPE_STEP_COUNT_DELTA
+import com.google.android.gms.fitness.data.DataType.*
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.result.DataReadResponse
@@ -28,7 +27,6 @@ class StepCountRepository(private val context: Context) {
 
     fun getTodayStepCountData(onDataObtained: (stepCount: Int) -> Unit) {
         //Intrinsics.checkParameterIsNotNull(onDataObtained, "onDataObtained")
-        //TODO: Data Points for Step data that is being fetched is empty
         var total = 0
         //total.element = 0
 
@@ -40,17 +38,19 @@ class StepCountRepository(private val context: Context) {
             set(Calendar.MILLISECOND, 0)
             set(Calendar.SECOND, 0)
             set(Calendar.MINUTE, 0)
-            set(Calendar.HOUR, -12) //Setting time to current day's midnight. setting it to 0 was putting the clock at noon
+            set(Calendar.HOUR, -12) //Setting time to current day's midnight. setting it to 0, was putting the clock at noon initially
         }
         val response = Fitness.getHistoryClient(
             context,
             GoogleSignIn.getLastSignedInAccount(context)!!
         )
             .readDailyTotal(TYPE_STEP_COUNT_DELTA)
+            //.readDailyTotal(TYPE_DISTANCE_CUMULATIVE)
 
         response.addOnSuccessListener {
             if (it.dataPoints.size > 0)
                 total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
+                //total = it.dataPoints[0].getValue(Field.FIELD_DISTANCE).asInt()
             Log.d("DailyStepCount", total.toString())
             onDataObtained(total)
         }.addOnFailureListener {
@@ -80,7 +80,6 @@ class StepCountRepository(private val context: Context) {
                     Log.d("Test","Millis"+System.currentTimeMillis().toString())
                     Log.d("Test", "Buckets "+it.buckets.toString())
                     Log.d("Test","Millis"+System.currentTimeMillis().toString())
-
                     for (bucket in it.buckets) {
                         Log.d("Test","Bucket "+bucket)
                         //val dataSets = bucket.dataSets
@@ -103,42 +102,40 @@ class StepCountRepository(private val context: Context) {
 
 
 //        val readDataResult: DataReadResponse? = Tasks.await(response)
-                        /* response.addOnSuccessListener {
-            //val dataSet: DataSet = response.result!!.getDataSet(TYPE_STEP_COUNT_DELTA)
-            val dataSet: DataSet = it.getDataSet(TYPE_STEP_COUNT_DELTA)
-            Log.d("Test", dataSet.dataPoints.toString())
-        }
-        response.addOnFailureListener{
-            Log.d("Test","Unable to fetch today's step data $it")
-        }*/
+    /* response.addOnSuccessListener {
+//val dataSet: DataSet = response.result!!.getDataSet(TYPE_STEP_COUNT_DELTA)
+val dataSet: DataSet = it.getDataSet(TYPE_STEP_COUNT_DELTA)
+Log.d("Test", dataSet.dataPoints.toString())
+}
+response.addOnFailureListener{
+Log.d("Test","Unable to fetch today's step data $it")
+}*/
 
-        // val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(context)
+    // val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(context)
 //        val fitnessOptions: GoogleSignInOptionsExtension = FitnessOptions.builder()
 //            .addDataType(
 //                TYPE_STEP_COUNT_DELTA,
 //                FitnessOptions.ACCESS_READ
 //            )
 //            .build()
-        // val googleSignInAccount = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
+    // val googleSignInAccount = GoogleSignIn.getAccountForExtension(context, fitnessOptions)
 
-        //Log.d("Test","name ${googleSignInAccount.displayName}")
-
-
+    //Log.d("Test","name ${googleSignInAccount.displayName}")
 
 
-        /*response.addOnSuccessListener {
-            total = it.getDataPoints().size
-            //total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
-            // total = it.getDataPoints().get(0).getValue(FIELD_STEPS).asInt();
 
-            Log.d("DailyStepCount","This "+total.toString())
 
-            Log.d("DailyStepCount", total.toString())
-            onDataObtained(total)
-        }.addOnFailureListener {
-            Log.e("DailyStepCount", "error: $it")
-            onDataObtained(total)
-        }*/
+    /*response.addOnSuccessListener {
+        total = it.getDataPoints().size
+        //total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
+        // total = it.getDataPoints().get(0).getValue(FIELD_STEPS).asInt();
+        Log.d("DailyStepCount","This "+total.toString())
+        Log.d("DailyStepCount", total.toString())
+        onDataObtained(total)
+    }.addOnFailureListener {
+        Log.e("DailyStepCount", "error: $it")
+        onDataObtained(total)
+    }*/
 
 
 
@@ -218,7 +215,6 @@ class StepCountRepository(private val context: Context) {
                         }
                     }
                 }
-
                 onDataObtained(stepCountMap)
                 Log.d("Step count map", stepCountMap.toString())
             }

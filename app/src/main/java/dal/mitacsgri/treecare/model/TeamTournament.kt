@@ -19,5 +19,7 @@ data class TeamTournament(
     var endDate: Timestamp = Timestamp.now(),
     var lastUpdateTime: Timestamp = Timestamp.now(),
     var steps: Int = 0,
-    val teamName: String = ""
+    val teamName: String = "",
+    var dailyGoalsAchieved: Int = 0
+    //var isFirstTimeUpdate:Boolean = true
 )

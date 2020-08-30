@@ -20,6 +20,7 @@ import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardActivity
 import dal.mitacsgri.treecare.screens.progressreport.ProgressReportActivity
+import dal.mitacsgri.treecare.screens.tournamentleaderboard.TournamentLeaderBoardActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
 import org.joda.time.DateTime
@@ -32,7 +33,7 @@ import java.util.*
  */
 class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
 
-    private val sharedPrefsRepository: SharedPreferencesRepository by inject()
+    private val sharedPrefsRepository:  SharedPreferencesRepository by inject()
     private val firestoreRepository: FirestoreRepository by inject()
 
     private val TAG: String = "SensorAPI"
@@ -65,6 +66,10 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         startActivity(Intent(this, LeaderboardActivity::class.java))
     }
 
+    fun OpenTournamentLeaderboard(){
+        startActivity(Intent(this, TournamentLeaderBoardActivity::class.java))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         startService()
@@ -88,11 +93,11 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         }
 
         if (sharedPrefsRepository.gameMode == CHALLENGER_MODE) {
-            getChallengersListAndCurrentPosition(sharedPrefsRepository.challengeName)
+            getChallengersListAndCurrentPosition(sharedPrefsRepository.challengeName!!)
         }
 
         if(sharedPrefsRepository.gameMode == TOURNAMENT_MODE){
-            getTeamsListAndCurrentPosition(sharedPrefsRepository.tournamentName)
+            getTeamsListAndCurrentPosition(sharedPrefsRepository.tournamentName!!)
         }
 
     }
@@ -120,13 +125,13 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     }
 
     private fun startService() {
-        val serviceIntent = Intent(this, StepDetectorService::class.java)
+        val serviceIntent = Intent(applicationContext, StepDetectorService::class.java)
         serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
-        ContextCompat.startForegroundService(this, serviceIntent)
+        ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
     private fun stopService() {
-        val serviceIntent = Intent(this, StepDetectorService::class.java)
+        val serviceIntent = Intent(applicationContext, StepDetectorService::class.java)
         stopService(serviceIntent)
     }
 
@@ -163,6 +168,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
         when(sharedPrefsRepository.gameMode) {
             STARTER_MODE -> getString(R.string.starter_mode_instructions)
             CHALLENGER_MODE -> getString(R.string.challenger_mode_instructions)
+            TOURNAMENT_MODE -> getString(R.string.tournament_mode_instructions)
             else -> ""
         }
 
@@ -268,7 +274,7 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
                         .addOnSuccessListener {
                             val team = it.toObject<Team>()
                             val totalSteps = team?.currentTournaments!![tournamentName]?.totalSteps
-                            val teamTournament = team.let { getTeamTournament(tournament, team.name, totalSteps) }
+                            val teamTournament = team.let { getTeamTournament(team, tournament, team.name, totalSteps) }
                             teamsList.add(teamTournament)
 
                             if (teamsList.size == limit) {
@@ -281,17 +287,22 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
             }
     }
 
-    private fun getTeamTournament(tournament: Tournament, team: String, steps: Int?) =
-        TeamTournament(
+    private fun getTeamTournament(team:Team, tournament: Tournament, teamName: String, steps: Int?) : TeamTournament {
+
+        val teamTournamentData = team.currentTournaments[tournament.name] ?: TeamTournament()
+
+        return TeamTournament(
             name = tournament.name,
-            dailyStepsMap = mutableMapOf(),
-            totalSteps = steps ?: 0,
+            dailyStepsMap    = mutableMapOf(),
+            totalSteps = steps!!,
+            leafCount = teamTournamentData.leafCount,
             joinDate = DateTime().millis,
             goal = tournament.dailyGoal,
             startDate = tournament.startTimestamp,
             endDate = tournament.finishTimestamp,
-            teamName = team
+            teamName = teamName
         )
+    }
 
     private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {
         sortByDescending {

@@ -26,6 +26,8 @@ const val TOURNAMENT_TYPE_AGGREGATE_BASED = 1
 const val STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID = "StepMonitorServiceChannel"
 const val FCM_NOTIFICATION_CHANNEL_ID = "FCMChannel"
 const val DAILY_GOAL_NOTIFICATION_CHANNEL_ID = "DailyGoalChannel"
+const val ACTIVITY_RECOGNITION_CHANNEL_ID = "ActivityChannel"
+const val FOREGROUND = "foreground"
 
 //Team Request Types
 const val JOIN_REQUEST = 0

@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
+import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.extensions.getTextAsInt
@@ -37,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        if (settingsViewModel.getGameMode() == CHALLENGER_MODE) {
+        if (settingsViewModel.getGameMode() == CHALLENGER_MODE || settingsViewModel.getGameMode() == TOURNAMENT_MODE) {
             dailyGoalTV.visibility = View.GONE
             seekBarGoal.visibility = View.GONE
             dailyGoalChangeTV.visibility = View.GONE

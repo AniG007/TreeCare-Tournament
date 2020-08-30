@@ -16,6 +16,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.TOURNAMENT_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Team
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_create_tournament.*
 import kotlinx.android.synthetic.main.fragment_create_tournament.view.*
 import kotlinx.android.synthetic.main.fragment_create_tournament.view.inputTournamentName
@@ -28,14 +29,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class CreateTournamentFragment : Fragment() {
 
-    private val mViewModel: CreateTournamentViewModel by viewModel()
-
     val args: CreateTournamentFragmentArgs by navArgs()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val status = args.status
-        val tournamentName = args.tournamentName ?:""
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        val status = args.status
+//        val tournamentName = args.tournamentName ?:""
+//    }
 
 
     /*override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,7 +138,7 @@ class CreateTournamentFragment : Fragment() {
                 }
 
                 inputTournamentGoal.validate("Goal should be a multiple of 1000 greater than 9000") {
-                    viewModel.isGoalValid = true //it.matches(viewModel.getRegexToMatchStepsGoal())
+                    viewModel.isGoalValid = it.matches(viewModel.getRegexToMatchStepsGoal())
                     viewModel.areAllInputFieldsValid()
                     viewModel.isGoalValid
                 }
@@ -170,6 +169,7 @@ class CreateTournamentFragment : Fragment() {
             }
 
             createTournamentButton.setOnClickListener {
+                MainActivity.playClickSound()
                 Log.d("Test","FD"+ viewModel.isFullDataValid.value)
                 if (viewModel.isFullDataValid.value!!) {
 

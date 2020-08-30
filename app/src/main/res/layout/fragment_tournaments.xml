@@ -35,6 +35,18 @@
             app:tabIndicatorHeight="@dimen/_2sdp"
             app:tabSelectedTextColor="@color/white" />
 
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            android:id="@+id/tournament_search"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textCursorDrawable="@null"-->
+<!--            app:queryHint="@string/Search"-->
+<!--            android:elevation="@dimen/_8sdp"-->
+<!--            app:iconifiedByDefault="false"-->
+<!--            app:queryBackground="@null"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/appbar"-->
+<!--            app:layout_constraintStart_toStartOf="parent"/>-->
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager

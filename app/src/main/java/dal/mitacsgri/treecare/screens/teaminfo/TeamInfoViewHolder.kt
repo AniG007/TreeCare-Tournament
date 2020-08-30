@@ -14,6 +14,7 @@ import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.model.TeamInfo
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
+import dal.mitacsgri.treecare.screens.MainActivity
 import io.grpc.Context
 import kotlinx.android.synthetic.main.item_team_info.view.*
 class TeamInfoViewHolder(
@@ -60,6 +61,7 @@ class TeamInfoViewHolder(
             if (viewModel.isUserCaptain(item.captainId) && (item.captainId != item.uId) ) {
                 removePlayer.visibility = View.VISIBLE
                 removePlayer.setOnClickListener{
+                    MainActivity.playClickSound()
                     MaterialAlertDialogBuilder(context)
                         .setTitle("Remove Team Member")
                         .setMessage("Do you really want to remove '${item.userName}' from your team?")
@@ -77,7 +79,8 @@ class TeamInfoViewHolder(
             }
 
             cardView.setOnClickListener {
-                viewModel.display()
+                MainActivity.playClickSound()
+                //viewModel.display()
             }
         }
     }

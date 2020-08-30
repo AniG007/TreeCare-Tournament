@@ -21,7 +21,7 @@ class InstructionsViewModel: ViewModel() {
             when(mode) {
                 STARTER_MODE -> context.getString(R.string.starter_mode_instructions)
                 CHALLENGER_MODE -> context.getString(R.string.challenger_mode_instructions)
-                TOURNAMENT_MODE -> ""
+                TOURNAMENT_MODE -> context.getString(R.string.tournament_mode_instructions)
                 else -> ""
             }
 }

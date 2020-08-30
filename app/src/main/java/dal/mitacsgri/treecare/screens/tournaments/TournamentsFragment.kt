@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
@@ -51,10 +52,18 @@ class TournamentsFragment : Fragment() {
             fabCreateTournament.setOnClickListener{
                 findNavController().navigate(R.id.action_tournamentsFragment_to_createTournamentFragment)
             }
+//            tournament_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextSubmit(query: String?): Boolean {
+//                    return false
+//                }
+//
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    adapter.filter.filter(newText)
+//                    return false
+//                }
+//
+//            })
         }
-
         return view
     }
-
-
 }

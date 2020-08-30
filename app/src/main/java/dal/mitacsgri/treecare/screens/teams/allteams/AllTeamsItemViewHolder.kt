@@ -10,6 +10,7 @@ import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
+import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.item_all_teams_team.view.*
 import org.jetbrains.anko.toast
@@ -31,6 +32,7 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
             if (viewModel.isUserCaptain(item.captain)) {
                 button.text = context.getString(R.string.invite_member)
                 button.setOnClickListener {
+                    MainActivity.playClickSound()
                     if (viewModel.teamExist()) {
                         val tName = nameTV.text.toString()
                         Log.d("TAG", "TeamNameinAll" + tName)
@@ -44,12 +46,17 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
                 }
             }
 
-
             else {
                 button.text =
                     if (viewModel.isJoinRequestSent(item)) context.getString(R.string.cancel_request)
                     else context.getString(R.string.send_join_request)
                 joinRequestAction(button, item)
+            }
+
+            allTeamsCard.setOnClickListener {
+                MainActivity.playClickSound()
+                val action = TeamsFragmentDirections.actionTeamsFragmentToTeamInfoFragment(item.name, "AllTeamsFragment")
+                findNavController().navigate(action)
             }
         }
     }
@@ -60,6 +67,7 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
         var cancelJoinRequestListener = View.OnClickListener {  }
 
         sendJoinRequestListener = View.OnClickListener {
+            MainActivity.playClickSound()
             viewModel.sendJoinRequest(team.name) {
                 changeButtonStateAndBehaviour(
                     it, button, sendJoinRequestListener, cancelJoinRequestListener)
@@ -67,6 +75,7 @@ class AllTeamsItemViewHolder(itemView: View, private val viewModel: AllTeamsView
         }
 
         cancelJoinRequestListener = View.OnClickListener {
+            MainActivity.playClickSound()
             viewModel.cancelJoinRequest(team.name) {
                 changeButtonStateAndBehaviourTwo(
                     //!it, button, sendJoinRequestListener, cancelJoinRequestListener)

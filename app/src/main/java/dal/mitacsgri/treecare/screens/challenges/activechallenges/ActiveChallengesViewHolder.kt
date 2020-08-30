@@ -9,6 +9,7 @@ import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.BaseViewHolder
+import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
@@ -54,6 +55,7 @@ class ActiveChallengesViewHolder(
             }
 
             buttonLeaderBoard.setOnClickListener {
+                MainActivity.playClickSound()
                 val action = ChallengesFragmentDirections
                     .actionChallengesFragmentToLeaderboardFragment(item.name)
                 findNavController().navigate(action)

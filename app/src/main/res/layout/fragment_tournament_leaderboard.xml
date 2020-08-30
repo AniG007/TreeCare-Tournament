@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/green_linear_gradient"
+        android:backgroundTint="@color/tournament_mode_primary_color"
         android:paddingBottom="@dimen/_15sdp"
         android:elevation="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"

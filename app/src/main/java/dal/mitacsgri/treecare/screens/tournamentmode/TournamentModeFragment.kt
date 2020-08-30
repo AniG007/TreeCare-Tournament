@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_tournament_mode.view.*
+import java.lang.IllegalStateException
 
 class TournamentModeFragment : Fragment() {
 
@@ -23,16 +25,28 @@ class TournamentModeFragment : Fragment() {
             Glide.with(this).load(R.drawable.team_run).into(teamsImage)
 
             tournaments.setOnClickListener {
+                MainActivity.playClickSound()
                 findNavController().navigate(R.id.action_tournamentModeFragment_to_tournamentsFragment)
             }
 
             teams.setOnClickListener {
+                MainActivity.playClickSound()
                 findNavController().navigate(R.id.action_tournamentModeFragment_to_teamsFragment)
             }
+
+            returnHome.setOnClickListener {
+                try{
+                    findNavController().navigateUp()
+                }
+                catch (e: IllegalStateException){
+                    activity?.onBackPressed()
+                }
+            }
+
         }
 
         return view
     }
 
-
 }
+

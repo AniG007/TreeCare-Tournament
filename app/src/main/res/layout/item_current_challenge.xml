@@ -9,7 +9,11 @@
     android:layout_marginEnd="@dimen/_16sdp"
     android:layout_marginBottom="@dimen/_16sdp"
     app:cardElevation="@dimen/_6sdp"
-    app:cardCornerRadius="@dimen/_6sdp">
+    app:cardCornerRadius="@dimen/_6sdp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:id="@+id/currentChallengeCard">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

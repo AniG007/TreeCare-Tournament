@@ -13,12 +13,16 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.di.sharedPreferencesRepositoryModule
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.teaminfo.TeamInfoViewModel
 import kotlinx.android.synthetic.main.fragment_team_info.view.*
 import kotlinx.android.synthetic.main.fragment_teams.view.*
 import kotlinx.android.synthetic.main.fragment_teams.view.title
 import kotlinx.android.synthetic.main.fragment_teams.view.toolbar
+import kotlinx.android.synthetic.main.item_team_info.view.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 //import kotlinx.android.synthetic.main.fragment_invites_request.view.*
@@ -26,8 +30,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class TeamInfoFragment : Fragment() {
 
     //val teamName= MutableLiveData<String>()
-    private val mViewModel : TeamInfoViewModel by viewModel()
+    private val mViewModel: TeamInfoViewModel by viewModel()
     val args: TeamInfoFragmentArgs by navArgs()
+    private val sharedPrefs: SharedPreferencesRepository by inject()
+
     /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         teamName.value = args.teamName
     }*/
@@ -41,7 +47,11 @@ class TeamInfoFragment : Fragment() {
 
         view.apply {
 
+            transferCaptaincy.visibility = View.INVISIBLE
+
             title.text = args.teamName
+
+            mViewModel.membersList.value?.clear() //To avoid duplicates
 
             toolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
@@ -54,6 +64,32 @@ class TeamInfoFragment : Fragment() {
                     adapter = TeamInfoRecyclerViewAdapter(it, mViewModel)
                 }
             })
+
+            if (args.sourceScreen == "enrollTeamsFragment")
+                transferCaptaincy.visibility = View.INVISIBLE
+
+            else if (args.sourceScreen == "teamsFragment") {
+
+                if (sharedPrefs.user.uid == sharedPrefs.team.captain)
+                    transferCaptaincy.visibility = View.VISIBLE
+                else transferCaptaincy.visibility = View.INVISIBLE
+
+            }
+            else{
+                transferCaptaincy.visibility = View.INVISIBLE
+            }
+
+//            mViewModel.bool.observe(viewLifecycleOwner, Observer {
+//                if(it) MutableLiveData<String>()
+//                else View.INVISIBLE
+//            })
+
+
+            transferCaptaincy.setOnClickListener {
+                val action =
+                    TeamInfoFragmentDirections.actionTeamInfoFragmentToTransferCaptaincy2(args.teamName)
+                findNavController().navigate(action)
+            }
         }
         return view
 

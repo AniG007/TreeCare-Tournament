@@ -2,6 +2,7 @@ package dal.mitacsgri.treecare.screens.tournaments
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Lifecycle
 import dal.mitacsgri.treecare.screens.tournaments.activetournaments.ActiveTournamentsFragment
 import dal.mitacsgri.treecare.screens.tournaments.currenttournaments.CurrentTournamentsFragment
 

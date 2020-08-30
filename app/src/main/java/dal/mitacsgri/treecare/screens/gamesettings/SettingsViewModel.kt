@@ -94,7 +94,6 @@ class SettingsViewModel(
             val key = DateTime(lastTime).plusDays(i).getMapFormattedDate()
             dailyGoalMap[key] = oldGoal!!
         }
-
         dailyGoalMap[DateTime(user.lastGoalChangeTime).getMapFormattedDate()] = updatedStepGoal
         user.dailyGoalMap = dailyGoalMap.toSortedMap()
     }

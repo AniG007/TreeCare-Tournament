@@ -1,5 +1,7 @@
 package dal.mitacsgri.treecare.services
 
+//import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
+
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -15,9 +17,7 @@ import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.request.DataSourcesRequest
 import com.google.android.gms.fitness.request.SensorRequest
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
-import dal.mitacsgri.treecare.consts.STARTER_MODE
-import dal.mitacsgri.treecare.consts.STEP_MONITOR_SERVICE_NOTIF_CHANNEL_ID
+import dal.mitacsgri.treecare.consts.*
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
@@ -29,10 +29,11 @@ import org.koin.core.inject
 import java.util.concurrent.TimeUnit
 
 
-class StepDetectorService: Service(), KoinComponent {
+class StepDetectorService : Service(), KoinComponent {
 
     private val TAG = "StepCountService"
 
+    //TODO: Check the sensor function returning data
     private val stepCountRepository: StepCountRepository by inject()
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
 
@@ -52,8 +53,27 @@ class StepDetectorService: Service(), KoinComponent {
 
         stepCountRepository.getTodayStepCountData {
             sharedPrefsRepository.storeDailyStepCount(it)
-            if (isRealtimeUpdateRequired()) updateStepCountUsingApi()
-            else sharedPrefsRepository.storeDailyStepCount(sharedPrefsRepository.challengeTotalStepsCount)
+            if (isRealtimeUpdateRequired()) {
+                Log.d(TAG, "bool" + isRealtimeUpdateRequired())
+                updateStepCountUsingApi()
+            }
+            //else sharedPrefsRepository.storeDailyStepCount(sharedPrefsRepository.challengeTotalStepsCount)
+            else {
+                Log.d(TAG, "Else " + sharedPrefsRepository.challengeTotalStepsCount)
+                if (sharedPrefsRepository.gameMode == CHALLENGER_MODE) {
+                    Log.d(
+                        TAG,
+                        "challenge end " + sharedPrefsRepository.challengeTotalStepsCount
+                    )
+                    sharedPrefsRepository.challengeTotalStepsCount
+                } else {
+                    Log.d(
+                        TAG,
+                        "Tournament end " + sharedPrefsRepository.challengeTotalStepsCount
+                    )
+                    sharedPrefsRepository.tournamentTotalStepsCount
+                }
+            }
         }
         return START_NOT_STICKY
     }
@@ -71,20 +91,22 @@ class StepDetectorService: Service(), KoinComponent {
                 setSound(null, null)
                 enableVibration(false)
             }
-
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
         }
     }
 
     private fun updateStepCountUsingApi() {
+        Log.d(TAG, "Inside updateStepCountUsingApi")
         Fitness.getSensorsClient(
             applicationContext,
-            GoogleSignIn.getLastSignedInAccount(applicationContext)!!)
+            GoogleSignIn.getLastSignedInAccount(applicationContext)!!
+        )
             .findDataSources(
                 DataSourcesRequest.Builder()
                     .setDataTypes(DataType.TYPE_STEP_COUNT_CUMULATIVE)
-                    .build())
+                    .build()
+            )
             .addOnSuccessListener {
                 it.forEach {
                     Log.i(TAG, "Data source found: $it")
@@ -105,35 +127,91 @@ class StepDetectorService: Service(), KoinComponent {
     }
 
     private fun registerFitnessDataListener() {
-
+        Log.d(TAG, "Inside registerFitnessDataListener")
         var isFirstRun = true
         var lastStepCount = 0
 
-        Fitness.getSensorsClient(applicationContext, GoogleSignIn.getLastSignedInAccount(applicationContext)!!)
+        Fitness.getSensorsClient(
+            applicationContext,
+            GoogleSignIn.getLastSignedInAccount(applicationContext)!!
+        )
             .add(
                 SensorRequest.Builder()
                     .setDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE)
                     .setSamplingRate(4, TimeUnit.SECONDS)
                     .build()
-            ) {dataPoint ->
+            ) { dataPoint ->
                 if (isFirstRun) {
-                    isFirstRun = false
-                    dataPoint.dataType.fields.forEach {
-                        val currentStepCount = dataPoint.getValue(it).asInt()
-                        lastStepCount = currentStepCount
+                    Log.d(TAG, "First Run")
+                    if (sharedPrefsRepository.gameMode == STARTER_MODE) {
+                        Log.d(TAG, "First Run Starter")
+                        isFirstRun = false
+                        dataPoint.dataType.fields.forEach {
+                            val currentStepCount = dataPoint.getValue(it).asInt()
+                            lastStepCount = currentStepCount
+                            Log.d(TAG, "First Run LS " + lastStepCount)
+                        }
+                    } else if (sharedPrefsRepository.gameMode == TOURNAMENT_MODE) {
+                        Log.d(TAG, "First Run Tournament")
+                        isFirstRun = false
+                        dataPoint.dataType.fields.forEach {
+                            //val currentStepCount = sharedPrefsRepository.tournamentTotalStepsCount
+                            val currentStepCount = dataPoint.getValue(it).asInt()
+                            lastStepCount = currentStepCount
+                            Log.d(TAG, "First Run LS " + lastStepCount)
+                        }
+                    } else if (sharedPrefsRepository.gameMode == CHALLENGER_MODE) {
+                        Log.d(TAG, "First Run Challenge")
+                        isFirstRun = false
+                        dataPoint.dataType.fields.forEach {
+                            //val currentStepCount = sharedPrefsRepository.challengeTotalStepsCount
+                            val currentStepCount = dataPoint.getValue(it).asInt()
+                            lastStepCount = currentStepCount
+                            Log.d(TAG, "First Run LS " + lastStepCount)
+                        }
                     }
+
                 } else {
-                    dataPoint.dataType.fields.forEach {
-                        val currentStepCount = dataPoint.getValue(it).asInt()
-                        sharedPrefsRepository.storeDailyStepCount(
-                            sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount)
-                        lastStepCount = currentStepCount
+                    if (sharedPrefsRepository.gameMode == STARTER_MODE) {
+                        Log.d(TAG, "Started sensor")
+                        dataPoint.dataType.fields.forEach {
+                            val currentStepCount = dataPoint.getValue(it).asInt()
+                            sharedPrefsRepository.storeDailyStepCount(
+                                sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
+                            )
+                            lastStepCount = currentStepCount
+                            Log.d(TAG, "LastStepCount " + lastStepCount)
+                        }
+                    } else if (sharedPrefsRepository.gameMode == CHALLENGER_MODE && sharedPrefsRepository.isChallengeActive) {
+                        Log.d(TAG, "Challenge sensor")
+                        dataPoint.dataType.fields.forEach {
+                            val currentStepCount = dataPoint.getValue(it).asInt()
+                            sharedPrefsRepository.storeChallengeStepCount(
+                                //  sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
+                                sharedPrefsRepository.getChallengeStepCount() + currentStepCount - lastStepCount
+                            )
+
+                            lastStepCount = currentStepCount
+                            Log.d(TAG, "LastStepCount " + lastStepCount)
+                        }
+                    } else if (sharedPrefsRepository.gameMode == TOURNAMENT_MODE && sharedPrefsRepository.isTournamentActive) {
+                        dataPoint.dataType.fields.forEach {
+                            Log.d(TAG, "Tournament sensor")
+                            val currentStepCount = dataPoint.getValue(it).asInt()
+                            //  sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
+                            sharedPrefsRepository.storeTournamentStepCount(
+                                sharedPrefsRepository.getTournamentStepCount() + currentStepCount - lastStepCount
+                            )
+                            lastStepCount = currentStepCount
+                            Log.d(TAG, "LastStepCount " + lastStepCount)
+                        }
                     }
                 }
             }
     }
 
     private fun useCoroutineToGetStepCount() {
+        Log.d(TAG, "Inside useCoroutineToGetStepCount")
         GlobalScope.launch {
             while (true) {
                 delay(4000)
@@ -146,5 +224,7 @@ class StepDetectorService: Service(), KoinComponent {
 
     private fun isRealtimeUpdateRequired() =
         (sharedPrefsRepository.gameMode == STARTER_MODE) or
-                ((sharedPrefsRepository.gameMode == CHALLENGER_MODE) and sharedPrefsRepository.isChallengeActive)
+                ((sharedPrefsRepository.gameMode == CHALLENGER_MODE) and sharedPrefsRepository.isChallengeActive) or
+                ((sharedPrefsRepository.gameMode == TOURNAMENT_MODE) and sharedPrefsRepository.isTournamentActive)
+
 }

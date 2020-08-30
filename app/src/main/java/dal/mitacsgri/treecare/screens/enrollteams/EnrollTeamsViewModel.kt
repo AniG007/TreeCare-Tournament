@@ -161,21 +161,17 @@ class EnrollTeamsViewModel(
             }
     }
 
-
-
     fun addTeamToList (teamName:String) {
-
         teamsHolder.value?.add(teamName)
         teamsHolder.notifyObserver()
-        //Log.d("Test","Adding"+tourneyList.value.toString())
-
+        Log.d("Test","Adding"+teamsHolder.value.toString())
     }
 
     fun removeTeamFromList (teamName:String){
 
         teamsHolder.value?.remove(teamName)
         teamsHolder.notifyObserver()
-        //Log.d("Test","Adding"+tourneyList.value.toString())
+        Log.d("Test","Adding"+teamsHolder.value.toString())
     }
 
     private fun getUserTournament(tournament: Tournament, team:String) =

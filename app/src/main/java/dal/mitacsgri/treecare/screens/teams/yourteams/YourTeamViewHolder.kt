@@ -11,11 +11,13 @@ import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
+import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.item_your_captained_team.view.*
 import kotlinx.coroutines.delay
 
-class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewModel): BaseViewHolder<Team>(itemView) {
+class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewModel)
+    : BaseViewHolder<Team>(itemView) {
 
     override fun bind(item: Team) {
         itemView.apply {
@@ -26,6 +28,7 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
                 buttonDelete.visibility = View.VISIBLE
                 addButton.visibility = View.VISIBLE
                 buttonDelete.setOnClickListener {
+                    MainActivity.playClickSound()
                     MaterialAlertDialogBuilder(context)
                             .setTitle("Delete Team")
                         .setMessage("Do you really want to delete your team '${item.name}' ?")
@@ -49,6 +52,7 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
             if (!viewModel.isUserCaptain(item.captain)) {
                 buttonExit.visibility = View.VISIBLE
                 buttonExit.setOnClickListener {
+                    MainActivity.playClickSound()
                     MaterialAlertDialogBuilder(context)
                         .setTitle("Exit Team")
                         .setMessage("Do you really want to exit the team '${item.name}' ?")
@@ -67,6 +71,7 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
             }
 
             addButton.setOnClickListener {
+                MainActivity.playClickSound()
                 val action = TeamsFragmentDirections.actionTeamsFragmentToJoinTeamFragment(item.name)
                 findNavController().navigate(action)
             }
@@ -77,10 +82,10 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
 //            } //To be removed since card can be clicked to view team members
 
             teamCard.setOnClickListener{
-                val action = TeamsFragmentDirections.actionTeamsFragmentToTeamInfoFragment(item.name)
+                MainActivity.playClickSound()
+                val action = TeamsFragmentDirections.actionTeamsFragmentToTeamInfoFragment(item.name, "teamsFragment")
                 findNavController().navigate(action)
             }
-
         }
     }
 }

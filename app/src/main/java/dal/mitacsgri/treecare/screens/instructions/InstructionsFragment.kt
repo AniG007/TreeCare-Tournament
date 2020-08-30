@@ -14,8 +14,10 @@ import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.*
 import dal.mitacsgri.treecare.extensions.startNextActivity
+import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
+//import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.fragment_instructions.view.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,6 +43,7 @@ class InstructionsFragment : Fragment() {
             instructionsTV.text = instructionsViewModel.getInstructions(args.mode, context)
 
             continueButton.setOnClickListener {
+                MainActivity.playClickSound()
                 when(args.mode) {
                     STARTER_MODE -> {
                         activity?.startNextActivity(TreeCareUnityActivity::class.java)
@@ -55,7 +58,6 @@ class InstructionsFragment : Fragment() {
                 findNavController().popBackStack(R.id.instructionsFragment, true)
             }
         }
-
         return view
     }
 

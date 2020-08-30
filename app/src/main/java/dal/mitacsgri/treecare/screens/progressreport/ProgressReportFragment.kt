@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_progress_report.view.*
 
 class ProgressReportFragment : Fragment() {

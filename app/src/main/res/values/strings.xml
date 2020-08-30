@@ -71,7 +71,6 @@
     <string name="tournament_total_steps_count">tournament_total_steps_count</string>
 
 
-
     <!--App UI text-->
     <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
     <string name="login_text">Please login with your Google account to proceed</string>
@@ -97,6 +96,18 @@
         \n\n4. To publicly recognize players’ efforts, there is a leaderboard that ranks top 10 players in descending order of the number of steps they took during challenge.
         \n\n5. Every player participating in a challenge can visualize the state of the other players’ trees.
         \n\n6. Every challenge has a timeline which is set by the organizer.</string>
+
+    <string name ="tournament_mode_instructions">This is a team-based competitive mode:
+    \n\n1. You need to be in a team to participate in a tournament
+    \n\n2. Only Team Captains can enroll their teams in a tournament but anyone can create a tournament and add teams.
+    \n\n3. You can be a part of only one team.
+    \n\n4. When you create a team, you\'ll become the team\'s captain. Although, you have an option to transfer the captaincy to someone else at a later stage
+    \n\n5. There\'s a leaderboard where teams are ranked according to their total steps taken during the tournament duration
+    \n\n6. You can leave a team and join another team but you\'d lose the progress of your current tournaments
+    \n\n7. For every *3000* steps you take, you gain a leaf.
+    </string>
+
+    <string name="teams_instruction">Teams Instructions</string>
 
     <string name="continueToGame">Continue</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -147,13 +158,13 @@
     <string name="daily_goal_remaining_notification">You are %d steps away from achieving your daily goal</string>
 
     <string name="daily_goal_notification_title1">Make every step count</string>
-    <string name="daily_goal_notification_title2">Walking is a lifestyle</string>
-    <string name="daily_goal_notification_title3">Walking is a therapy</string>
+    <string name="daily_goal_notification_title2">Get off the bus one stop earlier!</string>
+    <string name="daily_goal_notification_title3">Walk the dog (or your neighbour’s dog!)</string>
     <string name="daily_goal_notification_title4">Good things come to those who sweat</string>
-    <string name="daily_goal_notification_title5">Habituate yourself to walk very far</string>
-    <string name="daily_goal_notification_title6">Sweat is fat crying</string>
+    <string name="daily_goal_notification_title5">Habituate yourself to walk regularly</string>
+    <string name="daily_goal_notification_title6">Walk with your friends for a change!</string>
     <string name="daily_goal_notification_title7">It always seems impossible until its done</string>
-    <string name="daily_goal_notification_title8">Wish less, walk more</string>
+    <string name="daily_goal_notification_title8">Try to walk for at least 30 minutes!</string>
 
     <string name="profile_image_start_transition">profile_image_start_transition</string>
     <string name="profile_image_end_transition">profile_image_end_transition</string>
@@ -176,4 +187,19 @@
     <string name="tournament_ended">Tournament Ended</string>
     <string name="team_awards">Your Team Awards</string>
     <string name="tournament_leaderboard_position">tournament_leaderboard_position</string>
+    <string name="tournament_last_total_steps_count">tournament_last_total_steps_count</string>
+    <string name="Search">Search</string>
+    <string name="transfer_captaincy">Transfer Captaincy</string>
+    <string name="assign">Assign</string>
+
+
+    <string name="activity_in_vehicle">In Vehicle</string>
+    <string name="activity_on_bicycle">On Bicycle</string>
+    <string name="activity_on_foot">On Foot</string>
+    <string name="activity_running">Running</string>
+    <string name="activity_still">Still</string>
+    <string name="activity_tilting">Tilting</string>
+    <string name="activity_walking">walking</string>
+    <string name="activity_unknown">Unknown</string>
+
 </resources>

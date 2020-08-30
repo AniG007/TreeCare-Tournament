@@ -32,7 +32,6 @@ class YourTeamsFragment : Fragment() {
             mViewModel.getAllMyTeams().observe(viewLifecycleOwner, Observer {
                 recyclerView.adapter = YourTeamsRecyclerViewAdapter(it,mViewModel)
             })
-
             //mViewModel.delBtnVis()
 
             mViewModel.status.observe(viewLifecycleOwner, Observer {

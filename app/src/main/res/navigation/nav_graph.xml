@@ -117,7 +117,9 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_instructionsFragment_to_tournamentModeFragment2"
-            app:destination="@id/tournamentModeFragment" />
+            app:destination="@id/tournamentModeFragment"
+            app:popUpTo="@id/instructionsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment android:id="@+id/unityPlayerActivity"/>
     <fragment
@@ -202,6 +204,9 @@
         <action
             android:id="@+id/action_tournamentsFragment_to_tournamentLeaderBoardFragment"
             app:destination="@id/tournamentLeaderBoardFragment" />
+        <action
+            android:id="@+id/action_tournamentsFragment_to_tournamentLeaderBoard2Fragment"
+            app:destination="@id/tournamentLeaderBoard2Fragment" />
     </fragment>
     <fragment
         android:id="@+id/teamsFragment"
@@ -245,7 +250,8 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_teamsFragment_to_teamInfoFragment"
-            app:destination="@id/teamInfoFragment" />
+            app:destination="@id/teamInfoFragment"
+             />
     </fragment>
     <fragment
         android:id="@+id/createTeamFragment"
@@ -327,6 +333,15 @@
         <argument
             android:name="teamName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_teamInfoFragment_to_transferCaptaincy2"
+            app:destination="@id/transferCaptaincy2"
+            app:popUpTo="@id/teamInfoFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="sourceScreen"
+            app:argType="string"
+            android:defaultValue='""' />
     </fragment>
     <fragment
         android:id="@+id/enrollTeamsFragment"
@@ -428,6 +443,30 @@
             android:name="position"
             app:argType="integer" />
     </dialog>
+    <fragment
+        android:id="@+id/transferCaptaincy2"
+        android:name="dal.mitacsgri.treecare.screens.transfercaptaincy.TransferCaptaincy"
+        android:label="TransferCaptaincy" >
+        <argument
+            android:name="TeamName"
+            app:argType="string"
+            android:defaultValue="TeamName" />
+        <action
+            android:id="@+id/action_transferCaptaincy2_to_teamsFragment2"
+            app:destination="@id/teamsFragment"
+            app:popUpTo="@id/transferCaptaincy2"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/tournamentLeaderBoard2Fragment"
+        android:name="dal.mitacsgri.treecare.screens.tournamentleaderboard2.TournamentLeaderBoard2Fragment"
+        android:label="fragment_tournament_leaderboard_2"
+        tools:layout="@layout/fragment_tournament_leaderboard_2" >
+        <argument
+            android:name="tournament_name"
+            app:argType="string"
+            android:defaultValue='""' />
+    </fragment>
 
 
 </navigation>

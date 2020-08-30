@@ -71,11 +71,13 @@ class ProfileFragment : Fragment() {
             }
 
             buttonEdit.setOnClickListener {
+                MainActivity.playClickSound()
                 //findNavController().navigate(R.id.action_profileFragment_to_editNameDialog)
                 createEditNameDialog()
             }
 
             buttonProgressReport.setOnClickListener {
+                MainActivity.playClickSound()
                 findNavController().navigate(R.id.action_profileFragment_to_progressReportFragment)
             }
 

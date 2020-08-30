@@ -215,6 +215,7 @@ class ChallengesViewModel(
         sharedPrefsRepository.apply {
 
             val userChallenge = user.currentChallenges[challenge.name]!!
+            //Log.d("Unity", "UserSteps"+ userChallenge.totalSteps)
             gameMode = CHALLENGER_MODE
             challengeType = userChallenge.type
             challengeGoal = userChallenge.goal
@@ -222,9 +223,11 @@ class ChallengesViewModel(
             challengeFruitCount = userChallenge.fruitCount
             challengeStreak = userChallenge.challengeGoalStreak
             challengeName = userChallenge.name
-            isChallengeActive = userChallenge.endDate.toDateTime().millis > DateTime().millis
-            challengeTotalStepsCount = if (challenge.active) getDailyStepCount() else userChallenge.totalSteps
-
+            isChallengeActive = (userChallenge.isActive) // (userChallenge.endDate.toDateTime().millis > DateTime().millis)
+            challengeTotalStepsCount = if (userChallenge.isActive) userChallenge.totalSteps else  userChallenge.totalSteps //getDailyStepCount()
+            //challengeTotalStepsCount = getDailyStepCount()
+            //Log.d("Unity", challengeTotalStepsCount.toString())
+            Log.d("Unity", "UserSteps"+ isChallengeActive)
             action()
         }
     }
@@ -328,6 +331,11 @@ class ChallengesViewModel(
             }
         }
         this.add(challenge)
+    }
+
+    fun disp(challenge: Challenge){
+        val usr = sharedPrefsRepository.user.currentChallenges[challenge.name]
+        Log.d("Test", usr?.name!!)
     }
 
 

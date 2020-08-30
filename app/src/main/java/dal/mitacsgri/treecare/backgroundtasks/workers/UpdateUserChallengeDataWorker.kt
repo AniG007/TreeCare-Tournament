@@ -2,9 +2,7 @@ package dal.mitacsgri.treecare.backgroundtasks.workers
 
 import android.content.Context
 import android.util.Log
-import androidx.work.ListenableWorker
-import androidx.work.Worker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import calculateLeafCountFromStepCount
 import calculateLeafCountFromStepCountForTeam
 import com.google.common.util.concurrent.ListenableFuture
@@ -21,6 +19,7 @@ import org.joda.time.DateTime
 import org.joda.time.Days
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import java.util.concurrent.TimeUnit
 
 class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerParameters)
     : ListenableWorker(appContext, workerParams), KoinComponent {
@@ -28,6 +27,8 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
     private val stepCountRepository: StepCountRepository by inject()
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
     private val firestoreRepository: FirestoreRepository by inject()
+    private val mConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+    var cr = 0
 
     override fun startWork(): ListenableFuture<Result> {
         Log.d("Worker","Starting Worker")
@@ -38,6 +39,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         }
 
         val user = sharedPrefsRepository.user
+        var county = 0
 
 //        sharedPrefsRepository.team = Team()
 //
@@ -48,6 +50,12 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 //            }
 //        Log.d("Worker","Team "+ sharedPrefsRepository.team)
 //        val team = sharedPrefsRepository.team
+
+        user.currentChallenges.forEach { (_, challenge) ->
+            if(challenge.isActive) {
+                county++
+            }
+        }
 
         if(!user.currentChallenges.isNullOrEmpty()) {
             user.currentChallenges.forEach { (_, challenge) ->
@@ -60,13 +68,13 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                     if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) {
                         stepCountRepository.getTodayStepCountData {
                             challenge.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
-                            updateAndStoreUserChallengeDataInSharedPrefs(challenge, user)
+                            updateAndStoreUserChallengeDataInSharedPrefs(challenge, user, county, future)
 
                         }
                     }
                 }
             }
-            updateUserChallengeDataInFirestore()
+//            updateUserChallengeDataInFirestore()
         }
 //        if(!user.currentTournaments.isNullOrEmpty() && !team.currentTournaments.isNullOrEmpty()) {
 //            user.currentTournaments.forEach { (_, tourney) ->
@@ -94,10 +102,18 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         else{
             Log.d("Worker","CurrentTournament is empty")
         }
+
+        val updateUserChallengeDataRequest: WorkRequest =
+            OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>()
+                .setConstraints(mConstraints)
+                .setInitialDelay(15, TimeUnit.MINUTES)
+                .build()
+        //WorkManager.getInstance(applicationContext).enqueue(updateUserChallengeDataRequest)
         return future
     }
 
-    private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User) {
+    private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User, county: Int, future:SettableFuture<Result>) {
+        cr++
         challenge.leafCount = getTotalLeafCountForChallenge(challenge)
         challenge.fruitCount = getTotalFruitCountForChallenge(challenge)
         challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
@@ -114,6 +130,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             user.currentChallenges[challenge.name] = challenge
             sharedPrefsRepository.user = user
         }
+        updateUserChallengeDataInFirestore(cr, county, future)
     }
 
     private fun getChallengeGoalStreakForUser(challenge: UserChallenge, user: User): Int {
@@ -130,18 +147,21 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         return streakCount
     }
 
-    private fun updateUserChallengeDataInFirestore() {
-
-        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges))
-            .addOnSuccessListener {
-                Log.d("Worker", "User data upload success")
-                //future.set(Result.success())
-            }
-            .addOnFailureListener {
-                Log.e("Worker", "User data upload failed")
-                //future.set(Result.failure())
-            }
+    private fun updateUserChallengeDataInFirestore(cr:Int, county: Int, future: SettableFuture<Result>) {
+        if(cr == county) {
+            firestoreRepository.updateUserData(
+                sharedPrefsRepository.user.uid,
+                mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges)
+            )
+                .addOnSuccessListener {
+                    Log.d("Worker", "User data upload success")
+                    future.set(Result.success())
+                }
+                .addOnFailureListener {
+                    Log.e("Worker", "User data upload failed")
+                    future.set(Result.failure())
+                }
+        }
     }
 
     private fun getTotalLeafCountForChallenge(challenge: UserChallenge): Int {
@@ -230,36 +250,36 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         Log.d("Worker","UserPref "+ sharedPrefsRepository.user.currentTournaments)
     }
 
-    private fun updateUserTournamentDataInFirestore(future: SettableFuture<Result>) {
-        Log.d("Worker", "updateUserTournamentDataInFirestore")
-        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
-            mapOf("currentTournaments" to sharedPrefsRepository.user.currentTournaments))
-            .addOnSuccessListener {
-                updateUserTeamDataInFirestore(future)
-                Log.d("Worker", "TUser data upload success")
-                //future.set(Result.success())
-            }
-            .addOnFailureListener {
-                Log.e("Worker", "TUser data upload failed")
-                //future.set(Result.failure())
-            }
-    }
+//    private fun updateUserTournamentDataInFirestore(future: SettableFuture<Result>) {
+//        Log.d("Worker", "updateUserTournamentDataInFirestore")
+//        firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
+//            mapOf("currentTournaments" to sharedPrefsRepository.user.currentTournaments))
+//            .addOnSuccessListener {
+//                updateUserTeamDataInFirestore(future)
+//                Log.d("Worker", "TUser data upload success")
+//                //future.set(Result.success())
+//            }
+//            .addOnFailureListener {
+//                Log.e("Worker", "TUser data upload failed")
+//                //future.set(Result.failure())
+//            }
+//    }
 
-    private fun updateUserTeamDataInFirestore(future: SettableFuture<Result>) {
-        Log.d("Worker", "updateUserTeamDataInFirestore")
-        Log.d("Worker","Pref "+sharedPrefsRepository.team)
-        Log.d("Worker","PrefValue "+ sharedPrefsRepository.team.currentTournaments)
-        firestoreRepository.updateTeamData(sharedPrefsRepository.team.name,
-            mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments))
-            .addOnSuccessListener {
-                Log.d("Worker", "Team User data upload success")
-                future.set(Result.success())
-            }
-            .addOnFailureListener {
-                Log.e("Worker", "Team User data upload failed")
-                future.set(Result.failure())
-            }
-    }
+//    private fun updateUserTeamDataInFirestore(future: SettableFuture<Result>) {
+//        Log.d("Worker", "updateUserTeamDataInFirestore")
+//        Log.d("Worker","Pref "+sharedPrefsRepository.team)
+//        Log.d("Worker","PrefValue "+ sharedPrefsRepository.team.currentTournaments)
+//        firestoreRepository.updateTeamData(sharedPrefsRepository.team.name,
+//            mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments))
+//            .addOnSuccessListener {
+//                Log.d("Worker", "Team User data upload success")
+//                future.set(Result.success())
+//            }
+//            .addOnFailureListener {
+//                Log.e("Worker", "Team User data upload failed")
+//                future.set(Result.failure())
+//            }
+//    }
 
     private fun updateAndStoreTeamDataInSharedPrefs(teamTourney: TeamTournament, team: Team) {
         teamTourney.leafCount = getTotalLeafCountForTeam(teamTourney)

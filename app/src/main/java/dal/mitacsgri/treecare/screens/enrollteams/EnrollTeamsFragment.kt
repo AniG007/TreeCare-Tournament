@@ -1,6 +1,5 @@
 package dal.mitacsgri.treecare.screens.enrollteams
 
-
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
@@ -18,9 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_enroll_teams.view.*
+import kotlinx.android.synthetic.main.item_team_info.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class EnrollTeamsFragment : Fragment() {
 
@@ -41,8 +40,12 @@ class EnrollTeamsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val view = inflater.createFragmentViewWithStyle(activity, R.layout.fragment_enroll_teams, R.style.tournament_mode_theme)
-        Log.d("Test","TeamLimit "+args.teamsLimit)
+        val view = inflater.createFragmentViewWithStyle(
+            activity,
+            R.layout.fragment_enroll_teams,
+            R.style.tournament_mode_theme
+        )
+        Log.d("Test", "TeamLimit " + args.teamsLimit)
 
         view.apply {
             toolbar.setNavigationOnClickListener {
@@ -52,18 +55,19 @@ class EnrollTeamsFragment : Fragment() {
 
             //viewModel.getExistingTeams(args.tournamentName)
             enrollButton.setOnClickListener {
+                MainActivity.playClickSound()
                 //viewModel.enrollTeams(args.tournamentName)
 
                 val bool = viewModel.enrollTeams(args.teamsLimit)
-                if(bool) {
-                    Log.d("Frag", "VM" + viewModel.teamsHolder.value)
+                if (bool) {
+                   // Log.d("Frag", "VM" + viewModel.teamsHolder.value)
 
-                    Log.d("Test","TeamLimit "+args.teamsLimit)
-                    Log.d("Test","endDate "+args.endDate)
-                    Log.d("Test", "startDate "+args.startDate)
-                    Log.d("Test","goal "+args.goal)
-                    Log.d("Test","tourDesc "+args.tournamentDescription)
-                    Log.d("Test","tourName "+args.tournamentName)
+//                    Log.d("Test","TeamLimit "+args.teamsLimit)
+//                    Log.d("Test","endDate "+args.endDate)
+//                    Log.d("Test", "startDate "+args.startDate)
+//                    Log.d("Test","goal "+args.goal)
+//                    Log.d("Test","tourDesc "+args.tournamentDescription)
+//                    Log.d("Test","tourName "+args.tournamentName)
 
 
                     viewModel.MessageStatus.observe(viewLifecycleOwner, Observer {
@@ -78,7 +82,7 @@ class EnrollTeamsFragment : Fragment() {
 //                                args.teamsLimit,
 //                                it1)
 //                        }
-                        val action =viewModel.teamsHolder.value?.toTypedArray()?.let { it1 ->
+                        val action = viewModel.teamsHolder.value?.toTypedArray()?.let { it1 ->
                             EnrollTeamsFragmentDirections.actionEnrollTeamsFragmentToCreateTournamentFragment(
                                 true,
                                 args.tournamentName,
@@ -87,12 +91,12 @@ class EnrollTeamsFragment : Fragment() {
                                 args.endDate,
                                 args.teamsLimit,
                                 it1,
-                                args.startDate)
+                                args.startDate
+                            )
                         }
-                         findNavController().navigate(action!!)
+                        findNavController().navigate(action!!)
                     })
-                }
-                else{
+                } else {
                     viewModel.MessageStatus.observe(viewLifecycleOwner, Observer {
                         it.toast(context, Toast.LENGTH_SHORT)
                     })
@@ -101,42 +105,25 @@ class EnrollTeamsFragment : Fragment() {
 
             viewModel.getTeams().observe(viewLifecycleOwner, Observer {
                 recyclerView.apply {
-                    layoutManager = LinearLayoutManager(context,RecyclerView.VERTICAL, false)
+                    layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = EnrollTeamsRecyclerViewAdapter(it, viewModel)
-                    //membersrv.adapter = adapter
                 }
                 adapter = recyclerView.adapter as EnrollTeamsRecyclerViewAdapter
             })
 
-              membersrv = findViewById(R.id.recyclerView)
-//            membersrv.layoutManager = LinearLayoutManager(membersrv.context)
-//            membersrv.setHasFixedSize(true)
+            membersrv = findViewById(R.id.recyclerView)
 
             team_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return false
                 }
+
                 override fun onQueryTextChange(newText: String?): Boolean {
                     adapter.filter.filter(newText)
                     return false
                 }
-
             })
         }
         return view
     }
-
-//    override fun onCreate(savedInstanceState: Bundle?){
-//
-//        //Overriding back button since the navigateUp() started crashing when I tried introducing safeArgs while navigating back
-//        //stackoverflow: https://stackoverflow.com/questions/33242776/android-viewgroup-crash-attempt-to-read-from-field-int-android-view-view-mview
-//        // This link concerns with answers related to animation and handling the error. I'm handling this by overriding the navigation
-//        // Maybe deleting whole of createtournament and enrollteams module and putting them back may be an alternative
-//        super.onCreate(savedInstanceState)
-//        val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
-//            findNavController().popBackStack()
-//            findNavController().navigate(R.id.action_enrollTeamsFragment_to_createTournamentFragment)
-//        }
-//    }
-
 }

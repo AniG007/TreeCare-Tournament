@@ -33,7 +33,7 @@ class TeamsFragment : Fragment() {
                     findNavController().navigateUp()
             }
 
-            mViewModel.hasTeamRequests().observe(this@TeamsFragment, Observer {
+            mViewModel.hasTeamRequests().observe(viewLifecycleOwner, Observer {
                 memberRequestsBadge.visibility = if (it) View.VISIBLE else View.GONE
             })
 

@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.tournamentleaderboard
 
 import android.text.SpannedString
+import android.util.Log
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.LiveData
@@ -16,8 +17,9 @@ import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.model.UserTournament
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
-import org.joda.time.DateTime
-import java.lang.reflect.Array.set
+import java.util.*
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 class TournamentLeaderBoardViewModel(
     private val firestoreRepository: FirestoreRepository,
@@ -31,7 +33,7 @@ class TournamentLeaderBoardViewModel(
 
     var isDialogDisplayed: Boolean
 
-    get() = tournament.active.xnor(teamTournament?.isActive ?: tournament.active)
+    get() =  (tournament.active.xnor(teamTournament?.isActive ?: tournament.active))
     set(value){
      teamTournament?.let {
          it.isActive = value
@@ -61,23 +63,30 @@ class TournamentLeaderBoardViewModel(
             .addOnSuccessListener {
                 tournament = it.toObject<Tournament>()!!
 
+                sharedPrefsRepository.tournamentName = tournamentName
                 teamTournament = sharedPrefsRepository.team.currentTournaments[tournamentName]
 
                 val teams = tournament.teams
                 val teamsCount = teams.size
                 val limit = teamsCount
 
-                for (i in 0 until limit){
+                for (i in 0 until limit) {
                     firestoreRepository.getTeam(teams[i])
                         .addOnSuccessListener {
                             val teamFromDB = it.toObject<Team>()
                             val teamTourney = teamFromDB?.currentTournaments!![tournamentName]!!
                             teamList.value?.add(teamTourney)
 
-                            if(teamList.value?.size == limit){
-                                teamList.value!!.sortByDescending {
-                                    it.totalSteps
-                                }
+                            if (teamList.value?.size == limit) {
+//                                teamList.value!!.sortByDescending {
+//                                    //it.totalSteps
+//                                    it.dailyGoalsAchieved
+//                                }
+                                //Sorting according to daily goals first, then if any of the goals are equal, then the team's totalSteps are taken into account
+                                teamList.value!!.sortWith(compareBy({it.dailyGoalsAchieved}, {it.totalSteps}))
+                                teamList.value!!.reverse()
+
+                                sortTeamForTournament(tournamentName, teamList.value!!)
                                 teamList.notifyObserver()
                             }
                         }
@@ -88,7 +97,7 @@ class TournamentLeaderBoardViewModel(
         return teamList
     }
 
-    fun getTournamentName(): String = tournament.name
+    fun getTournamentName(): String = sharedPrefsRepository.tournamentName!!
 
     fun getTotalStepsText(teamTournament: TeamTournament): SpannedString =
         buildSpannedString {
@@ -121,4 +130,19 @@ class TournamentLeaderBoardViewModel(
             endDate = tournament.endDate,
             teamName = tournament.teamName
         )
+
+    fun sortTeamForTournament(tournamentName: String, teamList: ArrayList<TeamTournament>){
+        val teams = ArrayList<String>()
+        for (team in teamList){
+            teams.add(team.teamName)
+        }
+        //Log.d("Test", "Sorted Teams "+ teams)
+        firestoreRepository.updateTournamentData(tournamentName, mapOf("teams" to teams))
+            .addOnSuccessListener {
+                Log.d("Test", "Teams have been updated in the DB Successfully")
+            }
+            .addOnFailureListener{
+                Log.d("Test", "Failed to sort and upload teams in DB: "+ it)
+            }
+    }
 }

@@ -56,7 +56,10 @@ class SharedPreferencesRepository(val context: Context) {
         }
 
     var starterModeInstructionsDisplayed: Boolean
-        get() = sharedPref.getBoolean(context.getString(R.string.starter_mode_instructions_displayed), false)
+        get() = sharedPref.getBoolean(
+            context.getString(R.string.starter_mode_instructions_displayed),
+            false
+        )
         set(value) {
             sharedPref.edit {
                 putBoolean(context.getString(R.string.starter_mode_instructions_displayed), value)
@@ -64,18 +67,30 @@ class SharedPreferencesRepository(val context: Context) {
         }
 
     var challengerModeInstructionsDisplayed: Boolean
-        get() = sharedPref.getBoolean(context.getString(R.string.challenger_mode_instructions_displayed), false)
+        get() = sharedPref.getBoolean(
+            context.getString(R.string.challenger_mode_instructions_displayed),
+            false
+        )
         set(value) {
             sharedPref.edit {
-                putBoolean(context.getString(R.string.challenger_mode_instructions_displayed), value)
+                putBoolean(
+                    context.getString(R.string.challenger_mode_instructions_displayed),
+                    value
+                )
             }
         }
 
     var tournamentModeInstructionsDisplayed: Boolean
-        get() = sharedPref.getBoolean(context.getString(R.string.tournament_mode_instructions_displayed), false)
+        get() = sharedPref.getBoolean(
+            context.getString(R.string.tournament_mode_instructions_displayed),
+            false
+        )
         set(value) {
             sharedPref.edit {
-                putBoolean(context.getString(R.string.tournament_mode_instructions_displayed), value)
+                putBoolean(
+                    context.getString(R.string.tournament_mode_instructions_displayed),
+                    value
+                )
             }
         }
 
@@ -121,7 +136,9 @@ class SharedPreferencesRepository(val context: Context) {
 
     var lastFruitCount
         get() = getInt(R.string.last_fruit_count)
-        set(value) { storeInt(R.string.last_fruit_count, value) }
+        set(value) {
+            storeInt(R.string.last_fruit_count, value)
+        }
 
     var currentFruitCount
         get() = getInt(R.string.current_fruit_count)
@@ -131,19 +148,31 @@ class SharedPreferencesRepository(val context: Context) {
         }
 
     var currentDayOfWeek
-        get() = getInt(R.string.current_day_of_week, -1)    //-1 because the value is incremented by 1 in first run itself
-        set(value) { storeInt(R.string.current_day_of_week, value) }
+        get() = getInt(
+            R.string.current_day_of_week,
+            -1
+        )    //-1 because the value is incremented by 1 in first run itself
+        set(value) {
+            storeInt(R.string.current_day_of_week, value)
+        }
 
     var dailyGoalStreak
         get() = getInt(R.string.daily_goal_streak)
-        set(value) { storeInt(R.string.daily_goal_streak, value) }
+        set(value) {
+            storeInt(R.string.daily_goal_streak, value)
+        }
 
     var dailyGoalAchievedCount
         get() = getInt(R.string.daily_goal_achieved_count, 0)
-        set(value) { storeInt(R.string.daily_goal_achieved_count, value)}
+        set(value) {
+            storeInt(R.string.daily_goal_achieved_count, value)
+        }
 
     var dailyGoalStreakString: String
-        get() = sharedPref.getString(context.getString(R.string.daily_goal_streak_string), "0000000")
+        get() = sharedPref.getString(
+            context.getString(R.string.daily_goal_streak_string),
+            "0000000"
+        )!!
         set(value) {
             sharedPref.edit {
                 putString(context.getString(R.string.daily_goal_streak_string), value)
@@ -167,31 +196,50 @@ class SharedPreferencesRepository(val context: Context) {
                 putString(context.getString(R.string.user), Gson().toJson(value))
             }
         }
-//Added by Anirudh
+
+//    var check:FirstTourneyUpdateCheck
+//        get() {
+//            try {
+//                return Gson().fromJson(
+//                    sharedPref.getString(context.getString(R.string.user), ""),
+//                    FirstTourneyUpdateCheck::class.java
+//                )
+//            } catch (e: JSONException) {
+//                Log.e("Exception", e.toString())
+//            }
+//            return FirstTourneyUpdateCheck()
+//        }
+//        set(value) {
+//            sharedPref.edit {
+//                putString(context.getString(R.string.user), Gson().toJson(value))
+//            }
+//        }
+
+    //Added by Anirudh
     var team: Team
-        get(){
-            try{
-                Log.d("PrefTest","Inside Try Method")
-                Log.d("PrefTest",sharedPref.getString(context.getString(R.string.team), ""))
+        get() {
+            try {
+                //Log.d("PrefTest","Inside Try Method")
+                //Log.d("PrefTest",sharedPref.getString(context.getString(R.string.team), ""))
                 return Gson().fromJson(
                     sharedPref.getString(context.getString(R.string.team), ""),
                     Team::class.java
                 )
-            } catch(e: JSONException){
+            } catch (e: JSONException) {
                 Log.e("Exception", e.toString())
             }
             return Team()
         }
-    set(value){
-        sharedPref.edit{
-            putString(context.getString(R.string.team), Gson().toJson(value))
+        set(value) {
+            sharedPref.edit {
+                putString(context.getString(R.string.team), Gson().toJson(value))
+            }
         }
-    }
 
     var gameMode
         get() = getInt(R.string.game_mode)
         set(value) {
-            storeInt(R.string.game_mode , value)
+            storeInt(R.string.game_mode, value)
         }
 
     var challengeType = 0
@@ -205,11 +253,15 @@ class SharedPreferencesRepository(val context: Context) {
 
     var isChallengeActive
         get() = getBoolean(R.string.challenge_is_active, false)
-        set(value) { storeBoolean(R.string.challenge_is_active, value) }
+        set(value) {
+            storeBoolean(R.string.challenge_is_active, value)
+        }
 
     var isTournamentActive
         get() = getBoolean(R.string.tournament_is_active, false)
-        set(value) { storeBoolean(R.string.tournament_is_active, value) }
+        set(value) {
+            storeBoolean(R.string.tournament_is_active, value)
+        }
 
     var challengeLeafCount: Int = 0
         set(value) {
@@ -306,7 +358,9 @@ class SharedPreferencesRepository(val context: Context) {
 
     var isDailyGoalMapFixed
         get() = getBoolean(R.string.daily_goal_map_fixed, false)
-        set(value) { storeBoolean(R.string.daily_goal_map_fixed, value) }
+        set(value) {
+            storeBoolean(R.string.daily_goal_map_fixed, value)
+        }
 
     var myMap
         get() = sharedPref.getString("myMap", "")
@@ -320,7 +374,19 @@ class SharedPreferencesRepository(val context: Context) {
         storeInt(R.string.daily_step_count, stepCount)
     }
 
+    fun storeChallengeStepCount(stepCount: Int){
+        storeInt(R.string.challenge_total_steps_count, stepCount)
+    }
+
+    fun storeTournamentStepCount(stepCount: Int){
+        storeInt(R.string.tournament_total_steps_count, stepCount)
+    }
+
     fun getDailyStepCount() = getInt(R.string.daily_step_count)
+
+    fun getChallengeStepCount() = getInt(R.string.challenge_total_steps_count)
+
+    fun getTournamentStepCount() = getInt(R.string.tournament_total_steps_count)
 
     fun storeLastDayStepCount(stepCount: Int) {
         storeInt(R.string.last_day_step_count, stepCount)
@@ -351,7 +417,16 @@ class SharedPreferencesRepository(val context: Context) {
         }
     }
 
-    private fun getInt(key: Int, defValue: Int = 0) = sharedPref.getInt(context.getString(key), defValue)
+    private fun storeInt1(key: Int, value: Int) {
+        //commit is used instead of apply
+        with(sharedPref.edit()) {
+            putInt(context.getString(key), value)
+            commit()
+        }
+    }
+
+    private fun getInt(key: Int, defValue: Int = 0) =
+        sharedPref.getInt(context.getString(key), defValue)
 
     private fun storeBoolean(key: Int, value: Boolean) {
         with(sharedPref.edit()) {
@@ -360,6 +435,7 @@ class SharedPreferencesRepository(val context: Context) {
         }
     }
 
-    private fun getBoolean(key: Int, defValue: Boolean)
-            = sharedPref.getBoolean(context.getString(key), defValue)
+    private fun getBoolean(key: Int, defValue: Boolean) =
+        sharedPref.getBoolean(context.getString(key), defValue)
+
 }

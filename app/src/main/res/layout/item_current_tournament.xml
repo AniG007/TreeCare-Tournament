@@ -9,7 +9,11 @@
     android:layout_marginEnd="@dimen/_16sdp"
     android:layout_marginBottom="@dimen/_16sdp"
     app:cardElevation="@dimen/_6sdp"
-    app:cardCornerRadius="@dimen/_6sdp">
+    app:cardCornerRadius="@dimen/_6sdp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:id="@+id/currentTournamentCard">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -49,6 +53,16 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_time"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currentStartDate"
+            tools:text="Expires: Some date" />
+
+        <TextView
+            android:id="@+id/currentStartDate"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_time"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/goalTV"
             tools:text="Expires: Some date" />
 
@@ -58,8 +72,9 @@
             style="@style/ItemActiveChallengeTextWithDrawableStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_group_black_24dp"
+            android:drawableStart="@drawable/ic_teams"
             android:text="2000"
+            app:layout_constraintBottom_toTopOf="@+id/buttonExit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/goalTV" />
 
@@ -67,6 +82,7 @@
             android:id="@+id/buttonTree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="Tree"
             app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +97,8 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/leaderboard"
             app:layout_constraintStart_toEndOf="@+id/buttonTree"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
+            app:layout_constraintTop_toBottomOf="@+id/durationTV"
+            />
 
         <ImageButton
             android:id="@+id/buttonExit"

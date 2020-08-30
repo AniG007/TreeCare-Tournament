@@ -16,6 +16,7 @@ import com.firebase.ui.auth.AuthUI.getApplicationContext
 import com.google.android.material.button.MaterialButton
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.toast
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_create_team.view.toolbar
 import kotlinx.android.synthetic.main.fragment_join_team.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,6 +45,7 @@ class JoinTeamFragment : Fragment() {
             }
 
             AddTeamsButton.setOnClickListener {
+                MainActivity.playClickSound()
                 var emailId= playerEmailId.text
                 //Log.d("Test","TeamName "+teamName.value)
                 //Log.d("Test","OnButtonClick "+emailId)

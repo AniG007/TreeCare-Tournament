@@ -37,7 +37,7 @@ class MainViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository,
     private val firestoreRepository: FirestoreRepository
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val loadingDialog = LoginDataLoadingDialog()
     private lateinit var mActivity: Activity
@@ -48,6 +48,7 @@ class MainViewModel(
     val isLoginDone = MutableLiveData<Boolean>().default(false)
 
     val userFirstName =  MutableLiveData<String>()
+
 
     var firstLoginTime: Long
         set(value) {
@@ -62,12 +63,12 @@ class MainViewModel(
         get() = sharedPrefsRepository.lastLoginTime
 
     fun hasInstructionsDisplayed(mode: Int) =
-            when(mode) {
-                STARTER_MODE -> sharedPrefsRepository.starterModeInstructionsDisplayed
-                CHALLENGER_MODE -> sharedPrefsRepository.challengerModeInstructionsDisplayed
-                TOURNAMENT_MODE -> sharedPrefsRepository.tournamentModeInstructionsDisplayed
-                else -> true
-            }
+        when(mode) {
+            STARTER_MODE -> sharedPrefsRepository.starterModeInstructionsDisplayed
+            CHALLENGER_MODE -> sharedPrefsRepository.challengerModeInstructionsDisplayed
+            TOURNAMENT_MODE -> sharedPrefsRepository.tournamentModeInstructionsDisplayed
+            else -> true
+        }
 
     fun setInstructionsDisplayed(mode: Int, value: Boolean) {
         when(mode) {
@@ -96,7 +97,6 @@ class MainViewModel(
     }
 
     fun startLoginAndConfiguration(activity: FragmentActivity) {
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("628888141862-lmblquvs5s3gl9rmshvag3sin348kaam.apps.googleusercontent.com"/*Web application type client ID*/)
             .requestEmail()
@@ -149,16 +149,16 @@ class MainViewModel(
                         }
                 }
                 RC_GOOGLE_FIT_PERMISSIONS -> {
-                        Log.d("FitAPI", "permissions granted")
-                        subscribeToRecordSteps(GoogleSignIn.getLastSignedInAccount(activity)!!) {
-                            sharedPrefsRepository.isLoginDone = true
-                            isLoginDone.value = true
-                        }
+                    Log.d("FitAPI", "permissions granted")
+                    subscribeToRecordSteps(GoogleSignIn.getLastSignedInAccount(activity)!!) {
+                        sharedPrefsRepository.isLoginDone = true
+                        isLoginDone.value = true
                     }
                 }
-            } else {
-                Log.e("TreeCare", "RESULT_CANCELED")
             }
+        } else {
+            Log.e("TreeCare", "RESULT_CANCELED")
+        }
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount,
@@ -199,7 +199,7 @@ class MainViewModel(
     }
 
     private fun subscribeToRecordSteps(account: GoogleSignInAccount, action: () -> Unit) {
-
+        Log.d("FitAPI", account.grantedScopes.toString())
         val TAG = "RecordingAPI"
 
         Fitness.getRecordingClient(mActivity, account).subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
@@ -222,10 +222,10 @@ class MainViewModel(
     }
 
     private inline fun checkIfUserExists(uid: String,
-                                  account: GoogleSignInAccount,
-                                  crossinline userExistsAction: (User) -> Unit,
-                                  crossinline userDoesNotExistAction: () -> User,
-                                  crossinline actionAfterStoringUserData: (account: GoogleSignInAccount) -> Unit) {
+                                         account: GoogleSignInAccount,
+                                         crossinline userExistsAction: (User) -> Unit,
+                                         crossinline userDoesNotExistAction: () -> User,
+                                         crossinline actionAfterStoringUserData: (account: GoogleSignInAccount) -> Unit) {
         firestoreRepository.getUserData(uid)
             .addOnSuccessListener {
                 if (it.exists()) {
@@ -255,21 +255,20 @@ class MainViewModel(
         }
         keysList = keysList.sorted().toMutableList()
 
-        val lastTime = keysList[keysList.size-1]
-        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
-        val days = Days.daysBetween(lastDate, DateTime()).days
-
-        val oldGoal = dailyGoalMap[lastTime]
-
-        for (i in 1..days) {
-            val key = lastDate.plusDays(i).getMapFormattedDate()
-            user.dailyGoalMap[key] = oldGoal!!
-        }
+//        val lastTime = keysList[keysList.size-1]
+//        val lastDate = DateTime.parse(lastTime, DateTimeFormat.forPattern("yyyy/MM/dd"))
+//        val days = Days.daysBetween(lastDate, DateTime()).days
+//
+//        val oldGoal = dailyGoalMap[lastTime]
+//
+//        for (i in 1..days) {
+//            val key = lastDate.plusDays(i).getMapFormattedDate()
+//            user.dailyGoalMap[key] = oldGoal!!
+//        }
 
         user.dailyGoalMap = dailyGoalMap.toSortedMap()
         sharedPrefsRepository.user = user
     }
-
     //Update the daily goal stored in SharedPrefs to display in Unity
     //DailyGoalChecked is set to true only by Unity
     private inline fun storeDailyGoalInPrefs() {

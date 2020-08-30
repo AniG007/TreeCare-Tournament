@@ -3,16 +3,16 @@ package dal.mitacsgri.treecare.model
 import com.google.firebase.Timestamp
 
 data class Team (
-    val name: String = "",
+    var name: String = "",
     val description: String = "",
     val members: ArrayList<String> = arrayListOf(),
     val invitedMembers: ArrayList<String> = arrayListOf(),
     val joinRequests: ArrayList<String> = arrayListOf(),
     //val currentTournaments: ArrayList<String> = arrayListOf(),
     val currentTournaments: MutableMap<String, TeamTournament> = mutableMapOf(),
-    val captain: String = "",
+    var captain: String = "",
     val exist :Boolean = true,
-    val captainName: String = "",
+    var captainName: String = "",
     val creationTimestamp: Timestamp = Timestamp.now(),
     val newCaptain: String = ""
 )

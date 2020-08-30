@@ -1,12 +1,18 @@
 package dal.mitacsgri.treecare.repository
 
 import android.util.Log
+import androidx.work.WorkerParameters
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateTeamDataWorker
 import dal.mitacsgri.treecare.consts.*
 import dal.mitacsgri.treecare.model.*
+import dal.mitacsgri.treecare.screens.MainActivity
+import org.joda.time.DateTime
+
 
 /**
  * Created by Devansh on 22-06-2019
@@ -38,6 +44,25 @@ class FirestoreRepository {
 
     fun updateUserData(userId: String, values: Map<String, Any>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)
+
+    fun grick(teamName: String, tourney: String) {
+
+        val bir = db.runTransaction {
+            val team = it.get(db.collection(COLLECTION_TEAMS).document(teamName)).toObject<Team>()
+            //val tourneys = team.getDocumentReference("currentTournaments")
+            val curr = team?.currentTournaments!![tourney]
+            val stepMap = curr?.dailyStepsMap
+            if(stepMap?.isEmpty()!!) {
+
+            }
+            else if(stepMap.keys.last().toString() == DateTime().withTimeAtStartOfDay().toString()){
+
+            }
+            else{
+
+            }
+        }
+    }
 
     fun updateUserTournamentData(userId: String, values: Map<String, UserTournament?>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)

@@ -14,7 +14,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.concurrent.TimeUnit
 
-class TrophiesUpdateJob: DailyJob(), KoinComponent {
+class TrophiesUpdateJob : DailyJob(), KoinComponent {
 
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
     private val firestoreRepository: FirestoreRepository by inject()
@@ -27,7 +27,13 @@ class TrophiesUpdateJob: DailyJob(), KoinComponent {
         const val TAG = "TrophiesUpdateJob"
 
         fun scheduleJob() {
-            DailyJob.schedule(JobRequest.Builder(TAG),
+//            schedule(
+//                JobRequest.Builder(TAG),
+//                TimeUnit.HOURS.toMillis(17) + TimeUnit.MINUTES.toMillis(14),
+//                TimeUnit.HOURS.toMillis(17) + TimeUnit.MINUTES.toMillis(30)
+//            )
+            Log.d(TAG, "Scheduling Job")
+            schedule(JobRequest.Builder(TAG),
                 TimeUnit.HOURS.toMillis(0) + TimeUnit.MINUTES.toMillis(15),
                 TimeUnit.HOURS.toMillis(0) + TimeUnit.MINUTES.toMillis(40))
         }
@@ -46,16 +52,19 @@ class TrophiesUpdateJob: DailyJob(), KoinComponent {
                 Log.d(TAG, "Running Job for challenges")
                 if (challenge != null && !challenge.active) {
                     Log.d(TAG, "Some challenge is not active")
-                    when(challenge.players.indexOf(sharedPrefsRepository.user.uid)) {
+                    when (challenge.players.indexOf(sharedPrefsRepository.user.uid)) {
                         0 -> userTrophies.gold.add(name)
                         1 -> userTrophies.silver.add(name)
                         2 -> userTrophies.bronze.add(name)
                     }
 
                     challengesCounter.setValue(challengesCounter.getValue() + 1) {
-                        Log.d(TAG, "C counter "+ it + "C size "+ currentTournaments.size)
+                        Log.d(TAG, "C counter " + it + "C size " + currentTournaments.size)
                         if (it == currentChallenges.size) {
-                            firestoreRepository.storeTrophiesData(sharedPrefsRepository.user.uid, userTrophies)
+                            firestoreRepository.storeTrophiesData(
+                                sharedPrefsRepository.user.uid,
+                                userTrophies
+                            )
                                 .addOnSuccessListener {
                                     Log.d(TAG, "Success")
                                 }
@@ -68,13 +77,14 @@ class TrophiesUpdateJob: DailyJob(), KoinComponent {
             }
         }
 
-        currentTournaments.forEach{(name, userTournament) ->
+        currentTournaments.forEach { (name, userTournament) ->
             firestoreRepository.getTournament(name).addOnSuccessListener {
                 val tournament = it.toObject<Tournament>()
                 Log.d(TAG, "Running Job for tournaments")
-                if(tournament != null && !tournament.active) {
+                if (tournament != null && !tournament.active) {
                     Log.d(TAG, "Some tournament is not active")
                     Log.d(TAG, "index of your team " + tournament.teams.indexOf(sharedPrefsRepository.team.name).toString())
+                    Log.d(TAG, "Name of your tournament " + tournament.name + "Teams in it " + tournament.teams)
                     when (tournament.teams.indexOf(sharedPrefsRepository.team.name)) {
                         0 -> tournamentTrophies.gold.add(name)
                         1 -> tournamentTrophies.silver.add(name)
@@ -82,19 +92,22 @@ class TrophiesUpdateJob: DailyJob(), KoinComponent {
                     }
                 }
 
-                    tournamentsCounter.setValue(tournamentsCounter.getValue() + 1){
-                        Log.d(TAG, "counter "+ it + "Size "+ currentTournaments.size)
-                        if(it == currentTournaments.size) {
-                            Log.d(TAG, "Size equals tournament counter")
-                            firestoreRepository.storeTeamTrophiesData(sharedPrefsRepository.team.name, tournamentTrophies)
-                                .addOnSuccessListener {
-                                    Log.d(TAG, "TSuccess")
-                                }
-                                .addOnFailureListener {
-                                    Log.d(TAG, "TFailure")
-                                }
-                        }
+                tournamentsCounter.setValue(tournamentsCounter.getValue() + 1) {
+                    Log.d(TAG, "counter " + it + "Size " + currentTournaments.size)
+                    if (it == currentTournaments.size) {
+                        Log.d(TAG, "Size equals tournament counter")
+                        firestoreRepository.storeTeamTrophiesData(
+                            sharedPrefsRepository.team.name,
+                            tournamentTrophies
+                        )
+                            .addOnSuccessListener {
+                                Log.d(TAG, "TSuccess")
+                            }
+                            .addOnFailureListener {
+                                Log.d(TAG, "TFailure")
+                            }
                     }
+                }
                 //}
             }
         }

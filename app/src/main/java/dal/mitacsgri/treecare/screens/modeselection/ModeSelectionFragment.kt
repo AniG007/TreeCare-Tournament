@@ -16,6 +16,7 @@ import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
 import dal.mitacsgri.treecare.extensions.startNextActivity
+import dal.mitacsgri.treecare.screens.MainActivity.Companion.playClickSound
 import dal.mitacsgri.treecare.screens.MainViewModel
 import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
@@ -38,20 +39,25 @@ class ModeSelectionFragment : Fragment() {
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
 
             starterModeButtonHolder.setOnClickListener {
+                playClickSound()
                 starterModeButtonAction()
             }
             starterModeButton.setOnClickListener {
+                playClickSound()
                 starterModeButtonAction()
             }
 
             challengerModeButtonHolder.setOnClickListener {
+                playClickSound()
                 challengerModeButtonAction()
             }
             challengerModeButton.setOnClickListener {
+                playClickSound()
                 challengerModeButtonAction()
             }
 
             tournamentModeButton.setOnClickListener(){
+                playClickSound()
                 tournamentModeButtonAction()
             }
 
@@ -60,6 +66,7 @@ class ModeSelectionFragment : Fragment() {
                 .apply(RequestOptions.circleCropTransform())
                 .into(buttonProfile)
             buttonProfile.setOnClickListener {
+                playClickSound()
                 val extras = FragmentNavigatorExtras(
                     buttonProfile to getString(R.string.profile_image_end_transition)
                 )
@@ -90,12 +97,20 @@ class ModeSelectionFragment : Fragment() {
             findNavController().navigate(action)
         }
     }
+
     private fun tournamentModeButtonAction(){
         mainViewModel.setGameMode(TOURNAMENT_MODE)
-        val action = ModeSelectionFragmentDirections
-            .actionModeSelectionFragmentToInstructionsFragment(TOURNAMENT_MODE)
-        findNavController().navigate(R.id.action_modeSelectionFragment_to_tournamentModeFragment)
-        //findNavController().navigate(action)
+        if(mainViewModel.hasInstructionsDisplayed(TOURNAMENT_MODE))
+            findNavController().navigate(R.id.action_modeSelectionFragment_to_tournamentModeFragment)
+        else {
+            mainViewModel.setInstructionsDisplayed(TOURNAMENT_MODE, true)
+            val action =
+                ModeSelectionFragmentDirections.actionModeSelectionFragmentToInstructionsFragment(
+                    TOURNAMENT_MODE)
+            findNavController().navigate(action)
+        }
+       // findNavController().navigate(R.id.action_modeSelectionFragment_to_tournamentModeFragment)
+
     }
 
     private fun changeBackgroundSolidAndStrokeColor(

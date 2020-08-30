@@ -2,11 +2,12 @@ package dal.mitacsgri.treecare.screens.enrollteams
 
 import android.view.View
 import android.widget.CheckBox
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.screens.BaseViewHolder
-import kotlinx.android.synthetic.main.fragment_enroll_teams.view.*
+import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.item_enroll_teams.view.*
 
 
@@ -34,7 +35,8 @@ class EnrollTeamsViewHolder(
             }
 
             enrollteamCard.setOnClickListener {
-                val action = EnrollTeamsFragmentDirections.actionEnrollTeamsFragmentToTeamInfoFragment(item.name)
+                MainActivity.playClickSound()
+                val action = EnrollTeamsFragmentDirections.actionEnrollTeamsFragmentToTeamInfoFragment(item.name, "enrollTeamsFragment")
                 findNavController().navigate(action)
             }
 

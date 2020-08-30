@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
+import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.UserChallengeTrophies
 import dal.mitacsgri.treecare.model.UserTournamentTrophies
 import dal.mitacsgri.treecare.repository.FirestoreRepository
@@ -78,7 +79,23 @@ class ProfileViewModel(
     }
 
     fun getTeamTrophiesCount() {
+        //sharedPrefsRepository.team = Team()
 
+        var teamData = sharedPrefsRepository.team
+        Log.d("Test",sharedPrefsRepository.user.currentTeams.toString().removeSurrounding("[","]"))
+        teamData.name = sharedPrefsRepository.user.currentTeams.toString().removeSurrounding("[","]")
+        sharedPrefsRepository.team = teamData
+
+//        firestoreRepository.getTeam(sharedPrefsRepository.user.currentTeams.toString().removeSurrounding("[","]"))
+//            .addOnSuccessListener {
+//                val team = it.toObject<Team>()
+//                teamData = team!!
+//                sharedPrefsRepository.team = teamData
+//            }
+
+        Log.d("Test", sharedPrefsRepository.team.name)
+
+        if(!sharedPrefsRepository.team.name.isEmpty()) {
             firestoreRepository.getTeamTrophiesData(sharedPrefsRepository.team.name)
                 .addOnSuccessListener {
                     val teamTrophies = it.toObject<UserTournamentTrophies>()
@@ -91,8 +108,16 @@ class ProfileViewModel(
                     }
                 }
                 .addOnFailureListener {
-                    Log.d("Profile", "Failed to obtain team trophies data "+ it)
+                    Log.d("Profile", "Failed to obtain team trophies data " + it)
                 }
+//            firestoreRepository.getTeam(sharedPrefsRepository.team.name)
+//                .addOnSuccessListener {
+//                    val team = it.toObject<Team>()
+//                    sharedPrefsRepository.team = team!!
+//                    Log.d("Test", sharedPrefsRepository.team.toString())
+//                }
+        }
+        Log.d("Test", sharedPrefsRepository.team.toString())
     }
 
     fun updateUserName(newName: String, successAction: () -> Unit) {

@@ -8,12 +8,30 @@
     tools:context=".screens.tournaments.activetournaments.ActiveTournamentsFragment"
     android:background="@color/fui_transparent">
 
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/tournament_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textCursorDrawable="@null"
+        app:queryHint="@string/Search"
+        android:elevation="@dimen/_8sdp"
+        app:iconifiedByDefault="false"
+        app:queryBackground="@null"
+        app:layout_constraintBottom_toTopOf="@id/recyclerView"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/tournament_search"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

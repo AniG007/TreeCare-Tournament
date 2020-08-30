@@ -30,7 +30,7 @@ class UpdateUserTournamentDataWorker(appContext: Context, workerParams: WorkerPa
     private val firestoreRepository: FirestoreRepository by inject()
 
     override fun startWork(): ListenableFuture<Result> {
-        Log.d("Worker","Starting Worker")
+        Log.d("WorkerTournament","Starting Worker")
         val future = SettableFuture.create<Result>()
 
         if(sharedPrefsRepository.user.name.isEmpty()) {
@@ -48,7 +48,7 @@ class UpdateUserTournamentDataWorker(appContext: Context, workerParams: WorkerPa
                 //in the database even when the dialog has not been displayed
                 if (tourney.isActive && endTimeMillis > DateTime().millis) {
                     //if (tourney.isActive) {
-                    Log.d("Worker", "TourneyName "+ tourney.name)
+                    Log.d("WorkerTournament", "TourneyName "+ tourney.name)
                     stepCountRepository.getTodayStepCountData {
                         tourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = it
                         updateAndStoreUserTournamentDataInSharedPrefs(tourney)
@@ -56,13 +56,13 @@ class UpdateUserTournamentDataWorker(appContext: Context, workerParams: WorkerPa
                 }
             }
             if(c== user.currentTournaments.size) {
-                Log.d("Worker", "count "+ c+ "size "+ user.currentTournaments.size)
+                Log.d("WorkerTournament", "count "+ c+ "size "+ user.currentTournaments.size)
                 updateUserTournamentDataInFirestore(future)
             }
         }
 
         else {
-            Log.d("Worker","CurrentTournament is empty")
+            Log.d("WorkerTournament","CurrentTournament is empty")
         }
         return future
     }
@@ -71,7 +71,7 @@ class UpdateUserTournamentDataWorker(appContext: Context, workerParams: WorkerPa
     ////////////////////////////////////////////////////////////Tournament Functions////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private fun updateAndStoreUserTournamentDataInSharedPrefs(tournament: UserTournament) {
-        Log.d("Worker", "updateAndStoreUserTournamentDataInSharedPrefs")
+        Log.d("WorkerTournament", "updateAndStoreUserTournamentDataInSharedPrefs")
         tournament.lastUpdateTime = Timestamp.now()
         var totalSteps = 0
         tournament.dailyStepsMap.forEach { (time, steps) ->
@@ -84,19 +84,19 @@ class UpdateUserTournamentDataWorker(appContext: Context, workerParams: WorkerPa
             user.currentTournaments[tournament.name] = tournament
             sharedPrefsRepository.user = user
         }
-        Log.d("Worker","UserPref "+ sharedPrefsRepository.user.currentTournaments)
+        Log.d("WorkerTournament","UserPref "+ sharedPrefsRepository.user.currentTournaments)
     }
 
     private fun updateUserTournamentDataInFirestore(future: SettableFuture<Result>) {
-        Log.d("Worker", "updateUserTournamentDataInFirestore")
+        Log.d("WorkerTournament", "updateUserTournamentDataInFirestore")
         firestoreRepository.updateUserData(sharedPrefsRepository.user.uid,
             mapOf("currentTournaments" to sharedPrefsRepository.user.currentTournaments))
             .addOnSuccessListener {
-                Log.d("Worker", "TUser data upload success")
+                Log.d("WorkerTournament", "TUser data upload success")
                 future.set(Result.success())
             }
             .addOnFailureListener {
-                Log.e("Worker", "TUser data upload failed")
+                Log.e("WorkerTournament", "TUser data upload failed")
                 future.set(Result.failure())
             }
     }

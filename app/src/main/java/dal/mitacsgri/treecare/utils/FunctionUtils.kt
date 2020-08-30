@@ -19,16 +19,22 @@ fun calculateLeafCountFromStepCount(stepCount: Int, dailyGoal: Int): Int {
 }
 
 fun calculateLeafCountFromStepCountForTeam(stepCount: Int, dailyGoal: Int): Int {
-
     var leafCount = stepCount / 3000
-//    if (stepCount < dailyGoal) {
-//        leafCount -= Math.ceil((dailyGoal - stepCount) / 3000.0).toInt()
-//        if (leafCount < 0) leafCount = 0
-//    }
+    if (stepCount < dailyGoal) {
+        leafCount -= Math.ceil((dailyGoal - stepCount) / 3000.0).toInt()
+        if (leafCount < 0) leafCount = 0
+    }
     return leafCount
-
 }
 
+fun calculateDailyGoalsAchievedFromStepCountForTeam (stepCount: Int, dailyGoal:Int): Int{
+    var dailyGoalsAchieved = 0
+
+    if(stepCount >= dailyGoal){
+        dailyGoalsAchieved +=1
+    }
+    return dailyGoalsAchieved
+}
 
 
 fun expandDailyGoalMapIfNeeded(dailyGoalMap: MutableMap<String, Int>)

@@ -26,8 +26,10 @@ import dal.mitacsgri.treecare.screens.teams.TeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.allteams.AllTeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.yourteams.YourTeamsViewModel
 import dal.mitacsgri.treecare.screens.tournamentleaderboard.TournamentLeaderBoardViewModel
+import dal.mitacsgri.treecare.screens.tournamentleaderboard2.TournamentLeaderBoard2ViewModel
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import dal.mitacsgri.treecare.screens.tournaments.activetournaments.ActiveTournamentsViewModel
+import dal.mitacsgri.treecare.screens.transfercaptaincy.TransferCaptaincyViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -65,10 +67,12 @@ val appModule = module {
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { ProgressReportDataViewModel(get(), get()) }
     viewModel { InstructionsViewModel() }
-    viewModel { InvitesRequestViewModel(get(),get()) }
+    viewModel { InvitesRequestViewModel(get(), get()) }
     viewModel { JoinTeamViewModel(get()) }
-    viewModel { TeamInfoViewModel(get(),get(),get()) }
-    viewModel { EnrollTeamsViewModel(get(),get()) }
-    viewModel { TournamentLeaderBoardViewModel(get(),get()) }
+    viewModel { TeamInfoViewModel(get(),get(), get()) }
+    viewModel { EnrollTeamsViewModel(get(), get()) }
+    viewModel { TournamentLeaderBoardViewModel(get(), get()) }
     viewModel { TournamentEndedDialogViewModel() }
+    viewModel { TransferCaptaincyViewModel(get(), get()) }
+    viewModel { TournamentLeaderBoard2ViewModel (get()) }
 }

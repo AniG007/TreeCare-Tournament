@@ -18,7 +18,8 @@
         android:paddingStart="@dimen/_12sdp"
         android:paddingTop="@dimen/_10sdp"
         android:paddingEnd="@dimen/_12sdp"
-        android:paddingBottom="@dimen/_10sdp">
+        android:paddingBottom="@dimen/_10sdp"
+        android:id="@+id/tourney_card">
 
 
             <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
@@ -71,6 +72,18 @@
             android:drawableStart="@drawable/ic_time"
             android:drawableTint="@color/tournament_mode_primary_color"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/startDate"
+            tools:text="Expires: Some date" />
+
+        <TextView
+            android:id="@+id/startDate"
+            style="@style/ItemActiveChallengeTextWithDrawableStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_time"
+            android:drawableTint="@color/tournament_mode_primary_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/durationTV"
             app:layout_constraintTop_toBottomOf="@+id/goalTV"
             tools:text="Expires: Some date" />
 
@@ -82,27 +95,22 @@
             android:drawableStart="@drawable/ic_teams"
             android:text="2000"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/goalTV" />
+            app:layout_constraintTop_toBottomOf="@+id/goalTV"
+            app:layout_constraintBottom_toTopOf="@+id/buttonJoin"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonJoin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/join"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/durationTV"
+            app:layout_constraintTop_toBottomOf="@+id/teamCountTV"
+            app:layout_constraintVertical_bias="1.0" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonActiveLeaderBoard"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/leaderboard"
-            app:layout_constraintStart_toEndOf="@+id/buttonJoin"
-            app:layout_constraintTop_toBottomOf="@+id/durationTV" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

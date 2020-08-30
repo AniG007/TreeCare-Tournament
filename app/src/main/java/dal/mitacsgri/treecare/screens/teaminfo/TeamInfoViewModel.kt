@@ -17,47 +17,51 @@ class TeamInfoViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
     private val stepCountRepository: StepCountRepository
 )
-    :ViewModel()  {
+    :ViewModel() {
 
     val membersList = MutableLiveData<ArrayList<TeamInfo>>().default(arrayListOf())
-    val status :MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
+    val status: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     val tempList = MutableLiveData<ArrayList<TeamInfo>>().default(arrayListOf())
+    val bool = MutableLiveData<Boolean>().default(false)
 
-    fun getTeamMembers (teamName : String): MutableLiveData<ArrayList<TeamInfo>> {
+    fun getTeamMembers(teamName: String): MutableLiveData<ArrayList<TeamInfo>> {
         firestoreRepository.getTeam(teamName)
             .addOnSuccessListener {
                 val team = it.toObject<Team>()
-                Log.d("Test","members"+team?.members)
-                for(m in team?.members!!) {
-                    Log.d("Test","m "+m)
+                Log.d("Test", "members" + team?.members)
+                for (m in team?.members!!) {
+                    Log.d("Test", "m " + m)
                     firestoreRepository.getUserData(m.toString())
                         .addOnSuccessListener {
                             val user = it.toObject<User>()
-                            membersList.value?.sortAndAddToList(TeamInfo(
-                                user?.uid.toString(),
-                                teamName,
-                                team.captain,
-                                user?.name.toString(),
+                            membersList.value?.sortAndAddToList(
+                                TeamInfo(
+                                    user?.uid.toString(),
+                                    teamName,
+                                    team.captain,
+                                    user?.name.toString(),
 //                                getDailyStepCount(),
-                                user?.dailySteps!!,
-                                user.photoUrl.toString(),
-                                user.dailySteps/3000
-                            ))
-                            Log.d("Test","memsInTeam "+membersList.value.toString())
+                                    user?.dailySteps!!,
+                                    user.photoUrl.toString(),
+                                    user.dailySteps / 3000
+                                )
+                            )
+                            Log.d("Test", "memsInTeam " + membersList.value.toString())
                             membersList.notifyObserver()
                         }
                 }
             }
         return membersList
     }
-    fun isCurrentUser (tInfo: TeamInfo) = tInfo.uId == sharedPrefsRepository.user.uid
+
+    fun isCurrentUser(tInfo: TeamInfo) = tInfo.uId == sharedPrefsRepository.user.uid
 
     fun isUserCaptain(captainUid: String) = captainUid == sharedPrefsRepository.user.uid
 
     fun getDailyLeafCount(): String {
 
-        Log.d ("Test","Leaf "+(sharedPrefsRepository.getDailyStepCount() /3000).toString())
-        return (sharedPrefsRepository.getDailyStepCount() /3000).toString()
+        Log.d("Test", "Leaf " + (sharedPrefsRepository.getDailyStepCount() / 3000).toString())
+        return (sharedPrefsRepository.getDailyStepCount() / 3000).toString()
 
     }
 
@@ -91,10 +95,16 @@ class TeamInfoViewModel(
 //        }
 //    }
 
-    fun removePlayer(team : TeamInfo){
-        firestoreRepository.updateTeamData(team.teamName, mapOf("members" to FieldValue.arrayRemove(team.uId)))
+    fun removePlayer(team: TeamInfo) {
+        firestoreRepository.updateTeamData(
+            team.teamName,
+            mapOf("members" to FieldValue.arrayRemove(team.uId))
+        )
             .addOnSuccessListener {
-                firestoreRepository.updateUserData(team.uId, mapOf("currentTeams" to FieldValue.arrayRemove(team.teamName)))
+                firestoreRepository.updateUserData(
+                    team.uId,
+                    mapOf("currentTeams" to FieldValue.arrayRemove(team.teamName))
+                )
                     .addOnSuccessListener {
                         membersList.value?.remove(team)
                         membersList.notifyObserver()
@@ -104,19 +114,31 @@ class TeamInfoViewModel(
 
     private fun ArrayList<TeamInfo>.sortAndAddToList(teamInfo: TeamInfo) {
 
-        if(teamInfo.captainId.equals(teamInfo.uId)) {
-            add(0,teamInfo)
+        if (teamInfo.captainId.equals(teamInfo.uId)) {
+            add(0, teamInfo)
             return
-        }
-        else{
+        } else {
             add(teamInfo)
             return
         }
     }
 
-    fun display(){
+    fun display() {
+        Log.d("Test", "team printing " + sharedPrefsRepository.team.captainName)
+    }
 
-        Log.d("Test","team printing "+sharedPrefsRepository.team.captainName)
+    fun isCaptain(teamName: String): MutableLiveData<Boolean> {
 
+        firestoreRepository.getTeam(teamName)
+            .addOnSuccessListener {
+                val team = it.toObject<Team>()
+                val captain = team?.captain
+                bool.value = captain == sharedPrefsRepository.user.uid
+            }
+        return bool
+    }
+
+    fun getCaptainId(): String{
+        return membersList.value?.get(0)?.captainId!!
     }
 }

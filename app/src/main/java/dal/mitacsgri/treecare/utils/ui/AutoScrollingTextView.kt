@@ -13,10 +13,7 @@ class AutoScrollingTextView: androidx.appcompat.widget.AppCompatTextView {
 
     constructor(context: Context) : super(context)
 
-    override fun onFocusChanged(
-        focused: Boolean, direction: Int,
-        previouslyFocusedRect: Rect
-    ) {
+    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         if (focused) {
             super.onFocusChanged(focused, direction, previouslyFocusedRect)
         }

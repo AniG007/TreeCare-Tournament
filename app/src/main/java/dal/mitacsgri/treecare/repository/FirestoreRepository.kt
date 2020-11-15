@@ -45,7 +45,7 @@ class FirestoreRepository {
     fun updateUserData(userId: String, values: Map<String, Any>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)
 
-    fun grick(teamName: String, tourney: String) {
+    /*fun grick(teamName: String, tourney: String) {
 
         val bir = db.runTransaction {
             val team = it.get(db.collection(COLLECTION_TEAMS).document(teamName)).toObject<Team>()
@@ -62,7 +62,7 @@ class FirestoreRepository {
 
             }
         }
-    }
+    }*/
 
     fun updateUserTournamentData(userId: String, values: Map<String, UserTournament?>) =
         db.collection(COLLECTION_USERS).document(userId).update(values)
@@ -94,9 +94,13 @@ class FirestoreRepository {
         db.collection(COLLECTION_CHALLENGES).document(challenge.name)
             .update("players", FieldValue.arrayRemove(userId))
 
-    fun deleteChallengeFromUserDB(userId: String, userChallenge: UserChallenge, userChallengeJson: String) =
+//    fun deleteChallengeFromUserDB(userId: String, userChallenge: UserChallenge, userChallengeJson: String) =
+//        db.collection(COLLECTION_USERS).document(userId)
+//            .update(mapOf("currentChallenges.${userChallenge.name}" to userChallengeJson))
+
+    fun deleteChallengeFromUserDB(userId: String, challengeName: String) =
         db.collection(COLLECTION_USERS).document(userId)
-            .update(mapOf("currentChallenges.${userChallenge.name}" to userChallengeJson))
+            .update(mapOf("currentChallenges.${challengeName}" to FieldValue.delete()))
 
     fun getAllChallengesCreatedByUser(userId: String) =
         db.collection(COLLECTION_CHALLENGES)
@@ -106,7 +110,13 @@ class FirestoreRepository {
         db.collection(COLLECTION_CHALLENGES).document(challengeName)
             .update("exist", false)
 
-    fun getAllActiveTournaments() = db.collection(COLLECTION_TOURNAMENTS).get()
+    fun getAllActiveTournaments() = db.collection(COLLECTION_TOURNAMENTS).get() //To retrieve all tournaments
+
+    fun getAllUsers() = db.collection(COLLECTION_USERS).get()
+
+    fun getAllTrophies() = db.collection(COLLECTION_TROPHIES).get()
+
+    fun getAllTournamentTrophies() = db.collection(COLLECTION_TOURNAMENT_TROPHIES).get()
 
     fun getTournament(id: String) = db.collection(COLLECTION_TOURNAMENTS).document(id).get()
 

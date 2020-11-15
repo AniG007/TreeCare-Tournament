@@ -123,7 +123,7 @@ class ProgressReportDataViewModel(
 
     //Must be called from inside the observer for BarData live data
     fun getAggregateStepCount(): String =
-        NumberFormat.getNumberInstance(Locale.getDefault()).format(aggregateStepCount)
+        NumberFormat.getNumberInstance(Locale.getDefault()).format(aggregateStepCount) + " steps"
 
     //Must be called from inside the observer for BarData live data
     fun getProgressReportDataList(): ArrayList<ProgressReportDataItem> = progressReportDataList

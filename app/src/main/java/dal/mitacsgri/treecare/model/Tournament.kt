@@ -14,7 +14,8 @@ data class Tournament (
     val exist: Boolean = true,
     val creatorName: String = "",
     val creatorUId: String = "",
-    val teamLimit: Int = 0
+    val teamLimit: Int = 0,
+    val lastEdited: Timestamp = Timestamp.now()
 ){
 
     override fun equals(other: Any?): Boolean {

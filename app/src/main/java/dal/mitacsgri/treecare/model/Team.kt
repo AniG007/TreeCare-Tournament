@@ -9,7 +9,7 @@ data class Team (
     val invitedMembers: ArrayList<String> = arrayListOf(),
     val joinRequests: ArrayList<String> = arrayListOf(),
     //val currentTournaments: ArrayList<String> = arrayListOf(),
-    val currentTournaments: MutableMap<String, TeamTournament> = mutableMapOf(),
+    var currentTournaments: MutableMap<String, TeamTournament> = mutableMapOf(),
     var captain: String = "",
     val exist :Boolean = true,
     var captainName: String = "",

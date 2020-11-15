@@ -26,6 +26,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
+
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
@@ -37,17 +38,44 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+<!--        <TextView-->
+<!--            android:id="@+id/captainRank"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Your Rank"-->
+<!--            android:textColor="@color/tournament_mode_primary_color"-->
+<!--            android:textSize="@dimen/_12sdp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintLeft_toRightOf="@id/addButton"-->
+<!--            app:layout_constraintRight_toLeftOf="@id/buttonDelete"-->
+<!--            android:layout_marginBottom="@dimen/_10sdp"-->
+<!--            android:layout_marginEnd="@dimen/_72sdp"/>-->
+
+        <TextView
+            android:id="@+id/playerRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:text="MEMBERS"
+            android:textColor="@color/tournament_mode_primary_color"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/teamNameTV" />
+
+
         <TextView
             android:id="@+id/membersCountTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:drawableStart="@drawable/ic_user"
             android:drawablePadding="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:text="Players: 4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/teamNameTV" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/buttonDelete" />
 
         <!--        <com.google.android.material.button.MaterialButton-->
         <!--            android:id="@+id/viewButton"-->
@@ -65,44 +93,37 @@
             android:id="@+id/buttonDelete"
             android:layout_width="44dp"
             android:layout_height="43dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginRight="36dp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:backgroundTint="#f00"
-
             android:src="@drawable/ic_delete"
-
             android:tint="@color/white"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ImageButton
             android:id="@+id/buttonExit"
             android:layout_width="44dp"
             android:layout_height="43dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="36dp"
+            android:layout_marginEnd="@dimen/_8sdp"
             android:backgroundTint="#f00"
             android:src="@drawable/ic_exit"
             android:tint="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/addButton"
-            android:layout_width="107dp"
-            android:layout_height="43dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="76dp"
-            android:backgroundTint="@color/colorPrimaryDarkTransparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:backgroundTint="@color/tournament_mode_primary_color"
             android:text="@string/invite_players1"
             android:textAllCaps="false"
             android:tint="@color/white"
-            app:layout_constraintEnd_toEndOf="@+id/buttonDelete"
-            app:layout_constraintHorizontal_bias="0.865"
-            app:layout_constraintStart_toEndOf="@+id/membersCountTV"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/teamNameTV" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

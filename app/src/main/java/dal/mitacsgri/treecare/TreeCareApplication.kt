@@ -35,94 +35,86 @@ class TreeCareApplication : Application() {
         val mConstraints =
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
-        val updateUserChallengeDataRequest: WorkRequest =
+        val updateUserChallengeDataRequest =
             PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, MINUTES)
                 .setConstraints(mConstraints)
                 .setInitialDelay(5, MINUTES)
                 .build()
-
-//        val updateUserChallengeDataRequest: WorkRequest =
-//            OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>()
-//                .setConstraints(mConstraints)
-//                .setInitialDelay(5, MINUTES)
-//                .build()
-
-        val updateDailyStepCountDataRequest: WorkRequest =
+//
+        val updateDailyStepCountDataRequest =
             PeriodicWorkRequestBuilder<UpdateDailyStepCount>(15, MINUTES)
                 .setConstraints(mConstraints)
                 .setInitialDelay(5, MINUTES)
                 .build()
-
-//        val updateDailyStepCountDataRequest: WorkRequest =
-//            OneTimeWorkRequestBuilder<UpdateDailyStepCount>()
-//                .setConstraints(mConstraints)
-//                .setInitialDelay(5,MINUTES)
-//                .build()
-
-        val updateTeamDataRequest: WorkRequest =
+//
+        val updateTeamDataRequest =
             PeriodicWorkRequestBuilder<UpdateTeamDataWorker>(15, MINUTES)
                 .setConstraints(mConstraints)
                 .setInitialDelay(5, MINUTES)
                 .build()
 
-//        val updateTeamDataRequest: WorkRequest =
-//            OneTimeWorkRequestBuilder<UpdateTeamDataWorker>()
-//                .setConstraints(mConstraints)
-//                .setInitialDelay(5, MINUTES)
-//                .build()
-//
-//        val DailyGoalNotificationRequest: WorkRequest =
-//            OneTimeWorkRequestBuilder<DailyNotificationWorker>()
-//                .setConstraints(mConstraints)
-//                .setInitialDelay(5,MINUTES)
-//                .build()
-//
-//        val TrophiesUpdateRequest: WorkRequest =
-//            OneTimeWorkRequestBuilder<TrophiesUpdateWorker>()
-//                .setConstraints(mConstraints)
-//                .setInitialDelay(5,MINUTES)
-//                .build()
 
-
-        val dailyGoalNotificationRequest: WorkRequest =
+        val dailyGoalNotificationRequest =
             PeriodicWorkRequestBuilder<DailyNotificationWorker>(3, HOURS)
                 .setConstraints(mConstraints)
                 .setInitialDelay(5, MINUTES)
                 .build()
 
 
-        val trophiesUpdateRequest: WorkRequest =
+        val trophiesUpdateRequest =
             PeriodicWorkRequestBuilder<TrophiesUpdateWorker>(8, HOURS)
                 .setConstraints(mConstraints)
                 .setInitialDelay(5, MINUTES)
                 .build()
 
-        WorkManager.getInstance(this).enqueue(
+        val syncDataRequest =
+            PeriodicWorkRequestBuilder<DataSyncWorker>(15, MINUTES)
+                .setConstraints(mConstraints)
+                .setInitialDelay(2, MINUTES)
+                .build()
+
+        /*WorkManager.getInstance(this).enqueue(
             listOf(
-                updateDailyStepCountDataRequest,
-                updateTeamDataRequest,
-                updateUserChallengeDataRequest,
                 dailyGoalNotificationRequest,
                 trophiesUpdateRequest
             )
+        )*/
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "teamWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            updateTeamDataRequest,
         )
-        //JobConfig.setApiEnabled(JobApi.WORK_MANAGER, false)
-        //JobManager.create(this).addJobCreator(MainJobCreator())
-        //TrophiesUpdateJob.scheduleJob()
 
-        val tag = "DailyGoalNotificationJob"
-
-//        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(6),
-//            HOURS.toMillis(6) + MINUTES.toMillis(15), tag + 1)
-//        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(13),
-//            HOURS.toMillis(13) + MINUTES.toMillis(15), tag + 2)
-//        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(18),
-//            HOURS.toMillis(18) + MINUTES.toMillis(15), tag + 3)
-//        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(21),
-//            HOURS.toMillis(21) + MINUTES.toMillis(15), tag + 4)
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "challengeWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            updateUserChallengeDataRequest,
+        )
 //
-//        DailyGoalNotificationJob.scheduleJob(HOURS.toMillis(20) + MINUTES.toMillis(36),
-//            HOURS.toMillis(20) + MINUTES.toMillis(50) , tag +5)
-        //DailyGoalNotificationJob.scheduleJob()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "dailyStepsWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            updateDailyStepCountDataRequest,
+        )
+//
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "notificationWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            dailyGoalNotificationRequest,
+        )
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "trophiesWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            trophiesUpdateRequest,
+        )
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "syncWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            syncDataRequest,
+        )
+
     }
 }

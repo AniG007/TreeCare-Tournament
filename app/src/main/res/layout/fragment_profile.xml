@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,17 +17,18 @@
         android:paddingEnd="16dp"
         tools:context=".screens.profile.ProfileFragment">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/leaf_pattern"
-            android:scaleType="centerCrop"
-            android:id="@+id/imageView"
-            android:tint="#ddffffff"
-            android:layout_marginStart="-20dp"
-            android:layout_marginEnd="-20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+<!--        <ImageView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@d rawable/leaf_pattern"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:tint="#ddffffff"-->
+<!--            android:layout_marginStart="-20dp"-->
+<!--            android:layout_marginEnd="-20dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"/>-->
 
         <View
             android:layout_width="match_parent"
@@ -86,7 +89,7 @@
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:src="@tools:sample/avatars" />
 
-        <TextView
+        <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
             android:id="@+id/nameTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -102,7 +105,7 @@
             app:layout_constraintStart_toEndOf="@id/profileImageView"
             app:layout_constraintTop_toTopOf="@id/profileImageView"
             app:layout_constraintVertical_chainStyle="packed"
-            tools:text="Devansh Maurya" />
+            tools:text="User Name" />
 
         <ImageView
             android:id="@+id/buttonEdit"
@@ -166,7 +169,7 @@
             style="@style/ProfileSectionsTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/streak"
+            android:text="@string/your_streak"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider1" />
@@ -257,7 +260,7 @@
             style="@style/ProfileSectionsTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/awards"
+            android:text="@string/challenge_awards"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/streakImage7"
@@ -337,12 +340,12 @@
             style="@style/ProfileSectionsTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/team_awards"
+            android:text="@string/tournament_awards"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/streakImage7"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/silverAwardCountTV" />
+            app:layout_constraintTop_toBottomOf="@id/challengerModeButtonHolder" />
 
         <ImageView
             android:id="@+id/teamAwardFirstImage"
@@ -391,6 +394,19 @@
             app:layout_constraintTop_toBottomOf="@id/teamAwardSecondImage"
             tools:text="4" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/challengerModeButtonHolder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_40sdp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="@string/go_to_challenger_mode"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/awardFirstImage"/>
+
         <TextView
             android:id="@+id/bronzeTeamAwardCount"
             style="@style/ProfileAwardsTextStyle"
@@ -400,22 +416,37 @@
             app:layout_constraintStart_toStartOf="@id/awardThirdImage"
             app:layout_constraintTop_toBottomOf="@id/teamAwardThirdImage"
             tools:text="4" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/tournamentModeButtonHolder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_40sdp"
+            android:backgroundTint="@color/tournament_mode_primary_color"
+            android:text="@string/go_to_tournament_mode"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/teamAwardFirstImage"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>
 
 
-    <!--<com.google.android.material.button.MaterialButton-->
-    <!--android:id="@+id/challengerModeButtonHolder"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="@dimen/_40sdp"-->
-    <!--android:layout_marginBottom="@dimen/_40sdp"-->
-    <!--android:backgroundTint="@color/colorPrimary"-->
-    <!--android:text="@string/go_to_challenger_mode"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintHorizontal_bias="0.5"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@id/awardFirstImage" />
+<!--    <com.google.android.material.button.MaterialButton
+    android:id="@+id/challengerModeButtonHolder"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_40sdp"
+    android:layout_marginBottom="@dimen/_40sdp"
+    android:backgroundTint="@color/colorPrimary"
+    android:text="@string/go_to_challenger_mode"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/awardFirstImage"/>
+
 
 
     <View
@@ -426,7 +457,6 @@
             android:background="@color/colorPrimaryDark"
             app:layout_constraintTop_toBottomOf="@id/goldAwardCountTV"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"/>-->
 
 
-    -->

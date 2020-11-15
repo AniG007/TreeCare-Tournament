@@ -136,10 +136,10 @@
     <string name="invite">Invite</string>
     <string name="profile">Profile</string>
     <string name="profile_picture">Profile picture</string>
-    <string name="awards">Awards</string>
+    <string name="challenge_awards">Challenger Awards</string>
     <string name="challenger_mode">Challenger mode</string>
     <string name="go_to_challenger_mode">Go to Challenger Mode</string>
-    <string name="streak">Streak</string>
+    <string name="your_streak">Your Streak</string>
     <string name="progress_report">Progress Report</string>
     <string name="settings">Settings</string>
     <string name="change_volume">Change volume</string>
@@ -154,17 +154,18 @@
     <string name="logout_title">Logout/Switch account</string>
     <string name="challenges">Challenges</string>
 
-    <string name="goal_completed_notification">You achieved your daily goal today. Congratulations!</string>
+    <string name="goal_completed_notification">You have achieved your daily goal today. Congratulations!</string>
     <string name="daily_goal_remaining_notification">You are %d steps away from achieving your daily goal</string>
 
     <string name="daily_goal_notification_title1">Make every step count</string>
-    <string name="daily_goal_notification_title2">Get off the bus one stop earlier!</string>
-    <string name="daily_goal_notification_title3">Walk the dog (or your neighbour’s dog!)</string>
-    <string name="daily_goal_notification_title4">Good things come to those who sweat</string>
-    <string name="daily_goal_notification_title5">Habituate yourself to walk regularly</string>
-    <string name="daily_goal_notification_title6">Walk with your friends for a change!</string>
+<!--    <string name="daily_goal_notification_title2">Get off the bus one stop earlier!</string>-->
+<!--    <string name="daily_goal_notification_title3">Walk the dog (or your neighbour’s dog!)</string>-->
+<!--    <string name="daily_goal_notification_title4">Good things come to those who sweat</string>-->
+<!--    <string name="daily_goal_notification_title5">Habituate yourself to walk regularly</string>-->
+<!--    <string name="daily_goal_notification_title6">Walk with your friends for a change!</string>-->
     <string name="daily_goal_notification_title7">It always seems impossible until its done</string>
-    <string name="daily_goal_notification_title8">Try to walk for at least 30 minutes!</string>
+<!--    <string name="daily_goal_notification_title8">Try to walk for at least 30 minutes!</string>-->
+    <string name="daily_goal_notification_title9">Achieve your steps goal for today!</string>
 
     <string name="profile_image_start_transition">profile_image_start_transition</string>
     <string name="profile_image_end_transition">profile_image_end_transition</string>
@@ -173,9 +174,9 @@
     <string name="enter_a_new_name">Enter a new name</string>
     <string name="create_tournament">Create Tournament</string>
     <string name="invite_players">Invite Team Members</string>
-    <string name="tournament_description">Tournament Description</string>
+    <string name="tournament_description">Tournament description</string>
     <string name="add_teams">Add Teams</string>
-    <string name="InvReq">Invites/Request</string>
+    <string name="InvReq">Invites/Requests</string>
     <string name="team_name">Team Name</string>
     <string name="invite_players1">Invite</string>
     <string name="view_team">View Team</string>
@@ -185,7 +186,7 @@
     <string name="user_does_not_exist">PlayerId does not exist</string>
     <string name="leaderboard_tournament_name">TOURNAMENT NAME</string>
     <string name="tournament_ended">Tournament Ended</string>
-    <string name="team_awards">Your Team Awards</string>
+    <string name="tournament_awards">Tournament Awards</string>
     <string name="tournament_leaderboard_position">tournament_leaderboard_position</string>
     <string name="tournament_last_total_steps_count">tournament_last_total_steps_count</string>
     <string name="Search">Search</string>
@@ -201,5 +202,39 @@
     <string name="activity_tilting">Tilting</string>
     <string name="activity_walking">walking</string>
     <string name="activity_unknown">Unknown</string>
+
+    <string name="Player">Player</string>
+
+    <string name="New_Challenge">New Challenge</string>
+
+<!--    <string name="sendentary_notification_title1">Try to move every 30 mins to keep yourself Healthy!</string>-->
+    <string name="sendentary_notification_title2">Sedentary Alert</string>
+    <string name="sendentary_notification_title3">Have you been sitting for a long time?</string>
+
+<!--    <string name="sendentary_notification_body1">You have been sitting for the past 30 mins. Try going for a short walk to avoid fatigue.</string>-->
+    <string name="sendentary_notification_body2">You have been sedentary for the past 30 mins. You should take at least 5 minutes walk to be refreshed</string>
+    <string name="sendentary_notification_body3">Move around every now and then so that you do not feel sluggish</string>
+    <string name="sendentary_notification_body4">Mix up your work with short walks. Avoid sitting at the same place for a long time</string>
+    <string name="sendentary_notification_body5">Feeling lazy? Move around a bit, grab a glass of water and you will feel refreshed</string>
+
+    <string name="vehicle_notification_title1">It looks like you\'re in a vehicle!</string>
+    <string name="vehicle_notification_title2">Are you in a Vehicle?</string>
+    <string name="vehicle_notification_title3">Too lazy to walk?</string>
+    <string name="vehicle_notification_body1">If you are travelling a short distance, consider walking to your destination. Walking will keep you Healthy and Fit!</string>
+    <string name="vehicle_notification_body2">If you do not have time constraints, then consider walking to your destination. This way, you can achieve your daily goal and stay healthy</string>
+    <string name="vehicle_notification_body3">Consider walking over taking a vehicle if you do not have time constraints or health issues. Walking helps you to stay Healthy and Fit!</string>
+
+    <string name="edit_tournament">Edit Tournament</string>
+
+    <string name="empty_my_tournaments">You have not created any tournament yet</string>
+    <string name="empty_current_tournaments">You are not participating in any active tournament yet. Be sure to join a team if you haven\'t</string>
+    <string name="empty_active_tournaments">There are no ongoing tournaments for now</string>
+    <string name="empty_active_challenges">There are no ongoing challenges for now</string>
+    <string name="empty_current_challenges">You have not joined any active challenge yet. You can also create a new challenge for other players to join</string>
+    <string name="empty_my_challenges">You have not created any challenge yet</string>
+    <string name="empty_all_teams">No team has been created yet</string>
+    <string name="empty_your_teams">You have not joined any team yet. You can send a Join Request to any team of your choice or create your own team</string>
+    <string name="go_to_tournament_mode">GO TO TOURNAMENT MODE</string>
+
 
 </resources>

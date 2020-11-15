@@ -12,7 +12,6 @@ import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
-//import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.item_current_challenge.view.*
 
 /**
@@ -62,7 +61,7 @@ class CurrentChallengesViewHolder(
 
             currentChallengeCard.setOnClickListener {
                 MainActivity.playClickSound()
-                viewModel.disp(item)
+                //viewModel.disp(item)
             }
         }
     }

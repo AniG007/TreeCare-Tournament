@@ -56,7 +56,7 @@
                 android:id="@+id/tournamentNameLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="wrap_content"
                 android:hint="Tournament name"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +66,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputTournamentName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -96,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_tournament_input_fields_margin"
-                android:hint="Goal"
+                android:hint="Minimum Goal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tournamentDescriptionLayout">
@@ -114,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_tournament_input_fields_margin"
-                android:hint="No of Teams"
+                android:hint="Number of Teams"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tournamentEndDateLayout">

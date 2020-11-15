@@ -1,10 +1,12 @@
 package dal.mitacsgri.treecare.screens.createteam
 
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -28,15 +30,20 @@ class CreateTeamFragment : Fragment() {
         view.apply {
 
             toolbar.setNavigationOnClickListener {
+
+                val imm =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(windowToken, 0)
+
                 findNavController().navigateUp()
             }
 
             mViewModel.apply {
-                isFullDataValid.observe(this@CreateTeamFragment, Observer {
+                isFullDataValid.observe(viewLifecycleOwner, Observer {
                     createTeamButton.isEnabled = it
                 })
 
-                messageLiveData.observe(this@CreateTeamFragment, Observer {
+                messageLiveData.observe(viewLifecycleOwner, Observer {
                     it.toast(context)
                 })
 

@@ -12,14 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
-import kotlinx.android.synthetic.main.fragment_tournament_leaderboard.view.*
-import kotlinx.android.synthetic.main.fragment_tournament_leaderboard_2.*
 import kotlinx.android.synthetic.main.fragment_tournament_leaderboard_2.view.*
-import kotlinx.android.synthetic.main.fragment_tournament_leaderboard_2.view.backButton
 import kotlinx.android.synthetic.main.fragment_tournament_leaderboard_2.view.headingTV
 import kotlinx.android.synthetic.main.fragment_tournament_leaderboard_2.view.recyclerView
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.lang.IllegalStateException
 
 class TournamentLeaderBoard2Fragment : Fragment() {
     private val mViewModel: TournamentLeaderBoard2ViewModel by viewModel()
@@ -40,15 +36,20 @@ class TournamentLeaderBoard2Fragment : Fragment() {
                 recyclerView.adapter = TournamentLeaderBoard2RecyclerViewAdapter(it, mViewModel)
             })
 
-            headingTV.text = args.tournamentName
+            //headingTV.text = args.tournamentName
+            headingTV.text = mViewModel.getTournamentNameForLeaderBoard(args.tournamentName)
 
-            backButton.setOnClickListener {
+            /*backButton.setOnClickListener {
                 try{
                     findNavController().navigateUp()
                 }
                 catch (e: IllegalStateException){
                     activity?.onBackPressed()
                 }
+            }*/
+
+            toolbar2.setNavigationOnClickListener {
+                findNavController().navigateUp()
             }
 
         }

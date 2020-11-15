@@ -63,6 +63,58 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_43sdp"
+        android:id="@+id/header"
+        android:theme="@style/tournament_mode_theme">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:text="Rank"-->
+<!--                android:textAlignment="textStart"-->
+<!--                android:clickable="false"-->
+<!--                style="@style/Widget.AppCompat.Button.Borderless"/>-->
+
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:clickable="false"-->
+<!--                android:layout_marginStart="@dimen/_16sdp"-->
+<!--                android:text="Players"-->
+<!--                style="@style/Widget.AppCompat.Button.Borderless"/>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/rankHeader"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Rank"-->
+<!--            android:layout_marginStart="@dimen/_16sdp"-->
+<!--            android:textColor="@color/white"-->
+<!--            style="@style/TextAppearance.AppCompat.Headline" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/NameHeader"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Players"-->
+<!--                android:enabled="false"-->
+<!--                android:layout_marginStart="@dimen/_56sdp"-->
+<!--                android:textColor="@color/white"-->
+<!--                style="@style/TextAppearance.AppCompat.Headline" />-->
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -73,12 +125,12 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="64dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

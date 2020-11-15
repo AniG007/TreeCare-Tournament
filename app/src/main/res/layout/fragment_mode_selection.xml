@@ -11,18 +11,19 @@
         android:id="@+id/backgroundLayout"/>
 
     <TextView
+        android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/pinewood"
         android:text="@string/app_name"
         android:textAllCaps="true"
-        android:textSize="@dimen/_50sdp"
-        android:fontFamily="@font/pinewood"
         android:textColor="@color/black"
-        android:layout_marginTop="@dimen/_16sdp"
+        android:textSize="@dimen/_48sdp"
+        android:layout_marginTop="@dimen/_32sdp"
+        app:layout_constraintBottom_toTopOf="@id/starterModeButtonHolder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/heading"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/starterModeButtonHolder"
@@ -31,14 +32,14 @@
         android:backgroundTint="@color/colorPrimaryDarkTransparent"
         app:strokeColor="@color/black"
         app:cardElevation="@dimen/_2sdp"
-        app:cardCornerRadius="@dimen/_2sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintBottom_toTopOf="@+id/challengerModeButtonHolder"
         app:layout_constraintWidth_percent=".76"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintTop_toTopOf="@+id/backgroundLayout">
+        app:layout_constraintVertical_chainStyle = "packed"
+        app:layout_constraintTop_toBottomOf="@+id/heading">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,17 +68,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorPrimaryDarkTransparent"
-        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         app:strokeColor="@color/black"
         app:cardElevation="@dimen/_2sdp"
-        app:cardCornerRadius="@dimen/_2sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toBottomOf="@+id/starterModeButtonHolder"
-        app:layout_constraintBottom_toTopOf="@+id/tournamentModeButton"
+        app:layout_constraintBottom_toTopOf="@+id/tournamentModeButtonHolder"
         app:layout_constraintWidth_percent=".76"
-        style="@style/ModeSelectionButtonStyle">
+        style="@style/ModeSelectionButtonStyle"
+        android:theme="@style/challenger_mode_theme">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -102,33 +104,78 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/tournamentModeButtonHolder"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/tournament"
+        android:backgroundTint="@color/colorPrimaryDarkTransparent"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:strokeColor="@color/black"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:backgroundTint="@color/tournament_mode_primary_color"
         app:layout_constraintHorizontal_bias="0.5"
-        android:id="@+id/tournamentModeButton"
         app:layout_constraintTop_toBottomOf="@+id/challengerModeButtonHolder"
         app:layout_constraintBottom_toBottomOf="@+id/backgroundLayout"
         app:layout_constraintWidth_percent=".76"
-        style="@style/ModeSelectionButtonStyle"/>
+        style="@style/ModeSelectionButtonStyle"
+        android:theme="@style/tournament_mode_theme">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:src="@drawable/ic_tournament"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:color ="@color/black"
+                android:layout_gravity="center_horizontal"
+                android:padding="@dimen/_10sdp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tournamentModeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tournament"
+                android:backgroundTint="@color/tournament_mode_primary_color"
+                style="@style/ModeSelectionButtonStyle" />
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/tournament"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        android:backgroundTint="@color/tournament_mode_primary_color"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        android:id="@+id/tournamentModeButton"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/challengerModeButtonHolder"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/backgroundLayout"-->
+<!--        app:layout_constraintWidth_percent=".76"-->
+<!--        style="@style/ModeSelectionButtonStyle"/>-->
 
     <ImageButton
         android:id="@+id/buttonProfile"
-        android:layout_width="@dimen/_56sdp"
-        android:layout_height="@dimen/_56sdp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_margin="@dimen/_12sdp"
         android:background="@drawable/profile_button_background"
-        android:padding="@dimen/_2sdp"
         android:elevation="@dimen/_2sdp"
-        android:transitionName="@string/profile_image_start_transition"
-        tools:src="@drawable/ic_profile_empty"
+        android:padding="@dimen/_2sdp"
         android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:transitionName="@string/profile_image_start_transition"
+        app:layout_constraintBottom_toTopOf="@+id/heading"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="@dimen/_12sdp" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_profile_empty" />
+    <!--<a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

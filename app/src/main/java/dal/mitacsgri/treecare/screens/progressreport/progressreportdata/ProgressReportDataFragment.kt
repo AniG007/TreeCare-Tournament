@@ -59,7 +59,7 @@ class ProgressReportDataFragment : Fragment() {
                     else -> MutableLiveData()
                 }
 
-            barChartLiveData.observe(this@ProgressReportDataFragment, Observer {
+            barChartLiveData.observe(viewLifecycleOwner, {
                 updateBarChart(barChart, it)
                 totalStepCountTV.text = mViewModel.getAggregateStepCount()
                 recyclerView.adapter = ProgressReportRecyclerViewAdapter(

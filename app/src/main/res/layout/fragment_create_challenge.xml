@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            app:title="Create a challenge"
+            app:title="New Challenge"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIcon="?homeAsUpIndicator" >
@@ -28,7 +28,7 @@
                 android:id="@+id/titleTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/create_challenge"
+                android:text="@string/New_Challenge"
                 android:fontFamily="@font/montserrat_extra_bold"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_18sdp" />
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/create_challenge_input_fields_margin"
-                android:hint="Goal"
+                android:hint="Minimum Goal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

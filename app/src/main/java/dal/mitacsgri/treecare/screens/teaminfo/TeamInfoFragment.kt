@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.teaminfo
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_teams.view.toolbar
 import kotlinx.android.synthetic.main.item_team_info.view.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 //import kotlinx.android.synthetic.main.fragment_invites_request.view.*
 

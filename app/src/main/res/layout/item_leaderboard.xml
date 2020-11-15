@@ -64,7 +64,7 @@
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread"
-            tools:text="Devansh Maurya" />
+            tools:text="User Name" />
 
         <ImageView
             android:id="@+id/stepsImage"
@@ -79,7 +79,7 @@
             app:layout_constraintStart_toEndOf="@id/imageView"
             app:layout_constraintTop_toTopOf="@id/stepsCountTV" />
 
-        <TextView
+        <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
             android:id="@+id/stepsCountTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,23 +97,23 @@
             android:layout_marginEnd="@dimen/_4sdp"
             android:src="@drawable/ic_leaf"
             android:tint="@color/colorPrimary"
-            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="@id/leafCountTV"
             app:layout_constraintEnd_toStartOf="@id/leafCountTV"
             app:layout_constraintTop_toTopOf="@id/leafCountTV"
             app:layout_constraintStart_toEndOf="@id/stepsCountTV"/>
 
-        <TextView
+        <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
             android:id="@+id/leafCountTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_6sdp"
-            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginStart="@dimen/_2sdp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/stepsCountTV"
             app:layout_constraintStart_toEndOf="@id/leafImage"
             app:layout_constraintTop_toTopOf="@id/stepsCountTV"
-            tools:text="Leaves" />
+            tools:text="L" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

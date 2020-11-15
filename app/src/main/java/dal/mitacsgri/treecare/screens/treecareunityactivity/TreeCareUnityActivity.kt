@@ -28,9 +28,12 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.*
 
-/**
- * Created by Devansh on 24-06-2019
+/*
+ * Created by Devansh on 24-06-2019*
+ * Updated by Anirudh for Tournament Mode
  */
+
+
 class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
 
     private val sharedPrefsRepository:  SharedPreferencesRepository by inject()

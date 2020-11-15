@@ -18,8 +18,8 @@ class AllTeamsViewModel(
     private val firestoreRepository: FirestoreRepository,
     private val sharedPrefsRepository: SharedPreferencesRepository
 ): ViewModel() {
-    val teamsLiveData = MutableLiveData<List<Team>>()
-    fun getAllTeams(): LiveData<List<Team>> {
+    val teamsLiveData = MutableLiveData<ArrayList<Team>>()
+    fun getAllTeams(): LiveData<ArrayList<Team>> {
 
 
         firestoreRepository.getAllTeams()

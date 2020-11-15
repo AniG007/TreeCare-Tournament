@@ -2,19 +2,15 @@ package dal.mitacsgri.treecare.screens.teams.yourteams
 
 import android.content.DialogInterface
 import android.view.View
-import android.widget.AdapterView
-import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.model.Team
-import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
 import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
 import kotlinx.android.synthetic.main.item_your_captained_team.view.*
-import kotlinx.coroutines.delay
+
 
 class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewModel)
     : BaseViewHolder<Team>(itemView) {
@@ -27,6 +23,8 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
             if (viewModel.isUserCaptain(item.captain)) {
                 buttonDelete.visibility = View.VISIBLE
                 addButton.visibility = View.VISIBLE
+                playerRank.visibility = View.INVISIBLE
+
                 buttonDelete.setOnClickListener {
                     MainActivity.playClickSound()
                     MaterialAlertDialogBuilder(context)
@@ -40,13 +38,15 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
                            // findNavController().navigateUp()
                         }
                         .show()
-
                 }
             }
 
             else {
                 buttonDelete.visibility = View.INVISIBLE
                 addButton.visibility = View.INVISIBLE
+
+                //captainRank.visibility = View.INVISIBLE
+                  playerRank.visibility = View.VISIBLE
             }
 
             if (!viewModel.isUserCaptain(item.captain)) {
@@ -60,7 +60,8 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
                             dialogInterface.dismiss()
                         }
                         .setNegativeButton("Yes") { _: DialogInterface, _: Int ->
-                            viewModel.exitTeam(item)
+                            //viewModel.exitTeam(item)
+                            viewModel.displayMessageForTest()
                         }
                         .show()
                 }
@@ -83,7 +84,10 @@ class YourTeamViewHolder(itemView: View, private val viewModel: YourTeamsViewMod
 
             teamCard.setOnClickListener{
                 MainActivity.playClickSound()
-                val action = TeamsFragmentDirections.actionTeamsFragmentToTeamInfoFragment(item.name, "teamsFragment")
+                val action = TeamsFragmentDirections.actionTeamsFragmentToTeamInfoFragment(
+                    item.name,
+                    "teamsFragment"
+                )
                 findNavController().navigate(action)
             }
         }

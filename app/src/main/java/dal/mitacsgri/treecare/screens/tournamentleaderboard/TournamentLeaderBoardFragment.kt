@@ -4,18 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import kotlinx.android.synthetic.main.fragment_tournament_leaderboard.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.lang.IllegalStateException
 
 class TournamentLeaderBoardFragment : Fragment() {
     private val mViewModel: TournamentLeaderBoardViewModel by viewModel()
@@ -35,7 +31,9 @@ class TournamentLeaderBoardFragment : Fragment() {
         )
 
         view.apply {
-            headingTV.text = args.tournamentName
+            //headingTV.text = args.tournamentName
+            headingTV.text = mViewModel.getTournamentNameForLeaderBoard(args.tournamentName)
+
             backButton.setOnClickListener {
                 try{
                     findNavController().navigateUp()
@@ -45,6 +43,10 @@ class TournamentLeaderBoardFragment : Fragment() {
                 }
             }
 
+//            toolbar.setNavigationOnClickListener {
+//                findNavController().navigateUp()
+//            }
+
             mViewModel.getTeamList(args.tournamentName).observe(viewLifecycleOwner, Observer {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -52,9 +54,7 @@ class TournamentLeaderBoardFragment : Fragment() {
 
                     if((it.size>0) && !mViewModel.isDialogDisplayed){
                         mViewModel.isDialogDisplayed = false
-
                         val pos = mViewModel.getTeamPosition()
-
                         //dialog.show(FragmentManager(),"TournamentEndedDialog")
                         val action = TournamentLeaderBoardFragmentDirections.actionTournamentLeaderBoardFragmentToTournamentEndedDialog(pos)
                         findNavController().navigate(action)

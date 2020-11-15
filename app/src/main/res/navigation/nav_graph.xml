@@ -114,12 +114,14 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/instructionsFragment"
+            app:popUpToInclusive="true" />
+        <!--<action
             android:id="@+id/action_instructionsFragment_to_tournamentModeFragment2"
             app:destination="@id/tournamentModeFragment"
             app:popUpTo="@id/instructionsFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true" />-->
     </fragment>
     <fragment android:id="@+id/unityPlayerActivity"/>
     <fragment
@@ -207,6 +209,12 @@
         <action
             android:id="@+id/action_tournamentsFragment_to_tournamentLeaderBoard2Fragment"
             app:destination="@id/tournamentLeaderBoard2Fragment" />
+        <action
+            android:id="@+id/action_tournamentsFragment_to_editTournamentFragment"
+            app:destination="@id/editTournamentFragment" />
+        <action
+            android:id="@+id/action_tournamentsFragment_to_editTournamentAfterStartFragment"
+            app:destination="@id/editTournamentAfterStartFragment" />
     </fragment>
     <fragment
         android:id="@+id/teamsFragment"
@@ -294,6 +302,9 @@
         <action
             android:id="@+id/action_profileFragment_to_editNameDialog"
             app:destination="@id/editNameDialog" />
+        <action
+            android:id="@+id/action_profileFragment_to_tournamentModeFragment"
+            app:destination="@id/tournamentModeFragment" />
     </fragment>
     <dialog
         android:id="@+id/editNameDialog"
@@ -434,6 +445,9 @@
         <argument
             android:name="tournament_name"
             app:argType="string" />
+        <action
+            android:id="@+id/action_tournamentLeaderBoardFragment_to_teamRankingFragment"
+            app:destination="@id/teamRankingFragment" />
     </fragment>
     <dialog
         android:id="@+id/tournamentEndedDialog"
@@ -466,6 +480,51 @@
             android:name="tournament_name"
             app:argType="string"
             android:defaultValue='""' />
+    </fragment>
+    <fragment
+        android:id="@+id/editTournamentFragment"
+        android:name="dal.mitacsgri.treecare.screens.edittournament.EditTournamentFragment"
+        android:label="fragment_edit_tournament"
+        tools:layout="@layout/fragment_edit_tournament" >
+        <argument
+            android:name="tournamentName"
+            app:argType="string" />
+        <argument
+            android:name="tournamentDescription"
+            app:argType="string" />
+        <argument
+            android:name="tournamentGoal"
+            app:argType="string" />
+        <argument
+            android:name="tournamentStartDate"
+            app:argType="string" />
+        <argument
+            android:name="tournamentEndDate"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/editTournamentAfterStartFragment"
+        android:name="dal.mitacsgri.treecare.screens.edittournamentafterstart.EditTournamentAfterStartFragment"
+        android:label="fragment_edit_tournament_after_start"
+        tools:layout="@layout/fragment_edit_tournament_after_start" >
+        <argument
+            android:name="tournamentName"
+            app:argType="string" />
+        <argument
+            android:name="tournamentEndDate"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/teamRankingFragment"
+        android:name="dal.mitacsgri.treecare.screens.teamranking.TeamRankingFragment"
+        android:label="fragment_team_ranking"
+        tools:layout="@layout/fragment_team_ranking" >
+        <argument
+            android:name="teamName"
+            app:argType="string" />
+        <argument
+            android:name="tournamentName"
+            app:argType="string" />
     </fragment>
 
 

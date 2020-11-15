@@ -18,7 +18,6 @@ import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.MainActivity
 import kotlinx.android.synthetic.main.fragment_enroll_teams.view.*
-import kotlinx.android.synthetic.main.item_team_info.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EnrollTeamsFragment : Fragment() {
@@ -103,7 +102,7 @@ class EnrollTeamsFragment : Fragment() {
                 }
             }
 
-            viewModel.getTeams().observe(viewLifecycleOwner, Observer {
+            viewModel.getTeams().observe(viewLifecycleOwner, {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = EnrollTeamsRecyclerViewAdapter(it, viewModel)

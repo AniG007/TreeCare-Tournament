@@ -6,8 +6,7 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
@@ -20,11 +19,15 @@ import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 
 class ChallengesViewModel(
     private val sharedPrefsRepository: SharedPreferencesRepository,
-    private val firestoreRepository: FirestoreRepository
+    private val firestoreRepository: FirestoreRepository,
+    private val stepCountRepository: StepCountRepository
     ): ViewModel() {
 
     companion object Types {
@@ -40,26 +43,46 @@ class ChallengesViewModel(
     //disable or enable join button
     val statusMessage = MutableLiveData<String>()
     var messageDisplayed = true
+    val today = DateTime().withTimeAtStartOfDay().millis.toString()
 
-    fun getAllActiveChallenges() {
+    fun getAllActiveChallenges(): MutableLiveData<ArrayList<Challenge>> {
+        WorkManager.getInstance().cancelUniqueWork("challengeWorker")
+
         firestoreRepository.getAllActiveChallenges()
             .addOnSuccessListener {
-                activeChallengesList.value = it.toObjects<Challenge>().filter { it.exist && it.active }.toArrayList()
+                val challenges = it.toObjects<Challenge>()
+//                activeChallengesList.value = it.toObjects<Challenge>().filter { it.exist && it.active }.toArrayList()
+//                activeChallengesList.notifyObserver()
+                val user = sharedPrefsRepository.user
+//                Log.d("chlg", challenges.toString())
+                activeChallengesList.value =
+                    it.toObjects<Challenge>().filter { it.exist && it.active }
+                        .toArrayList()
                 activeChallengesList.notifyObserver()
-            }
-            .addOnFailureListener {
-                Log.e("Active challenges", "Fetch failed: $it")
-            }
 
-//        val updateUserChallengeDataRequest =
-//            OneTimeWorkRequestBuilder<UpdateUserChallengeDataWorker>().build()
-//        WorkManager.getInstance().enqueue(updateUserChallengeDataRequest).result.addListener(
-//            Runnable {
-//                Log.d("Challenge data", "updated by work manager")
-//            }, MoreExecutors.directExecutor())
+                    Log.d("Test", "challenges" + challenges)
+                if(user.currentChallenges.isNotEmpty()) {
+                    for (challenge in user.currentChallenges) {
+                        stepCountRepository.getTodayStepCountData {
+                            user.currentChallenges[challenge.key]?.dailyStepsMap!![today] = it
+                            synchronized(sharedPrefsRepository.user) {
+                                Log.d("chlg", it.toString())
+                                val userData = sharedPrefsRepository.user
+                                userData.currentChallenges[challenge.key] =
+                                    user.currentChallenges[challenge.key]!!
+                                sharedPrefsRepository.user = userData
+//                            Log.d("chlg", sharedPrefsRepository.user.currentChallenges.toString())
+                            }
+                            updateChallengeData()
+                        }
+                    }
+                }
+            }
+        enqueWorkForChallenge()
+        return activeChallengesList
     }
 
-    fun getCurrentChallengesForUser() {
+    fun getCurrentChallengesForUser(): MutableLiveData<ArrayList<Challenge>> {
         val challengeReferences = sharedPrefsRepository.user.currentChallenges
 
         challengeReferences.forEach { (_, userChallenge) ->
@@ -79,20 +102,20 @@ class ChallengesViewModel(
                     Log.d("Challenge not found", it.toString())
                 }
         }
-
-        Log.d("Test","ChallengePref "+sharedPrefsRepository.user.currentChallenges["Walkathon"]?.endDate?.toDateTime()?.millis)
-
+        return currentChallengesList
     }
 
-    fun getAllCreatedChallengesChallenges(userId: String) {
+    fun getAllCreatedChallengesChallenges(userId: String): MutableLiveData<ArrayList<Challenge>> {
         firestoreRepository.getAllChallengesCreatedByUser(userId)
             .addOnSuccessListener {
-                challengesByYouList.value = it.toObjects<Challenge>().filter { it.exist }.toArrayList()
+                challengesByYouList.value =
+                    it.toObjects<Challenge>().filter { it.exist }.toArrayList()
                 challengesByYouList.notifyObserver()
             }
             .addOnFailureListener {
                 Log.e("Active challenges", "Fetch failed: $it")
             }
+        return challengesByYouList
     }
 
     fun joinChallenge(challenge: Challenge, successAction: () -> Unit) {
@@ -101,8 +124,10 @@ class ChallengesViewModel(
 
         updateUserSharedPrefsData(userChallenge)
 
-        firestoreRepository.updateUserData(uid,
-            mapOf("currentChallenges.${challenge.name}" to userChallenge))
+        firestoreRepository.updateUserData(
+            uid,
+            mapOf("currentChallenges.${challenge.name}" to userChallenge)
+        )
             .addOnSuccessListener {
                 //updateUserSharedPrefsData(userChallenge)
                 messageDisplayed = false
@@ -112,7 +137,7 @@ class ChallengesViewModel(
                 activeChallengesList.notifyObserver()
 
                 index = challengesByYouList.value?.indexOf(challenge)!!
-                Log.d("Test","Index "+index)
+                Log.d("Test", "Index " + index)
                 if (index != -1) challengesByYouList.value?.get(index)?.players?.add(uid)
                 challengesByYouList.notifyObserver()
 
@@ -132,8 +157,10 @@ class ChallengesViewModel(
                 Log.e("Error joining challenge", it.toString())
             }
 
-        firestoreRepository.updateChallengeData(challenge.name,
-            mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid)))
+        firestoreRepository.updateChallengeData(
+            challenge.name,
+            mapOf("players" to FieldValue.arrayUnion(sharedPrefsRepository.user.uid))
+        )
 
         currentChallengesList.value?.add(challenge)
         currentChallengesList.notifyObserver()
@@ -144,7 +171,8 @@ class ChallengesViewModel(
         WorkManager.getInstance().enqueue(updateUserChallengeDataRequest).result.addListener(
             Runnable {
                 Log.d("Challenge data", "updated by work manager")
-            }, MoreExecutors.directExecutor())
+            }, MoreExecutors.directExecutor()
+        )
     }
 
     fun leaveChallenge(challenge: Challenge) {
@@ -171,7 +199,11 @@ class ChallengesViewModel(
         }
 
         //TODO: Maybe later on we can think of only disabling the challenge instead of actually deleting from the database - done
-        firestoreRepository.deleteChallengeFromUserDB(userId, userChallenge, userChallenge.toJson<UserChallenge>())
+        firestoreRepository.deleteChallengeFromUserDB(
+            userId,
+            userChallenge.name
+            //userChallenge.toJson<UserChallenge>()
+        )
             .addOnSuccessListener {
                 synchronized(counter) {
                     counter++
@@ -223,18 +255,27 @@ class ChallengesViewModel(
             challengeFruitCount = userChallenge.fruitCount
             challengeStreak = userChallenge.challengeGoalStreak
             challengeName = userChallenge.name
-            isChallengeActive = (userChallenge.isActive) // (userChallenge.endDate.toDateTime().millis > DateTime().millis)
-            challengeTotalStepsCount = if (userChallenge.isActive) userChallenge.totalSteps else  userChallenge.totalSteps //getDailyStepCount()
+            isChallengeActive =
+                (userChallenge.isActive) // (userChallenge.endDate.toDateTime().millis > DateTime().millis)
+            //challengeTotalStepsCount = if (userChallenge.isActive) userChallenge.totalSteps else  userChallenge.totalSteps //getDailyStepCount()
+            challengeTotalStepsCount = getDailyStepCount()
             //challengeTotalStepsCount = getDailyStepCount()
             //Log.d("Unity", challengeTotalStepsCount.toString())
-            Log.d("Unity", "UserSteps"+ isChallengeActive)
+            Log.d("Unity", "UserSteps" + isChallengeActive)
             action()
         }
     }
 
     fun getChallengeDurationText(challenge: Challenge): SpannedString {
         val finishDate = challenge.finishTimestamp.toDateTime().millis
-        val finishDateString = challenge.finishTimestamp.toDateTime().getStringRepresentation()
+        val finishDateString =
+            challenge.finishTimestamp.toDateTime().getStringRepresentation().split(",")
+        val finishDateFormat1 =
+            SimpleDateFormat("HH:mm") //reference for conversion: https://beginnersbook.com/2017/10/java-display-time-in-12-hour-format-with-ampm/?unapproved=224896&moderation-hash=b24a6ccf99e5d9013cc45de55849ebb4#comment-224896
+        val finishDateParsed = finishDateFormat1.parse(finishDateString.get(1).trim())
+        val finishDateFormat2 = SimpleDateFormat("hh:mm aa")
+        val finishDateTime = finishDateFormat2.format(finishDateParsed)
+        val finishDateText = finishDateString.get(0) + ", " + finishDateTime
 
         val challengeEnded = finishDate < DateTime().millis
 
@@ -242,7 +283,7 @@ class ChallengesViewModel(
             bold {
                 append(if (challengeEnded) "Ended: " else "Ends: ")
             }
-            append(finishDateString)
+            append(finishDateText)
         }
     }
 
@@ -255,15 +296,19 @@ class ChallengesViewModel(
             bold {
                 append("Type: ")
             }
-            append(if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) "Daily Goal Based"
-                    else "Aggregate based")
+            append(
+                if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) "Daily Goal Based"
+                else "Aggregate based"
+            )
         }
 
     fun getGoalText(challenge: Challenge) =
         buildSpannedString {
             bold {
-                append(if(challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) "Minimum Daily Goal: "
-                        else "Total steps goal: ")
+                append(
+                    if (challenge.type == CHALLENGE_TYPE_DAILY_GOAL_BASED) "Minimum Daily Goal: "
+                    else "Total steps goal: "
+                )
             }
             append(challenge.goal.toString())
         }
@@ -324,7 +369,7 @@ class ChallengesViewModel(
             return
         }
 
-        for(i in 0 until size) {
+        for (i in 0 until size) {
             if (this[i].finishTimestamp.toDateTime().millis < finishTimestampMillis) {
                 add(i, challenge)
                 return
@@ -333,10 +378,59 @@ class ChallengesViewModel(
         this.add(challenge)
     }
 
-    fun disp(challenge: Challenge){
-        val usr = sharedPrefsRepository.user.currentChallenges[challenge.name]
-        Log.d("Test", usr?.name!!)
+    fun disp(challenge: Challenge) {
+        //val usr = sharedPrefsRepository.user.currentChallenges[challenge.name]
+        //Log.d("Test", usr?.name!!)
+        /*val challenges = sharedPrefsRepository.user
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1604635200000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1604721600000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1604808000000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1604894400000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1604980800000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1605067200000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1605153600000"] = 5001
+        challenges.currentChallenges["TestChallenger"]?.dailyStepsMap!!["1605240000000"] = 5001
+        sharedPrefsRepository.user = challenges
+
+        Log.d("disp", sharedPrefsRepository.user.currentChallenges["TestChallenger"].toString())*/
+
     }
 
+    fun enqueWorkForChallenge() {
+        val mConstraints =
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
+        val updateUserChallengeDataRequest =
+            PeriodicWorkRequestBuilder<UpdateUserChallengeDataWorker>(15, TimeUnit.MINUTES)
+                .setConstraints(mConstraints)
+                .setInitialDelay(5, TimeUnit.MINUTES)
+                .build()
+
+        WorkManager.getInstance().enqueueUniquePeriodicWork(
+            "challengeWorker",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            updateUserChallengeDataRequest,
+        )
+    }
+
+    fun updateChallengeData() {
+
+        firestoreRepository.updateUserData(
+            sharedPrefsRepository.user.uid,
+            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges)
+        )
+            .addOnSuccessListener {
+                Log.d("chlg", "challenge update was successful")
+                /*firestoreRepository.getAllActiveChallenges().addOnSuccessListener {
+                    activeChallengesList.value =
+                        it.toObjects<Challenge>().filter { it.exist && it.active }
+                            .toArrayList()
+                    activeChallengesList.notifyObserver()
+                }*/
+//                    }
+            }
+            .addOnFailureListener {
+                Log.e("Active challenges", "Fetch failed: $it")
+            }
+    }
 }

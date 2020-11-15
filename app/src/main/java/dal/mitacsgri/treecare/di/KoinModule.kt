@@ -12,6 +12,8 @@ import dal.mitacsgri.treecare.screens.createtournament.CreateTournamentViewModel
 //import dal.mitacsgri.treecare.screens.createtournament.CreateTournamentViewModel
 import dal.mitacsgri.treecare.screens.dialog.challengecomplete.ChallengeCompleteDialogViewModel
 import dal.mitacsgri.treecare.screens.dialog.tournamentended.TournamentEndedDialogViewModel
+import dal.mitacsgri.treecare.screens.edittournament.EditTournamentViewModel
+import dal.mitacsgri.treecare.screens.edittournamentafterstart.EditTournamentAfterStartViewModel
 import dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsViewModel
 //import dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsViewModel
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsViewModel
@@ -22,6 +24,7 @@ import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardItemViewModel
 import dal.mitacsgri.treecare.screens.profile.ProfileViewModel
 import dal.mitacsgri.treecare.screens.progressreport.progressreportdata.ProgressReportDataViewModel
 import dal.mitacsgri.treecare.screens.teaminfo.TeamInfoViewModel
+import dal.mitacsgri.treecare.screens.teamranking.TeamRankingViewModel
 import dal.mitacsgri.treecare.screens.teams.TeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.allteams.AllTeamsViewModel
 import dal.mitacsgri.treecare.screens.teams.yourteams.YourTeamsViewModel
@@ -63,7 +66,7 @@ val appModule = module {
     viewModel { CreateTeamViewModel(get(), get()) }
     viewModel { TeamsViewModel(get(), get()) }
     viewModel { TournamentsViewModel(get(), get(), get()) }
-    viewModel { ChallengesViewModel(get(), get())}
+    viewModel { ChallengesViewModel(get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get()) }
     viewModel { ProgressReportDataViewModel(get(), get()) }
     viewModel { InstructionsViewModel() }
@@ -74,5 +77,8 @@ val appModule = module {
     viewModel { TournamentLeaderBoardViewModel(get(), get()) }
     viewModel { TournamentEndedDialogViewModel() }
     viewModel { TransferCaptaincyViewModel(get(), get()) }
-    viewModel { TournamentLeaderBoard2ViewModel (get()) }
+    viewModel { TournamentLeaderBoard2ViewModel (get(), get()) }
+    viewModel { EditTournamentViewModel (get()) }
+    viewModel { EditTournamentAfterStartViewModel (get()) }
+    viewModel { TeamRankingViewModel (get(), get()) }
 }

@@ -8,8 +8,13 @@
     tools:context=".screens.leaderboard.LeaderboardActivity">
 
     <fragment
-        android:name="dal.mitacsgri.treecare.screens.leaderboard.LeaderboardFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:id="@+id/fragmentHolder"
+        app:navGraph="@navigation/nav_graph"
+        app:defaultNavHost="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--    android:name="dal.mitacsgri.treecare.screens.leaderboard.LeaderboardFragment"-->

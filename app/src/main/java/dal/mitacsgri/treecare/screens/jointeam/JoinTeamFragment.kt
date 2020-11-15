@@ -1,12 +1,14 @@
 package dal.mitacsgri.treecare.screens.jointeam
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -41,6 +43,11 @@ class JoinTeamFragment : Fragment() {
         val view= inflater.inflate(R.layout.fragment_join_team, container, false)
         view.apply {
             toolbar.setNavigationOnClickListener {
+
+                val imm =
+                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(windowToken, 0)
+
                 findNavController().navigateUp()
             }
 

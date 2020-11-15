@@ -103,32 +103,39 @@ class DailyNotificationWorker(appContext: Context, workerParams: WorkerParameter
     }
 
     private fun getNotificationTitle(): String {
-        Log.d(DailyGoalNotificationJob.TAG, "getNotificationTitle")
+        //Log.d(DailyGoalNotificationJob.TAG, "getNotificationTitle")
         val titlesArray = arrayListOf<String>()
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title1))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title2))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title3))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title4))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title5))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title6))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title7))
-        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title8))
 
-        return titlesArray[Random.nextInt(0, 8)]
+        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title1))
+        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title7))
+        titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title9))
+        //titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title2))
+        //titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title3))
+        //titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title4))
+        //titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title5))
+        //titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title6))
+        //titlesArray.add(applicationContext.getString(R.string.daily_goal_notification_title8))
+
+        return titlesArray[Random.nextInt(0, 3)]
     }
 
     private fun getNotificationBody(remainingSteps: Int): CharSequence {
-        Log.d(DailyGoalNotificationJob.TAG, "getNotificationBody")
+        //Log.d(DailyGoalNotificationJob.TAG, "getNotificationBody")
         return if (remainingSteps > 0)
             buildSpannedString {
                 append("You are ")
                 bold {
                     append("$remainingSteps steps ")
                 }
-                append("away from achieving your daily goal")
+                append("away from achieving today's goal. You will eventually meet your goal if you walk for about ")
+                bold{append("${minutesOfWalking(remainingSteps)} minutes")}
             }
         else
             applicationContext.getString(R.string.goal_completed_notification)
+    }
+    private fun minutesOfWalking(remainingSteps: Int): Int{
+        var minutesOfWalk =  remainingSteps / 100
+        return minutesOfWalk
     }
 
 }

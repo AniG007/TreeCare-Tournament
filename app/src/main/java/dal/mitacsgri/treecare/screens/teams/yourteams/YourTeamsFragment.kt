@@ -12,8 +12,14 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.teams.TeamsFragmentDirections
+import dal.mitacsgri.treecare.screens.tournaments.activetournaments.ActiveTournamentsRecyclerViewAdapter
+import dal.mitacsgri.treecare.screens.tournaments.mytournaments.MyTournamentsRecyclerViewAdapter
 import kotlinx.android.synthetic.*
+import kotlinx.android.synthetic.main.fragment_active_tournaments.view.*
+import kotlinx.android.synthetic.main.fragment_my_tournaments.*
 import kotlinx.android.synthetic.main.fragment_your_teams.view.*
+import kotlinx.android.synthetic.main.fragment_your_teams.view.empty_view
+import kotlinx.android.synthetic.main.fragment_your_teams.view.recyclerView
 import kotlinx.android.synthetic.main.item_your_captained_team.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.w3c.dom.Text
@@ -21,6 +27,8 @@ import org.w3c.dom.Text
 class YourTeamsFragment : Fragment() {
 
     private val mViewModel: YourTeamsViewModel by viewModel()
+
+    lateinit var adapter: YourTeamsRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,6 +39,15 @@ class YourTeamsFragment : Fragment() {
         view.apply {
             mViewModel.getAllMyTeams().observe(viewLifecycleOwner, Observer {
                 recyclerView.adapter = YourTeamsRecyclerViewAdapter(it,mViewModel)
+
+                adapter = recyclerView.adapter as YourTeamsRecyclerViewAdapter
+
+                if(adapter.itemCount == 0){
+                    empty_view.visibility = View.VISIBLE
+                }
+                else{
+                    empty_view.visibility = View.INVISIBLE
+                }
             })
             //mViewModel.delBtnVis()
 

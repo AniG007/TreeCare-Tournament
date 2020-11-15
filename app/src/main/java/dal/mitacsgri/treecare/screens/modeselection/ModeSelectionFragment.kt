@@ -15,6 +15,7 @@ import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.STARTER_MODE
 import dal.mitacsgri.treecare.consts.TOURNAMENT_MODE
+import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.extensions.startNextActivity
 import dal.mitacsgri.treecare.screens.MainActivity.Companion.playClickSound
 import dal.mitacsgri.treecare.screens.MainViewModel
@@ -38,6 +39,17 @@ class ModeSelectionFragment : Fragment() {
         view.apply {
             changeBackgroundSolidAndStrokeColor(tournamentModeButton, "FF9C27B0", "1A237E")
 
+            /*starterModeButton.visibility = View.INVISIBLE
+            starterModeButtonHolder.visibility = View.INVISIBLE
+
+            challengerModeButton.visibility = View.INVISIBLE
+            challengerModeButtonHolder.visibility = View.INVISIBLE
+
+            tournamentModeButton.visibility = View.INVISIBLE
+            tournamentModeButtonHolder.visibility = View.INVISIBLE
+
+            buttonProfile.visibility = View.INVISIBLE*/
+
             starterModeButtonHolder.setOnClickListener {
                 playClickSound()
                 starterModeButtonAction()
@@ -54,6 +66,11 @@ class ModeSelectionFragment : Fragment() {
             challengerModeButton.setOnClickListener {
                 playClickSound()
                 challengerModeButtonAction()
+            }
+
+            tournamentModeButtonHolder.setOnClickListener{
+                playClickSound()
+                tournamentModeButtonAction()
             }
 
             tournamentModeButton.setOnClickListener(){

@@ -1,6 +1,5 @@
 package dal.mitacsgri.treecare.screens.createtournament
 
-import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +8,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
-import dal.mitacsgri.treecare.extensions.notifyObserver
 import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
@@ -30,6 +28,7 @@ class CreateTournamentViewModel(
     var isStartDateValid = false
     var isEndDateValid = false
     var isTeamSizeValid = false
+    var isCaptain = false
 
     var messageDisplayed = false
 
@@ -81,11 +80,19 @@ class CreateTournamentViewModel(
 
     fun getRegexToMatchTeamSize() = Regex("[2-9]|10")
 
+    fun checkCaptaincy() { if(sharedPrefsRepository.user.uid == sharedPrefsRepository.team.captain) { isCaptain = true }}
+
+    fun checkDataFormat(dateLength: Int): Boolean {
+        return dateLength == 12 || dateLength == 13 || dateLength == 14
+
+    }
+
+
     //fun isTeamLimitValid(size: Int):Boolean{ return size<=10 }
 
     fun areAllInputFieldsValid(): Boolean {
         isFullDataValid.value =
-            isNameValid and isGoalValid and isEndDateValid and isStartDateValid and isTeamSizeValid
+            isNameValid and isGoalValid and isEndDateValid and isStartDateValid and isTeamSizeValid //and isCaptain //Use this if you want to allow only captains to create tournaments
         if (isFullDataValid.value == true) {
             buttonVis.value = true
             return true
@@ -106,9 +113,8 @@ class CreateTournamentViewModel(
     ) {
         //Log.d("FDin",isFullDataValid.value.toString())
         //Sorry about the mess in this function but it was inevitable during this time. Welcome to callback hell! A possible alternative is using coroutines.
-        Log.d("startDate", Timestamp(startDate.timeInMillis / 1000, 0).toString())
-        Log.d("currentDate", Timestamp.now().toString())
-
+//        Log.d("startDate", Timestamp(startDate.timeInMillis / 1000, 0).toString())
+//        Log.d("currentDate", Timestamp.now().toString())
 
         firestoreRepository.getTournament(name.toString())
             .addOnSuccessListener {
@@ -149,8 +155,14 @@ class CreateTournamentViewModel(
                         ) {
                             action(it)
                             if (it) {
-                                messageDisplayed = false
-                                messageLiveData.value = "Tournament created successfully"
+                                firestoreRepository.updateUserData(
+                                    sharedPrefsRepository.user.uid,
+                                    mapOf("tournamentsCreated" to FieldValue.arrayUnion(name.toString() ))
+                                )
+                                    .addOnSuccessListener {
+                                        messageDisplayed = false
+                                        messageLiveData.value = "Tournament created successfully"
+                                    }
                             } else {
                                 messageDisplayed = false
                                 messageLiveData.value = "Tournament creation failed"
@@ -452,7 +464,14 @@ class CreateTournamentViewModel(
                                                     }
                                             }
                                         } else {
-                                            messageLiveData.value = "Tournament has been created"
+                                            firestoreRepository.updateUserData(
+                                                sharedPrefsRepository.user.uid,
+                                                mapOf("tournamentsCreated" to FieldValue.arrayUnion(name.toString()))
+                                            )
+                                                .addOnSuccessListener {
+                                                    messageDisplayed = false
+                                                    messageLiveData.value = "Tournament created successfully"
+                                                }
                                         }
                                     }
                             }
@@ -527,6 +546,8 @@ class CreateTournamentViewModel(
             set(Calendar.SECOND, 0)
         }
     }
+
+
 
     private fun storeEndDate(dayOfMonth: Int, monthOfYear: Int, year: Int) {
         endDate = Calendar.getInstance()

@@ -2,6 +2,7 @@ package dal.mitacsgri.treecare.screens.challenges
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.fragment.app.FragmentStatePagerAdapter
 import dal.mitacsgri.treecare.screens.challenges.activechallenges.ActiveChallengesFragment
 import dal.mitacsgri.treecare.screens.challenges.challengesbyyou.ChallengesByYouFragment
 import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChallengesFragment
@@ -11,7 +12,7 @@ import dal.mitacsgri.treecare.screens.challenges.currentchallenges.CurrentChalle
  */
 
 class ChallengesPagerAdapter(fm: FragmentManager)
-    : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int) =
         when(position) {
@@ -25,9 +26,9 @@ class ChallengesPagerAdapter(fm: FragmentManager)
 
     override fun getPageTitle(position: Int) =
             when(position) {
-                0 -> "Current challenges"
-                1 -> "Active challenges"
-                2 -> "My Challenges"
+                0 -> "Current\nChallenges"
+                1 -> "Active\nChallenges"
+                2 -> "My\nChallenges"
                 else -> "Challenge"
             }
 }

@@ -12,7 +12,9 @@
     app:cardElevation="@dimen/_4sdp"
     app:cardCornerRadius="@dimen/_4sdp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cardView">
+    android:id="@+id/cardView"
+    android:clickable="true"
+    android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -92,7 +94,7 @@
                 android:layout_width="@dimen/_16sdp"
                 android:layout_height="@dimen/_16sdp"
                 android:layout_marginStart="@dimen/_20sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
                 android:src="@drawable/ic_leaf"
                 android:tint="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="@id/leafCount"
@@ -105,7 +107,6 @@
                 android:id="@+id/leafCount"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_6sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:gravity="center"
                 android:textColor="@color/black"

@@ -14,9 +14,9 @@ data class UserTournament(
         var leafCount: Int = 0,
         var fruitCount: Int = 0,
         var currentDayOfWeek: Int = 0,
-        val goal: Int = 0,
+        var goal: Int = 0,
         var isActive: Boolean = true,
-        val startDate:Timestamp = Timestamp.now(),
+        var startDate:Timestamp = Timestamp.now(),
         var endDate: Timestamp = Timestamp.now(),
         var lastUpdateTime: Timestamp = Timestamp.now()
     )

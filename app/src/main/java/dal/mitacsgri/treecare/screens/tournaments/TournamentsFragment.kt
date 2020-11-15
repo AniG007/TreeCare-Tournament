@@ -11,6 +11,7 @@ import androidx.viewpager.widget.ViewPager
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import kotlinx.android.synthetic.main.fragment_challenges.view.*
+import kotlinx.android.synthetic.main.fragment_my_tournaments.view.*
 import kotlinx.android.synthetic.main.fragment_tournaments.view.*
 import kotlinx.android.synthetic.main.fragment_tournaments.view.tabLayout
 import kotlinx.android.synthetic.main.fragment_tournaments.view.toolbar
@@ -52,17 +53,6 @@ class TournamentsFragment : Fragment() {
             fabCreateTournament.setOnClickListener{
                 findNavController().navigate(R.id.action_tournamentsFragment_to_createTournamentFragment)
             }
-//            tournament_search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//                override fun onQueryTextSubmit(query: String?): Boolean {
-//                    return false
-//                }
-//
-//                override fun onQueryTextChange(newText: String?): Boolean {
-//                    adapter.filter.filter(newText)
-//                    return false
-//                }
-//
-//            })
         }
         return view
     }

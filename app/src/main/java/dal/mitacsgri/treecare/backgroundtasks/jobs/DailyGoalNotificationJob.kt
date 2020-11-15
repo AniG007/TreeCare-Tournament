@@ -154,14 +154,14 @@ class DailyGoalNotificationJob : DailyJob(), KoinComponent {
         Log.d(TAG, "getNotificationTitle")
         val titlesArray = arrayListOf<String>()
         titlesArray.add(context.getString(R.string.daily_goal_notification_title1))
-        titlesArray.add(context.getString(R.string.daily_goal_notification_title2))
-        titlesArray.add(context.getString(R.string.daily_goal_notification_title3))
-        titlesArray.add(context.getString(R.string.daily_goal_notification_title4))
-        titlesArray.add(context.getString(R.string.daily_goal_notification_title5))
-        titlesArray.add(context.getString(R.string.daily_goal_notification_title6))
+//        titlesArray.add(context.getString(R.string.daily_goal_notification_title2))
+//        titlesArray.add(context.getString(R.string.daily_goal_notification_title3))
+//        titlesArray.add(context.getString(R.string.daily_goal_notification_title4))
+//        titlesArray.add(context.getString(R.string.daily_goal_notification_title5))
+//        titlesArray.add(context.getString(R.string.daily_goal_notification_title6))
         titlesArray.add(context.getString(R.string.daily_goal_notification_title7))
-        titlesArray.add(context.getString(R.string.daily_goal_notification_title8))
+        titlesArray.add(context.getString(R.string.daily_goal_notification_title9))
 
-        return titlesArray[Random.nextInt(0, 8)]
+        return titlesArray[Random.nextInt(0, 3)]
     }
 }

@@ -7,15 +7,12 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
-import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import java.util.*
-import kotlinx.android.synthetic.main.item_active_tournament.view.*
 import kotlin.collections.ArrayList
 
 class ActiveTournamentsRecyclerViewAdapter(
-//    private val tournaments: List<Tournament>,
     private val tournamentsList : ArrayList<Tournament>,
     private val viewModel: TournamentsViewModel
 ): RecyclerView.Adapter<ActiveTournamentsViewHolder>(), Filterable {

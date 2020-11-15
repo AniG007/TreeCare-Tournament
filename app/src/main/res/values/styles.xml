@@ -20,6 +20,10 @@
         <item name="colorPrimaryDark">@color/tournament_mode_accent_color</item>
     </style>
 
+    <style name="bg_leaf">
+        <item name="android:previewImage">@layout/layout_leaf_background</item>
+    </style>
+
     <style name="login_screen_text">
         <item name="android:textSize">@dimen/_20sdp</item>
         <item name="android:textStyle">bold</item>
@@ -68,6 +72,11 @@
     <style name="ProfileScreenElementsStyle">
         <item name="android:paddingStart">@dimen/_16sdp</item>
         <item name="android:paddingEnd">@dimen/_16sdp</item>
+    </style>
+
+    <style name= "SearchBarStyle">
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:editTextColor">@color/white</item>
     </style>
 
 </resources>

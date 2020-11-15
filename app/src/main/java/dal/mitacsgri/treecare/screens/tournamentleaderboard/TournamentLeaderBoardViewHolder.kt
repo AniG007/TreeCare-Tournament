@@ -1,7 +1,9 @@
 package dal.mitacsgri.treecare.screens.tournamentleaderboard
 
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.TeamTournament
 import dal.mitacsgri.treecare.screens.BaseViewHolder
@@ -24,6 +26,11 @@ class TournamentLeaderBoardViewHolder(
             if (viewModel.isCurrentTeam(item)) {
                 cardView.setCardBackgroundColor(
                     ContextCompat.getColor(context, R.color.colorPrimaryLight))
+            }
+
+            cardView.setOnClickListener {
+                val action = TournamentLeaderBoardFragmentDirections.actionTournamentLeaderBoardFragmentToTeamRankingFragment(item.teamName, item.name)
+                findNavController().navigate(action)
             }
         }
     }

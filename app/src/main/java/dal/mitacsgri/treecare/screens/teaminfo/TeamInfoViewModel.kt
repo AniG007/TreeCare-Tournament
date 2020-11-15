@@ -29,6 +29,7 @@ class TeamInfoViewModel(
             .addOnSuccessListener {
                 val team = it.toObject<Team>()
                 Log.d("Test", "members" + team?.members)
+                val teamCount = team?.members?.size
                 for (m in team?.members!!) {
                     Log.d("Test", "m " + m)
                     firestoreRepository.getUserData(m.toString())
@@ -46,6 +47,22 @@ class TeamInfoViewModel(
                                     user.dailySteps / 3000
                                 )
                             )
+//
+//                            membersList.value?.sortList(
+//                                TeamInfo(
+//                                    user?.uid.toString(),
+//                                    teamName,
+//                                    team.captain,
+//                                    user?.name.toString(),
+////                                getDailyStepCount(),
+//                                    user?.dailySteps!!,
+//                                    user.photoUrl.toString(),
+//                                    user.dailySteps / 3000
+//                                )
+//                            )
+                            /*if (membersList.value?.size == teamCount) {
+                                sortTeamBasedOnStepCount(membersList.value!!)
+                            }*/
                             Log.d("Test", "memsInTeam " + membersList.value.toString())
                             membersList.notifyObserver()
                         }
@@ -95,21 +112,28 @@ class TeamInfoViewModel(
 //        }
 //    }
 
-    fun removePlayer(team: TeamInfo) {
-        firestoreRepository.updateTeamData(
-            team.teamName,
-            mapOf("members" to FieldValue.arrayRemove(team.uId))
+    fun removePlayer(teamInfo: TeamInfo) {
+        firestoreRepository.updateUserData(
+            teamInfo.uId,
+            mapOf("currentTeams" to FieldValue.arrayRemove(teamInfo.teamName))
         )
             .addOnSuccessListener {
-                firestoreRepository.updateUserData(
-                    team.uId,
-                    mapOf("currentTeams" to FieldValue.arrayRemove(team.teamName))
+                firestoreRepository.updateTeamData(
+                    teamInfo.teamName,
+                    mapOf("members" to FieldValue.arrayRemove(teamInfo.uId))
                 )
                     .addOnSuccessListener {
-                        membersList.value?.remove(team)
+                        firestoreRepository.getTeam(teamInfo.teamName).addOnSuccessListener {
+                            val teamData = it.toObject<Team>()
+                            val teamTourneys = teamData?.currentTournaments?.keys
+                            for(tourney in teamTourneys!!) {
+                                removeUserStepsFromTeam(teamInfo.teamName, tourney, teamInfo.uId)  //Removing user's steps from team's step map
+                            }
+                        }
+                        membersList.value?.remove(teamInfo)
                         membersList.notifyObserver()
-                    }
             }
+    }
     }
 
     private fun ArrayList<TeamInfo>.sortAndAddToList(teamInfo: TeamInfo) {
@@ -123,9 +147,9 @@ class TeamInfoViewModel(
         }
     }
 
-    fun display() {
-        Log.d("Test", "team printing " + sharedPrefsRepository.team.captainName)
-    }
+//    fun display() {
+//        Log.d("Test", "team printing " + sharedPrefsRepository.team.captainName)
+//    }
 
     fun isCaptain(teamName: String): MutableLiveData<Boolean> {
 
@@ -141,4 +165,95 @@ class TeamInfoViewModel(
     fun getCaptainId(): String{
         return membersList.value?.get(0)?.captainId!!
     }
+
+    fun removeUserStepsFromTeam(teamName: String, tournament: String, userId: String) {
+        Log.d("Test", "Inside removeUserStepsFromTeam")
+        //Receive, subtract and upload back again// or modify prefs, upload and remove
+        firestoreRepository.getUserData(userId)
+            .addOnSuccessListener {
+                val user = it.toObject<User>()
+                val userTournaments = user?.currentTournaments
+                Log.d("Test", "userTournament " + userTournaments.toString())
+                if (userTournaments?.keys?.contains(tournament)!!) {
+                    val userTournament = userTournaments[tournament]
+                    val map = userTournament?.dailyStepsMap
+                    firestoreRepository.getTeam(teamName)
+                        .addOnSuccessListener {
+                            val team = it.toObject<Team>()
+                            val currentTournament = team?.currentTournaments!![tournament]
+                            //take each and every date for tournament and subtract the steps from team tournament
+                            Log.d("Test", "outside Loop " + userTournament.toString())
+                            if (userTournament?.isActive!!) {
+                                for (steps in map!!) {
+                                    Log.d("Test", "Steps " + steps.toString())
+                                    val teamStepForAParticularDay =
+                                        currentTournament?.dailyStepsMap!![steps.key]
+                                    Log.d("Test", "teamStepForAParticularDay " + teamStepForAParticularDay)
+                                    val stepsAfterDeductingUsersSteps =
+                                        teamStepForAParticularDay!! - steps.value
+                                    Log.d(
+                                        "Test",
+                                        "stepsAfterDeductingUsersSteps " + stepsAfterDeductingUsersSteps
+                                    )
+                                    currentTournament.dailyStepsMap[steps.key] =
+                                        stepsAfterDeductingUsersSteps
+                                    Log.d("Test", "currentTournament.dailyStepsMap[steps.key] " + currentTournament.dailyStepsMap)
+                                }
+                                Log.d("Test", "TeamName " + teamName)
+                                firestoreRepository.updateTeamTournamentData(
+                                    teamName,
+                                    mapOf(tournament to currentTournament)
+                                )
+                                    .addOnSuccessListener {
+                                        deleteTournamentFromUserDB(tournament,team, userId)
+                                        Log.d("Test", "Update to team successful")
+                                    }
+                                    .addOnFailureListener {
+                                        Log.d("Test", "Failed to update Team" + it.toString())
+                                    }
+                            }
+                        }
+                }
+            }
+    }
+
+    fun deleteTournamentFromUserDB(tourney: String, team:Team, userId: String) {
+        firestoreRepository.deleteTournamentFromUserDB(userId, tourney)
+            .addOnSuccessListener {
+                //removing the prefs for a user after quitting a team
+                firestoreRepository.getTeam(team.name)
+                    .addOnSuccessListener {
+                        val teamData = it.toObject<Team>()
+
+                        var prefs = sharedPrefsRepository.team
+                        prefs = teamData!!
+                        sharedPrefsRepository.team = prefs
+                    }
+            }
+            .addOnFailureListener {
+                Log.d("Exception", it.toString())
+            }
+    }
+
+    fun sortUsersAccordingToStepCount(): MutableLiveData<ArrayList<TeamInfo>>{
+
+        return membersList
+    }
+
+    private fun ArrayList<TeamInfo>.sortList(teamInfo: TeamInfo) {
+
+        sortByDescending {
+            it.stepsCount
+        }
+    }
+
+//    fun getPlayerPosition(): Int{
+//
+//        val players = membersList.value?: arrayListOf()
+//        for(i in 0 until players.size){
+//            if(players[i].uId == sharedPrefsRepository.user.uid)
+//                return i+1
+//        }
+//        return 0
+//    }
 }

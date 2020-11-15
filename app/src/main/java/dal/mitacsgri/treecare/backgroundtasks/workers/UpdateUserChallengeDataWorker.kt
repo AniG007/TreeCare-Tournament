@@ -100,7 +100,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
 //            //updateUserTeamDataInFirestore(future)
 //        }
         else{
-            Log.d("Worker","CurrentTournament is empty")
+            Log.d("Worker","Current Challenges is empty")
         }
 
         val updateUserChallengeDataRequest: WorkRequest =
@@ -126,9 +126,9 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         challenge.totalSteps = totalSteps
 
         synchronized(sharedPrefsRepository.user) {
-            val user = sharedPrefsRepository.user
-            user.currentChallenges[challenge.name] = challenge
-            sharedPrefsRepository.user = user
+                val user = sharedPrefsRepository.user
+                user.currentChallenges[challenge.name] = challenge
+                sharedPrefsRepository.user = user
         }
         updateUserChallengeDataInFirestore(cr, county, future)
     }
@@ -187,6 +187,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
         val days = Days.daysBetween(joinDate, currentDate).days
         val weeks = Math.ceil(days/7.0).toInt()
 
+        //Log.d("Worker", "weeks "+ weeks)
         var fruitCount = 0
 
         var weekStartDate = joinDate
@@ -202,6 +203,7 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
             newWeekDate = weekStartDate.plusWeeks(1)
         }
 
+        Log.d("fruits", fruitCount.toString())
         return fruitCount
     }
 

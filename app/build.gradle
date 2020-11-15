@@ -3,7 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'      // Google Play services Gradle plugin
 apply plugin: "androidx.navigation.safeargs.kotlin" //SafeArgs
-apply plugin: 'io.fabric'                           //Crashlytics
+apply plugin: 'com.google.firebase.crashlytics'        //Crashlytics
+//apply plugin: 'io.fabric'                           //Crashlytics
 
 android {
     signingConfigs {
@@ -21,7 +22,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false //changed
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             debuggable = true
         }
@@ -75,10 +76,15 @@ dependencies {
     //Google Fitness API
 //    implementation 'com.google.android.gms:play-services-fitness:17.0.0'
 //    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation 'com.google.android.gms:play-services-fitness:18.0.0'
-    implementation 'com.google.android.gms:play-services-auth:18.0.0'
+
+    /*implementation 'com.google.android.gms:play-services-fitness:18.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'*/
+
+    implementation 'com.google.android.gms:play-services-fitness:20.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+
     //For Activity Recognition
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
     //Intuit
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
 
@@ -107,19 +113,19 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
     //Firebase core, keep the version at 16.0.9 otherwise app crashes at runtime
-    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-core:18.0.0' //17.0.1
 
     //Firebase UI Auth
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
 
     //Firebase Auth
-    implementation 'com.google.firebase:firebase-auth:18.1.0'
+    implementation 'com.google.firebase:firebase-auth:20.0.0' //18.1.0
 
     //JodaTime
     implementation 'joda-time:joda-time:2.9.4'
 
     //Firebase Firestore (with Kotlin extensions)
-    implementation 'com.google.firebase:firebase-firestore-ktx:20.2.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:22.0.0'//20.2.0
     //implementation 'com.google.firebase:firebase-firestore-ktx:$VERSION'
     //Gson
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -128,7 +134,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.0.1'
 
     //Material components
-    implementation 'com.google.android.material:material:1.1.0-alpha09'
+    implementation 'com.google.android.material:material:1.2.0-alpha04' //1.1.0-alpha09 //1.2.0-alpha03
 
     //WorkManager Kotlin + Coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
@@ -137,7 +143,8 @@ dependencies {
     androidTestImplementation "androidx.work:work-testing:$work_version"
 
     //Futures concurrent-future dependency for ListenableWorker
-    implementation "androidx.concurrent:concurrent-futures:1.0.0-rc01"
+    //implementation "androidx.concurrent:concurrent-futures:1.0.0-rc01"
+    implementation "androidx.concurrent:concurrent-futures:1.1.0"
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
@@ -162,13 +169,15 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
 
     //Firebase Analytics
-    implementation 'com.google.firebase:firebase-analytics:17.4.4'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0' //Google Analytics SDK //17.6.0
 
     //Crashlytics
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    //implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    //implementation 'com.crashlytics.sdk.android:crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2' //FireBase Crashlytics SDK
 
     //FCM
-    implementation 'com.google.firebase:firebase-messaging:20.2.1'
+    implementation 'com.google.firebase:firebase-messaging:21.0.0' //2o.2.1
 
     //AppIntro
     implementation 'com.github.AppIntro:AppIntro:5.1.0'

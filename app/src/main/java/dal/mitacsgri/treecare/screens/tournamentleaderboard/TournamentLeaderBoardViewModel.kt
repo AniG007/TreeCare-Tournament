@@ -11,10 +11,7 @@ import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.notifyObserver
 import dal.mitacsgri.treecare.extensions.xnor
-import dal.mitacsgri.treecare.model.Team
-import dal.mitacsgri.treecare.model.TeamTournament
-import dal.mitacsgri.treecare.model.Tournament
-import dal.mitacsgri.treecare.model.UserTournament
+import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import java.util.*
@@ -53,7 +50,8 @@ class TournamentLeaderBoardViewModel(
      }
     }
 
-    fun isCurrentTeam(teamTournament: TeamTournament) = teamTournament.name == sharedPrefsRepository.team.name
+    fun isCurrentTeam(teamTournament: TeamTournament) = teamTournament.teamName == sharedPrefsRepository.team.name
+
 
     fun getTeamList(tournamentName: String): LiveData<ArrayList<TeamTournament>> {
 
@@ -74,7 +72,7 @@ class TournamentLeaderBoardViewModel(
                     firestoreRepository.getTeam(teams[i])
                         .addOnSuccessListener {
                             val teamFromDB = it.toObject<Team>()
-                            val teamTourney = teamFromDB?.currentTournaments!![tournamentName]!!
+                                val teamTourney = teamFromDB?.currentTournaments!![tournamentName]!!
                             teamList.value?.add(teamTourney)
 
                             if (teamList.value?.size == limit) {
@@ -83,7 +81,7 @@ class TournamentLeaderBoardViewModel(
 //                                    it.dailyGoalsAchieved
 //                                }
                                 //Sorting according to daily goals first, then if any of the goals are equal, then the team's totalSteps are taken into account
-                                teamList.value!!.sortWith(compareBy({it.dailyGoalsAchieved}, {it.totalSteps}))
+                                teamList.value!!.sortWith(compareBy({it.leafCount}, {it.totalSteps}))
                                 teamList.value!!.reverse()
 
                                 sortTeamForTournament(tournamentName, teamList.value!!)
@@ -96,6 +94,15 @@ class TournamentLeaderBoardViewModel(
         mTeamList.value = teamList.value
         return teamList
     }
+
+    fun isCurrentUser(challenger: Challenger) = challenger.uid == sharedPrefsRepository.user.uid
+
+    fun getTournamentNameForLeaderBoard(tournamentName: String) = buildSpannedString {
+        run {
+        append(tournamentName)
+    }
+    append("\nLeaderboard")
+}
 
     fun getTournamentName(): String = sharedPrefsRepository.tournamentName!!
 

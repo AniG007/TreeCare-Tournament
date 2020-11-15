@@ -186,9 +186,13 @@ class StepDetectorService : Service(), KoinComponent {
                         Log.d(TAG, "Challenge sensor")
                         dataPoint.dataType.fields.forEach {
                             val currentStepCount = dataPoint.getValue(it).asInt()
-                            sharedPrefsRepository.storeChallengeStepCount(
-                                //  sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
-                                sharedPrefsRepository.getChallengeStepCount() + currentStepCount - lastStepCount
+//                            sharedPrefsRepository.storeChallengeStepCount(
+//                                //  sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
+//                                sharedPrefsRepository.getChallengeStepCount() + currentStepCount - lastStepCount
+//                            )
+
+                            sharedPrefsRepository.storeDailyStepCount(
+                                sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
                             )
 
                             lastStepCount = currentStepCount
@@ -201,6 +205,9 @@ class StepDetectorService : Service(), KoinComponent {
                             //  sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
                             sharedPrefsRepository.storeTournamentStepCount(
                                 sharedPrefsRepository.getTournamentStepCount() + currentStepCount - lastStepCount
+                            )
+                            sharedPrefsRepository.storeDailyStepCount(
+                                sharedPrefsRepository.getDailyStepCount() + currentStepCount - lastStepCount
                             )
                             lastStepCount = currentStepCount
                             Log.d(TAG, "LastStepCount " + lastStepCount)

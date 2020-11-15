@@ -11,12 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
+import dal.mitacsgri.treecare.screens.tournaments.mytournaments.MyTournamentsRecyclerViewAdapter
+import kotlinx.android.synthetic.main.fragment_current_challenges.*
 import kotlinx.android.synthetic.main.fragment_current_challenges.view.*
+import kotlinx.android.synthetic.main.fragment_my_tournaments.*
+import kotlinx.android.synthetic.main.fragment_my_tournaments.empty_view
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class CurrentChallengesFragment : Fragment() {
 
     private val mViewModel: ChallengesViewModel by sharedViewModel()
+
+    lateinit var adapter: CurrentChallengesRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,17 +38,25 @@ class CurrentChallengesFragment : Fragment() {
         //the elements are duplicated
         mViewModel.currentChallengesList.value?.clear()
 
-        view.recyclerView.apply {
-            setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            adapter = CurrentChallengesRecyclerViewAdapter(mViewModel.currentChallengesList.value!!, mViewModel)
-        }
 
-        mViewModel.currentChallengesList.observe(viewLifecycleOwner, Observer {
-            view.recyclerView.adapter?.notifyDataSetChanged()
+        mViewModel.getCurrentChallengesForUser().observe(viewLifecycleOwner, {
+            //view.recyclerView.adapter?.notifyDataSetChanged()
+            view.recyclerView.apply {
+                setHasFixedSize(true)
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+                adapter = CurrentChallengesRecyclerViewAdapter(mViewModel.currentChallengesList.value!!, mViewModel)
+            }
+            adapter = recyclerView.adapter as CurrentChallengesRecyclerViewAdapter
+
+            if(adapter.itemCount == 0){
+                empty_view.visibility = View.VISIBLE
+            }
+            else{
+                empty_view.visibility = View.INVISIBLE
+            }
         })
 
-        mViewModel.getCurrentChallengesForUser()
+        //mViewModel.getCurrentChallengesForUser()
         return view
     }
 

@@ -1,18 +1,14 @@
 package dal.mitacsgri.treecare.backgroundtasks.workers
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.work.*
 import calculateLeafCountFromStepCountForTeam
 import calculateDailyGoalsAchievedFromStepCountForTeam
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dal.mitacsgri.treecare.extensions.toDateTime
 import dal.mitacsgri.treecare.model.Team
 import dal.mitacsgri.treecare.model.TeamTournament
@@ -21,12 +17,15 @@ import dal.mitacsgri.treecare.model.UserTournament
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
-import dal.mitacsgri.treecare.services.ForegroundService
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.Days
-import org.joda.time.Minutes
+import org.joda.time.format.DateTimeFormat
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
@@ -35,13 +34,23 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
     private val stepCountRepository: StepCountRepository by inject()
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
     private val firestoreRepository: FirestoreRepository by inject()
-    private val today = DateTime().withTimeAtStartOfDay().millis.toString()
-    private val mConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+    //private val today = DateTime().withTimeAtStartOfDay()
+    private val today = DateTime()
+    private val halifaxTimeZone = DateTimeZone.forID("America/Halifax")
+    //private val dateOutputFormat = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm:ss").withZone(halifaxTimeZone)
+
     var cr = 0 //for counting number of calc call for the active tourneys
 
     override fun startWork(): ListenableFuture<Result> {
+
         Log.d("WorkerT", "Starting Team Worker")
         val future = SettableFuture.create<Result>()
+        Log.d("Datey", "Today: "+ today.toString())
+        //dateOutputFormat.setTimeZone(TimeZone.getTimeZone("America/Halifax"))  //https://stackoverflow.com/questions/37390080/convert-local-time-to-utc-and-vice-versa
+        //val mNight = Date(dateOutputFormat.format(today)).time   //Converting time to Halifax time so that all phones update according to halifax midnight time.
+        val mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+        Log.d("Datey", "After conv"+ mNight.toString())
+
 //        if(sharedPrefsRepository.getLastDayStepCount() == 0){
 //            firestoreRepository.getUserData(sharedPrefsRepository.user.uid)
 //                .addOnSuccessListener {
@@ -49,6 +58,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 //                    sharedPrefsRepository.storeLastDayStepCount(user?.dailySteps!!)
 //                }
 //        }
+
 
         val team = sharedPrefsRepository.team
         var county = 0
@@ -65,7 +75,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                 if (tourney.isActive && endTimeMillis > DateTime().millis && startTimeMillis <= DateTime().millis) {
                     stepCountRepository.getTodayStepCountData {
                         Log.d("WorkerT", "TourneyName: " + tourney.name)
-                        calc(team, it, future, county, tourney)
+                        calc(team, it, future, county, tourney, mNight)
                     }
                 }
             }
@@ -85,13 +95,6 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 //            val serviceIntent = Intent(applicationContext, ForegroundService::class.java)
 //            serviceIntent.putExtra("inputExtra", "input")
 //            ContextCompat.startForegroundService(applicationContext, serviceIntent)
-
-
-        val updateTeamDataRequest: WorkRequest =
-            OneTimeWorkRequestBuilder<UpdateTeamDataWorker>()
-                .setConstraints(mConstraints)
-                .setInitialDelay(5, TimeUnit.MINUTES)
-                .build()
 
        // WorkManager.getInstance(applicationContext).enqueue(updateTeamDataRequest)
         return future
@@ -251,7 +254,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 //        }
 //    }
 
-    private fun calc(team: Team, currentStepCount: Int, future:SettableFuture<Result>,county: Int, tourney: TeamTournament) {
+    private fun calc(team: Team, currentStepCount: Int, future:SettableFuture<Result>,county: Int, tourney: TeamTournament, midNight: Long) {
         cr++
         Log.d("WorkerT", "cr: " + cr)
         val userTourneys = sharedPrefsRepository.user
@@ -273,12 +276,13 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                 val userTournaments = user?.currentTournaments
 
                 // userTournaments?.forEach { (_, userTourney) ->
-                //TODO: End date check is also needed to avoid updating expired tournaments
-                Log.d("WorkerT", "Crash for tournament "+ tourney.name)
                 if (userTournaments!![tourney.name]?.dailyStepsMap?.isEmpty()!! && userTournaments[tourney.name]?.isActive!!) {
                     Log.d("WorkerT", "Stepmap is empty for ${tourney.name}")
 
-                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+//                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+//                        currentStepCount
+
+                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                         currentStepCount
                     userTourneys.currentTournaments[tourney.name]?.lastUpdateTime =
                         Timestamp.now()
@@ -313,7 +317,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                             "WorkerT",
                                             "Team tourney:${tourney.name} Daily Step Map is empty"
                                         )
-                                        team.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                        team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                             currentStepCount
 
                                         updateAndStoreTeamDataInSharedPrefs(
@@ -330,13 +334,13 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                     } else {
                                         Log.d("WorkerT", "Daily Step Map is not empty")
                                         if (teamTourney[tourney.name]?.dailyStepsMap?.keys?.sorted()?.last()
-                                                .toString() != DateTime().withTimeAtStartOfDay().millis.toString()
+                                                .toString() != midNight.toString()
                                         ) {
                                             Log.d(
                                                 "WorkerT",
                                                 "Team tourney: ${tourney.name} is not up to date"
                                             )
-                                            team.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                            team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                 currentStepCount
 
                                             updateAndStoreTeamDataInSharedPrefs(
@@ -358,10 +362,10 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                             val oldStep =
                                                 teamTourney[tourney.name]?.dailyStepsMap?.values?.last()
                                             val updatedSteps = oldStep!! + currentStepCount
-                                            team.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] = updatedSteps
+                                            team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = updatedSteps
 
 
-                                            team.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                            team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                 updatedSteps
                                             updateAndStoreTeamDataInSharedPrefs(
                                                 team.currentTournaments[tourney.name]!!,
@@ -392,14 +396,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                             if (tourney.isActive) {
                                 Log.d("WorkerT", "userStepMap for Tourney ${tourney.name}"+ userTournaments[tourney.name]?.dailyStepsMap?.keys+ "Last "+ userTournaments[tourney.name]?.dailyStepsMap?.keys?.last())
                                 if (userTournaments[tourney.name]?.dailyStepsMap?.keys?.sorted()?.last()
-                                        .toString() == DateTime().withTimeAtStartOfDay().millis.toString()
+                                        .toString() == midNight.toString()
                                 ) {
 
                                    // Log.d("WorkerT", "userStepMap for Tourney ${tourney.name}"+ tournaments!![tourney.name]?.dailyStepsMap?.keys+ "Last "+ tournaments[tourney.name]?.dailyStepsMap?.keys?.last())
                                     //TODO:replace users daily steps
                                     Log.d("WorkerT", "UserTourney is up to date")
 
-                                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                         currentStepCount
 
                                     userTourneys.currentTournaments[tourney.name]?.lastUpdateTime =
@@ -431,7 +435,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     "WorkerT",
                                                     "Team tourney step map is empty"
                                                 )
-                                                tournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                                tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                     currentStepCount
 
                                                 updateAndStoreTeamDataInSharedPrefs(
@@ -451,7 +455,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     "Team tourney step map is not empty"
                                                 )
                                                 if (tournaments[tourney.name]?.dailyStepsMap?.keys?.sorted()?.last()
-                                                        .toString() != DateTime().withTimeAtStartOfDay().millis.toString()
+                                                        .toString() != midNight.toString()
                                                 ) {
                                                     Log.d(
                                                         "WorkerT",
@@ -459,7 +463,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     )
                                                     tourney.dailyStepsMap =
                                                         teamDB.currentTournaments[tourney.name]?.dailyStepsMap!!
-                                                    tourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                                    tourney.dailyStepsMap[midNight.toString()] =
                                                         currentStepCount
 
                                                     updateAndStoreTeamDataInSharedPrefs(
@@ -479,7 +483,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                         "Team tourney is up to date"
                                                     )
                                                     val oldStep =
-                                                        tournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()]
+                                                        tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()]
 
                                                     Log.d("WorkerT", "OldStep for tourney: ${tourney.name} " + oldStep)
                                                     Log.d("WorkerT", "Last Day step count "+ sharedPrefsRepository.getLastDayStepCount())
@@ -489,7 +493,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     val updatedSteps = oldStep!! + diff
 
                                                     if (diff > 0) {
-                                                        tourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                                        tourney.dailyStepsMap[midNight.toString()] =
                                                             updatedSteps
                                                         updateAndStoreTeamDataInSharedPrefs(
                                                             tourney,
@@ -514,7 +518,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 
 //                                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap =
 //                                        userTourney.dailyStepsMap
-                                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                         currentStepCount
 
                                     userTourneys.currentTournaments[tourney.name]?.lastUpdateTime =
@@ -551,7 +555,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     "WorkerT",
                                                     "Team tourney step map is empty"
                                                 )
-                                                tournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                                tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                     currentStepCount
 
                                                 updateAndStoreTeamDataInSharedPrefs(
@@ -571,7 +575,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     "Team tourney step map is not empty"
                                                 )
                                                 if (tournaments[tourney.name]?.dailyStepsMap?.keys?.sorted()?.last()
-                                                        .toString() != DateTime().withTimeAtStartOfDay().millis.toString()
+                                                        .toString() != midNight.toString()
                                                 ) {
                                                     //Data is present in team tourney
                                                     Log.d(
@@ -581,7 +585,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 
                                                     tourney.dailyStepsMap =
                                                         teamDB.currentTournaments[tourney.name]?.dailyStepsMap!!
-                                                    tourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
+                                                    tourney.dailyStepsMap[midNight.toString()] =
                                                         currentStepCount
 
                                                     updateAndStoreTeamDataInSharedPrefs(
@@ -603,9 +607,9 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                         "Team tourney is up to date"
                                                     )
                                                     val oldStep =
-                                                        tournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()]
+                                                        tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()]
                                                     val updatedSteps = oldStep!! + currentStepCount
-                                                    team.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] = updatedSteps
+                                                    team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = updatedSteps
 
                                                     updateAndStoreTeamDataInSharedPrefs(
                                                         team.currentTournaments[tourney.name]!!,
@@ -742,6 +746,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
         if (stepCountMap.size < 7) return 0
 
         stepCountMap.forEach { (_, stepCount) ->
+            Log.d("WorkerT", "currentDay "+ currentDay)
             goalAchievedStreak[currentDay] =
                 stepCount >= tournament.goal
             currentDay++

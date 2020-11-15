@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dal.mitacsgri.treecare.R
+import kotlinx.android.synthetic.main.fragment_invites_request.view.*
 import kotlinx.android.synthetic.main.fragment_leaderboard.view.*
+import kotlinx.android.synthetic.main.fragment_leaderboard.view.toolbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LeaderboardFragment : Fragment() {
@@ -31,7 +34,8 @@ class LeaderboardFragment : Fragment() {
         )
 
         view.apply {
-            headingTV.text = args.challengeName
+            //headingTV.text = args.challengeName + " LeaderBoard"
+            headingTV.text = mViewModel.getChallengeNameForLeaderBoard(args.challengeName)
 
             backButton.setOnClickListener {
                 try {
@@ -40,6 +44,10 @@ class LeaderboardFragment : Fragment() {
                     activity?.onBackPressed()
                 }
             }
+
+//            toolbar.setNavigationOnClickListener {
+//                findNavController().navigateUp()
+//            }
 
             mViewModel.getChallengersList(args.challengeName).observe(viewLifecycleOwner, Observer {
                 recyclerView.apply {

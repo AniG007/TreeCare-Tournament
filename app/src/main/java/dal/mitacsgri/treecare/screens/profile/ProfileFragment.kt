@@ -90,9 +90,14 @@ class ProfileFragment : Fragment() {
                 silverAwardCountTV.text = it.second.toString()
                 bronzeAwardCount.text = it.third.toString()
             })
-//            challengerModeButtonHolder.setOnClickListener {
-//                findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
-//            }
+
+            challengerModeButtonHolder.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_challengesFragment)
+            }
+
+            tournamentModeButtonHolder.setOnClickListener {
+                findNavController().navigate(R.id.action_profileFragment_to_tournamentModeFragment)
+            }
 
             mViewModel.teamTrophiesCountData.observe(viewLifecycleOwner, Observer {
                 goldTeamAwardCountTV.text = it.first.toString()

@@ -6,7 +6,8 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.crashlytics.android.Crashlytics
+//import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.firebase.firestore.ktx.toObject
@@ -135,9 +136,11 @@ class ProfileViewModel(
     fun logout(context: Context) {
         sharedPrefsRepository.clearSharedPrefs()
         Fitness.getConfigClient(context, GoogleSignIn.getLastSignedInAccount(context)!!).disableFit()
-        Crashlytics.setUserIdentifier("")
-        Crashlytics.setUserName("")
-        Crashlytics.setUserEmail("")
+        val crashlytics = FirebaseCrashlytics.getInstance()
+//        Crashlytics.setUserIdentifier("")
+//        Crashlytics.setUserName("")
+//        Crashlytics.setUserEmail("")
+        crashlytics.setUserId("")
         //TODO: Maybe cancellation of jobs is needed
     }
 

@@ -6,9 +6,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -20,30 +22,34 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.location.DetectedActivity
-import com.judemanutd.autostarter.AutoStartPermissionHelper
 import dal.mitacsgri.treecare.R
 import dal.mitacsgri.treecare.backgroundtasks.jobs.DailyGoalNotificationJob
 import dal.mitacsgri.treecare.consts.ACTIVITY_RECOGNITION_CHANNEL_ID
+import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.services.BackgroundDetectedActivitiesService
 import dal.mitacsgri.treecare.services.ForegroundService
 import dal.mitacsgri.treecare.services.ForegroundServiceRestarter
+import org.joda.time.DateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModel()
 
     private val TAG = MainActivity::class.java.simpleName
-    internal lateinit var broadcastReceiver: BroadcastReceiver
-    val REQUEST_CODE = 1
+    private lateinit var broadcastReceiver: BroadcastReceiver
+    private val REQUEST_CODE = 1
+    private val REQUEST_CODE2 = 2
+    private val firestoreRepository: FirestoreRepository = FirestoreRepository()
 
     private var activityTimer: Timer? = null
     private var activityTimerTask: TimerTask? = null
@@ -51,8 +57,9 @@ class MainActivity : AppCompatActivity() {
     var count = 0
 
     var currentTime = 0
-    var lastTime = (System.currentTimeMillis()/1000).toInt()
+    var lastTime = (System.currentTimeMillis() / 1000).toInt()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -60,36 +67,40 @@ class MainActivity : AppCompatActivity() {
         startServices() //for foreground service testing
 
         getIgnoreBatteryOptimizationsPermission()
+        Log.d("DateyBoye", System.currentTimeMillis().toString())
+        Log.d("DateyBoye", (DateTime().withTimeAtStartOfDay().millis + 28800000).toString())
 
         //This try catch is to ask the user to allow the app to auto start to run the BG service.
         //This is only for the Chinese manufacturers
-        try {
-            val intent = Intent()
-            val manufacturer = Build.MANUFACTURER
-            if ("xiaomi".equals(manufacturer, ignoreCase = true)) {
-                intent.component = ComponentName(
-                    "com.miui.securitycenter",
-                    "com.miui.permcenter.autostart.AutoStartManagementActivity"
-                )
-            } else if ("oppo".equals(manufacturer, ignoreCase = true)) {
-                intent.component = ComponentName(
-                    "com.coloros.safecenter",
-                    "com.coloros.safecenter.permission.startup.StartupAppListActivity"
-                )
-            } else if ("vivo".equals(manufacturer, ignoreCase = true)) {
-                intent.component = ComponentName(
-                    "com.vivo.permissionmanager",
-                    "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"
-                )
-            }
-            val list: List<ResolveInfo> = getPackageManager()
-                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-            if (list.size > 0) {
-                startActivity(intent)
-            }
-        } catch (e: Exception) {
-            Crashlytics.logException(e)
-        }
+//        try {
+//            val intent = Intent()
+//            val manufacturer = Build.MANUFACTURER
+//            if ("xiaomi".equals(manufacturer, ignoreCase = true)) {
+//                intent.component = ComponentName(
+//                    "com.miui.securitycenter",
+//                    "com.miui.permcenter.autostart.AutoStartManagementActivity"
+//                )
+//            } else if ("oppo".equals(manufacturer, ignoreCase = true)) {
+//                intent.component = ComponentName(
+//                    "com.coloros.safecenter",
+//                    "com.coloros.safecenter.permission.startup.StartupAppListActivity"
+//                )
+//            } else if ("vivo".equals(manufacturer, ignoreCase = true)) {
+//                intent.component = ComponentName(
+//                    "com.vivo.permissionmanager",
+//                    "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"
+//                )
+//            }
+//            val list: List<ResolveInfo> = getPackageManager()
+//                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+//            if (list.size > 0) {
+//                startActivity(intent)
+//            }
+//        } catch (e: Exception) {
+//            val crashlytics = FirebaseCrashlytics.getInstance()
+//            crashlytics.recordException(e)
+//            //Crashlytics.logException(e)
+//        }
 
         //For API 29 and above for activity recognition
 
@@ -103,13 +114,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        AutoStartPermissionHelper.getInstance().getAutoStartPermission(applicationContext) //Supposed to take you to the auto start permission screen for Chinese OEM's
+
+        //AutoStartPermissionHelper.getInstance().getAutoStartPermission(applicationContext) //Supposed to take you to the auto start permission screen for Chinese OEM's
 
         soundPool = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val audioAttributes: AudioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                //.setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
+
             SoundPool.Builder()
                 .setMaxStreams(3)
                 .setAudioAttributes(audioAttributes)
@@ -120,8 +134,10 @@ class MainActivity : AppCompatActivity() {
 
         clickSound = soundPool?.load(applicationContext, R.raw.click, 1)!!
         victorySound = soundPool?.load(applicationContext, R.raw.victory, 1)!!
-        splashScreenSound = soundPool?.load(applicationContext, R.raw.acoustic_intro_short,1)!!
+        splashScreenSound = soundPool?.load(applicationContext, R.raw.acoustic_intro_short, 1)!!
 
+        this.volumeControlStream =
+            AudioManager.STREAM_MUSIC //mapping the stream to the volume hardware keys
 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -176,32 +192,31 @@ class MainActivity : AppCompatActivity() {
 
         Log.e(TAG, "User activity: $label, Confidence: $confidence")
 
-        if (confidence > CONFIDENCE && label == "You are in Vehicle" && count ==0) {
+        if (confidence > CONFIDENCE && label == "You are in Vehicle" && count == 0) {
 //            Toast.makeText(applicationContext,
 //                "User activity: $label, Confidence: $confidence",
 //                Toast.LENGTH_SHORT)
 //                .show()
             //createNotification(label,confidence)
             stopTimerTask()
-            createNotification(label)
+            createVehicleNotification()
+            clearSedentaryNotification()
             count = 1
-        }
-//        else if(currentTime - lastTime >=1 && counter != 0){
-//           if(counter >= 300){
-//               createNotification2(label)
-//               stopTimerTask()
-//           }
-//        }
-        else if(confidence > CONFIDENCE && label == "You are Still" && counter == 0){
+//        } else if (currentTime - lastTime >= 1 && counter != 0) {
+//            if (counter >= 300) {
+//                createNotification2(label)
+//                stopTimerTask()
+//            }
+        } else if (confidence > CONFIDENCE && label == "You are Still" && counter == 0) {
             startTimerTask()
-            count =0
-        }
-        else{
+            count = 0
+        } else {
             stopTimerTask()
+            clearSedentaryNotification()
             count = 0
         }
-        Log.d("Activity", (currentTime - lastTime).toString())
-//        else if(counter >= 100) {
+        //Log.d("Activity", (currentTime - lastTime).toString())
+//        else if (counter >= 100) {
 //            createNotification2(label)
 //            stopTimerTask()
 //        }
@@ -215,12 +230,13 @@ class MainActivity : AppCompatActivity() {
             broadcastReceiver,
             IntentFilter(BROADCAST_DETECTED_ACTIVITY)
         )
+
     }
 
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "OnPause")
-        //LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
     }
 
     private fun startTracking() {
@@ -241,7 +257,7 @@ class MainActivity : AppCompatActivity() {
 
         internal val DETECTION_INTERVAL_IN_MILLISECONDS: Long = 1000 //for activit recognition
 
-        val CONFIDENCE = 90 //for activit recognition
+        val CONFIDENCE = 90 //for activity recognition
 
         var soundPool: SoundPool? = null //For Ui sound
 
@@ -259,12 +275,12 @@ class MainActivity : AppCompatActivity() {
 
         //For Leaderboard victory sound
         fun playVictorySound(){
-            soundPool?.play(victorySound,  1F, 1F, 1, 0, 1F)
+            soundPool?.play(victorySound, 1F, 1F, 1, 0, 1F)
         }
 
         //For Splash Screen Sound
         fun playSplashScreenIntro(){
-            soundPool?.play(splashScreenSound,  1F, 1F, 1, 0, 1F)
+            soundPool?.play(splashScreenSound, 1F, 1F, 1, 0, 1F)
         }
     }
 
@@ -276,7 +292,7 @@ class MainActivity : AppCompatActivity() {
         broadcastIntent.setClass(this, ForegroundServiceRestarter::class.java)
         this.sendBroadcast(broadcastIntent)
 
-        stopTracking()
+        //stopTracking()
 
         soundPool?.release();
         soundPool = null;
@@ -313,15 +329,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createNotification(label: String) {
+    private fun createVehicleNotification() {
         Log.d(TAG + " Notif", "Creating Notif")
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationSound = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.notification)
 
-        val title = "It looks like you're in a vehicle!"
-        val body = "Try walking short distances instead of taking a vehicle"
+        /*val title = "It looks like you're in a vehicle!"
+        val body = "Try walking short distances instead of taking a vehicle"*/
+
+        val title = getVehicleNotificationTitle()
+        val body = getVehicleNotificationBody()
 
         val notificationBuilder = NotificationCompat.Builder(this, ACTIVITY_RECOGNITION_CHANNEL_ID)
             .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher_round))
@@ -347,8 +366,11 @@ class MainActivity : AppCompatActivity() {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationSound = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.notification)
 
-        val title = "Sedentary Reminder"
-        val body = "Try to move every 30 mins to keep yourself Healthy!"
+        /*val title = "Sedentary Reminder"
+        val body = "Try to move every 30 mins to keep yourself Healthy!"*/
+
+        val title = getSedentaryNotificationTitle()
+        val body = getSedentaryNotificationBody()
 
         val notificationBuilder = NotificationCompat.Builder(this, ACTIVITY_RECOGNITION_CHANNEL_ID)
             .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher_round))
@@ -375,7 +397,7 @@ class MainActivity : AppCompatActivity() {
             val i = Intent()
             if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
                 i.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                i.data = Uri.parse( "package:$packageName")
+                i.data = Uri.parse("package:$packageName")
                 startActivity(i)
             } else {
                 Log.d("Battery", "Already Optimized")
@@ -400,11 +422,11 @@ class MainActivity : AppCompatActivity() {
                 Log.i("Counter", "=========  " + counter++)
                 currentTime = (System.currentTimeMillis()/1000).toInt()
 
-                if(currentTime - lastTime >=1800 && counter != 0){
+                if (currentTime - lastTime >= 1800 && counter != 0 && (System.currentTimeMillis() > DateTime().withTimeAtStartOfDay().millis && System.currentTimeMillis() >= DateTime().withTimeAtStartOfDay().millis + 28800000)) { //for preventing reminder popup in the middle of  the night.... I woke up lot of times.. got irritated and then did this
                     //if(counter >= 1800){
                     createSedentaryReminderNotification()
                     stopTimerTask()
-                    lastTime = (System.currentTimeMillis()/1000).toInt()
+                    lastTime = (System.currentTimeMillis() / 1000).toInt()
                     //}
                 }
             }
@@ -419,17 +441,90 @@ class MainActivity : AppCompatActivity() {
         }
         counter = 0
     }
+
+    private fun getSedentaryNotificationTitle(): String{
+
+        val titlesArray = arrayListOf<String>()
+
+        //titlesArray.add(applicationContext.getString(R.string.sendentary_notification_title1))
+        titlesArray.add(applicationContext.getString(R.string.sendentary_notification_title2))
+        titlesArray.add(applicationContext.getString(R.string.sendentary_notification_title3))
+
+        return titlesArray[Random.nextInt(0, 2)]
+    }
+
+    private fun getSedentaryNotificationBody(): String{
+        val bodyArray = arrayListOf<String>()
+
+        //bodyArray.add(applicationContext.getString(R.string.sendentary_notification_body2))
+        bodyArray.add(applicationContext.getString(R.string.sendentary_notification_body2))
+        bodyArray.add(applicationContext.getString(R.string.sendentary_notification_body3))
+        bodyArray.add(applicationContext.getString(R.string.sendentary_notification_body4))
+        bodyArray.add(applicationContext.getString(R.string.sendentary_notification_body5))
+
+        return bodyArray[Random.nextInt(0, 4)]
+    }
+
+    private fun getVehicleNotificationTitle(): String{
+        val titlesArray = arrayListOf<String>()
+
+        titlesArray.add(applicationContext.getString(R.string.vehicle_notification_title1))
+        titlesArray.add(applicationContext.getString(R.string.vehicle_notification_title2))
+        titlesArray.add(applicationContext.getString(R.string.vehicle_notification_title3))
+
+        return titlesArray[Random.nextInt(0, 3)]
+    }
+
+    private fun getVehicleNotificationBody(): String{
+        val bodyArray = arrayListOf<String>()
+
+        bodyArray.add(applicationContext.getString(R.string.vehicle_notification_body1))
+        bodyArray.add(applicationContext.getString(R.string.vehicle_notification_body2))
+        bodyArray.add(applicationContext.getString(R.string.vehicle_notification_body3))
+
+        return bodyArray[Random.nextInt(0, 3)]
+    }
+
+    fun clearSedentaryNotification() {
+        val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(2)
+    }
+
+    //For DB Backup
+    /*fun export(view: View?) {
+        //Ref: https://www.youtube.com/watch?v=VDAwbgHoYEA
+        val data = java.lang.StringBuilder()
+        data.append("Trophies")
+        firestoreRepository.getAllTrophies().addOnSuccessListener {
+
+            val dota = it.toObjects<Trophies>()
+            for (dotta in dota) {
+                data.append("\n" + dotta + "," + "\n")
+            }
+
+            try {
+                //saving the file into device
+                val out = openFileOutput("trophies.csv", MODE_PRIVATE)
+                out.write(data.toString().toByteArray())
+                out.close()
+
+                //exporting
+                val context = applicationContext
+                val filelocation = File(filesDir, "trophies.csv")
+                val path = FileProvider.getUriForFile(
+                    context,
+                    "com.example.exportcsv.fileprovider",
+                    filelocation
+                )
+                val fileIntent = Intent(Intent.ACTION_SEND)
+                fileIntent.type = "text/csv"
+                fileIntent.putExtra(Intent.EXTRA_SUBJECT, "Data")
+                fileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                fileIntent.putExtra(Intent.EXTRA_STREAM, path)
+                startActivity(Intent.createChooser(fileIntent, "Send mail"))
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        }
+    }*/
 }
-//
-//    override fun stopService(name: Intent?): Boolean {
-//        Log.d("Test", "Closing activity/app")
-//        return super.stopService(name)
-//    }
-
-//    override fun isDestroyed(): Boolean {
-//        Log.d("Test", "Destroying activity/app")
-//        startServices()
-//        return super.isDestroyed()
-//    }
-
-

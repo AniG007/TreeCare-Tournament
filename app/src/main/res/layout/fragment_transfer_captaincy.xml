@@ -73,7 +73,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textCursorDrawable="@null"
-        app:queryHint="@string/team"
+        app:queryHint="@string/Player"
         android:elevation="@dimen/_8sdp"
         app:iconifiedByDefault="false"
         app:queryBackground="@null"

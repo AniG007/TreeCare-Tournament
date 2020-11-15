@@ -144,6 +144,8 @@ class YourTeamsViewModel(
                             Log.d("Test", "Tourney Name" + tourney)
                             removeUserStepsFromTeam(team.name, tourney, team)  //Removing user's steps from team's step map
                         }
+                        teamsLiveData.notifyObserver()
+                        status.value = "You are no longer part of the team ${team.name}"
                     }
             }
     }
@@ -222,6 +224,11 @@ class YourTeamsViewModel(
             .addOnFailureListener {
                 Log.d("Exception", it.toString())
             }
+    }
+
+    fun displayMessageForTest(){
+        status.value = "You cannot exit a team during the Study"
+        messageDisplayed = false
     }
 }
 

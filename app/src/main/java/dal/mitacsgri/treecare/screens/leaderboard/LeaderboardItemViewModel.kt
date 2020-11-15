@@ -71,7 +71,9 @@ class LeaderboardItemViewModel(
                             challengersList.value?.add(challenger!!)
 
                             if (challengersList.value?.size == limit) {
-                                challengersList.value?.sortChallengersList(challenge.type)
+                                //challengersList.value?.sortChallengersList(challenge.type)
+                                challengersList.value!!.sortWith(compareBy({it.totalLeaves}, {it.totalSteps}))
+                                challengersList.value!!.reverse()
                                 sortPlayerForChallenge(challengersList.value!!, challenge.name)
                                 challengersList.notifyObserver()
                             }
@@ -82,8 +84,6 @@ class LeaderboardItemViewModel(
         mChallengersList.value = challengersList.value
         return challengersList
     }
-
-    fun getCurrentChallengerPositionText(): String = getCurrentChallengerPosition().toString()
 
     fun getCurrentChallengerPosition(): Int {
         val currentUserUid = sharedPrefsRepository.user.uid
@@ -105,6 +105,13 @@ class LeaderboardItemViewModel(
             append(challenger.totalSteps.toString())
         }
 
+    fun getChallengeNameForLeaderBoard(challengeName: String) = buildSpannedString {
+        run {
+            append(challengeName)
+        }
+        append("\nLeaderboard")
+    }
+
     fun getLeafCountText(challenger: Challenger): String = challenger.totalLeaves.toString()
 
     private fun makeChallengerFromUser(user: User, challenge: Challenge): Challenger {
@@ -119,15 +126,15 @@ class LeaderboardItemViewModel(
             totalLeaves = userChallengeData.leafCount)
     }
 
-    private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {
-        sortByDescending {
-            when(challengeType) {
-                CHALLENGE_TYPE_DAILY_GOAL_BASED -> it.totalSteps
-                CHALLENGE_TYPE_AGGREGATE_BASED -> it.totalSteps
-                else -> it.totalSteps
-            }
-        }
-    }
+//    private fun ArrayList<Challenger>.sortChallengersList(challengeType: Int) {
+//        sortByDescending {
+//            when(challengeType) {
+//                CHALLENGE_TYPE_DAILY_GOAL_BASED -> it.totalSteps
+//                CHALLENGE_TYPE_AGGREGATE_BASED -> it.totalSteps
+//                else -> it.totalSteps
+//            }
+//        }
+//    }
 
     fun sortPlayerForChallenge(challengers: ArrayList<Challenger>, challengeName: String) {
 

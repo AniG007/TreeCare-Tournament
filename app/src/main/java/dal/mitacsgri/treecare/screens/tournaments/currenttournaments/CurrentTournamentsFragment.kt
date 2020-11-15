@@ -18,8 +18,10 @@ import dal.mitacsgri.treecare.screens.MainActivity
 import dal.mitacsgri.treecare.screens.enrollteams.EnrollTeamsRecyclerViewAdapter
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.fragment_current_tournaments.*
+import kotlinx.android.synthetic.main.fragment_current_tournaments.empty_view
 import kotlinx.android.synthetic.main.fragment_current_tournaments.view.*
 import kotlinx.android.synthetic.main.fragment_enroll_teams.view.*
+import kotlinx.android.synthetic.main.fragment_my_tournaments.*
 import kotlinx.android.synthetic.main.fragment_tournaments.*
 import kotlinx.android.synthetic.main.item_current_challenge.*
 import kotlinx.android.synthetic.main.item_current_tournament.view.*
@@ -74,18 +76,26 @@ class CurrentTournamentsFragment : Fragment() {
                 //membersrv.adapter = adapter
             }
             adapter = recyclerView.adapter as CurrentTournamentsRecyclerViewAdapter
+
+            if(adapter.itemCount == 0){
+                empty_view.visibility = View.VISIBLE
+            }
+            else{
+                empty_view.visibility = View.INVISIBLE
+            }
         })
         tournamemntsrv = view.findViewById(R.id.recyclerView)
 
-//        tournament_search1.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                return false
-//            }
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                adapter.filter.filter(newText)
-//                return false
-//            }
-//        })
+
+        /*tournament_search1.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return false
+            }
+        })*/
 
         return view
     }

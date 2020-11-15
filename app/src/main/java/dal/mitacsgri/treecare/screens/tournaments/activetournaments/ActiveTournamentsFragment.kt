@@ -14,7 +14,7 @@ import dal.mitacsgri.treecare.extensions.createFragmentViewWithStyle
 import dal.mitacsgri.treecare.extensions.toast
 import dal.mitacsgri.treecare.screens.tournaments.TournamentsViewModel
 import kotlinx.android.synthetic.main.fragment_active_tournaments.view.*
-import kotlinx.android.synthetic.main.fragment_tournaments.view.*
+import kotlinx.android.synthetic.main.fragment_my_tournaments.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ActiveTournamentsFragment : Fragment() {
@@ -36,12 +36,19 @@ class ActiveTournamentsFragment : Fragment() {
 //                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 //                adapter = ActiveTournamentsRecyclerViewAdapter(mViewModel.activeTournamentsList.value!!, mViewModel)
 //            }
-            mViewModel.getAllActiveTournaments().observe(viewLifecycleOwner,Observer {
+            mViewModel.getAllActiveTournaments().observe(viewLifecycleOwner, {
                 recyclerView.apply {
                     layoutManager = LinearLayoutManager(context,RecyclerView.VERTICAL, false)
                     adapter = ActiveTournamentsRecyclerViewAdapter(it, mViewModel)
                 }
                 adapter = recyclerView.adapter as ActiveTournamentsRecyclerViewAdapter
+
+                if(adapter.itemCount == 0){
+                    empty_view.visibility = View.VISIBLE
+                }
+                else{
+                    empty_view.visibility = View.INVISIBLE
+                }
             })
             tournamentsrv = findViewById(R.id.recyclerView)
 

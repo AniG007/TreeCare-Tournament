@@ -1,14 +1,17 @@
 package dal.mitacsgri.treecare.screens.tournaments.activetournaments
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
 import android.view.View
 import androidx.navigation.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.extensions.disable
 import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.extensions.toDateTime
+import dal.mitacsgri.treecare.model.Challenge
 import dal.mitacsgri.treecare.model.Tournament
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.BaseViewHolder
@@ -21,6 +24,7 @@ import kotlinx.android.synthetic.main.item_active_tournament.view.goalTV
 import kotlinx.android.synthetic.main.item_active_tournament.view.nameTV
 import kotlinx.android.synthetic.main.item_active_tournament.view.teamCountTV
 import org.joda.time.DateTime
+import java.io.FileOutputStream
 
 class ActiveTournamentsViewHolder(
     private val viewModel: TournamentsViewModel,
@@ -42,7 +46,7 @@ class ActiveTournamentsViewHolder(
 
             //if (item.active && !viewModel.hasTeamJoinedTournament(item)) {
 
-            if (item.active || item.finishTimestamp.toDateTime().withTimeAtStartOfDay().millis > DateTime().withTimeAtStartOfDay().millis) {
+            if ((item.active || item.finishTimestamp.toDateTime().withTimeAtStartOfDay().millis > DateTime().withTimeAtStartOfDay().millis) && !viewModel.hasTeamJoined(item.name)) {
                 buttonJoin.enable()
                 buttonJoin.setOnClickListener {
                     MainActivity.playClickSound()

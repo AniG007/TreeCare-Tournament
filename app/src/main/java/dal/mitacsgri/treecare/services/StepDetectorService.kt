@@ -182,8 +182,10 @@ class StepDetectorService : Service(), KoinComponent {
                             lastStepCount = currentStepCount
                             Log.d(TAG, "LastStepCount " + lastStepCount)
                         }
-                    } else if (sharedPrefsRepository.gameMode == CHALLENGER_MODE && sharedPrefsRepository.isChallengeActive) {
-                        Log.d(TAG, "Challenge sensor")
+                    }
+
+                    else if(sharedPrefsRepository.gameMode == CHALLENGER_MODE && sharedPrefsRepository.isChallengeActive){
+                        Log.d(TAG, "Challenge ended")
                         dataPoint.dataType.fields.forEach {
                             val currentStepCount = dataPoint.getValue(it).asInt()
 //                            sharedPrefsRepository.storeChallengeStepCount(
@@ -198,7 +200,9 @@ class StepDetectorService : Service(), KoinComponent {
                             lastStepCount = currentStepCount
                             Log.d(TAG, "LastStepCount " + lastStepCount)
                         }
-                    } else if (sharedPrefsRepository.gameMode == TOURNAMENT_MODE && sharedPrefsRepository.isTournamentActive) {
+                    }
+
+                    else if (sharedPrefsRepository.gameMode == TOURNAMENT_MODE && sharedPrefsRepository.isTournamentActive) {
                         dataPoint.dataType.fields.forEach {
                             Log.d(TAG, "Tournament sensor")
                             val currentStepCount = dataPoint.getValue(it).asInt()

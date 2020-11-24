@@ -187,10 +187,10 @@ class TeamInfoViewModel(
                                 for (steps in map!!) {
                                     Log.d("Test", "Steps " + steps.toString())
                                     val teamStepForAParticularDay =
-                                        currentTournament?.dailyStepsMap!![steps.key]
+                                        currentTournament?.dailyStepsMap!![steps.key] ?:0
                                     Log.d("Test", "teamStepForAParticularDay " + teamStepForAParticularDay)
                                     val stepsAfterDeductingUsersSteps =
-                                        teamStepForAParticularDay!! - steps.value
+                                        teamStepForAParticularDay - steps.value
                                     Log.d(
                                         "Test",
                                         "stepsAfterDeductingUsersSteps " + stepsAfterDeductingUsersSteps

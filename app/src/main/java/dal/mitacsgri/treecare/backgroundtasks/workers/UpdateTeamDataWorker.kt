@@ -17,6 +17,7 @@ import dal.mitacsgri.treecare.model.UserTournament
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
+import org.jetbrains.anko.doAsync
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Days
@@ -35,21 +36,71 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
     private val sharedPrefsRepository: SharedPreferencesRepository by inject()
     private val firestoreRepository: FirestoreRepository by inject()
     //private val today = DateTime().withTimeAtStartOfDay()
-    private val today = DateTime()
-    private val halifaxTimeZone = DateTimeZone.forID("America/Halifax")
+    val today = DateTime()
+    val localMN = today.withTimeAtStartOfDay().millis
+    val localDate = today.toLocalDateTime().dayOfMonth
+    val localMonth = today.toLocalDateTime().monthOfYear
+
+    val halifaxTimeZone = DateTimeZone.forID("America/Halifax")
+
+    val halifax = today.withZone(halifaxTimeZone)
+    val halifaxMN = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+    val halifaxDate = halifax.toLocalDateTime().dayOfMonth
+    val halifaxMonth = halifax.toLocalDateTime().monthOfYear
+
+    var mNight: Long = 0
+
+
     //private val dateOutputFormat = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm:ss").withZone(halifaxTimeZone)
 
     var cr = 0 //for counting number of calc call for the active tourneys
 
     override fun startWork(): ListenableFuture<Result> {
 
+        when {
+            (localMN > halifaxMN)  -> {
+                /*Log.d("Dates", "Greater")
+                Log.d("Dates", "Today $localDate")
+                Log.d("Dates", "Halifax $halifaxDate")*/
+                if(localDate == halifaxDate)
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
+                if(localDate > halifaxDate || (localDate < halifaxDate && localMonth > halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis + 86400000
+
+                if(localDate < halifaxDate || (localDate > halifaxDate && localMonth < halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis - 86400000
+//                Log.d("Dates", "mNight $mNight")
+            }
+            (localMN < halifaxMN) -> {
+                /*Log.d("Dates", "Lesser")
+                Log.d("Dates", "Today $localDate")
+                Log.d("Dates", "Halifax $halifaxDate")*/
+                if(localDate == halifaxDate)
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
+                if(localDate < halifaxDate || (localDate > halifaxDate && localMonth < halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis - 86400000
+
+                if(localDate > halifaxDate || (localDate < halifaxDate && localMonth > halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis + 86400000
+                //Log.d("Dates", "mNight $mNight")
+            }
+            else -> {
+                /*Log.d("Dates", "equal")
+                Log.d("Dates", "Today $localDate")
+                Log.d("Dates", "Halifax $halifaxDate")*/
+                mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+                //Log.d("Dates", "mNight $mNight")
+            }
+        }
+
         Log.d("WorkerT", "Starting Team Worker")
         val future = SettableFuture.create<Result>()
-        Log.d("Datey", "Today: "+ today.toString())
         //dateOutputFormat.setTimeZone(TimeZone.getTimeZone("America/Halifax"))  //https://stackoverflow.com/questions/37390080/convert-local-time-to-utc-and-vice-versa
         //val mNight = Date(dateOutputFormat.format(today)).time   //Converting time to Halifax time so that all phones update according to halifax midnight time.
-        val mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
-        Log.d("Datey", "After conv"+ mNight.toString())
+        //val mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
 
 //        if(sharedPrefsRepository.getLastDayStepCount() == 0){
 //            firestoreRepository.getUserData(sharedPrefsRepository.user.uid)
@@ -61,6 +112,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 
 
         val team = sharedPrefsRepository.team
+        val user = sharedPrefsRepository.user
         var county = 0
 
         team.currentTournaments.forEach { (_, tourney) ->
@@ -76,6 +128,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                     stepCountRepository.getTodayStepCountData {
                         Log.d("WorkerT", "TourneyName: " + tourney.name)
                         calc(team, it, future, county, tourney, mNight)
+                        //updateStepsForUserAndTeam(team, user,it, future, tourney, mNight)
                     }
                 }
             }
@@ -100,167 +153,12 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
         return future
     }
 
-//    private fun calc(team: Team, currentStepCount: Int, future: SettableFuture<Result>) {
-//        //Sorting the step map according to the dates
-//        Log.d("WorkerT", "Inside Calc")
-//
-//        team.currentTournaments.forEach { (_, teamTourney) ->
-//            teamTourney.dailyStepsMap = teamTourney.dailyStepsMap.toSortedMap()
-//        }
-//
-//        team.currentTournaments.forEach { (_, teamTourney)  ->
-//            if (teamTourney.isActive && teamTourney.endDate.toDateTime().millis > DateTime().millis) {
-//                if (teamTourney.dailyStepsMap.isNotEmpty()) {
-//                    Log.d("WorkerT", "pref not empty")
-////                    Log.d("WorkerT", teamTourney.dailyStepsMap.keys.last() + " " + tourney.dailyStepsMap.keys.elementAt(index))
-//
-//                    if (teamTourney.dailyStepsMap.keys.last() != DateTime().withTimeAtStartOfDay().millis.toString()) {
-//                        Log.d("WorkerT", "pref needs to be updated")
-//                        //when tournament exists and user starts a new day // user opens the app first day for a day
-//                        //condition check for new day. Since only one time stamp (date in millis) is used during the update of values
-//                        //DB fetch is needed
-//                        firestoreRepository.getTeam(team.name)
-//                            .addOnSuccessListener {
-//
-//                                val teamDB = it.toObject<Team>()
-//
-//                                if (teamDB?.currentTournaments!![teamTourney.name]?.dailyStepsMap?.isNotEmpty()!!) {
-//                                    Log.d("WorkerT", "DB not empty for tournament ${teamTourney.name}")
-//                                    //check for today's date stamp in db
-//                                    // set DB value to pref and update back to DB
-//                                    Log.d("WorkerT", "Last Dates: pref"+ teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap?.keys?.last().toString() +"Date "+ DateTime().withTimeAtStartOfDay().millis.toString())
-//                                    if(teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap?.keys?.last().toString() == DateTime().withTimeAtStartOfDay().millis.toString()) {
-//                                        Log.d("WorkerT", "DB up to Date for${teamTourney.name}")
-//                                        val oldStep = teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()]
-//                                        //todo: user needs to update steps for starting a new day
-//                                        val diff = currentStepCount - sharedPrefsRepository.getLastDayStepCount()
-//                                        Log.d("WorkerT", "Diff1 "+ diff)
-//                                        val updatedSteps = oldStep!! + diff
-//
-//                                        if (diff > 0) {
-//                                            teamTourney.dailyStepsMap =
-//                                                teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap!!
-//
-//                                            teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
-//                                                updatedSteps
-//
-//                                            updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                            //updateUserTeamDataInFirestore(future)
-//                                            sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                                        }
-//                                    }
-//                                    else{
-//                                        Log.d("WorkerT", "DB not up to Date")
-//                                        teamTourney.dailyStepsMap = teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap!!
-//                                        teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
-//                                            currentStepCount
-//
-//                                        updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                        //updateUserTeamDataInFirestore(future)
-//                                        sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                                    }
-//                                }
-//
-//                                else {
-//                                    Log.d("WorkerT", "DB step map empty")
-//                                    teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
-//                                        currentStepCount
-//
-//                                    updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                    //updateUserTeamDataInFirestore(future)
-//                                    sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                                }
-//                            }
-//                    }
-//                    else {
-//                        Log.d("WorkerT", "LastDayStepCount " + sharedPrefsRepository.getLastDayStepCount())
-//                        Log.d("WorkerT", "pref not up to date")
-//                        //TODO: check if last date is in db or not
-//                        //val oldStep = tourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()]
-//                        firestoreRepository.getTeam(team.name)
-//                            .addOnSuccessListener {
-//                                val teamDB = it.toObject<Team>()
-//                                val tournaments = teamDB?.currentTournaments
-//                                if(tournaments!![teamTourney.name]?.dailyStepsMap?.keys?.last().toString() != DateTime().withTimeAtStartOfDay().millis.toString()){
-//                                    Log.d("WorkerT", "DB is not upto date")
-//                                    teamTourney.dailyStepsMap = teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap!!
-//                                    teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = currentStepCount
-//
-//                                    updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                    //updateUserTeamDataInFirestore(future)
-//                                    sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                                }
-//                                else {
-//                                    Log.d("WorkerT", "DB is upto date")
-//                                    val oldStep =
-//                                        tournaments[teamTourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()]
-//                                    val diff =
-//                                        currentStepCount - sharedPrefsRepository.getLastDayStepCount()
-//                                    Log.d("WorkerT", "Diff2 " + diff)
-//                                    if (diff > 0) {
-//                                        val updatedSteps = oldStep!! + diff
-//                                        teamTourney.dailyStepsMap =
-//                                            teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap!!
-//                                        teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = updatedSteps
-//
-//                                        updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                        //updateUserTeamDataInFirestore(future)
-//                                        sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                                    }
-//                                }
-//                            }
-//                    }
-//                }
-//
-//                else {
-//                    Log.d("WorkerT", "prefs is empty")
-//                    // When tournament exists but doesn't have steps in the teams collection
-//                    // take care of updating team and tour prefs when user has joined a tournament/team (when user is not a captain)
-//                    firestoreRepository.getTeam(team.name)
-//                        // checking if the tournament has steps updated by other users. If not, then we update it, if present,
-//                        // the last step count is fetched and then it is incremented with the users steps and is updated back in the db
-//                        .addOnSuccessListener {
-//                            val teamDB = it.toObject<Team>()
-//                            val tournaments = teamDB?.currentTournaments
-//                            if (tournaments!![teamTourney.name]?.dailyStepsMap?.isEmpty()!!) {
-//                                Log.d("WorkerT", "DB and pref have empty step Map")
-//
-//                                teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] = currentStepCount
-//
-//                                updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                //updateUserTeamDataInFirestore(future)
-//                                sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                            }
-//
-//                            else{
-//                                Log.d("WorkerT", "DB is upto date and pref is empty")
-//                                val oldStep = tournaments[teamTourney.name]?.dailyStepsMap?.values?.last()
-//                                val diff = currentStepCount - sharedPrefsRepository.getLastDayStepCount()
-//                                Log.d("WorkerT", "Diff3 "+ diff)
-//                                val updatedSteps = oldStep!! + diff
-//                                if (diff > 0) {
-//                                    teamTourney.dailyStepsMap =
-//                                        teamDB.currentTournaments[teamTourney.name]?.dailyStepsMap!!
-//                                    teamTourney.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()] =
-//                                        updatedSteps
-//                                    updateAndStoreTeamDataInSharedPrefs(teamTourney, team)
-//                                    //updateUserTeamDataInFirestore(future)
-//                                    sharedPrefsRepository.storeLastDayStepCount(currentStepCount)
-//                                }
-//                            }
-//                        }
-//                }
-//            }
-//        }
-//    }
+    private fun calc(team: Team, currentStepCount: Int, future:SettableFuture<Result>, county: Int, tourney: TeamTournament, midNight: Long) {
 
-    private fun calc(team: Team, currentStepCount: Int, future:SettableFuture<Result>,county: Int, tourney: TeamTournament, midNight: Long) {
         cr++
-        Log.d("WorkerT", "cr: " + cr)
         val userTourneys = sharedPrefsRepository.user
         //Sorting the step map according to the dates
         Log.d("WorkerT", "Inside Calc")
-        Log.d("WorkerT", "County: "+ county)
 
         team.currentTournaments.forEach { (_, teamTourney) ->
             teamTourney.dailyStepsMap = teamTourney.dailyStepsMap.toSortedMap()
@@ -275,12 +173,9 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                 val user = it.toObject<User>()
                 val userTournaments = user?.currentTournaments
 
-                // userTournaments?.forEach { (_, userTourney) ->
                 if (userTournaments!![tourney.name]?.dailyStepsMap?.isEmpty()!! && userTournaments[tourney.name]?.isActive!!) {
                     Log.d("WorkerT", "Stepmap is empty for ${tourney.name}")
 
-//                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
-//                        currentStepCount
 
                     userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                         currentStepCount
@@ -288,15 +183,8 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                         Timestamp.now()
                     userTourneys.currentTournaments[tourney.name]?.totalSteps =
                         currentStepCount
-                    //sharedPrefsRepository.user = userTourneys
+
                     updateAndStoreUserDataInSharedPrefs(userTourneys.currentTournaments[tourney.name]!!)
-
-//                        userTourneys[userTourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] =
-//                            currentStepCount
-//
-//                        userTourneys[userTourney.name]?.lastUpdateTime = Timestamp.now()
-
-//                        sharedPrefsRepository.user = userTourneys
 
                     Log.d("WorkerT", sharedPrefsRepository.user.currentTournaments[tourney.name].toString())
 
@@ -319,18 +207,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                         )
                                         team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                             currentStepCount
-
-                                        updateAndStoreTeamDataInSharedPrefs(
-                                            team.currentTournaments[tourney.name]!!,
-                                            team,
-                                            future,
-                                            cr,
-                                            county
-                                        )
-                                        //updateUserTeamDataInFirestore(future)
-//                                            sharedPrefsRepository.storeLastDayStepCount(
-//                                                currentStepCount
-//                                            )
+                                        doAsync {
+                                            val i = updateAndStoreTeamDataInSharedPrefs(
+                                                team.currentTournaments[tourney.name]!!,
+                                                team,
+                                                userTourneys.currentTournaments[tourney.name]!!
+                                            )
+                                            updateUserTeamDataInFirestore(future, cr,county,i)
+                                        }
                                     } else {
                                         Log.d("WorkerT", "Daily Step Map is not empty")
                                         if (teamTourney[tourney.name]?.dailyStepsMap?.keys?.sorted()?.last()
@@ -342,18 +226,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                             )
                                             team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                 currentStepCount
-
-                                            updateAndStoreTeamDataInSharedPrefs(
-                                                team.currentTournaments[tourney.name]!!,
-                                                team,
-                                                future,
-                                                cr,
-                                                county
-                                            )
-                                            //updateUserTeamDataInFirestore(future)
-//                                                sharedPrefsRepository.storeLastDayStepCount(
-//                                                    currentStepCount
-//                                                )
+                                            doAsync {
+                                                val i = updateAndStoreTeamDataInSharedPrefs(
+                                                    team.currentTournaments[tourney.name]!!,
+                                                    team,
+                                                    userTourneys.currentTournaments[tourney.name]!!
+                                                )
+                                                updateUserTeamDataInFirestore(future, cr,county,i)
+                                            }
                                         } else {
                                             Log.d(
                                                 "WorkerT",
@@ -367,17 +247,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
 
                                             team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                 updatedSteps
-                                            updateAndStoreTeamDataInSharedPrefs(
-                                                team.currentTournaments[tourney.name]!!,
-                                                team,
-                                                future,
-                                                cr,
-                                                county
-                                            )
-                                            //updateUserTeamDataInFirestore(future)
-//                                                sharedPrefsRepository.storeLastDayStepCount(
-//                                                    currentStepCount
-//                                                )
+                                            doAsync {
+                                                val i = updateAndStoreTeamDataInSharedPrefs(
+                                                    team.currentTournaments[tourney.name]!!,
+                                                    team,
+                                                    userTourneys.currentTournaments[tourney.name]!!
+                                                )
+                                                updateUserTeamDataInFirestore(future, cr,county,i)
+                                            }
                                         }
                                     }
                                 }
@@ -399,7 +276,6 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                         .toString() == midNight.toString()
                                 ) {
 
-                                   // Log.d("WorkerT", "userStepMap for Tourney ${tourney.name}"+ tournaments!![tourney.name]?.dailyStepsMap?.keys+ "Last "+ tournaments[tourney.name]?.dailyStepsMap?.keys?.last())
                                     //TODO:replace users daily steps
                                     Log.d("WorkerT", "UserTourney is up to date")
 
@@ -411,7 +287,7 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                     userTourneys.currentTournaments[tourney.name]?.totalSteps =
                                         currentStepCount
                                     updateAndStoreUserDataInSharedPrefs(userTourneys.currentTournaments[tourney.name]!!)
-                                    //sharedPrefsRepository.user = userTourneys
+                                    firestoreRepository.updateTeamData(team.name, mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments))
 
 
                                     firestoreRepository.updateUserData(
@@ -424,12 +300,6 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                 "WorkerT",
                                                 "stepmap for ${tourney.name} was uploaded successfully"
                                             )
-
-
-//                                            firestoreRepository.getTeam(team.name)
-//                                                .addOnSuccessListener {
-//                                                    val teamDB = it.toObject<Team>()
-//                                                    val tournaments = teamDB?.currentTournaments
                                             if (tournaments!![tourney.name]?.dailyStepsMap?.isEmpty()!!) {
                                                 Log.d(
                                                     "WorkerT",
@@ -437,18 +307,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                 )
                                                 tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                     currentStepCount
-
-                                                updateAndStoreTeamDataInSharedPrefs(
-                                                    tournaments[tourney.name]!!,
-                                                    team,
-                                                    future,
-                                                    cr,
-                                                    county
-                                                )
-                                                //updateUserTeamDataInFirestore(future)
-//                                                        sharedPrefsRepository.storeLastDayStepCount(
-//                                                            currentStepCount
-//                                                        )
+                                                doAsync {
+                                                    val i = updateAndStoreTeamDataInSharedPrefs(
+                                                        tournaments[tourney.name]!!,
+                                                        team,
+                                                        userTourneys.currentTournaments[tourney.name]!!
+                                                    )
+                                                    updateUserTeamDataInFirestore(future, cr,county,i)
+                                                }
                                             } else {
                                                 Log.d(
                                                     "WorkerT",
@@ -465,18 +331,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                         teamDB.currentTournaments[tourney.name]?.dailyStepsMap!!
                                                     tourney.dailyStepsMap[midNight.toString()] =
                                                         currentStepCount
-
-                                                    updateAndStoreTeamDataInSharedPrefs(
-                                                        tourney,
-                                                        team,
-                                                        future,
-                                                        cr,
-                                                        county
-                                                    )
-                                                    //updateUserTeamDataInFirestore(future)
-//                                                            sharedPrefsRepository.storeLastDayStepCount(
-//                                                                currentStepCount
-//                                                            )
+                                                    doAsync {
+                                                        val i = updateAndStoreTeamDataInSharedPrefs(
+                                                            tourney,
+                                                            team,
+                                                            userTourneys.currentTournaments[tourney.name]!!
+                                                        )
+                                                        updateUserTeamDataInFirestore(future, cr,county,i)
+                                                    }
                                                 } else {
                                                     Log.d(
                                                         "WorkerT",
@@ -495,29 +357,22 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     if (diff > 0) {
                                                         tourney.dailyStepsMap[midNight.toString()] =
                                                             updatedSteps
-                                                        updateAndStoreTeamDataInSharedPrefs(
-                                                            tourney,
-                                                            team,
-                                                            future,
-                                                            cr,
-                                                            county
-                                                        )
-                                                        //updateUserTeamDataInFirestore(future)
-//                                                                sharedPrefsRepository.storeLastDayStepCount(
-//                                                                    currentStepCount
-//                                                                )
+                                                        doAsync {
+                                                            val i = updateAndStoreTeamDataInSharedPrefs(
+                                                                tourney,
+                                                                team,
+                                                                userTourneys.currentTournaments[tourney.name]!!
+                                                            )
+                                                            updateUserTeamDataInFirestore(future, cr,county,i)
+                                                        }
                                                     }
-//                                                            else if(diff == 0) future.set(
-//                                                                ListenableWorker.Result.success())
                                                 }
                                             }
-                                            //}
+
                                         }
                                 } else {
                                     Log.d("WorkerT", "UserTourney is not up to date")
 
-//                                    userTourneys.currentTournaments[tourney.name]?.dailyStepsMap =
-//                                        userTourney.dailyStepsMap
                                     userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                         currentStepCount
 
@@ -527,8 +382,6 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                         currentStepCount
 
                                     updateAndStoreUserDataInSharedPrefs(userTourneys.currentTournaments[tourney.name]!!)
-
-                                    //sharedPrefsRepository.user = userTourneys
 
 
                                     firestoreRepository.updateUserData(
@@ -542,13 +395,6 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                 "stepmap for ${tourney.name} was uploaded successfully"
                                             )
 
-//                                            firestoreRepository.getTeam(team.name)
-//                                                .addOnSuccessListener {
-//                                                    val teamDB = it.toObject<Team>()
-//                                                    val tournaments = teamDB?.currentTournaments
-
-//                                            userTourneys.currentTournaments[tourney.name]?.dailyStepsMap = userTourney.dailyStepsMap
-//                                            userTourneys.currentTournaments[tourney.name]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] = currentStepCount
                                             //TODO: Update user Tourney
                                             if (tournaments!![tourney.name]?.dailyStepsMap?.isEmpty()!!) {
                                                 Log.d(
@@ -558,13 +404,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                 tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                     currentStepCount
 
-                                                updateAndStoreTeamDataInSharedPrefs(
-                                                    tournaments[tourney.name]!!,
-                                                    team,
-                                                    future,
-                                                    cr,
-                                                    county
-                                                )
+                                                doAsync {
+                                                    val i = updateAndStoreTeamDataInSharedPrefs(
+                                                        tournaments[tourney.name]!!,
+                                                        team,
+                                                        userTourneys.currentTournaments[tourney.name]!!
+                                                    )
+                                                    updateUserTeamDataInFirestore(future, cr,county,i)
+                                                }
                                                 //updateUserTeamDataInFirestore(future)
 //                                                        sharedPrefsRepository.storeLastDayStepCount(
 //                                                            currentStepCount
@@ -588,18 +435,20 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     tourney.dailyStepsMap[midNight.toString()] =
                                                         currentStepCount
 
-                                                    updateAndStoreTeamDataInSharedPrefs(
-                                                        tourney,
-                                                        team,
-                                                        future,
-                                                        cr,
-                                                        county
-                                                    )
+                                                    doAsync {
+                                                        val i = updateAndStoreTeamDataInSharedPrefs(
+                                                            tourney,
+                                                            team,
+                                                            userTourneys.currentTournaments[tourney.name]!!
+                                                        )
+                                                        updateUserTeamDataInFirestore(future, cr,county,i)
+                                                    }
                                                     //updateUserTeamDataInFirestore(future)
 //                                                            sharedPrefsRepository.storeLastDayStepCount(
 //                                                                currentStepCount
 //                                                            )
-                                                } else {
+                                                }
+                                                else {
                                                     //Data is not present in TeamTourney
 
                                                     Log.d(
@@ -611,13 +460,14 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                                                     val updatedSteps = oldStep!! + currentStepCount
                                                     team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = updatedSteps
 
-                                                    updateAndStoreTeamDataInSharedPrefs(
-                                                        team.currentTournaments[tourney.name]!!,
-                                                        team,
-                                                        future,
-                                                        cr,
-                                                        county
-                                                    )
+                                                    doAsync {
+                                                        val i = updateAndStoreTeamDataInSharedPrefs(
+                                                            team.currentTournaments[tourney.name]!!,
+                                                            team,
+                                                            userTourneys.currentTournaments[tourney.name]!!
+                                                        )
+                                                        updateUserTeamDataInFirestore(future, cr,county,i)
+                                                    }
                                                     //updateUserTeamDataInFirestore(future)
 //                                                            sharedPrefsRepository.storeLastDayStepCount(
 //                                                                currentStepCount
@@ -629,11 +479,34 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
                             }
                         }
                 }
-                // }
             }
+        // }
     }
+    /*private fun updateStepsForUserAndTeam(team: Team,user: User, currentStepCount: Int, future:SettableFuture<Result>, tourney: TeamTournament, midNight: Long){
 
-    private fun updateAndStoreTeamDataInSharedPrefs(teamTourney: TeamTournament, team: Team, future:SettableFuture<Result>, cr:Int, county: Int) {
+        var totalSteps = 0
+        var teamMemberCount = 0
+        user.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = currentStepCount
+        firestoreRepository.getTeam(team.name).addOnSuccessListener {
+            val teamData = it.toObject<Team>()
+            val teamMembers = teamData?.members
+            for(member in teamMembers!!){
+                teamMemberCount++
+                firestoreRepository.getUserData(member).addOnSuccessListener {
+                    val userData = it.toObject<User>()
+                    val userTourney = userData?.currentTournaments!![tourney.name]
+                    totalSteps += userTourney?.dailyStepsMap!![midNight.toString()] ?: 0
+
+                    if(teamMemberCount == teamMembers.count()){
+                        team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = totalSteps
+                        updateAndStoreTeamDataInSharedPrefs(team.currentTournaments[tourney.name]!!, user.currentTournaments[tourney.name]!!, team, future, 0 ,0)
+                    }
+                }
+            }
+        }
+    }*/
+
+    private fun updateAndStoreTeamDataInSharedPrefs(teamTourney: TeamTournament, team: Team, userTourney: UserTournament): Int {
         teamTourney.leafCount = getTotalLeafCountForTeam(teamTourney)
         teamTourney.fruitCount = getTotalFruitCountForTeam(teamTourney)
         teamTourney.tournamentGoalStreak = getTeamGoalStreakForUser(teamTourney, team)
@@ -641,42 +514,57 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
         teamTourney.dailyGoalsAchieved = calculateDailyGoalsAchieved(teamTourney)
         Log.d("WorkerT", "updateAndStoreTeamDataInSharedPrefs")
         var totalSteps = 0
-        teamTourney.dailyStepsMap.forEach { (time, steps) ->
+
+        /*teamTourney.dailyStepsMap.forEach { (time, steps) ->
+            totalSteps += steps
+        }*/
+
+        for (steps in userTourney.dailyStepsMap.values){
             totalSteps += steps
         }
-        teamTourney.totalSteps = totalSteps
 
+        teamTourney.totalSteps = totalSteps
         synchronized(sharedPrefsRepository.team) {
             val team = sharedPrefsRepository.team
             team.currentTournaments[teamTourney.name] = teamTourney
             sharedPrefsRepository.team = team
         }
-        updateUserTeamDataInFirestore(future, cr, county)
+        //updateUserTeamDataInFirestore()
+        return 0
     }
 
-    private fun updateUserTeamDataInFirestore(future: SettableFuture<Result>, cr1:Int, county1: Int) {
-        if (cr1 == county1) {
+
+    private fun updateUserTeamDataInFirestore(future: SettableFuture<Result>, i: Int, cr: Int, county: Int) {
+        //passing i as dummy variable since we run both sharedPrefs and update function in background thread, i is needed for synchronizing the function calls
+        //if (cr == county) {
             Log.d("WorkerT", "updateUserTeamDataInFirestore")
             Log.d("WorkerT", "Pref " + sharedPrefsRepository.team)
             Log.d("WorkerT", "PrefValue " + sharedPrefsRepository.team.currentTournaments)
             Log.d("WorkerT", "TeamName " + sharedPrefsRepository.team.name)
-            firestoreRepository.updateTeamData(
-                sharedPrefsRepository.team.name,
-                mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments))
+            firestoreRepository.updateUserData(
+                sharedPrefsRepository.user.uid,
+                mapOf("currentTournaments" to sharedPrefsRepository.user.currentTournaments)
+            )
                 .addOnSuccessListener {
-                    Log.d("WorkerT", "Team User data upload success")
-                    Log.d("WorkerT", "cr: " + cr1 + "county: " + county1)
+                    firestoreRepository.updateTeamData(
+                        sharedPrefsRepository.team.name,
+                        mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments)
+                    )
+                        .addOnSuccessListener {
+                            Log.d("WorkerT", "Team User data upload success")
+                            Log.d("WorkerT", "cr: " + cr + "county: " + county)
 
-                    stepCountRepository.getTodayStepCountData {
-                        sharedPrefsRepository.storeLastDayStepCount(it)
-                    }
-                    future.set(Result.success())
+                            stepCountRepository.getTodayStepCountData {
+                                sharedPrefsRepository.storeLastDayStepCount(it)
+                            }
+                            future.set(Result.success())
+                        }
+                        .addOnFailureListener {
+                            Log.e("WorkerT", "Team User data upload failed")
+                            future.set(Result.failure())
+                        }
                 }
-                .addOnFailureListener {
-                    Log.e("WorkerT", "Team User data upload failed")
-                    future.set(Result.failure())
-                }
-        }
+        //}
     }
 
 //    private fun updateUserTournamentDataInFirestore() {
@@ -707,8 +595,6 @@ class UpdateTeamDataWorker (appContext: Context, workerParams: WorkerParameters)
             leafCount += calculateLeafCountFromStepCountForTeam(stepsMap[keys[i]]!!, goal)
         }
         leafCount += stepsMap[keys[keys.size-1]]!! / 3000
-
-
         return leafCount
     }
 

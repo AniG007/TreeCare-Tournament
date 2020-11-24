@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -20,6 +21,7 @@ import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.screens.gamesettings.SettingsActivity
 import dal.mitacsgri.treecare.screens.leaderboard.LeaderboardActivity
 import dal.mitacsgri.treecare.screens.progressreport.ProgressReportActivity
+import dal.mitacsgri.treecare.screens.tournamentleaderboard.TournamentLeaderBoard2Activity
 import dal.mitacsgri.treecare.screens.tournamentleaderboard.TournamentLeaderBoardActivity
 import dal.mitacsgri.treecare.services.StepDetectorService
 import dal.mitacsgri.treecare.unity.UnityPlayerActivity
@@ -71,6 +73,10 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
 
     fun OpenTournamentLeaderboard(){
         startActivity(Intent(this, TournamentLeaderBoardActivity::class.java))
+    }
+
+    fun OpenTournament2Leaderboard(){
+        startActivity(Intent(this, TournamentLeaderBoard2Activity::class.java))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -205,7 +211,9 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
     fun getCurrentChallengerPosition(challengers: ArrayList<Challenger>): Int {
 
         val currentUserUid = sharedPrefsRepository.user.uid
+        Log.d("Leader", "uid $currentUserUid")
         for (i in 0 until challengers.size) {
+            Log.d("Leader", "cid ${challengers[i].uid}")
             if (challengers[i].uid == currentUserUid)
                 return i+1
         }
@@ -230,16 +238,16 @@ class TreeCareUnityActivity : UnityPlayerActivity(), KoinComponent {
                 val challenge = it.toObject<Challenge>() ?: Challenge()
                 val challengers = challenge.players
                 val challengersCount = challengers.size
-                val limit = if (challengersCount > 10) 10 else challengersCount
+                //val limit = if (challengersCount > 10) 10 else challengersCount
 
-                for (i in 0 until limit) {
+                for (i in 0 until challengersCount) {
                     firestoreRepository.getUserData(challengers[i])
                         .addOnSuccessListener {
                             val user = it.toObject<User>()
                             val challenger = user?.let { makeChallengerFromUser(user, challenge) }
                             challengersList.add(challenger!!)
 
-                            if (challengersList.size == limit) {
+                            if (challengersList.size == challengersCount) {
                                 challengersList.sortChallengersList(challenge.type)
 
                                 sharedPrefsRepository.challengeLeaderboardPosition =

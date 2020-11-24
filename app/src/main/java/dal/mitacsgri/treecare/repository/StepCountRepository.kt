@@ -51,7 +51,6 @@ class StepCountRepository(private val context: Context) {
             if (it.dataPoints.size > 0)
                 total = it.dataPoints[0].getValue(Field.FIELD_STEPS).asInt()
                 //total = it.dataPoints[0].getValue(Field.FIELD_DISTANCE).asInt()
-            Log.d("DailyStepCount", total.toString())
             onDataObtained(total)
         }.addOnFailureListener {
             Log.e("DailyStepCount", "error: $it")

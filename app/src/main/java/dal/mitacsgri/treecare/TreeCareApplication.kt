@@ -83,38 +83,37 @@ class TreeCareApplication : Application() {
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "teamWorker",
             ExistingPeriodicWorkPolicy.REPLACE,
-            updateTeamDataRequest,
+            updateTeamDataRequest
         )
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "challengeWorker",
             ExistingPeriodicWorkPolicy.REPLACE,
-            updateUserChallengeDataRequest,
+            updateUserChallengeDataRequest
         )
 //
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "dailyStepsWorker",
             ExistingPeriodicWorkPolicy.REPLACE,
-            updateDailyStepCountDataRequest,
+            updateDailyStepCountDataRequest
         )
 //
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "notificationWorker",
             ExistingPeriodicWorkPolicy.REPLACE,
-            dailyGoalNotificationRequest,
+            dailyGoalNotificationRequest
         )
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "trophiesWorker",
             ExistingPeriodicWorkPolicy.REPLACE,
-            trophiesUpdateRequest,
+            trophiesUpdateRequest
         )
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "syncWorker",
             ExistingPeriodicWorkPolicy.REPLACE,
-            syncDataRequest,
+            syncDataRequest
         )
-
     }
 }

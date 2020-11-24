@@ -109,6 +109,8 @@ class UpdateUserChallengeDataWorker(appContext: Context, workerParams: WorkerPar
                 .setInitialDelay(15, TimeUnit.MINUTES)
                 .build()
         //WorkManager.getInstance(applicationContext).enqueue(updateUserChallengeDataRequest)
+
+
         return future
     }
 

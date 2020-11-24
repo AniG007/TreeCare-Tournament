@@ -72,7 +72,8 @@
 
 
     <!--App UI text-->
-    <string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>
+    <!--<string name="login_screen_quote">The more physically active you\'ll be, more flourishing will be your tree</string>-->
+    <string name="login_screen_quote">Your tree flourishes as you perform physical activity daily!</string>
     <string name="login_text">Please login with your Google account to proceed</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="instructions">Instructions</string>
@@ -213,7 +214,7 @@
 
 <!--    <string name="sendentary_notification_body1">You have been sitting for the past 30 mins. Try going for a short walk to avoid fatigue.</string>-->
     <string name="sendentary_notification_body2">You have been sedentary for the past 30 mins. You should take at least 5 minutes walk to be refreshed</string>
-    <string name="sendentary_notification_body3">Move around every now and then so that you do not feel sluggish</string>
+    <string name="sendentary_notification_body3">Move around every now and then so that you can feel refreshed</string>
     <string name="sendentary_notification_body4">Mix up your work with short walks. Avoid sitting at the same place for a long time</string>
     <string name="sendentary_notification_body5">Feeling lazy? Move around a bit, grab a glass of water and you will feel refreshed</string>
 
@@ -235,6 +236,8 @@
     <string name="empty_all_teams">No team has been created yet</string>
     <string name="empty_your_teams">You have not joined any team yet. You can send a Join Request to any team of your choice or create your own team</string>
     <string name="go_to_tournament_mode">GO TO TOURNAMENT MODE</string>
+    <string name="challenge_active">challenge_active</string>
+    <string name="tournament_active">tournament_active</string>
 
 
 </resources>

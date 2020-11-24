@@ -1,6 +1,7 @@
 package dal.mitacsgri.treecare.screens.progressreport.progressreportdata
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +50,6 @@ class ProgressReportDataFragment : Fragment() {
         reportType = arguments?.getLong(REPORT_TYPE)!!
         startDateMillis = arguments?.getLong(START_DATE)!!
         val startDate = DateTime(startDateMillis)
-
         val view = inflater.inflate(R.layout.fragment_progress_report_data, container, false)
         view.apply {
             val barChartLiveData =
@@ -120,7 +120,6 @@ class ProgressReportDataFragment : Fragment() {
                 setDrawAxisLine(false)
                 axisLeft.axisMinimum = 0f
             }
-
             animateY(1000)
         }
     }

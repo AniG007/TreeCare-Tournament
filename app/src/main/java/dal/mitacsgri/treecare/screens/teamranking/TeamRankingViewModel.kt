@@ -34,12 +34,14 @@ class TeamRankingViewModel(
                     firestoreRepository.getUserData(m)
                         .addOnSuccessListener {
                             val user = it.toObject<User>()
-                            val userStepMap = user?.currentTournaments!![tournamentName]?.dailyStepsMap
+                            val userStepMap = user?.currentTournaments!![tournamentName]?.dailyStepsMap?.values
                             var totalStepsForATournament = 0
 
-                            for (step in userStepMap?.values!!){
-                                totalStepsForATournament += step
-                                Log.d("Steps", step.toString())
+                            if (userStepMap != null) {
+                                for (step in userStepMap){
+                                    totalStepsForATournament += step
+                                    Log.d("Steps", step.toString())
+                                }
                             }
 
                             membersList.value?.add(

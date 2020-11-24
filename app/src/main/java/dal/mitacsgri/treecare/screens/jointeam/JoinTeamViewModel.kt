@@ -4,15 +4,18 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
 import dal.mitacsgri.treecare.extensions.default
 import dal.mitacsgri.treecare.extensions.notifyObserver
-import dal.mitacsgri.treecare.model.User
+import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
+import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import org.joda.time.DateTime
 
 class JoinTeamViewModel(
 
-    //private val sharedPrefsRepository: SharedPreferencesRepository,
+    private val sharedPrefsRepository: SharedPreferencesRepository,
     private val firestoreRepository: FirestoreRepository
 ): ViewModel() {
 
@@ -51,11 +54,15 @@ class JoinTeamViewModel(
                 Log.d("Test", "mailId1" + it.toString())
                 val user = it.toObjects<User>()
                 try {
-                    userID.value = user.get(0).email
+                    //userID.value = user.get(0).email
+                    val userId = user.get(0).email
 
                     //Log.d("Test", "mailId2" + user.get(0).email)
-                    if (userID.value == email) {
-                        firestoreRepository.updateUserData(user.get(0).uid, mapOf("teamInvites" to FieldValue.arrayUnion(teamName)))
+                    //if (userID.value == email) {
+                    if (userId == email) {
+                        /**Uncomment the line below for adding user directly to team and comment all other lines in this function */
+                        acceptUser(user[0].uid)
+                        /*firestoreRepository.updateUserData(user.get(0).uid, mapOf("teamInvites" to FieldValue.arrayUnion(teamName)))
                             .addOnSuccessListener {
                                 Log.d("Invite", "sent")
 
@@ -63,7 +70,6 @@ class JoinTeamViewModel(
                                     .addOnSuccessListener {
                                         Log.d("UserId", "User Added to team invites")
                                         messageLiveData2.value = "An Invite has been sent to the Player"
-                                        //messageLiveData2.notifyObserver()
                                     }
                                     .addOnFailureListener {
                                         Log.d("Invite", "Failed to add to team")
@@ -72,11 +78,11 @@ class JoinTeamViewModel(
                             }
                             .addOnFailureListener {
                                 Log.e("Invite", "failed")
-                            }
+                            }*/
                     }
                     else{
                         messageLiveData.value = "PlayerID does not exist"
-                        messageLiveData.notifyObserver()
+                        //messageLiveData.notifyObserver() // notify observer is not needed here
                     }
                 }
                 catch (e: Exception) {
@@ -84,106 +90,135 @@ class JoinTeamViewModel(
                     }
             }
     }
-}
 
-                /*try {
-                    valid.value = sendInvite(userID.value.toString(), teamName)
-                    Log.d("Toast","Back in try"+valid.value)
-                        //messageLiveData.notifyObserver()
-                }
-                catch(e:Exception){
-                    valid.value = false
-                    if(valid.value == false) {
-                        messageLiveData.value = "Unable to send out invites. Please try again later"
-                        messageLiveData.notifyObserver()
-                        Log.d("Toast","msgge"+messageLiveData.value)
-                    }
-                        //messageLiveData.notifyObserver()
-                }
-                if(valid.value == true) {
-                    messageLiveData.value = "An invite has been sent to the user"
-                    messageLiveData.notifyObserver()
-                    Log.d("Toast","msgg"+messageLiveData.value)
-                }
 
-                valid.notifyObserver()
+    fun acceptUser(userID: String): MutableLiveData<String> {
+        /** most of these firebase calls can be rewritten in a concise manner */
+        Log.d("Test","Inside Function")
+        val tName = sharedPrefsRepository.team.name
+        Log.d("Test", "tname "+ tName)
+        var count2 = 0
 
-                Log.d("TAG","DBID "+userID.value)
-                //Log.d("TAG","DBB "+userEmail)
-            }
-            .addOnFailureListener{
-                Log.d("Toast","VM User Does not Exist")
-
-            }
-        // Log.d("TAG","DBID2 "+userEmail)
-        //return userID
-        //return valid\
-        Log.d("Toast","msg"+messageLiveData.value)
-        return valid
-    }
-
-    fun sendInvite(Uid: String, teamName: String): Boolean? {
-        Log.d("TAG","TN "+teamName)
-        Log.d("Invite","UID "+ Uid)
-
-       *//* if(Uid.isNotEmpty()) {
-            valid.value = true
-            valid.notifyObserver()
-        }*//*
-        //val uid = sharedPrefsRepository.user.uid
-
-        firestoreRepository.updateUserData(Uid,
-            mapOf("teamInvites" to FieldValue.arrayUnion(teamName)))
+        firestoreRepository.getUserData(userID)
             .addOnSuccessListener {
-                Log.d("Invite", "sent")
+                val user = it.toObject<User>()
+                // checking if the user is already in a team before accepting
+                val currentTeams = user?.currentTeams
+                if (currentTeams.isNullOrEmpty()) {
+                    //if (currentTeams.isEmpty()) {
+                    firestoreRepository.getTeam(tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside getTeam")
+                            val team = it.toObject<Team>()
+                            val capId = team?.captain
+                            Log.d("Test", "CaptainId" + capId)
 
-                firestoreRepository.updateTeamData(teamName,
-                    mapOf("invitedMembers" to FieldValue.arrayUnion(Uid)))
-                    .addOnSuccessListener {
-                        //action(true)
-                        Log.d("UserId","User Added to team invites")
-                        valid.value = true
-                        valid.notifyObserver()
-                        Log.d("Valid","Value1"+valid.value)
-                    }
+                            count2++
+                            Log.d("Count", "Count1" + count2)
+                        }
 
-                    .addOnFailureListener {
-                        //action(false)
-                        Log.d("Invite","Failed to add to team")
-                        firestoreRepository.updateTeamData(Uid,
-                            mapOf("invitedMembers" to FieldValue.arrayRemove(teamName)))
-                    }
-                //valid.notifyObserver()
-                Log.d("Valid","Value2"+valid.value)
+                    firestoreRepository.addCurrentTeams(userID, tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside addCurrentTeams")
+                            count2++
+                            Log.d("Count", "Count4" + count2)
+
+                            Log.d("Add", "User was added to the team successfully")
+                        }
+                        .addOnFailureListener {
+                            Log.d("Text", "Exception $it " + userID + " "+ tName)
+                        }
+
+                    firestoreRepository.addTeamMember(userID, tName)
+                        .addOnSuccessListener {
+                            Log.d("Test", "Inside addTeamMember")
+                            count2++
+                            Log.d("Count", "Count5" + count2)
+
+                            Log.d("count", "c1 " + count2)
+
+                            Log.d("Add", "User was added to the team successfully")
+
+                            if (count2 == 3) {
+
+                                firestoreRepository.getTeam(tName)
+                                    .addOnSuccessListener {
+                                        val team = it.toObject<Team>()
+                                        val tourneys = team?.currentTournaments?.keys
+                                        for (tourney in tourneys!!) {
+                                            addTournament(tName, tourney, "Request", userID)
+                                        }
+                                    }
+
+                                messageLiveData2.value = "Player has been added to the team"
+                                //messageLiveData2.notifyObserver()
+
+                            } else {
+                                messageLiveData2.value =
+                                    "Unable to process request. Please try again later"
+                                //messageLiveData2.notifyObserver()
+                            }
+                        }
+                } else {
+                    messageLiveData2.value = "User is already part of a team"
+                }
+
             }
-            .addOnFailureListener {
-                Log.e("Invite", "failed")
-                //action(false)
-            }
-
-
-        Log.d("Valid","Value3"+valid.value)
-        return valid.value
+        return messageLiveData2
     }
-}*/
 
-    //fun getRegexToMatchEmail() = Regex("\n*@*.com")
-    //userEmail = userLiveData.value.toString()
-    /*for (i in 0 until limit){
-        //val user = it.toObject<User>()
-        Log.d("TAG", "UserInfo "+limit.toString()+" " + user.toString())
-        userLiveData.value = user?.email.toString()
-        if(userLiveData.value.equals(email)) {
-            Log.d("TAG","MatchingMailIds"+userLiveData)
-            userEmail.add(userLiveData.value.toString())
-            isValid=true
-        }
-    }*/
+    fun addTournament(team: String, tournamentName : String, type:String, uid:String) {
+        //Adding tournament to currentTournaments in Users Collection
+        firestoreRepository.getTournament(tournamentName)
+            .addOnSuccessListener {
+                val tournament = it.toObject<Tournament>()
+                val userTournament =
+                    tournament?.let { it1 -> getUserTournament(it1, team) }
 
-    //isValid = userLiveData.value?.matches(getRegexToMatchEmail())!!
+                userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
+                Log.d("Test", "tourneyName2 ${tournament?.name}")
+                if (tournament?.active!!){
+                    mapOf("currentTournaments.${tournament.name}" to userTournament).let { it1 ->
+                        firestoreRepository.updateUserTournamentData(uid, it1)
+                    }
+                        .addOnSuccessListener {
+                            //If it's an invite, share  d preferences are updated when the user accepts the invite, else,
+                            //if it's a request, shared preferences are updated when user visits the tournaments page
+                            // (check tournaments view model code, under current tournaments function
+                            if (type == "Invite") {
+                                val user = sharedPrefsRepository.user
+                                user.currentTournaments[tournament.name] =
+                                    userTournament!!
+                                sharedPrefsRepository.user = user
 
-    /*if (isValid) {
-        Log.d("TAG", "MailId" + userLiveData.value.toString())
-        return userLiveData.value.toString()
-    }*/
+                                Log.d("Test", "Being added to user")
+                            }
+                        }
+                        .addOnFailureListener {
+                            Log.d("Test", "Unable to add user")
+                        }
+                }
+            }
+    }
 
+    private fun getUserTournament(tournament: Tournament, team:String) =
+        UserTournament(
+            name = tournament.name,
+            dailyStepsMap = mutableMapOf(),
+            totalSteps = sharedPrefsRepository.getDailyStepCount(),
+            joinDate = DateTime().millis,
+            goal = tournament.dailyGoal,
+            startDate = tournament.startTimestamp,
+            endDate = tournament.finishTimestamp,
+            teamName = team
+        )
+
+    private fun updateUserSharedPrefsData(userTournament: UserTournament){
+        val user = sharedPrefsRepository.user
+        userTournament.leafCount = sharedPrefsRepository.getDailyStepCount() / 1000
+        userTournament.totalSteps = sharedPrefsRepository.getDailyStepCount()
+        user.currentTournaments[userTournament.name] = userTournament
+        sharedPrefsRepository.user = user
+    }
+
+}

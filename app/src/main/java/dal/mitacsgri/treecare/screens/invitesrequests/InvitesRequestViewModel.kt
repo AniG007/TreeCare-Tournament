@@ -91,104 +91,6 @@ class InvitesRequestViewModel(
         return requestList
     }
 
-    /*
-firestoreRepository.getUserData(uid)
-.addOnSuccessListener {
-    val user = it.toObject<User>()
-    val teams: ArrayList<String> = user!!.captainedTeams
-    val count = getCount(uid)
-    Log.d ("count", "user Count "+ count.value?.count())
-    for (t in teams) {
-        Log.d("TAG", "TeamName In loop " + t)
-        firestoreRepository.getTeam(t)
-            .addOnSuccessListener {
-                val team = it.toObject<Team>()
-                val capname = team?.captainName
-                val tName = team?.name.toString()
-                uId.add(team?.joinRequests.toString())
-                //val uCount = uId.count()
-                for (u in uId) {
-                    val user1 = sharedPrefsRepository.user.uid
-                    firestoreRepository.getUserData(user1)
-                        .addOnSuccessListener {
-                            val user2 = it.toObject<User>()
-                            //uUrl.add(user2?.photoUrl.toString())
-                            requestList.value?.add(
-                                InvitesRequest(
-                                    user2?.name.toString(),
-                                    tName,
-                                    user2?.photoUrl.toString()
-                                )
-                            )
-                        }
-
-                }
-                //arr.add(team?.captain to InvitesRequest)
-
-                //InvitesRequest(, tName,
-
-                Log.d("TAG", "JoinRequest " + requestList.value)
-            }
-    }
-
-
-}*/
-
-
-                //To retrieve all invites that the user has received from captains
-
-
-                /*fun getCount(uid: String, teams: ArrayList<String>): Int? {
-        firestoreRepository.getUserData(uid)
-            .addOnSuccessListener {
-                tCount = teams.count()
-                for (t in teams) {
-                    firestoreRepository.getTeam(t)
-                        .addOnSuccessListener {
-                            val team = it.toObject<Team>()
-                            Log.d("Tag","nullcheck "+team!!.joinRequests.toString())
-                            uIdc.value?.add(team.joinRequests.toString())
-                            uIdc.notifyObserver()
-                            Log.d("TAG","uIdc "+uIdc.value)
-                            val count = uIdc.value!!.count()
-                            //uCount.value = uIdc.value!!.count()
-                            uCount.value = count
-                            //uc = uIdc.value!!.count()
-                            uCount.notifyObserver()
-                            uc = uCount.value!!.toInt()
-                            Log.d("TAG","ucount "+ uCount.value)
-                            Log.d("TAG","ucount "+ uc)
-                        }
-                    Log.d("TAG","uIdc before uc1 "+uIdc.value)
-                    Log.d("TAG","ucount1 "+ uCount.value)
-                    Log.d("TAG","ucount1.1 "+ uc)
-                }
-                Log.d("TAG","uIdc before uc2  "+uIdc.value)
-                Log.d("TAG","ucount2 "+ uCount.value)
-                Log.d("TAG","ucount2.1 "+ uc)
-
-            }
-        return (uCount.value) //Counting the number of data fetches that will happen for each userId under each team
-    }*/
-
-                /*fun getCount(uid:String): MutableLiveData<ArrayList<String>> {
-
-        firestoreRepository.getAllCaptainedTeams(uid)
-            .addOnSuccessListener {
-                val ct = it.toObjects<Team>()
-                for (i in 0 until ct.count()){
-                cTeam.value?.add(ct.get(i).joinRequests.toString())
-                //Log.d("TAG", "teamz" + ct.get(i).joinRequests)
-            }
-                cTeam.notifyObserver()
-                //Log.d("TAG","ids"+cTeam.value?.count())
-
-            }
-        Log.d("TAG","ids"+cTeam.value?.count())
-        return cTeam
-
-    }*/
-
     fun getAllInvites(): MutableLiveData<ArrayList<InvitesRequest>> {
 
         val uid = sharedPrefsRepository.user.uid
@@ -209,11 +111,11 @@ firestoreRepository.getUserData(uid)
                                 .addOnSuccessListener {
                                     val captain = it.toObject<User>()
                                     invitesList.value?.add(InvitesRequest(
-                                            team?.captainName.toString(),
-                                            team?.name.toString(),
-                                            captain?.photoUrl.toString(),
-                                            team?.captain.toString()
-                                        ))
+                                        team?.captainName.toString(),
+                                        team?.name.toString(),
+                                        captain?.photoUrl.toString(),
+                                        team?.captain.toString()
+                                    ))
 
                                     if (count2 == user.teamInvites.count())
                                         invitesList.notifyObserver()
@@ -230,7 +132,7 @@ firestoreRepository.getUserData(uid)
         //Log.d("Del","tn"+item.teamName+" "+item.photoUrl+" "+item.userName+" "+userid)
 
         if(sharedPrefsRepository.team.name.isEmpty()){
-        //TODO: These functions can be simplified using the updateTeam function instead of having so many functions
+            //TODO: These functions can be simplified using the updateTeam function instead of having so many functions
             firestoreRepository.deleteTeamInvitesFromUser(userid, item.teamName)
                 .addOnSuccessListener {
 
@@ -330,13 +232,14 @@ firestoreRepository.getUserData(uid)
             return messageLiveData
         }
         else{
-                messageLiveData.value = "You can only be a part of one team"
-                //messageLiveData.notifyObserver()
-                return messageLiveData
+            messageLiveData.value = "You can only be a part of one team"
+            //messageLiveData.notifyObserver()
+            return messageLiveData
         }
     }
 
     fun acceptUser(item: InvitesRequest): MutableLiveData<String> {
+        /** most of these firebase calls can be rewritten in a concise manner */
         Log.d("Test","Inside Function")
         val userid2 = item.uId
         val tName = item.teamName.trim()
@@ -495,7 +398,7 @@ firestoreRepository.getUserData(uid)
 
                 userTournament?.let { it1 -> updateUserSharedPrefsData(it1) }
                 Log.d("Test", "tourneyName2 ${tournament?.name}")
-                if (tournament?.active!!){
+                if (tournament?.active!!) {
                     mapOf("currentTournaments.${tournament.name}" to userTournament).let { it1 ->
                         firestoreRepository.updateUserTournamentData(uid, it1)
                     }

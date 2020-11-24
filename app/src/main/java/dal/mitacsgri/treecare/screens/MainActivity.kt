@@ -199,20 +199,22 @@ class MainActivity : AppCompatActivity() {
 //                .show()
             //createNotification(label,confidence)
             stopTimerTask()
-            createVehicleNotification()
             clearSedentaryNotification()
             count = 1
+        }
 //        } else if (currentTime - lastTime >= 1 && counter != 0) {
 //            if (counter >= 300) {
 //                createNotification2(label)
 //                stopTimerTask()
 //            }
-        } else if (confidence > CONFIDENCE && label == "You are Still" && counter == 0) {
+         else if (confidence > CONFIDENCE && label == "You are Still" && counter == 0) {
             startTimerTask()
+            clearVehicleNotification()
             count = 0
         } else {
             stopTimerTask()
             clearSedentaryNotification()
+            clearVehicleNotification()
             count = 0
         }
         //Log.d("Activity", (currentTime - lastTime).toString())
@@ -236,7 +238,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "OnPause")
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
+        //LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver) //uncomment if you do not want to track activity recognition in the background
     }
 
     private fun startTracking() {
@@ -356,7 +358,7 @@ class MainActivity : AppCompatActivity() {
 
         val notificationManager =
             this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(2, notificationBuilder.build())
+        notificationManager.notify(10, notificationBuilder.build())
     }
 
     private fun createSedentaryReminderNotification() {
@@ -488,6 +490,11 @@ class MainActivity : AppCompatActivity() {
     fun clearSedentaryNotification() {
         val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(2)
+    }
+
+    fun clearVehicleNotification() {
+        val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(10)
     }
 
     //For DB Backup

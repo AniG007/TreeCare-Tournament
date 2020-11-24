@@ -71,7 +71,7 @@ val appModule = module {
     viewModel { ProgressReportDataViewModel(get(), get()) }
     viewModel { InstructionsViewModel() }
     viewModel { InvitesRequestViewModel(get(), get()) }
-    viewModel { JoinTeamViewModel(get()) }
+    viewModel { JoinTeamViewModel(get(), get()) }
     viewModel { TeamInfoViewModel(get(),get(), get()) }
     viewModel { EnrollTeamsViewModel(get(), get()) }
     viewModel { TournamentLeaderBoardViewModel(get(), get()) }

@@ -78,7 +78,8 @@ class ActiveTournamentsViewHolder(
             tourney_card.setOnClickListener {
                 MainActivity.playClickSound()
                 //viewModel.display2(item)
-                if(item.startTimestamp.toDateTime().withTimeAtStartOfDay().millis <= DateTime().withTimeAtStartOfDay().millis) {
+                /** remove this if you want to navigate to leader board */
+                /*if(item.startTimestamp.toDateTime().withTimeAtStartOfDay().millis <= DateTime().withTimeAtStartOfDay().millis) {
                     val action =
                         TournamentsFragmentDirections.actionTournamentsFragmentToTournamentLeaderBoardFragment(
                             item.name
@@ -88,7 +89,7 @@ class ActiveTournamentsViewHolder(
                 else{
                     val action = TournamentsFragmentDirections.actionTournamentsFragmentToTournamentLeaderBoard2Fragment(item.name)
                     findNavController().navigate(action)
-                }
+                }*/
             }
         }
     }

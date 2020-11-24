@@ -568,6 +568,7 @@ class CreateTournamentViewModel(
             totalSteps = sharedPrefsRepository.getDailyStepCount(),
             joinDate = DateTime().millis,
             goal = tournament.dailyGoal,
+            startDate = tournament.startTimestamp,
             endDate = tournament.finishTimestamp,
             teamName = team
         )

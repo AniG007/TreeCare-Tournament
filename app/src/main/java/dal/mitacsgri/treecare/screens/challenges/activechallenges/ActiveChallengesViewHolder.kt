@@ -14,6 +14,14 @@ import dal.mitacsgri.treecare.screens.challenges.ChallengesFragmentDirections
 import dal.mitacsgri.treecare.screens.challenges.ChallengesViewModel
 import dal.mitacsgri.treecare.screens.treecareunityactivity.TreeCareUnityActivity
 import kotlinx.android.synthetic.main.item_active_challenge.view.*
+import kotlinx.android.synthetic.main.item_active_challenge.view.buttonJoin
+import kotlinx.android.synthetic.main.item_active_challenge.view.buttonLeaderBoard
+import kotlinx.android.synthetic.main.item_active_challenge.view.descriptionTV
+import kotlinx.android.synthetic.main.item_active_challenge.view.durationTV
+import kotlinx.android.synthetic.main.item_active_challenge.view.goalTV
+import kotlinx.android.synthetic.main.item_active_challenge.view.membersCountTV
+import kotlinx.android.synthetic.main.item_active_challenge.view.nameTV
+import kotlinx.android.synthetic.main.item_challenge_by_you.view.*
 
 /**
  * Created by Devansh on 25-06-2019
@@ -59,6 +67,10 @@ class ActiveChallengesViewHolder(
                 val action = ChallengesFragmentDirections
                     .actionChallengesFragmentToLeaderboardFragment(item.name)
                 findNavController().navigate(action)
+            }
+
+            activeChallengeCardView.setOnClickListener {
+                MainActivity.playClickSound()
             }
         }
     }

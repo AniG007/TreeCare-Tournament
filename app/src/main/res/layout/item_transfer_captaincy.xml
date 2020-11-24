@@ -22,6 +22,7 @@
             android:id="@+id/imageView"
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_60sdp"
+            android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_6sdp"
             android:padding="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -37,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="25dp"
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:marqueeRepeatLimit="marquee_forever"
@@ -50,7 +51,7 @@
             app:layout_constraintHorizontal_bias="0.016"
             app:layout_constraintStart_toEndOf="@id/imageView"
             app:layout_constraintTop_toTopOf="parent" />
-        <ImageView
+        <!--<ImageView
             android:id="@+id/stepsImage"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
@@ -97,7 +98,7 @@
             app:layout_constraintStart_toEndOf="@id/leavesImage"
             app:layout_constraintTop_toTopOf="@id/stepCountTV"
             tools:text="Leaves" />
-
+-->
         <CheckBox
             android:id="@+id/checkbox_user"
             android:layout_width="wrap_content"

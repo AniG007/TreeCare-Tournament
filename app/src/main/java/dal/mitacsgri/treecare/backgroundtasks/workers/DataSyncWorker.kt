@@ -7,9 +7,13 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.google.firebase.firestore.ktx.toObject
 import dal.mitacsgri.treecare.model.Team
+import dal.mitacsgri.treecare.model.TeamTournament
 import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
+import dal.mitacsgri.treecare.repository.StepCountRepository
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.concurrent.TimeUnit
@@ -19,18 +23,20 @@ class DataSyncWorker(appContext: Context, workerParams: WorkerParameters)
 
     private val sharedPrefRepository: SharedPreferencesRepository by inject()
     private val firestoreRepository: FirestoreRepository by inject()
+    private val stepCountRepository: StepCountRepository by inject()
 
     override fun startWork(): ListenableFuture<Result> {
-
+        Log.d("syncWorker","Started")
         val future = SettableFuture.create<Result>()
-        WorkManager.getInstance().cancelUniqueWork("teamWorker")
+            WorkManager.getInstance().cancelUniqueWork("teamWorker")
         WorkManager.getInstance().cancelUniqueWork("challengeWorker")
+
         if(sharedPrefRepository.team.currentTournaments.isEmpty()){
 
-            firestoreRepository.getUserData(sharedPrefRepository.user.uid).addOnSuccessListener {
-                val user = it.toObject<User>()
+            firestoreRepository.getUserData(sharedPrefRepository.user.uid).addOnSuccessListener { userDataFromDB ->
+                val user = userDataFromDB.toObject<User>()
                 val userTeam = user?.currentTeams.toString().removeSurrounding("[", "]")
-                if (userTeam.isNotEmpty()) {
+                if (userTeam.isNotEmpty() && !user?.currentTournaments.isNullOrEmpty()) {
                     firestoreRepository.getTeam(userTeam).addOnSuccessListener {
                         val team = it.toObject<Team>()
                         val teamTournaments = team?.currentTournaments
@@ -40,6 +46,7 @@ class DataSyncWorker(appContext: Context, workerParams: WorkerParameters)
                                 sharedPrefRepository.team = team
                             }
                         }
+                        Log.d("syncWorker", "Sync finished")
                     }
                 }
             }
@@ -57,7 +64,7 @@ class DataSyncWorker(appContext: Context, workerParams: WorkerParameters)
                         firestoreRepository.getTeam(userTeam).addOnSuccessListener {
                             val team = it.toObject<Team>()
                             val teamTournaments = team?.currentTournaments
-                            synchronized(sharedPrefRepository.team) {
+                            synchronized(sharedPrefRepository) {
                                 val userData = sharedPrefRepository.user
                                 userData.currentTournaments = userTournaments!!
                                 sharedPrefRepository.user = userData
@@ -66,12 +73,33 @@ class DataSyncWorker(appContext: Context, workerParams: WorkerParameters)
                                 teamData.currentTournaments = teamTournaments!!
                                 sharedPrefRepository.team = teamData
                             }
+                            Log.d("syncWorker","Sync finished")
                         }
                     }
                 }
             }
         }
+
+        if (sharedPrefRepository.getLastDayStepCount() == 0) {
+            firestoreRepository.getUserData(sharedPrefRepository.user.uid)
+                .addOnSuccessListener {
+                    val user = it.toObject<User>()
+                    val currentTournaments = user?.currentTournaments
+                    currentTournaments?.forEach { (_, tourney) ->
+                        if (tourney.isActive && tourney.dailyStepsMap.isNotEmpty()) {
+                            Log.d("LastCount", "tourney is active and map is not empty")
+                            sharedPrefRepository.storeLastDayStepCount(tourney.dailyStepsMap.toSortedMap().values.last())
+                        }
+                    }
+                }
+        }
+
         startWorkers()
+
+        if(DateTime().toLocalDateTime().dayOfMonth == 24 && DateTime().toLocalDateTime().year == 2020 && DateTime().toLocalDateTime().monthOfYear == 11){
+            uploadStepsForStudy()
+        }
+
         return future
     }
 
@@ -102,6 +130,26 @@ class DataSyncWorker(appContext: Context, workerParams: WorkerParameters)
             ExistingPeriodicWorkPolicy.REPLACE,
             updateUserChallengeDataRequest,
         )
+    }
 
+    fun uploadStepsForStudy(){
+        stepCountRepository.getStepCountDataOverARange(DateTime().withTimeAtStartOfDay().millis - 172800000, DateTime().withTimeAtStartOfDay().millis){
+            val currentTourney = sharedPrefRepository.user.currentTournaments
+            it.toSortedMap()
+
+            currentTourney["Walkathon"]?.dailyStepsMap!!["1606017600000"] = it.values.first()
+            currentTourney["Walkathon"]?.dailyStepsMap!!["1606104000000"] = it.values.last()
+
+            synchronized(sharedPrefRepository.user){
+                val user = sharedPrefRepository.user
+                user.currentTournaments = currentTourney
+                sharedPrefRepository.user = user
+            }
+
+            firestoreRepository.updateUserData(sharedPrefRepository.user.uid, mapOf("currentTournaments" to sharedPrefRepository.user.currentTournaments))
+                .addOnSuccessListener {
+                    Log.d("Steps", "Revive successful")
+                }
+        }
     }
 }

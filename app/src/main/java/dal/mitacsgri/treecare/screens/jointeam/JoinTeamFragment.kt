@@ -53,10 +53,10 @@ class JoinTeamFragment : Fragment() {
 
             AddTeamsButton.setOnClickListener {
                 MainActivity.playClickSound()
-                var emailId= playerEmailId.text
+                val emailId= playerEmailId.text
                 //Log.d("Test","TeamName "+teamName.value)
                 //Log.d("Test","OnButtonClick "+emailId)
-               // Log.d("Test","OnButtonClick "+teamName)
+                //Log.d("Test","OnButtonClick "+teamName)
 
                 joinTeamViewModel.getUserEmail(emailId.toString(),args.teamName)
             }

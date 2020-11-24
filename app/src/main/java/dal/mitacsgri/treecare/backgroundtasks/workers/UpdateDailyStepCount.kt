@@ -49,6 +49,7 @@ class UpdateDailyStepCount(appContext: Context, workerParams: WorkerParameters)
 
        // WorkManager.getInstance(applicationContext).enqueue(updateDailyStepCountDataRequest)
 
+
         return future
     }
 
@@ -56,7 +57,7 @@ class UpdateDailyStepCount(appContext: Context, workerParams: WorkerParameters)
         Log.d(TAG,"updating in Shared Pref")
         synchronized(sharedPrefsRepository.user) {
             val user = sharedPrefsRepository.user
-            user.stepMap[DateTime().withTimeAtStartOfDay().millis.toString()] = steps
+            user.stepMap[DateTime().withTimeAtStartOfDay(). millis.toString()] = steps
             user.leafMap[DateTime().withTimeAtStartOfDay().millis.toString()] = steps / 1000
             sharedPrefsRepository.user = user
         }

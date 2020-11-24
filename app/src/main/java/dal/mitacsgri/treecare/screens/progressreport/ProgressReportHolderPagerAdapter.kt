@@ -1,5 +1,6 @@
 package dal.mitacsgri.treecare.screens.progressreport
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -24,8 +25,12 @@ class ProgressReportHolderPagerAdapter(fm: FragmentManager, private val reportTy
     private var position1ShownOnce = false
     private var position0ShownOnce = false
 
-    override fun getItem(position: Int): Fragment =
-            ProgressReportDataFragment.newInstance(reportType, getStartDateForPosition(reportType, position))
+    override fun getItem(position: Int): Fragment {
+        return ProgressReportDataFragment.newInstance(
+            reportType,
+            getStartDateForPosition(reportType, position)
+        )
+    }
 
     override fun getCount(): Int {
         val firstLoginDate = DateTime(sharedPrefRepository.user.firstLoginTime)

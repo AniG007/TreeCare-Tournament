@@ -8,7 +8,7 @@
     tools:context=".screens.leaderboard.LeaderboardActivity">
 
     <fragment
-        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:name="dal.mitacsgri.treecare.screens.leaderboard.LeaderboardFragment"
         android:id="@+id/fragmentHolder"
         app:navGraph="@navigation/nav_graph"
         app:defaultNavHost="true"

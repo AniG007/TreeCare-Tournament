@@ -86,7 +86,7 @@ class TransferCaptaincyViewModel(
 
         firestoreRepository.updateTeamData(sharedPrefsRepository.team.name, mapOf("captain" to newCaptain))
             .addOnSuccessListener {
-                firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("captainedTeams" to FieldValue.arrayRemove(sharedPrefsRepository.team.name)))
+                firestoreRepository.updateUserData(sharedPrefsRepository.user.uid, mapOf("captainedTeams" to FieldValue.arrayRemove(sharedPrefsRepository.user.captainedTeams[0].removeSurrounding("[","]"))))
                     .addOnSuccessListener {
                         firestoreRepository.updateUserData(newCaptain, mapOf("captainedTeams" to FieldValue.arrayUnion(sharedPrefsRepository.team.name)))
                             .addOnSuccessListener {
@@ -95,11 +95,10 @@ class TransferCaptaincyViewModel(
                                     .addOnSuccessListener {
                                         val user = it.toObject< User>()
                                         sharedPrefsRepository.team.captainName = user?.name!!
+                                        firestoreRepository.updateTeamData(sharedPrefsRepository.team.name, mapOf("captainName" to user.name))
                                     }
                             }
                     }
             }
-//        Log.d("Test", "prefId "+ sharedPrefsRepository.team.captain)
-//        Log.d("Test", "capName "+ sharedPrefsRepository.team.captainName)
     }
 }

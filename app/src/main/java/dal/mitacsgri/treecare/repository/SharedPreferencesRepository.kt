@@ -128,6 +128,18 @@ class SharedPreferencesRepository(val context: Context) {
             storeInt(R.string.last_leaf_count, value)
         }
 
+    var challengeActive: Int
+        get() = getInt(R.string.challenge_active)
+        set(value) {
+            storeInt(R.string.challenge_active, value)
+        }
+
+    var tournamentActive: Int
+        get() = getInt(R.string.tournament_active)
+        set(value) {
+            storeInt(R.string.tournament_active, value)
+        }
+
     var currentLeafCount: Int
         get() = getInt(R.string.current_leaf_count)
         set(value) {

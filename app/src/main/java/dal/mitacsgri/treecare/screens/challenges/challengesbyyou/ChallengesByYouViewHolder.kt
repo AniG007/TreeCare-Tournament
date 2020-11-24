@@ -79,6 +79,10 @@ class ChallengesByYouViewHolder(
                     .actionChallengesFragmentToLeaderboardFragment(item.name)
                 findNavController().navigate(action)
             }
+
+            cardView.setOnClickListener {
+                MainActivity.playClickSound()
+            }
         }
     }
 }

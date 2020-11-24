@@ -61,6 +61,9 @@ class CurrentChallengesViewHolder(
 
             currentChallengeCard.setOnClickListener {
                 MainActivity.playClickSound()
+                val action = ChallengesFragmentDirections
+                    .actionChallengesFragmentToLeaderboardFragment(item.name)
+                findNavController().navigate(action)
                 //viewModel.disp(item)
             }
         }

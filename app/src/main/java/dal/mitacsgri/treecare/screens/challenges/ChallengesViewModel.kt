@@ -7,20 +7,26 @@ import androidx.core.text.buildSpannedString
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.work.*
+import calculateLeafCountFromStepCount
 import com.google.common.util.concurrent.MoreExecutors
+import com.google.common.util.concurrent.SettableFuture
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.ktx.toObjects
+import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateTeamDataWorker
 import dal.mitacsgri.treecare.backgroundtasks.workers.UpdateUserChallengeDataWorker
 import dal.mitacsgri.treecare.consts.CHALLENGER_MODE
 import dal.mitacsgri.treecare.consts.CHALLENGE_TYPE_DAILY_GOAL_BASED
 import dal.mitacsgri.treecare.extensions.*
 import dal.mitacsgri.treecare.model.Challenge
+import dal.mitacsgri.treecare.model.User
 import dal.mitacsgri.treecare.model.UserChallenge
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
 import org.joda.time.DateTime
+import org.joda.time.Days
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
@@ -43,7 +49,6 @@ class ChallengesViewModel(
     //disable or enable join button
     val statusMessage = MutableLiveData<String>()
     var messageDisplayed = true
-    val today = DateTime().withTimeAtStartOfDay().millis.toString()
 
     fun getAllActiveChallenges(): MutableLiveData<ArrayList<Challenge>> {
         WorkManager.getInstance().cancelUniqueWork("challengeWorker")
@@ -54,26 +59,28 @@ class ChallengesViewModel(
 //                activeChallengesList.value = it.toObjects<Challenge>().filter { it.exist && it.active }.toArrayList()
 //                activeChallengesList.notifyObserver()
                 val user = sharedPrefsRepository.user
-//                Log.d("chlg", challenges.toString())
+
                 activeChallengesList.value =
                     it.toObjects<Challenge>().filter { it.exist && it.active }
                         .toArrayList()
                 activeChallengesList.notifyObserver()
 
-                    Log.d("Test", "challenges" + challenges)
-                if(user.currentChallenges.isNotEmpty()) {
+                if (user.currentChallenges.isNotEmpty() && !user.currentChallenges.isNullOrEmpty()) {
                     for (challenge in user.currentChallenges) {
-                        stepCountRepository.getTodayStepCountData {
-                            user.currentChallenges[challenge.key]?.dailyStepsMap!![today] = it
-                            synchronized(sharedPrefsRepository.user) {
-                                Log.d("chlg", it.toString())
-                                val userData = sharedPrefsRepository.user
-                                userData.currentChallenges[challenge.key] =
-                                    user.currentChallenges[challenge.key]!!
-                                sharedPrefsRepository.user = userData
-//                            Log.d("chlg", sharedPrefsRepository.user.currentChallenges.toString())
+                        if (challenge.value.isActive) {
+                            Log.d("Today", "today ${DateTime().withTimeAtStartOfDay().millis}")
+                            stepCountRepository.getTodayStepCountData {
+                                user.currentChallenges[challenge.key]?.dailyStepsMap!![DateTime().withTimeAtStartOfDay().millis.toString()] = it
+                                synchronized(sharedPrefsRepository.user) {
+                                    Log.d("chlg", it.toString())
+                                    val userData = sharedPrefsRepository.user
+                                    userData.currentChallenges[challenge.key] =
+                                        user.currentChallenges[challenge.key]!!
+                                    sharedPrefsRepository.user = userData
+                                }
+                                if(user.currentChallenges[challenge.key]?.isActive!!)
+                                    updateAndStoreUserChallengeDataInSharedPrefs(user.currentChallenges[challenge.key]!!, user)
                             }
-                            updateChallengeData()
                         }
                     }
                 }
@@ -244,25 +251,49 @@ class ChallengesViewModel(
     }
 
     fun startUnityActivityForChallenge(challenge: Challenge, action: () -> Unit) {
-        sharedPrefsRepository.apply {
 
-            val userChallenge = user.currentChallenges[challenge.name]!!
-            //Log.d("Unity", "UserSteps"+ userChallenge.totalSteps)
-            gameMode = CHALLENGER_MODE
-            challengeType = userChallenge.type
-            challengeGoal = userChallenge.goal
-            challengeLeafCount = userChallenge.leafCount
-            challengeFruitCount = userChallenge.fruitCount
-            challengeStreak = userChallenge.challengeGoalStreak
-            challengeName = userChallenge.name
-            isChallengeActive =
-                (userChallenge.isActive) // (userChallenge.endDate.toDateTime().millis > DateTime().millis)
-            //challengeTotalStepsCount = if (userChallenge.isActive) userChallenge.totalSteps else  userChallenge.totalSteps //getDailyStepCount()
-            challengeTotalStepsCount = getDailyStepCount()
-            //challengeTotalStepsCount = getDailyStepCount()
-            //Log.d("Unity", challengeTotalStepsCount.toString())
-            Log.d("Unity", "UserSteps" + isChallengeActive)
-            action()
+        if(challenge.active) {
+            sharedPrefsRepository.apply {
+
+                val userChallenge = user.currentChallenges[challenge.name]!!
+                //Log.d("Unity", "UserSteps"+ userChallenge.totalSteps)
+                gameMode = CHALLENGER_MODE
+                challengeType = userChallenge.type
+                challengeGoal = userChallenge.goal
+                challengeLeafCount = userChallenge.leafCount
+                challengeFruitCount = userChallenge.fruitCount
+                challengeStreak = userChallenge.challengeGoalStreak
+                challengeName = userChallenge.name
+                isChallengeActive = true // (userChallenge.endDate.toDateTime().millis > DateTime().millis)
+                challengeActive = 1
+                //challengeTotalStepsCount = if (userChallenge.isActive) userChallenge.totalSteps else  userChallenge.totalSteps //getDailyStepCount()
+                challengeTotalStepsCount = getDailyStepCount()
+                //challengeTotalStepsCount = getDailyStepCount()
+                //Log.d("Unity", challengeTotalStepsCount.toString())
+                Log.d("Unity", "UserStepsActive" + isChallengeActive)
+                action()
+            }
+        }
+        else{
+            sharedPrefsRepository.apply {
+
+                val userChallenge = user.currentChallenges[challenge.name]!!
+                //Log.d("Unity", "UserSteps"+ userChallenge.totalSteps)
+                gameMode = CHALLENGER_MODE
+                challengeType = userChallenge.type
+                challengeGoal = userChallenge.goal
+                challengeLeafCount = userChallenge.leafCount
+                challengeFruitCount = userChallenge.fruitCount
+                challengeStreak = userChallenge.challengeGoalStreak
+                challengeName = userChallenge.name
+                isChallengeActive = false // (userChallenge.endDate.toDateTime().millis > DateTime().millis)
+                challengeActive = 0
+                //challengeTotalStepsCount = if (userChallenge.isActive) userChallenge.totalSteps else  userChallenge.totalSteps //getDailyStepCount()
+                challengeTotalStepsCount = userChallenge.totalSteps
+                //challengeTotalStepsCount = getDailyStepCount()
+                Log.d("Unity", "UserStepsInActive" + isChallengeActive)
+                action()
+            }
         }
     }
 
@@ -413,24 +444,124 @@ class ChallengesViewModel(
         )
     }
 
-    fun updateChallengeData() {
+//    fun updateChallengeData() {
+//
+//        firestoreRepository.updateUserData(
+//            sharedPrefsRepository.user.uid,
+//            mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges)
+//        )
+//            .addOnSuccessListener {
+//                Log.d("chlg", "challenge update was successful")
+//                /*firestoreRepository.getAllActiveChallenges().addOnSuccessListener {
+//                    activeChallengesList.value =
+//                        it.toObjects<Challenge>().filter { it.exist && it.active }
+//                            .toArrayList()
+//                    activeChallengesList.notifyObserver()
+//                }*/
+////                    }
+//            }
+//            .addOnFailureListener {
+//                Log.e("Active challenges", "Fetch failed: $it")
+//            }
+//    }
 
+    private fun updateAndStoreUserChallengeDataInSharedPrefs(challenge: UserChallenge, user: User) {
+        challenge.leafCount = getTotalLeafCountForChallenge(challenge)
+        challenge.fruitCount = getTotalFruitCountForChallenge(challenge)
+        challenge.challengeGoalStreak = getChallengeGoalStreakForUser(challenge, user)
+        challenge.lastUpdateTime = Timestamp.now()
+
+        var totalSteps = 0
+        challenge.dailyStepsMap.forEach { (time, steps) ->
+            totalSteps += steps
+        }
+        challenge.totalSteps = totalSteps
+
+        synchronized(sharedPrefsRepository.user) {
+            val userData = sharedPrefsRepository.user
+            userData.currentChallenges[challenge.name] = challenge
+            sharedPrefsRepository.user = user
+        }
+        updateUserChallengeDataInFirestore()
+    }
+
+    private fun updateUserChallengeDataInFirestore() {
         firestoreRepository.updateUserData(
             sharedPrefsRepository.user.uid,
             mapOf("currentChallenges" to sharedPrefsRepository.user.currentChallenges)
         )
-            .addOnSuccessListener {
-                Log.d("chlg", "challenge update was successful")
-                /*firestoreRepository.getAllActiveChallenges().addOnSuccessListener {
-                    activeChallengesList.value =
-                        it.toObjects<Challenge>().filter { it.exist && it.active }
-                            .toArrayList()
-                    activeChallengesList.notifyObserver()
-                }*/
-//                    }
+    }
+
+    private fun getChallengeGoalStreakForUser(challenge: UserChallenge, user: User): Int {
+        val userChallengeData = user.currentChallenges[challenge.name]!!
+        var streakCount = 0
+
+        userChallengeData.dailyStepsMap.forEach { (date, stepCount) ->
+            //This check prevents resetting streak count if goal is yet to be met today
+            if (date.toLong() < DateTime().withTimeAtStartOfDay().millis) {
+                if (stepCount >= challenge.goal) streakCount++
+                else streakCount = 0
             }
-            .addOnFailureListener {
-                Log.e("Active challenges", "Fetch failed: $it")
+        }
+        return streakCount
+    }
+
+    private fun getTotalLeafCountForChallenge(challenge: UserChallenge): Int {
+        val stepsMap = challenge.dailyStepsMap
+        val goal = challenge.goal
+        var leafCount = 0
+
+        val keys = stepsMap.keys.sortedBy {
+            it.toLong()
+        }
+
+        for (i in 0 until keys.size-1) {
+            leafCount += calculateLeafCountFromStepCount(stepsMap[keys[i]]!!, goal)
+        }
+        leafCount += stepsMap[keys[keys.size-1]]!! / 1000
+
+        return leafCount
+    }
+
+    private fun getTotalFruitCountForChallenge(challenge: UserChallenge): Int {
+        val joinDate = DateTime(challenge.joinDate)
+        val currentDate = DateTime()
+        val days = Days.daysBetween(joinDate, currentDate).days
+        val weeks = Math.ceil(days/7.0).toInt()
+
+        //Log.d("Worker", "weeks "+ weeks)
+        var fruitCount = 0
+
+        var weekStartDate = joinDate
+        var newWeekDate = weekStartDate.plusWeeks(1)
+        var mapPartition: Map<String, Int>
+        for (i in 0 until weeks) {
+            mapPartition = challenge.dailyStepsMap.filter {
+                val keyAsLong = it.key.toLong()
+                keyAsLong >= weekStartDate.millis && keyAsLong < newWeekDate.millis
             }
+            fruitCount += calculateFruitCountForWeek(challenge, mapPartition)
+            weekStartDate = newWeekDate
+            newWeekDate = weekStartDate.plusWeeks(1)
+        }
+
+        Log.d("fruits", fruitCount.toString())
+        return fruitCount
+    }
+
+    private fun calculateFruitCountForWeek(challenge: UserChallenge, stepCountMap: Map<String, Int>): Int {
+        var currentDay = 0
+        val goalAchievedStreak = arrayOf(false, false, false, false, false, false, false)
+        val fullStreak = arrayOf(true, true, true, true, true, true, true)
+
+        if (stepCountMap.size < 7) return 0
+
+        stepCountMap.forEach { (_, stepCount) ->
+            goalAchievedStreak[currentDay] =
+                stepCount >= challenge.goal
+            currentDay++
+        }
+
+        return if (goalAchievedStreak.contentEquals(fullStreak)) 1 else -1
     }
 }

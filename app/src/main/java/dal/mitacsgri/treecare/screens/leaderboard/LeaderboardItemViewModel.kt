@@ -61,16 +61,16 @@ class LeaderboardItemViewModel(
 
                 val challengers = challenge.players
                 val challengersCount = challengers.size
-                val limit = if (challengersCount > 10) 10 else challengersCount
+                //val limit = if (challengersCount > 10) 10 else challengersCount
 
-                for (i in 0 until limit) {
+                for (i in 0 until challengersCount) {
                     firestoreRepository.getUserData(challengers[i])
                         .addOnSuccessListener {
                             val user = it.toObject<User>()
                             val challenger = user?.let { makeChallengerFromUser(user, challenge) }
                             challengersList.value?.add(challenger!!)
 
-                            if (challengersList.value?.size == limit) {
+                            if (challengersList.value?.size == challengersCount) {
                                 //challengersList.value?.sortChallengersList(challenge.type)
                                 challengersList.value!!.sortWith(compareBy({it.totalLeaves}, {it.totalSteps}))
                                 challengersList.value!!.reverse()

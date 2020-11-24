@@ -23,8 +23,8 @@ class TransferCaptaincyViewHolder(
                 .apply(RequestOptions.circleCropTransform())
                 .into(imageView)
 
-            stepCountTV.text = item.dailySteps.toString()
-            leavesCountTV.text = (item.dailySteps / 3000).toString()
+            /*stepCountTV.text = item.dailySteps.toString()
+            leavesCountTV.text = (item.dailySteps / 3000).toString()*/
 
             checkbox_user.setOnClickListener {
                 if (it is CheckBox) {

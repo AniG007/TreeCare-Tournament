@@ -55,7 +55,7 @@
 
         <LinearLayout
             android:id="@+id/LLayout"
-            android:layout_width="150dp"
+            android:layout_width="256dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/imageView"
             app:layout_constraintTop_toTopOf="parent"
@@ -63,7 +63,7 @@
 
             <dal.mitacsgri.treecare.utils.ui.AutoScrollingTextView
                 android:id="@+id/teamNameTV"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_180sdp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal"

@@ -8,6 +8,10 @@
     android:layout_marginBottom="@dimen/_16sdp"
     android:layout_marginStart="@dimen/_16sdp"
     android:layout_marginEnd="@dimen/_16sdp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:id="@+id/cardView"
     app:cardElevation="@dimen/_6sdp"
     app:cardCornerRadius="@dimen/_6sdp">
 

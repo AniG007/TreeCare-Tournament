@@ -30,9 +30,6 @@ class FirestoreRepository {
 
     fun getAllUserEmail(user: String):Task<QuerySnapshot>{
         return db.collection(COLLECTION_USERS).whereEqualTo("email",user).get()
-        //val emails = ArrayList<String>()
-        //emails.add(mails.toString())
-        //return users.toString()
     }
     fun countUsers(): Int {
         val users = db.collection(COLLECTION_USERS).toString()

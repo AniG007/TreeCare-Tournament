@@ -84,11 +84,11 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/backButton"
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
-                    android:src="@drawable/ic_back_arrow"
+                    android:background="@drawable/ic_back_arrow"
                     app:layout_constraintTop_toTopOf="@id/titleTV"
                     app:layout_constraintStart_toStartOf="@id/titleTV"
                     app:layout_constraintBottom_toBottomOf="@id/titleTV"/>

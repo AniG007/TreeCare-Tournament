@@ -21,11 +21,20 @@ import dal.mitacsgri.treecare.model.*
 import dal.mitacsgri.treecare.repository.FirestoreRepository
 import dal.mitacsgri.treecare.repository.SharedPreferencesRepository
 import dal.mitacsgri.treecare.repository.StepCountRepository
+import kotlinx.coroutines.tasks.await
+import org.jetbrains.anko.custom.asyncResult
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.doAsyncResult
+import org.jetbrains.anko.internals.AnkoInternals.createAnkoContext
+import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Days
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -60,6 +69,9 @@ class TournamentsViewModel(
     var cr =
         0 // to check for count before uploading team tourney data into firestore, part of the worker for updating team data. It's been added here for testing purposes.
     var currentStepCount = 0
+
+    var cr1 = 0
+    var county1 =0
 
     //The error status message must contain 'error' in string because it is used to check whether to
     //disable or enable join button
@@ -188,14 +200,20 @@ class TournamentsViewModel(
                                             getTeamTournament(
                                                 tourney,
                                                 sharedPrefsRepository.getDailyStepCount(),
-                                                userTeam.name,
+                                                sharedPrefsRepository.user.currentTeams[0].removeSurrounding(
+                                                    "[",
+                                                    "]"
+                                                ),
                                                 true
                                             )
                                         else
                                             getTeamTournament(
                                                 tourney,
                                                 sharedPrefsRepository.getDailyStepCount(),
-                                                userTeam.name,
+                                                sharedPrefsRepository.user.currentTeams[0].removeSurrounding(
+                                                    "[",
+                                                    "]"
+                                                ),
                                                 false
                                             )
                                     sharedPrefsRepository.team = userTeam
@@ -214,12 +232,14 @@ class TournamentsViewModel(
                                 //fetch current tourney for users and check with shared prefs
                                 Log.d("Test", "currentTourney List" + currentTournamentsList.value)
                             }
-
-                            updateUserStepsForTournaments(tournament)
                             //}
                             synchronized(currentTournamentsList.value!!) {
                                 currentTournamentsList.value?.sortAndAddToList(tourney)
                                 currentTournamentsList.notifyObserver()
+                            }
+
+                            if(tournament.value.endDate.toDateTime().millis > DateTime().millis && tournament.value.startDate.toDateTime().millis <= DateTime().millis) {
+                                updateUserStepsForTournaments(tournament)
                             }
                         }
                         .addOnFailureListener {
@@ -323,27 +343,288 @@ class TournamentsViewModel(
 
     fun startUnityActivityForTournament(tournament: Tournament, action: () -> Unit) {
 
-        sharedPrefsRepository.apply {
+        val today = DateTime().withTimeAtStartOfDay().millis.toString()
 
-            val teamTournament = team.currentTournaments[tournament.name]!!
-            //storeTournamentTotalStepCount(teamTournament.dailyStepsMap.values.last())
-            //Log.d("Unity", teamTournament.dailyStepsMap.values.last().toString())
-            gameMode = TOURNAMENT_MODE
-            tournamentType = teamTournament.type
-            tournamentGoal = teamTournament.goal
-            tournamentLeafCount = teamTournament.leafCount
-            tournamentFruitCount = teamTournament.fruitCount
-            tournamentStreak = teamTournament.tournamentGoalStreak
-            tournamentName = teamTournament.name
-            isTournamentActive = teamTournament.endDate.toDateTime().millis > DateTime().millis
-            tournamentTotalStepsCount =
-                teamTournament.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()]!!
-            //tournamentTotalStepsCount = sharedPrefsRepository.getDailyStepCount()
-            //tournamentTotalStepsCount = getDailyStepCount()
-            Log.d("Unity", tournamentTotalStepsCount.toString())
-            action()
+        if (tournament.active) {
+            Log.d("Steps", "StepsIF")
+            sharedPrefsRepository.apply {
+
+                val teamTournament = team.currentTournaments[tournament.name]!!
+                teamTournament.dailyStepsMap.values.sorted()
+
+                //Log.d("Unity", teamTournament.dailyStepsMap.values.last().toString())
+                gameMode = TOURNAMENT_MODE
+                tournamentType = teamTournament.type
+                tournamentGoal = teamTournament.goal
+                //tournamentLeafCount = teamTournament.leafCount
+                //tournamentFruitCount = teamTournament.fruitCount
+                tournamentStreak = teamTournament.tournamentGoalStreak
+                tournamentName = teamTournament.name
+                isTournamentActive = true
+                tournamentActive = 1
+
+                //doAsync {
+                    firestoreRepository.getTeam(sharedPrefsRepository.team.name)
+                        .addOnSuccessListener {
+                            val teamFromDB = it.toObject<Team>()
+                            val members = teamFromDB?.members
+                            val teamTourney = teamFromDB?.currentTournaments!![tournamentName]!!
+                            var totalStepsForATournament = 0
+                            var memberCount = members!!.count()
+                            val mappy: MutableMap<String, Int> = mutableMapOf()
+                            for (member in members) {
+                                firestoreRepository.getUserData(member)
+                                    .addOnSuccessListener {
+                                        val user = it.toObject<User>()
+                                        val userStepMap =
+                                            user?.currentTournaments!![tournamentName]?.dailyStepsMap!![today]
+                                        val userStepMapForLeaves = user.currentTournaments[tournamentName]?.dailyStepsMap
+
+                                        if (userStepMap != null) {
+                                            totalStepsForATournament += userStepMap
+                                            Log.d("Steps", userStepMap.toString())
+                                        }
+
+                                        if (userStepMapForLeaves?.values != null) {
+
+                                            userStepMapForLeaves.forEach {
+                                                if (mappy.keys.contains(it.key)) {
+                                                    val last = mappy[it.key]!!
+                                                    mappy[it.key] = last + it.value
+                                                    /*Log.d(
+                                                        "Mapper",
+                                                        "For Team ${teamFromDB.name} For User ${user.name}" + it.value
+                                                    )*/
+                                                } else {
+                                                    mappy[it.key] = it.value
+                                                    /*Log.d(
+                                                        "MapperElse",
+                                                        "For Team ${teamFromDB.name} For User ${user.name}" + userStepMapForLeaves.values.last()
+                                                            .toString()
+                                                    )*/
+                                                }
+                                            }
+                                        }
+                                        memberCount--
+                                        if (memberCount == 0) {
+                                            tournamentTotalStepsCount = totalStepsForATournament
+                                            teamTourney.dailyStepsMap = mappy
+
+                                            tournamentLeafCount =
+                                                getTotalLeafCountForTeam(teamTourney)
+                                            tournamentFruitCount =
+                                                getTotalFruitCountForTeam(teamTourney)
+                                            Log.d("Mappy", mappy.toString())
+
+                                            mappy.clear()
+                                        }
+                                    }
+                            }
+                        }
+
+                    /*firestoreRepository.getTeam(sharedPrefsRepository.team.name)
+                        .addOnSuccessListener {
+                            val teamFromDB = it.toObject<Team>()
+                            val teamTourney = teamFromDB?.currentTournaments!![tournamentName]!!
+                            val members = teamFromDB.members
+                            var memberCount = members.count()
+                            val mappy: MutableMap<String, Int> = mutableMapOf()
+
+                            for (member in members) {
+                                firestoreRepository.getUserData(member)
+                                    .addOnSuccessListener {
+                                        val user = it.toObject<User>()
+                                        val userStepMap =
+                                            user?.currentTournaments!![tournamentName]?.dailyStepsMap
+
+                                        if (userStepMap?.values != null) {
+
+                                            userStepMap.forEach {
+                                                if (mappy.keys.contains(it.key)) {
+                                                    val last = mappy[it.key]!!
+                                                    mappy[it.key] = last + it.value
+                                                    Log.d(
+                                                        "Mapper",
+                                                        "For Team ${teamFromDB.name} For User ${user.name}" + it.value
+                                                    )
+                                                } else {
+                                                    mappy[it.key] = it.value
+                                                    Log.d(
+                                                        "MapperElse",
+                                                        "For Team ${teamFromDB.name} For User ${user.name}" + userStepMap.values.last()
+                                                            .toString()
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        Log.d(
+                                            "Steps",
+                                            "membercount $memberCount members.count ${members.count()}"
+                                        )
+
+                                        memberCount--
+                                        if (memberCount == 0) {
+                                            Log.d("Steps", "Adding to List")
+                                            //teamTourney.totalSteps = totalStepsForATournament
+                                            teamTourney.dailyStepsMap = mappy
+
+                                            tournamentLeafCount =
+                                                getTotalLeafCountForTeam(teamTourney)
+                                            tournamentFruitCount =
+                                                getTotalFruitCountForTeam(teamTourney)
+
+                                            mappy.clear()
+                                        }
+                                    }
+                            }
+                        }*/
+
+
+                //}
+                //tournamentTotalStepsCount = teamTournament.dailyStepsMap[DateTime().withTimeAtStartOfDay().millis.toString()]!!
+                //tournamentTotalStepsCount = sharedPrefsRepository.getDailyStepCount()
+                //tournamentTotalStepsCount = getDailyStepCount()
+                Log.d("Unity", tournamentTotalStepsCount.toString())
+                action()
+            }
+        } else {
+            Log.d("Steps", "StepsElse")
+            sharedPrefsRepository.apply {
+                val teamTournament = team.currentTournaments[tournament.name]!!
+                teamTournament.dailyStepsMap.values.sorted().last()
+                //storeTournamentTotalStepCount(teamTournament.dailyStepsMap.values.last())
+                //Log.d("Unity", teamTournament.dailyStepsMap.values.last().toString())
+                gameMode = TOURNAMENT_MODE
+                tournamentType = teamTournament.type
+                tournamentGoal = teamTournament.goal
+                tournamentLeafCount = teamTournament.leafCount
+                tournamentFruitCount = teamTournament.fruitCount
+                tournamentStreak = teamTournament.tournamentGoalStreak
+                tournamentName = teamTournament.name
+                isTournamentActive = false
+                tournamentActive = 0
+
+                //doAsync {
+                    firestoreRepository.getTeam(team.name)
+                        .addOnSuccessListener {
+                            val teamFromDB = it.toObject<Team>()
+                            val members = teamFromDB?.members
+                            var totalStepsForATournament = 0
+                            var memberCount = members!!.count()
+                            val mappy: MutableMap<String, Int> = mutableMapOf()
+                            val teamTourney = teamFromDB.currentTournaments[tournamentName]!!
+                            for (member in members) {
+                                firestoreRepository.getUserData(member)
+                                    .addOnSuccessListener {
+                                        val user = it.toObject<User>()
+                                        val userStepMap =
+                                            user?.currentTournaments!![tournamentName]?.dailyStepsMap?.values
+                                        val userStepMapForLeaves = user.currentTournaments[tournamentName]?.dailyStepsMap
+
+                                        if (userStepMap != null) {
+                                            for (step in userStepMap) {
+                                                totalStepsForATournament += step
+                                                Log.d("Steps", step.toString())
+                                            }
+                                        }
+
+                                        if (userStepMapForLeaves?.values != null) {
+
+                                            userStepMapForLeaves.forEach {
+                                                if (mappy.keys.contains(it.key)) {
+                                                    val last = mappy[it.key]!!
+                                                    mappy[it.key] = last + it.value
+                                                } else {
+                                                    mappy[it.key] = it.value
+                                                }
+                                            }
+                                        }
+
+                                        memberCount--
+                                        if (memberCount == 0) {
+                                            tournamentTotalStepsCount = totalStepsForATournament
+
+                                            teamTourney.dailyStepsMap = mappy
+
+                                            tournamentLeafCount =
+                                                getTotalLeafCountForTeam(teamTourney)
+                                            tournamentFruitCount =
+                                                getTotalFruitCountForTeam(teamTourney)
+                                            Log.d("Mappy", mappy.toString())
+
+                                            mappy.clear()
+                                        }
+                                        //tournamentTotalStepsCount = sharedPrefsRepository.getDailyStepCount()
+                                        //tournamentTotalStepsCount = getDailyStepCount()
+                                        Log.d("Unity", tournamentTotalStepsCount.toString())
+
+                                    }
+                            }
+                        }
+
+                    /*firestoreRepository.getTeam(sharedPrefsRepository.team.name)
+                        .addOnSuccessListener {
+                            val teamFromDB = it.toObject<Team>()
+                            val teamTourney = teamFromDB?.currentTournaments!![tournamentName]!!
+                            val members = teamFromDB.members
+                            var memberCount = members.count()
+                            val mappy: MutableMap<String, Int> = mutableMapOf()
+
+                            for (member in members) {
+                                firestoreRepository.getUserData(member)
+                                    .addOnSuccessListener {
+                                        val user = it.toObject<User>()
+                                        val userStepMap =
+                                            user?.currentTournaments!![tournamentName]?.dailyStepsMap
+
+                                        if (userStepMap?.values != null) {
+
+                                            userStepMap.forEach {
+                                                if (mappy.keys.contains(it.key)) {
+                                                    val last = mappy[it.key]!!
+                                                    mappy[it.key] = last + it.value
+                                                    Log.d(
+                                                        "Mapper",
+                                                        "For Team ${teamFromDB.name} For User ${user.name}" + it.value
+                                                    )
+                                                } else {
+                                                    mappy[it.key] = it.value
+                                                    Log.d(
+                                                        "MapperElse",
+                                                        "For Team ${teamFromDB.name} For User ${user.name}" + userStepMap.values.last()
+                                                            .toString()
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        Log.d(
+                                            "Steps",
+                                            "membercount $memberCount members.count ${members.count()}"
+                                        )
+
+                                        memberCount--
+                                        if (memberCount == 0) {
+                                            Log.d("Steps", "Adding to List")
+                                            //teamTourney.totalSteps = totalStepsForATournament
+                                            teamTourney.dailyStepsMap = mappy
+
+                                            tournamentLeafCount =
+                                                getTotalLeafCountForTeam(teamTourney)
+                                            tournamentFruitCount =
+                                                getTotalFruitCountForTeam(teamTourney)
+
+                                            mappy.clear()
+                                        }
+                                    }
+                            }
+                        }*/
+                //}
+                action()
+            }
         }
     }
+
+
 
     fun getTournamentDurationText(tournament: Tournament): SpannedString {
         val finishDate = tournament.finishTimestamp.toDateTime().millis
@@ -868,29 +1149,86 @@ class TournamentsViewModel(
 
 
     fun updateUserStepsForTournaments(tournament: MutableMap.MutableEntry<String, UserTournament>) {
-
         val today = DateTime()
+        val localMN = today.withTimeAtStartOfDay().millis
+        val localDate = today.toLocalDateTime().dayOfMonth
+        val localMonth = today.toLocalDateTime().monthOfYear
+
         val halifaxTimeZone = DateTimeZone.forID("America/Halifax")
-        val mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
+        val halifax = today.withZone(halifaxTimeZone)
+        val halifaxMN = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+        val halifaxDate = halifax.toLocalDateTime().dayOfMonth
+        val halifaxMonth = halifax.toLocalDateTime().monthOfYear
+
+        var mNight: Long = 0
+        /*Log.d("Dates", "LocalDates $localDate HalifaxDate $halifaxDate")
+        Log.d("Dates", "LocalMN $localMN HalifaxMN $halifaxMN")*/
+
+        when {
+            (localMN > halifaxMN)  -> {
+
+                if(localDate == halifaxDate)
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
+                if(localDate > halifaxDate || (localDate < halifaxDate && localMonth > halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis + 86400000
+
+                if(localDate < halifaxDate || (localDate > halifaxDate && localMonth < halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis - 86400000
+
+            }
+            (localMN < halifaxMN) -> {
+
+                if(localDate == halifaxDate)
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
+                if(localDate < halifaxDate || (localDate > halifaxDate && localMonth < halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis - 86400000
+
+                if(localDate > halifaxDate || (localDate < halifaxDate && localMonth > halifaxMonth))
+                    mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis + 86400000
+                //Log.d("Dates", "mNight $mNight")
+            }
+            else -> {
+                mNight = today.withZone(halifaxTimeZone).withTimeAtStartOfDay().millis
+
+            }
+        }
 
         val team = sharedPrefsRepository.team
         val user = sharedPrefsRepository.user
 
-        if(team.currentTournaments.isNotEmpty()) {
+        if(team.name.isNullOrEmpty())
+            team.name = sharedPrefsRepository.user.currentTeams.toString().removeSurrounding("[","]")
+
+        if(team.currentTournaments.containsKey(tournament.key)) {
+            Log.d("tester", "key " + tournament.key+ ", tn"+ !team.name.isNullOrEmpty()+", tc"+ team.currentTournaments.isNotEmpty()+ ", ac"+ tournament.value.isActive)
+            Log.d("tester","tname "+team.name)
+        }
+
+        team.currentTournaments.forEach { (_, tourney) ->
+            if(tourney.isActive && tourney.endDate.toDateTime().millis > DateTime().millis && tourney.startDate.toDateTime().millis <= DateTime().millis) {
+                county1++
+                Log.d("tester", "activeTourney ${tourney.name}")
+            }
+        }
+
+        if(team.currentTournaments.isNotEmpty() && team.currentTournaments.containsKey(tournament.key) && tournament.value.endDate.toDateTime().millis > DateTime().millis && tournament.value.startDate.toDateTime().millis <= DateTime().millis && !team.name.isEmpty()) {
             stepCountRepository.getTodayStepCountData {
 //            user.currentTournaments[tournament.key]?.dailyStepsMap!![mNight.toString()] = it
 //            team.currentTournaments[tournament.key]?.dailyStepsMap!![mNight.toString()] = it
                 //Log.d("tourneyUpload", "TourneyName: " + tourney.name)
                 calc(team, it, team.currentTournaments[tournament.key]!!, mNight)
+                //updateStepsForUserAndTeam(team, user,it, team.currentTournaments[tournament.key]!!, mNight, county1)
             }
         }
-
         startWorkerForTournaments()
     }
 
     private fun calc(team: Team, currentStepCount: Int, tourney: TeamTournament, midNight: Long) {
 
-        cr++
+        cr1++
         val userTourneys = sharedPrefsRepository.user
         //Sorting the step map according to the dates
         Log.d("tourneyUpload", "Inside Calc")
@@ -942,11 +1280,14 @@ class TournamentsViewModel(
                                         )
                                         team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                             currentStepCount
-
-                                        updateAndStoreTeamDataInSharedPrefs(
-                                            team.currentTournaments[tourney.name]!!,
-                                            team
-                                        )
+                                        doAsync {
+                                            val i = updateAndStoreTeamDataInSharedPrefs(
+                                                team.currentTournaments[tourney.name]!!,
+                                                team,
+                                                userTourneys.currentTournaments[tourney.name]!!
+                                            )
+                                            updateUserTeamDataInFirestore(i)
+                                        }
                                     } else {
                                         Log.d("tourneyUpload", "Daily Step Map is not empty")
                                         if (teamTourney[tourney.name]?.dailyStepsMap?.keys?.sorted()?.last()
@@ -958,11 +1299,14 @@ class TournamentsViewModel(
                                             )
                                             team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                 currentStepCount
-
-                                            updateAndStoreTeamDataInSharedPrefs(
-                                                team.currentTournaments[tourney.name]!!,
-                                                team
-                                            )
+                                            doAsync {
+                                                val i = updateAndStoreTeamDataInSharedPrefs(
+                                                    team.currentTournaments[tourney.name]!!,
+                                                    team,
+                                                    userTourneys.currentTournaments[tourney.name]!!
+                                                )
+                                                updateUserTeamDataInFirestore(i)
+                                            }
                                         } else {
                                             Log.d(
                                                 "tourneyUpload",
@@ -976,10 +1320,14 @@ class TournamentsViewModel(
 
                                             team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                 updatedSteps
-                                            updateAndStoreTeamDataInSharedPrefs(
-                                                team.currentTournaments[tourney.name]!!,
-                                                team
-                                            )
+                                            doAsync {
+                                                val i = updateAndStoreTeamDataInSharedPrefs(
+                                                    team.currentTournaments[tourney.name]!!,
+                                                    team,
+                                                    userTourneys.currentTournaments[tourney.name]!!
+                                                )
+                                                updateUserTeamDataInFirestore(i)
+                                            }
                                         }
                                     }
                                 }
@@ -1012,6 +1360,7 @@ class TournamentsViewModel(
                                     userTourneys.currentTournaments[tourney.name]?.totalSteps =
                                         currentStepCount
                                     updateAndStoreUserDataInSharedPrefs(userTourneys.currentTournaments[tourney.name]!!)
+                                    firestoreRepository.updateTeamData(team.name, mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments))
 
 
                                     firestoreRepository.updateUserData(
@@ -1031,11 +1380,14 @@ class TournamentsViewModel(
                                                 )
                                                 tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                     currentStepCount
-
-                                                updateAndStoreTeamDataInSharedPrefs(
-                                                    tournaments[tourney.name]!!,
-                                                    team
-                                                )
+                                                doAsync {
+                                                    val i = updateAndStoreTeamDataInSharedPrefs(
+                                                        tournaments[tourney.name]!!,
+                                                        team,
+                                                        userTourneys.currentTournaments[tourney.name]!!
+                                                    )
+                                                    updateUserTeamDataInFirestore(i)
+                                                }
                                             } else {
                                                 Log.d(
                                                     "tourneyUpload",
@@ -1052,11 +1404,14 @@ class TournamentsViewModel(
                                                         teamDB.currentTournaments[tourney.name]?.dailyStepsMap!!
                                                     tourney.dailyStepsMap[midNight.toString()] =
                                                         currentStepCount
-
-                                                    updateAndStoreTeamDataInSharedPrefs(
-                                                        tourney,
-                                                        team
-                                                    )
+                                                    doAsync {
+                                                        val i = updateAndStoreTeamDataInSharedPrefs(
+                                                            tourney,
+                                                            team,
+                                                            userTourneys.currentTournaments[tourney.name]!!
+                                                        )
+                                                        updateUserTeamDataInFirestore(i)
+                                                    }
                                                 } else {
                                                     Log.d(
                                                         "tourneyUpload",
@@ -1075,10 +1430,14 @@ class TournamentsViewModel(
                                                     if (diff > 0) {
                                                         tourney.dailyStepsMap[midNight.toString()] =
                                                             updatedSteps
-                                                        updateAndStoreTeamDataInSharedPrefs(
-                                                            tourney,
-                                                            team
-                                                        )
+                                                        doAsync {
+                                                            val i = updateAndStoreTeamDataInSharedPrefs(
+                                                                tourney,
+                                                                team,
+                                                                userTourneys.currentTournaments[tourney.name]!!
+                                                            )
+                                                            updateUserTeamDataInFirestore(i)
+                                                        }
                                                     }
                                                 }
                                             }
@@ -1118,10 +1477,14 @@ class TournamentsViewModel(
                                                 tournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
                                                     currentStepCount
 
-                                                updateAndStoreTeamDataInSharedPrefs(
-                                                    tournaments[tourney.name]!!,
-                                                    team
-                                                )
+                                                doAsync {
+                                                    val i = updateAndStoreTeamDataInSharedPrefs(
+                                                        tournaments[tourney.name]!!,
+                                                        team,
+                                                        userTourneys.currentTournaments[tourney.name]!!
+                                                    )
+                                                    updateUserTeamDataInFirestore(i)
+                                                }
                                                 //updateUserTeamDataInFirestore(future)
 //                                                        sharedPrefsRepository.storeLastDayStepCount(
 //                                                            currentStepCount
@@ -1145,15 +1508,20 @@ class TournamentsViewModel(
                                                     tourney.dailyStepsMap[midNight.toString()] =
                                                         currentStepCount
 
-                                                    updateAndStoreTeamDataInSharedPrefs(
-                                                        tourney,
-                                                        team
-                                                    )
-                                                    //updateUserTeamDataInFirestore(future)
+                                                    doAsync {
+                                                        val i = updateAndStoreTeamDataInSharedPrefs(
+                                                            tourney,
+                                                            team,
+                                                            userTourneys.currentTournaments[tourney.name]!!
+                                                        )
+                                                        updateUserTeamDataInFirestore(i)
+                                                    }
+                                                        //updateUserTeamDataInFirestore(future)
 //                                                            sharedPrefsRepository.storeLastDayStepCount(
 //                                                                currentStepCount
 //                                                            )
-                                                } else {
+                                                }
+                                                 else {
                                                     //Data is not present in TeamTourney
 
                                                     Log.d(
@@ -1165,14 +1533,19 @@ class TournamentsViewModel(
                                                     val updatedSteps = oldStep!! + currentStepCount
                                                     team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = updatedSteps
 
-                                                    updateAndStoreTeamDataInSharedPrefs(
-                                                        team.currentTournaments[tourney.name]!!,
-                                                        team
-                                                    )
-                                                    //updateUserTeamDataInFirestore(future)
+                                                    doAsync {
+                                                        val i = updateAndStoreTeamDataInSharedPrefs(
+                                                            team.currentTournaments[tourney.name]!!,
+                                                            team,
+                                                            userTourneys.currentTournaments[tourney.name]!!
+                                                        )
+                                                        updateUserTeamDataInFirestore(i)
+                                                    }
+                                                        //updateUserTeamDataInFirestore(future)
 //                                                            sharedPrefsRepository.storeLastDayStepCount(
 //                                                                currentStepCount
 //                                                            )
+                                                    }
                                                 }
                                             }
                                         }
@@ -1183,9 +1556,88 @@ class TournamentsViewModel(
                 // }
             }
 
-    }
+    /*private fun updateStepsForUserAndTeam(
+        team: Team,
+        user: User,
+        currentStepCount: Int,
+        tourney: TeamTournament,
+        midNight: Long,
+        county1: Int
+    ) {
+        cr1++
 
-    private fun updateAndStoreTeamDataInSharedPrefs(teamTourney: TeamTournament, team: Team) {
+        Log.d("tester", "For tournament: ${tourney.name} ," + "count: $cr1")
+
+        var totalSteps = 0
+        var teamMemberCount = 0
+
+        *//*firestoreRepository.getUserData(sharedPrefsRepository.user.uid).addOnSuccessListener {
+            val userData = it.toObject<User>()
+            val userTournaments = userData?.currentTournaments*//*
+
+            //userTournaments!![tourney.name]?.dailyStepsMap!![midNight.toString()] = currentStepCount
+        user.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] = currentStepCount
+
+            *//*firestoreRepository.updateUserData(
+                sharedPrefsRepository.user.uid,
+                mapOf("currentTournaments" to userTournaments)
+            ).addOnSuccessListener {*//*
+
+              //  firestoreRepository.getTeam(team.name).addOnSuccessListener {
+//                    val teamData = it.toObject<Team>()
+//                    val teamMembers = teamData?.members
+//                    val teamTourneys = teamData?.currentTournaments?.filter { it.value.isActive }
+        val teamMembers = team.members
+        for (member in teamMembers) {
+
+            teamMemberCount++
+
+            firestoreRepository.getUserData(member).addOnSuccessListener {
+                val memberData = it.toObject<User>()
+                val userTourneys =
+                    memberData?.currentTournaments!![tourney.name]
+
+                if(member!= sharedPrefsRepository.user.uid)
+                    totalSteps += userTourneys!!.dailyStepsMap[midNight.toString()] ?: 0
+
+                //Log.d("Steps for tournament ${tourney.name}", user.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()].toString())
+                Log.d("tester", "memberCount $teamMemberCount")
+                if (teamMemberCount == teamMembers.count()) {
+
+                    Log.d("tester", "User count is equal to teamcount" + totalSteps)
+                    totalSteps += currentStepCount //doing this for adding current user's step count
+                    team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
+                        totalSteps
+
+                    //todo: uncomment if necessary
+                    //updateAndStoreTeamDataInSharedPrefs(team.currentTournaments[tourney.name], user.currentTournaments[tourney.name], team)
+
+                    totalSteps = 0
+                    teamMemberCount = 0
+
+                    *//*firestoreRepository.updateTeamData(
+                        team.name,
+                        mapOf("currentTournaments" to teamTourneys)
+                    )
+                        .addOnSuccessListener {
+                            user.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
+                                currentStepCount
+                            team.currentTournaments[tourney.name]?.dailyStepsMap!![midNight.toString()] =
+                                totalSteps
+                            teamMemberCount = 0
+                            totalSteps = 0
+                            //updateAndStoreTeamDataInSharedPrefs(teamTourney, userTourney, team, cr1, county1, team.currentTournaments[tourney.name]!!)
+                        }*//*
+                }
+                //}
+            }
+        }
+        //}
+        //}
+        // }
+    }*/
+
+    private fun updateAndStoreTeamDataInSharedPrefs(teamTourney: TeamTournament, team: Team, userTourney: UserTournament): Int {
         teamTourney.leafCount = getTotalLeafCountForTeam(teamTourney)
         teamTourney.fruitCount = getTotalFruitCountForTeam(teamTourney)
         teamTourney.tournamentGoalStreak = getTeamGoalStreakForUser(teamTourney, team)
@@ -1193,31 +1645,41 @@ class TournamentsViewModel(
         teamTourney.dailyGoalsAchieved = calculateDailyGoalsAchieved(teamTourney)
         Log.d("tourneyUpload", "updateAndStoreTeamDataInSharedPrefs")
         var totalSteps = 0
-        teamTourney.dailyStepsMap.forEach { (time, steps) ->
+
+        /*teamTourney.dailyStepsMap.forEach { (time, steps) ->
+            totalSteps += steps
+        }*/
+
+        for (steps in userTourney.dailyStepsMap.values){
             totalSteps += steps
         }
-        teamTourney.totalSteps = totalSteps
 
+        teamTourney.totalSteps = totalSteps
         synchronized(sharedPrefsRepository.team) {
             val team = sharedPrefsRepository.team
             team.currentTournaments[teamTourney.name] = teamTourney
             sharedPrefsRepository.team = team
         }
-        updateUserTeamDataInFirestore()
+        //updateUserTeamDataInFirestore()
+        return 0
     }
 
-    private fun updateUserTeamDataInFirestore() {
 
+    private fun updateUserTeamDataInFirestore(i: Int) {
+
+            Log.d("tester", "printing i $i")
             Log.d("tourneyUpload", "updateUserTeamDataInFirestore")
             Log.d("tourneyUpload", "Pref " + sharedPrefsRepository.team)
             Log.d("tourneyUpload", "PrefValue " + sharedPrefsRepository.team.currentTournaments)
             Log.d("tourneyUpload", "TeamName " + sharedPrefsRepository.team.name)
             firestoreRepository.updateTeamData(
                 sharedPrefsRepository.team.name,
-                mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments))
+                mapOf("currentTournaments" to sharedPrefsRepository.team.currentTournaments)
+            )
                 .addOnSuccessListener {
                     Log.d("tourneyUpload", "Team User data upload success")
-
+                    cr1 = 0
+                    county1 = 0
                     stepCountRepository.getTodayStepCountData {
                         sharedPrefsRepository.storeLastDayStepCount(it)
                     }
@@ -1226,6 +1688,7 @@ class TournamentsViewModel(
                     Log.e("tourneyUpload", "Team User data upload failed")
                 }
     }
+
 
     private fun updateAndStoreUserDataInSharedPrefs(userTourney: UserTournament){
 

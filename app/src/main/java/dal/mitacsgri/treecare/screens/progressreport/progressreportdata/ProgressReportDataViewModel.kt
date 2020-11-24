@@ -3,6 +3,7 @@ package dal.mitacsgri.treecare.screens.progressreport.progressreportdata
 import android.content.Context
 import android.graphics.Color
 import android.text.SpannedString
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -43,7 +44,7 @@ class ProgressReportDataViewModel(
             WEEK_DATA -> {
                 val weekStartDate = DateTime(getStartOfWeek(startTime.millis))
                 val weekEndDate = weekStartDate.plusDays(6)
-                val formatter = DateTimeFormat.forPattern("MMMM, d")
+                val formatter = DateTimeFormat.forPattern("MMMM d")
 
                 formatter.print(weekStartDate) + " - " + formatter.print(weekEndDate)
             }

@@ -1,7 +1,9 @@
 package dal.mitacsgri.treecare.screens.gamesettings
 
 import android.content.DialogInterface
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.TouchDelegate
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -14,6 +16,7 @@ import dal.mitacsgri.treecare.extensions.enable
 import dal.mitacsgri.treecare.extensions.getTextAsInt
 import dal.mitacsgri.treecare.extensions.toast
 import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.fragment_tournament_leaderboard.view.*
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -36,6 +39,18 @@ class SettingsActivity : AppCompatActivity() {
 
         backButton.setOnClickListener {
             finish()
+        }
+
+        val parent = backButton.parent as View // button: the view you want to enlarge hit area
+
+        parent.post {
+            val rect = Rect()
+            backButton.getHitRect(rect)
+            rect.top -= 100 // increase top hit area
+            rect.left -= 100 // increase left hit area
+            rect.bottom += 100 // increase bottom hit area
+            rect.right += 100 // increase right hit area
+            parent.touchDelegate = TouchDelegate(rect, backButton)
         }
 
         if (settingsViewModel.getGameMode() == CHALLENGER_MODE || settingsViewModel.getGameMode() == TOURNAMENT_MODE) {
